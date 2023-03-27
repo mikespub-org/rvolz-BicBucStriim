@@ -13,6 +13,7 @@
             "role": "Developer"
         }
     ],
+    "type": "project",
     "license": "MIT",
     "require": {
         "dflydev/markdown": "^1.0",
