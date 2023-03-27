@@ -1,4 +1,19 @@
 {
+    "name": "mikespub/rvolz-bicbucstriim",
+    "description": "BicBucStriim streams books, digital books. It fills a gap in the functionality of current NAS devices that provide access to music, videos and photos -- but not books. BicBucStriim fills this gap and provides web-based access to your e-book collection.",
+    "authors": [
+        {
+            "name": "Rainer Volz",
+            "homepage": "https://github.com/rvolz/BicBucStriim",
+            "role": "Developer"
+        },
+        {
+            "name": "mikespub",
+            "homepage": "https://github.com/mikespub-org/rvolz-BicBucStriim",
+            "role": "Developer"
+        }
+    ],
+    "license": "MIT",
     "require": {
         "dflydev/markdown": "^1.0",
         "slim/slim": "^2.6",
