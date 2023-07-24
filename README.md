@@ -1,6 +1,18 @@
 BicBucStriim
 ============
 
+Forked Branches for PHP 8.x
+---------------------------
+
+| Upstream | PHP 8.x PR | Updated |
+|----------|------------|---------|
+| [v1](https://github.com/mikespub-org/rvolz-BicBucStriim/tree/v1) | [v1](https://github.com/mikespub-org/rvolz-BicBucStriim/tree/v1) | [main](https://github.com/mikespub-org/rvolz-BicBucStriim/tree/main) |
+| [master](https://github.com/mikespub-org/rvolz-BicBucStriim/tree/master) | [master](https://github.com/mikespub-org/rvolz-BicBucStriim/tree/master) | [updated](https://github.com/mikespub-org/rvolz-BicBucStriim/tree/updated) |
+| [BicBucStriim-352](https://github.com/mikespub-org/rvolz-BicBucStriim/tree/BicBucStriim-352) | [BicBucStriim-352](https://github.com/mikespub-org/rvolz-BicBucStriim/tree/BicBucStriim-352) | [frontend](https://github.com/mikespub-org/rvolz-BicBucStriim/tree/frontend) |
+
+Introduction (original)
+-----------------------
+
 BicBucStriim streams books, digital books. It fills a gap in the functionality of current NAS devices that provide access to music, videos and photos -- but not books. BicBucStriim fills this gap and provides web-based access to your e-book collection.
 
 BicBucStriim was created when I bought a NAS device (Synology DS 512+) to store my media on it. NAS devices like the Synology DS typically include media servers that publish audio, video, photos, so that you can access your media from all kinds of devices (TV, smart phone, laptop ...) inside the house, which is very convenient. Unfortunately there is nothing like that for e-books. So BicBucStriim was created.
