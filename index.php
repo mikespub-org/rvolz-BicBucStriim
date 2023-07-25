@@ -44,9 +44,9 @@ $appversion = '1.6.4';
 # Init app and routes
 $app = new \Slim\Slim([
     'view' => new \Slim\Views\Twig(),
-    #'mode' => 'production',
+    'mode' => 'production',
     #'mode' => 'debug',
-    'mode' => 'development',
+    #'mode' => 'development',
 ]);
 
 $app->configureMode('production', 'confprod');

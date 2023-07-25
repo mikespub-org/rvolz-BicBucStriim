@@ -38,6 +38,7 @@ $archive = $zippy->create('bicbucstriim.zip', [
     'data' => 'data',
     'index.php',
     'installcheck.php',
+    'php.ini',
     'favicon.ico',
     'bbs-icon.png',
     'CHANGELOG.md',
