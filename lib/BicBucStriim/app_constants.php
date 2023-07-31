@@ -11,7 +11,7 @@
 const DB_SCHEMA_VERSION = 3;
 
 # URL for version information
-const VERSION_URL = 'http://projekte.textmulch.de/bicbucstriim/version.json';
+const VERSION_URL = 'https://github-org.mikespub.net/rvolz-BicBucStriim/version.json';
 
 # Cookie name to store Kindle email address
 const KINDLE_COOKIE = 'kindle_email';
