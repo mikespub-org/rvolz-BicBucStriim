@@ -1398,7 +1398,7 @@ function kindle($id, $file)
     foreach ($details['authors'] as $author) {
         $filename .= $author->name;
     }
-    $filename .= ".mobi";
+    $filename .= ".epub";
     # Validate request e-mail format
     $to_email = $app->request()->post('email');
     if (!isEMailValid($to_email)) {
