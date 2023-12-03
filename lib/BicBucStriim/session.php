@@ -10,6 +10,4 @@ use Aura\Session\Session as AuraSession;
  * Session that integrates Aura Auth and Session.
  *
  */
-class Session extends AuraSession implements SessionInterface
-{
-}
+class Session extends AuraSession implements SessionInterface {}

@@ -30,7 +30,7 @@ class MetadataEpub
      *					if not defined the systems TEMP directory
      * 					will be used (see sys_get_temp_dir())
      */
-    public function __construct($file, $tmpdir=null)
+    public function __construct($file, $tmpdir = null)
     {
         if (is_null($tmpdir)) {
             $tmp = sys_get_temp_dir();
@@ -75,7 +75,7 @@ class MetadataEpub
      * @param array $metadata	Calibre metadata
      * @param string $cover	path to new cover image
      */
-    public function updateMetadata($metadata=null, $cover = null)
+    public function updateMetadata($metadata = null, $cover = null)
     {
         if (is_null($metadata)) {
             return;

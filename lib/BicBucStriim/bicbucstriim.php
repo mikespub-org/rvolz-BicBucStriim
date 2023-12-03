@@ -45,11 +45,11 @@ class BicBucStriim
      * 								else RedBeanPHP adapt the schema
      * 								default = true
      */
-    public function __construct($dataPath='data/data.db', $freeze=true)
+    public function __construct($dataPath = 'data/data.db', $freeze = true)
     {
         $rp = realpath($dataPath);
         $this->data_dir = dirname($dataPath);
-        $this->thumb_dir = $this->data_dir.'/titles';
+        $this->thumb_dir = $this->data_dir . '/titles';
         if (!file_exists($this->thumb_dir)) {
             mkdir($this->thumb_dir);
         }
@@ -58,12 +58,12 @@ class BicBucStriim
             mkdir($this->authors_dir);
         }
         if (file_exists($rp) && is_writeable($rp)) {
-            $this->mydb = new PDO('sqlite:'.$rp, null, null, []);
+            $this->mydb = new PDO('sqlite:' . $rp, null, null, []);
             //$this->mydb->setAttribute(1002, 'SET NAMES utf8');
             $this->mydb->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             $this->mydb->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
             $this->last_error = $this->mydb->errorCode();
-            R::setup('sqlite:'.$rp);
+            R::setup('sqlite:' . $rp);
             R::freeze($freeze);
         } else {
             $this->mydb = null;
@@ -74,20 +74,20 @@ class BicBucStriim
      * Create an empty BBS DB, just with the initial admin user account, so that login is possible.
      * @param string $dataPath Path to BBS DB
      */
-    public function createDataDb($dataPath='data/data.db')
+    public function createDataDb($dataPath = 'data/data.db')
     {
-        $schema = file($this->data_dir.'/schema.sql');
-        $this->mydb = new PDO('sqlite:'.$dataPath, null, null, []);
+        $schema = file($this->data_dir . '/schema.sql');
+        $this->mydb = new PDO('sqlite:' . $dataPath, null, null, []);
         //$this->mydb->setAttribute(1002, 'SET NAMES utf8');
         $this->mydb->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $this->mydb->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
-        for ($i=0; $i < count($schema); $i++) {
+        for ($i = 0; $i < count($schema); $i++) {
             if (strpos($schema[$i], '--') == false) {
                 $this->mydb->exec($schema[$i]);
             }
         }
         $mdp = password_hash('admin', PASSWORD_BCRYPT);
-        $this->mydb->exec('insert into user (username, password, role) values ("admin", "'.$mdp.'",1)');
+        $this->mydb->exec('insert into user (username, password, role) values ("admin", "' . $mdp . '",1)');
         $this->mydb->exec('insert into config (name, val) values ("db_version", "3")');
         $this->mydb = null;
     }
@@ -242,7 +242,7 @@ class BicBucStriim
             }
             $user->languages = $languages;
             $user->tags = $tags;
-            if (strcasecmp($role, "admin")==0) {
+            if (strcasecmp($role, "admin") == 0) {
                 $user->role = "1";
             } else {
                 $user->role = "0";
@@ -430,7 +430,7 @@ class BicBucStriim
             $png = true;
         }
 
-        $fname = $this->authors_dir. '/author_'.$calibreThing->id.'_thm.png';
+        $fname = $this->authors_dir . '/author_' . $calibreThing->id . '_thm.png';
         if (file_exists($fname)) {
             unlink($fname);
         }
@@ -476,8 +476,8 @@ class BicBucStriim
      */
     public function isTitleThumbnailAvailable($id)
     {
-        $thumb_name = 'thumb_'.$id.'.png';
-        $thumb_path = $this->thumb_dir.'/'.$thumb_name;
+        $thumb_name = 'thumb_' . $id . '.png';
+        $thumb_path = $this->thumb_dir . '/' . $thumb_name;
         return file_exists($thumb_path);
     }
 
@@ -498,8 +498,8 @@ class BicBucStriim
      */
     public function titleThumbnail($id, $cover, $clipped)
     {
-        $thumb_name = 'thumb_'.$id.'.png';
-        $thumb_path = $this->thumb_dir.'/'.$thumb_name;
+        $thumb_name = 'thumb_' . $id . '.png';
+        $thumb_path = $this->thumb_dir . '/' . $thumb_name;
         if (!file_exists($thumb_path)) {
             if (is_null($cover)) {
                 $thumb_path = null;
@@ -526,7 +526,7 @@ class BicBucStriim
         $cleared = true;
         if ($dh = opendir($this->thumb_dir)) {
             while (($file = readdir($dh)) !== false) {
-                $fn = $this->thumb_dir.'/'.$file;
+                $fn = $this->thumb_dir . '/' . $file;
                 if (preg_match("/^thumb.*\\.png$/", $file) && file_exists($fn)) {
                     if (!@unlink($fn)) {
                         $cleared = false;
@@ -737,10 +737,10 @@ class BicBucStriim
         $maxwh = max([$width, $height]);
         if ($height > $width) {
             $diff = $maxwh - $width;
-            $dstx = (int) $diff/2;
+            $dstx = (int) $diff / 2;
         } else {
             $diff = $maxwh - $height;
-            $dsty = (int) $diff/2;
+            $dsty = (int) $diff / 2;
         }
         $inbetween = $this->transparentImage($maxwh, $maxwh);
         imagecopy($inbetween, $source, $dstx, $dsty, 0, 0, $width, $height);

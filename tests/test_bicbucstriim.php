@@ -21,10 +21,10 @@ class TestOfBicBucStriim extends UnitTestCase
     public function setUp()
     {
         if (file_exists(self::DATA)) {
-            system("rm -rf ".self::DATA);
+            system("rm -rf " . self::DATA);
         }
         mkdir(self::DATA);
-        chmod(self::DATA, 0777);
+        chmod(self::DATA, 0o777);
         copy(self::DB2, self::DATADB);
         copy(self::SCHEMA, self::TESTSCHEMA);
         $this->bbs = new BicBucStriim(self::DATADB, false);
@@ -36,23 +36,23 @@ class TestOfBicBucStriim extends UnitTestCase
         R::nuke();
         R::close();
         $this->bbs = null;
-        system("rm -rf ".self::DATA);
+        system("rm -rf " . self::DATA);
     }
 
     public function testDbOk()
     {
         $this->assertTrue($this->bbs->dbOk());
-        $this->bbs = new BicBucStriim(self::DATA.'/nodata.db');
+        $this->bbs = new BicBucStriim(self::DATA . '/nodata.db');
         $this->assertFalse($this->bbs->dbOk());
     }
 
     public function testCreateDb()
     {
-        $this->bbs = new BicBucStriim(self::DATA.'/nodata.db');
+        $this->bbs = new BicBucStriim(self::DATA . '/nodata.db');
         $this->assertFalse($this->bbs->dbOk());
-        $this->bbs->createDataDB(self::DATA.'/newdata.db');
-        $this->assertTrue(file_exists(self::DATA.'/newdata.db'));
-        $this->bbs = new BicBucStriim(self::DATA.'/newdata.db');
+        $this->bbs->createDataDB(self::DATA . '/newdata.db');
+        $this->assertTrue(file_exists(self::DATA . '/newdata.db'));
+        $this->bbs = new BicBucStriim(self::DATA . '/newdata.db');
         $this->assertTrue($this->bbs->dbOk());
     }
 
@@ -234,7 +234,7 @@ class TestOfBicBucStriim extends UnitTestCase
     public function testEditAuthorThumbnail()
     {
         $this->assertTrue($this->bbs->editAuthorThumbnail(1, 'Author Name', true, 'tests/fixtures/author1.jpg', 'image/jpeg'));
-        $this->assertTrue(file_exists(self::DATA.'/authors/author_1_thm.png'));
+        $this->assertTrue(file_exists(self::DATA . '/authors/author_1_thm.png'));
         $result2 = $this->bbs->getCalibreThing(DataConstants::CALIBRE_AUTHOR_TYPE, 1);
         $this->assertEqual('Author Name', $result2->cname);
         $this->assertEqual(1, $result2->refctr);
@@ -243,7 +243,7 @@ class TestOfBicBucStriim extends UnitTestCase
         $result = $artefacts[1];
         $this->assertNotNull($result);
         $this->assertEqual(DataConstants::AUTHOR_THUMBNAIL_ARTEFACT, $result->atype);
-        $this->assertEqual(self::DATA.'/authors/author_1_thm.png', $result->url);
+        $this->assertEqual(self::DATA . '/authors/author_1_thm.png', $result->url);
     }
 
     public function testGetAuthorThumbnail()
@@ -253,7 +253,7 @@ class TestOfBicBucStriim extends UnitTestCase
         $result = $this->bbs->getAuthorThumbnail(1);
         $this->assertNotNull($result);
         $this->assertEqual(DataConstants::AUTHOR_THUMBNAIL_ARTEFACT, $result->atype);
-        $this->assertEqual(self::DATA.'/authors/author_1_thm.png', $result->url);
+        $this->assertEqual(self::DATA . '/authors/author_1_thm.png', $result->url);
         $result = $this->bbs->getAuthorThumbnail(2);
         $this->assertNotNull($result);
     }
@@ -263,7 +263,7 @@ class TestOfBicBucStriim extends UnitTestCase
         $this->assertTrue($this->bbs->editAuthorThumbnail(1, 'Author Name', true, 'tests/fixtures/author1.jpg', 'image/jpeg'));
         $this->assertNotNull($this->bbs->getAuthorThumbnail(1));
         $this->assertTrue($this->bbs->deleteAuthorThumbnail(1));
-        $this->assertFalse(file_exists(self::DATA.'/authors/author_1_thm.png'));
+        $this->assertFalse(file_exists(self::DATA . '/authors/author_1_thm.png'));
         $this->assertNull($this->bbs->getAuthorThumbnail(1));
         $this->assertEqual(0, R::count('artefact'));
         $this->assertEqual(0, R::count('calibrething'));

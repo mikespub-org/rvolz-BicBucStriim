@@ -4,14 +4,14 @@ require 'vendor/autoload.php';
 class Mailer
 {
     // SMTP transport
-    public const SMTP=0;
+    public const SMTP = 0;
     // Sendmail transport
-    public const SENDMAIL=1;
+    public const SENDMAIL = 1;
     // PHP mail transport
-    public const MAIL=2;
+    public const MAIL = 2;
 
-    public const SSL='ssl';
-    public const TLS='tls';
+    public const SSL = 'ssl';
+    public const TLS = 'tls';
 
     protected $transport;
     protected $dump;
@@ -26,7 +26,7 @@ class Mailer
      *								'username' - SMTP user
      *								'password' - SMTP password
      */
-    public function __construct($transportType=Mailer::MAIL, $config=[])
+    public function __construct($transportType = Mailer::MAIL, $config = [])
     {
         if ($transportType == Mailer::SMTP) {
             // Create the Transport
@@ -92,7 +92,7 @@ class Mailer
         try {
             return $mailer->send($message);
         } catch (Exception $e) {
-            $this->dump = $e->getMessage().' -- '.$logger->dump();
+            $this->dump = $e->getMessage() . ' -- ' . $logger->dump();
             return 0;
         }
     }

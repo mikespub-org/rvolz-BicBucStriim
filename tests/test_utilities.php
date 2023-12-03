@@ -58,7 +58,7 @@ class TestOfUtilities extends UnitTestCase
         $this->assertEqual('application/x-mobipocket-ebook', Utilities::titleMimeType('test.azw'));
         $this->assertEqual('application/vnd.amazon.ebook', Utilities::titleMimeType('test.azw1'));
         $this->assertEqual('application/vnd.amazon.ebook', Utilities::titleMimeType('test.azw2'));
-        $this->assertEqual('text/plain', Utilities::titleMimeType(self::FIXT.'/test.unknown-format'));
-        $this->assertEqual('text/xml', Utilities::titleMimeType(self::FIXT.'/atom.rng'));
+        $this->assertEqual('text/plain', Utilities::titleMimeType(self::FIXT . '/test.unknown-format'));
+        $this->assertEqual('text/xml', Utilities::titleMimeType(self::FIXT . '/atom.rng'));
     }
 }

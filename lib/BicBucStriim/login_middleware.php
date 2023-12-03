@@ -47,7 +47,7 @@ class LoginMiddleware extends \Slim\Middleware
         $request = $app->request;
         $resource = $request->getResourceUri();
         $accept = $request->headers('ACCEPT');
-        $app->getLog()->debug('login resource: '.$resource);
+        $app->getLog()->debug('login resource: ' . $resource);
         if ($globalSettings[LOGIN_REQUIRED] == 1) {
             if (!$this->is_static_resource($resource) && !$this->is_authorized()) {
                 if ($resource === '/login/') {
@@ -65,7 +65,7 @@ class LoginMiddleware extends \Slim\Middleware
                 } else {
                     $app->getLog()->debug('login: redirecting to login');
                     // now we can also use the native app->redirect method!
-                    $this->app->redirect($this->mkRootUrl().'/login/');
+                    $this->app->redirect($this->mkRootUrl() . '/login/');
                 }
             }
         } else {
@@ -76,7 +76,7 @@ class LoginMiddleware extends \Slim\Middleware
                 return;
             } elseif (stripos($resource, '/admin') === 0 && !$this->is_static_resource($resource) && !$this->is_authorized()) {
                 $app->getLog()->debug('login: redirecting to login');
-                $this->app->redirect($this->mkRootUrl().'/login/');
+                $this->app->redirect($this->mkRootUrl() . '/login/');
             }
         }
     }
@@ -127,7 +127,7 @@ class LoginMiddleware extends \Slim\Middleware
         try {
             $resume_service->resume($app->auth);
         } catch(ErrorException $e) {
-            $app->getLog()->warn('login error: bad cookie data '.var_export(get_class($e), true));
+            $app->getLog()->warn('login error: bad cookie data ' . var_export(get_class($e), true));
         }
         $app->getLog()->debug("after resume: " . $app->auth->getStatus());
         if ($app->auth->isValid()) {
@@ -148,7 +148,7 @@ class LoginMiddleware extends \Slim\Middleware
             if (is_null($auth)) {
                 $auth = $this->checkHttpAuth($req);
             }
-            $app->getLog()->debug('login auth: '.var_export($auth, true));
+            $app->getLog()->debug('login auth: ' . var_export($auth, true));
             // if auth info found check the database
             if (is_null($auth)) {
                 return false;
@@ -157,9 +157,9 @@ class LoginMiddleware extends \Slim\Middleware
                     $app->login_service->login($app->auth, [
                         'username' => $auth[0],
                         'password' => $auth[1]]);
-                    $app->getLog()->debug('login status: '.var_export($app->auth->getStatus(), true));
+                    $app->getLog()->debug('login status: ' . var_export($app->auth->getStatus(), true));
                 } catch (Auth\Exception $e) {
-                    $app->getLog()->debug('login error: '.var_export(get_class($e), true));
+                    $app->getLog()->debug('login error: ' . var_export(get_class($e), true));
                 }
                 return $app->auth->isValid();
             }
@@ -220,7 +220,7 @@ class LoginMiddleware extends \Slim\Middleware
             } else {
                 // Use forwarding info
                 $app->getLog()->debug("mkRootUrl: Using forwarding information " . $info);
-                $root = $info->protocol. '://'. $info->host. $app->request()->getRootUri();
+                $root = $info->protocol . '://' . $info->host . $app->request()->getRootUri();
             }
         }
         $app->getLog()->debug("mkRootUrl: Using root url " . $root);

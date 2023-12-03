@@ -23,8 +23,8 @@ class OwnConfigMiddleware extends \Slim\Middleware
         $app = $this->app;
         $config_status = $this->check_config_db();
         if ($config_status == 0) {
-            $app->halt(500, 'No or bad configuration database. Please use <a href="'.
-                $app->request->getRootUri().
+            $app->halt(500, 'No or bad configuration database. Please use <a href="' .
+                $app->request->getRootUri() .
                 '/installcheck.php">installcheck.php</a> to check for errors.');
         } elseif ($config_status == 2) {
             // TODO Redirect to an update script in the future

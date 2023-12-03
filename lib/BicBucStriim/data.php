@@ -20,7 +20,7 @@ class BbsData
 
     public function __construct($db, $data_dir)
     {
-        R::setup('sqlite:'.$db);
+        R::setup('sqlite:' . $db);
         $this->data_dir = $data_dir;
         $this->authors_dir = $this->data_dir . '/authors';
         if (!file_exists($this->authors_dir)) {
@@ -74,7 +74,7 @@ class BbsData
             $calibreThing = $this->addCalibreThing(DataConstants::CALIBRE_AUTHOR_TYPE, $authorId, $authorName);
         }
 
-        $fname = $this->authors_dir. '/author_'.$calibreThing->id.'_thm.png';
+        $fname = $this->authors_dir . '/author_' . $calibreThing->id . '_thm.png';
         if ($clipped) {
             $created = $this->thumbnailClipped($file, self::THUMB_RES, self::THUMB_RES, $fname);
         } else {
@@ -145,10 +145,10 @@ class BbsData
         $maxwh = max([$width, $height]);
         if ($height > $width) {
             $diff = $maxwh - $width;
-            $dstx = (int) $diff/2;
+            $dstx = (int) $diff / 2;
         } else {
             $diff = $maxwh - $height;
-            $dsty = (int) $diff/2;
+            $dsty = (int) $diff / 2;
         }
         $inbetween = $this->transparentImage($maxwh, $maxwh);
         imagecopy($inbetween, $source, $dstx, $dsty, 0, 0, $width, $height);

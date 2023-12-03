@@ -15,13 +15,9 @@ require 'lib/BicBucStriim/inst_utils.php';
 
 class TestOfInstUtils extends UnitTestCase
 {
-    public function setUp()
-    {
-    }
+    public function setUp() {}
 
-    public function tearDown()
-    {
-    }
+    public function tearDown() {}
 
     ##
     # Test

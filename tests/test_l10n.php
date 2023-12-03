@@ -7,13 +7,9 @@ require_once('lib/BicBucStriim/l10n.php');
 
 class TestOfL10N extends UnitTestCase
 {
-    public function setUp()
-    {
-    }
+    public function setUp() {}
 
-    public function tearDown()
-    {
-    }
+    public function tearDown() {}
 
     ##
     # Test array functionality

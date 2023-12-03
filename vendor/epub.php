@@ -11,7 +11,7 @@ class EPub
     protected $file;
     protected $meta;
     protected $namespaces;
-    protected $imagetoadd='';
+    protected $imagetoadd = '';
 
     /**
      * Constructor
@@ -75,11 +75,11 @@ class EPub
         $zip->addFromString($this->meta, $this->xml->saveXML());
         // add the cover image
         if ($this->imagetoadd) {
-            $path = dirname('/'.$this->meta).'/php-epub-meta-cover.img'; // image path is relative to meta file
+            $path = dirname('/' . $this->meta) . '/php-epub-meta-cover.img'; // image path is relative to meta file
             $path = ltrim($path, '/');
 
             $zip->addFromString($path, file_get_contents($this->imagetoadd));
-            $this->imagetoadd='';
+            $this->imagetoadd = '';
         }
         $zip->close();
     }
@@ -99,7 +99,7 @@ class EPub
      *
      * @params array $authors
      */
-    public function Authors($authors=false)
+    public function Authors($authors = false)
     {
         // set new data
         if ($authors !== false) {
@@ -162,7 +162,7 @@ class EPub
      *
      * @param string $title
      */
-    public function Title($title=false)
+    public function Title($title = false)
     {
         return $this->getset('dc:title', $title);
     }
@@ -172,7 +172,7 @@ class EPub
      *
      * @param string $lang
      */
-    public function Language($lang=false)
+    public function Language($lang = false)
     {
         return $this->getset('dc:language', $lang);
     }
@@ -182,7 +182,7 @@ class EPub
      *
      * @param string $publisher
      */
-    public function Publisher($publisher=false)
+    public function Publisher($publisher = false)
     {
         return $this->getset('dc:publisher', $publisher);
     }
@@ -192,7 +192,7 @@ class EPub
      *
      * @param string $rights
      */
-    public function Copyright($rights=false)
+    public function Copyright($rights = false)
     {
         return $this->getset('dc:rights', $rights);
     }
@@ -202,7 +202,7 @@ class EPub
      *
      * @param string $description
      */
-    public function Description($description=false)
+    public function Description($description = false)
     {
         return $this->getset('dc:description', $description);
     }
@@ -212,7 +212,7 @@ class EPub
      *
      * @param string $isbn
      */
-    public function ISBN($isbn=false)
+    public function ISBN($isbn = false)
     {
         return $this->getset('dc:identifier', $isbn, 'opf:scheme', 'ISBN');
     }
@@ -222,7 +222,7 @@ class EPub
      *
      * @param string $google
      */
-    public function Google($google=false)
+    public function Google($google = false)
     {
         return $this->getset('dc:identifier', $google, 'opf:scheme', 'GOOGLE');
     }
@@ -232,7 +232,7 @@ class EPub
      *
      * @param string $amazon
      */
-    public function Amazon($amazon=false)
+    public function Amazon($amazon = false)
     {
         return $this->getset('dc:identifier', $amazon, 'opf:scheme', 'AMAZON');
     }
@@ -245,7 +245,7 @@ class EPub
      *
      * @param array $subjects
      */
-    public function Subjects($subjects=false)
+    public function Subjects($subjects = false)
     {
         // setter
         if ($subjects !== false) {
@@ -302,7 +302,7 @@ class EPub
      * @param  string $mime mime type of the given file
      * @return array
      */
-    public function Cover($path=false, $mime=false)
+    public function Cover($path = false, $mime = false)
     {
         // set cover
         if ($path !== false) {
@@ -348,13 +348,13 @@ class EPub
             return $this->no_cover();
         }
 
-        $nodes = $this->xpath->query('//opf:manifest/opf:item[@id="'.$coverid.'"]');
+        $nodes = $this->xpath->query('//opf:manifest/opf:item[@id="' . $coverid . '"]');
         if (!$nodes->length) {
             return $this->no_cover();
         }
         $mime = $nodes->item(0)->attr('opf:media-type');
         $path = $nodes->item(0)->attr('opf:href');
-        $path = dirname('/'.$this->meta).'/'.$path; // image path is relative to meta file
+        $path = dirname('/' . $this->meta) . '/' . $path; // image path is relative to meta file
         $path = ltrim($path, '/');
 
         $zip = new ZipArchive();
@@ -380,10 +380,10 @@ class EPub
      * @param string $att    Attribute name
      * @param string $aval   Attribute value
      */
-    protected function getset($item, $value=false, $att=false, $aval=false)
+    protected function getset($item, $value = false, $att = false, $aval = false)
     {
         // construct xpath
-        $xpath = '//opf:metadata/'.$item;
+        $xpath = '//opf:metadata/' . $item;
         if ($att) {
             $xpath .= "[@$att=\"$aval\"]";
         }
@@ -478,7 +478,7 @@ class EPubDOMElement extends DOMElement
     ];
 
 
-    public function __construct($name, $value='', $namespaceURI='')
+    public function __construct($name, $value = '', $namespaceURI = '')
     {
         [$ns, $name] = $this->splitns($name);
         $value = htmlspecialchars($value);
@@ -494,7 +494,7 @@ class EPubDOMElement extends DOMElement
      *
      * Works with our epub namespaces and omits default namespaces
      */
-    public function newChild($name, $value='')
+    public function newChild($name, $value = '')
     {
         [$ns, $local] = $this->splitns($name);
         if ($ns) {
@@ -528,7 +528,7 @@ class EPubDOMElement extends DOMElement
     /**
      * Simple EPub namespace aware attribute accessor
      */
-    public function attr($attr, $value=null)
+    public function attr($attr, $value = null)
     {
         [$ns, $attr] = $this->splitns($attr);
 

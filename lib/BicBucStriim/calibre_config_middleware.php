@@ -35,19 +35,19 @@ class CalibreConfigMiddleware extends \Slim\Middleware
                 if ($app->request->getResourceUri() != '/admin/configuration/') {
                     // app->redirect not useable in middleware
                     $app->response->status(302);
-                    $app->response->header('Location', $app->request->getRootUri().'/admin/configuration/');
+                    $app->response->header('Location', $app->request->getRootUri() . '/admin/configuration/');
                 } else {
                     $this->next->call();
                 }
             } else {
                 # Setup the connection to the Calibre metadata db
-                $clp = $globalSettings[$this->calibreDir].'/metadata.db';
+                $clp = $globalSettings[$this->calibreDir] . '/metadata.db';
                 $app->calibre = new Calibre($clp);
                 if (!$app->calibre->libraryOk()) {
-                    $app->getLog()->error('check_config: Exception while opening metadata db '.$clp.'. Showing admin page.');
+                    $app->getLog()->error('check_config: Exception while opening metadata db ' . $clp . '. Showing admin page.');
                     // app->redirect not useable in middleware
                     $app->response->status(302);
-                    $app->response->header('Location', $app->request->getRootUri().'/admin/configuration/');
+                    $app->response->header('Location', $app->request->getRootUri() . '/admin/configuration/');
                 } else {
                     $this->next->call();
                 }

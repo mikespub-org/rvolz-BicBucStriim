@@ -36,7 +36,7 @@ class CachingMiddleware extends \Slim\Middleware
         foreach ($this->resources as $noCacheResource) {
             if (Utilities::stringStartsWith($resource, $noCacheResource)) {
                 session_cache_limiter('nocache');
-                $app->getLog()->debug('caching_middleware: caching disabled for '.$resource);
+                $app->getLog()->debug('caching_middleware: caching disabled for ' . $resource);
                 break;
             }
         }

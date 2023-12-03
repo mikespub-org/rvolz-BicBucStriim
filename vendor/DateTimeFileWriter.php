@@ -135,7 +135,7 @@ class DateTimeFileWriter
         //Open resource handle to log file
         if (!$this->resource) {
             $filename = date($this->settings['name_format']);
-            if (! empty($this->settings['extension'])) {
+            if (!empty($this->settings['extension'])) {
                 $filename .= '.' . $this->settings['extension'];
             }
 

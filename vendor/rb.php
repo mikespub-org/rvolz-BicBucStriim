@@ -200,7 +200,7 @@ class RedBean_Driver_PDO implements RedBean_Driver
         } catch(PDOException $e) {
             $matches = [];
             $dbname = (preg_match('/dbname=(\w+)/', $this->dsn, $matches)) ? $matches[1] : '?';
-            throw new PDOException('Could not connect to database ('.$dbname.').', $e->getCode());
+            throw new PDOException('Could not connect to database (' . $dbname . ').', $e->getCode());
         }
     }
     /**
@@ -218,11 +218,11 @@ class RedBean_Driver_PDO implements RedBean_Driver
         foreach ($aValues as $key => &$value) {
             if (is_integer($key)) {
                 if (is_null($value)) {
-                    $s->bindValue($key+1, null, PDO::PARAM_NULL);
+                    $s->bindValue($key + 1, null, PDO::PARAM_NULL);
                 } elseif (!$this->flagUseStringOnlyBinding && RedBean_QueryWriter_AQueryWriter::canBeTreatedAsInt($value) && $value < 2147483648) {
-                    $s->bindParam($key+1, $value, PDO::PARAM_INT);
+                    $s->bindParam($key + 1, $value, PDO::PARAM_INT);
                 } else {
-                    $s->bindParam($key+1, $value, PDO::PARAM_STR);
+                    $s->bindParam($key + 1, $value, PDO::PARAM_STR);
                 }
             } else {
                 if (is_null($value)) {
@@ -265,7 +265,7 @@ class RedBean_Driver_PDO implements RedBean_Driver
             if ($s->columnCount()) {
                 $this->rs = $s->fetchAll();
                 if ($this->debug && $this->logger) {
-                    $this->logger->log('resultset: '.count($this->rs).' rows');
+                    $this->logger->log('resultset: ' . count($this->rs) . ' rows');
                 }
             } else {
                 $this->rs = [];
@@ -275,7 +275,7 @@ class RedBean_Driver_PDO implements RedBean_Driver
             //So we need a property to convey the SQL State code.
             $err = $e->getMessage();
             if ($this->debug && $this->logger) {
-                $this->logger->log('An error occurred: '.$err);
+                $this->logger->log('An error occurred: ' . $err);
             }
             $x = new RedBean_Exception_SQL($err, 0);
             $x->setSQLState($e->getCode());
@@ -290,14 +290,14 @@ class RedBean_Driver_PDO implements RedBean_Driver
         $this->runQuery($sql, $aValues);
         return $this->rs;
     }
-     /**
-     * @see RedBean_Driver::GetCol
-     */
+    /**
+    * @see RedBean_Driver::GetCol
+    */
     public function GetCol($sql, $aValues = [])
     {
         $rows = $this->GetAll($sql, $aValues);
         $cols = [];
-        if ($rows && is_array($rows) && count($rows)>0) {
+        if ($rows && is_array($rows) && count($rows) > 0) {
             foreach ($rows as $row) {
                 $cols[] = array_shift($row);
             }
@@ -644,7 +644,7 @@ class RedBean_OODBBean implements IteratorAggregate, ArrayAccess, Countable
         if ($parents) {
             foreach ($this as $k => $v) {
                 if (substr($k, -3) == '_id') {
-                    $prop = substr($k, 0, strlen($k)-3);
+                    $prop = substr($k, 0, strlen($k) - 3);
                     $this->$prop;
                 }
             }
@@ -719,7 +719,7 @@ class RedBean_OODBBean implements IteratorAggregate, ArrayAccess, Countable
     public function __unset($property)
     {
         $this->__get($property);
-        $fieldLink = $property.'_id';
+        $fieldLink = $property . '_id';
         if (isset($this->$fieldLink)) {
             //wanna unset a bean reference?
             $this->$fieldLink = null;
@@ -786,7 +786,7 @@ class RedBean_OODBBean implements IteratorAggregate, ArrayAccess, Countable
         if ($sql instanceof RedBean_SQLHelper) {
             [$sql, $params] = $sql->getQuery();
         }
-        $this->withSql = ' AND '.$sql;
+        $this->withSql = ' AND ' . $sql;
         $this->withParams = $params;
         return $this;
     }
@@ -882,10 +882,10 @@ class RedBean_OODBBean implements IteratorAggregate, ArrayAccess, Countable
             }
         }
         if (!isset($this->properties[$property])) {
-            $fieldLink = $property.'_id';
+            $fieldLink = $property . '_id';
             if (isset($this->$fieldLink) && $fieldLink !== $this->getMeta('sys.idfield')) {
                 $this->__info['tainted'] = true;
-                $bean = $this->getMeta('sys.parentcache.'.$property);
+                $bean = $this->getMeta('sys.parentcache.' . $property);
                 if (!$bean) {
                     $type =  $this->getAlias($property);
                     $targetType = $this->properties[$fieldLink];
@@ -900,25 +900,25 @@ class RedBean_OODBBean implements IteratorAggregate, ArrayAccess, Countable
                 }
                 if ($this->aliasName) {
                     $parentField = $this->aliasName;
-                    $myFieldLink = $this->aliasName.'_id';
-                    $this->__info['sys.alias.'.$type] = $this->aliasName;
+                    $myFieldLink = $this->aliasName . '_id';
+                    $this->__info['sys.alias.' . $type] = $this->aliasName;
                     $this->aliasName = null;
                 } else {
-                    $myFieldLink = $this->__info['type'].'_id';
+                    $myFieldLink = $this->__info['type'] . '_id';
                     $parentField = $this->__info['type'];
                 }
                 $beans = [];
-                if ($this->getID()>0) {
+                if ($this->getID() > 0) {
                     $params = array_merge([$this->getID()], $this->withParams);
-                    $beans = $redbean->find($type, [], [" $myFieldLink = ? ".$this->withSql, $params]);
+                    $beans = $redbean->find($type, [], [" $myFieldLink = ? " . $this->withSql, $params]);
                 }
                 $this->withSql = '';
                 $this->withParams = [];
                 foreach ($beans as $b) {
-                    $b->__info['sys.parentcache.'.$parentField] = $this;
+                    $b->__info['sys.parentcache.' . $parentField] = $this;
                 }
                 $this->properties[$property] = $beans;
-                $this->__info['sys.shadow.'.$property] = $beans;
+                $this->__info['sys.shadow.' . $property] = $beans;
                 $this->__info['tainted'] = true;
                 return $this->properties[$property];
             } elseif (strpos($property, 'shared') === 0 && ctype_upper(substr($property, 6, 1))) {
@@ -937,7 +937,7 @@ class RedBean_OODBBean implements IteratorAggregate, ArrayAccess, Countable
                 $this->withSql = '';
                 $this->withParams = [];
                 $this->properties[$property] = $beans;
-                $this->__info['sys.shadow.'.$property] = $beans;
+                $this->__info['sys.shadow.' . $property] = $beans;
                 $this->__info['tainted'] = true;
                 return $this->properties[$property];
             } else {
@@ -966,7 +966,7 @@ class RedBean_OODBBean implements IteratorAggregate, ArrayAccess, Countable
         $this->__get($property);
         $this->flagSkipBeau = false;
         $this->setMeta('tainted', true);
-        $linkField = $property.'_id';
+        $linkField = $property . '_id';
         if (isset($this->properties[$linkField]) && !($value instanceof RedBean_OODBBean)) {
             if (is_null($value) || $value === false) {
                 return $this->__unset($property);
@@ -1299,7 +1299,7 @@ class RedBean_OODBBean implements IteratorAggregate, ArrayAccess, Countable
         } else {
             $bean = $typeOrBean;
         }
-        $list = 'own'.ucfirst($bean->getMeta('type'));
+        $list = 'own' . ucfirst($bean->getMeta('type'));
         array_push($this->$list, $bean);
         return $bean;
     }
@@ -1556,8 +1556,8 @@ class RedBean_Adapter_DBAdapter extends RedBean_Observable implements RedBean_Ad
         $assoc = [];
         if ($rows) {
             foreach ($rows as $row) {
-                if (is_array($row) && count($row)>0) {
-                    if (count($row)>1) {
+                if (is_array($row) && count($row) > 0) {
+                    if (count($row) > 1) {
                         $key = array_shift($row);
                         $value = array_shift($row);
                     } elseif (count($row) == 1) {
@@ -1905,7 +1905,7 @@ abstract class RedBean_QueryWriter_AQueryWriter
     public function esc($dbStructure, $dontQuote = false)
     {
         $this->check($dbStructure);
-        return ($dontQuote) ? $dbStructure : $this->quoteCharacter.$dbStructure.$this->quoteCharacter;
+        return ($dontQuote) ? $dbStructure : $this->quoteCharacter . $dbStructure . $this->quoteCharacter;
     }
     /**
      * Checks table name or column name.
@@ -1958,7 +1958,7 @@ abstract class RedBean_QueryWriter_AQueryWriter
             $p[] = " {$this->esc($uv["property"])} = ? ";
             $v[] = $uv['value'];
         }
-        $sql .= implode(',', $p).' WHERE id = '.intval($id);
+        $sql .= implode(',', $p) . ' WHERE id = ' . intval($id);
         $this->adapter->exec($sql, $v);
         return $id;
     }
@@ -1977,12 +1977,12 @@ abstract class RedBean_QueryWriter_AQueryWriter
         $default = $this->defaultValue;
         $suffix = $this->getInsertSuffix($table);
         $table = $this->esc($table);
-        if (count($insertvalues)>0 && is_array($insertvalues[0]) && count($insertvalues[0])>0) {
+        if (count($insertvalues) > 0 && is_array($insertvalues[0]) && count($insertvalues[0]) > 0) {
             foreach ($insertcolumns as $k => $v) {
                 $insertcolumns[$k] = $this->esc($v);
             }
-            $insertSQL = "INSERT INTO $table ( id, ".implode(',', $insertcolumns)." ) VALUES 
-			( $default, ". implode(',', array_fill(0, count($insertcolumns), ' ? '))." ) $suffix";
+            $insertSQL = "INSERT INTO $table ( id, " . implode(',', $insertcolumns) . " ) VALUES 
+			( $default, " . implode(',', array_fill(0, count($insertcolumns), ' ? ')) . " ) $suffix";
 
             foreach ($insertvalues as $i => $insertvalue) {
                 $ids[] = $this->adapter->getCell($insertSQL, $insertvalue, $i);
@@ -2008,7 +2008,7 @@ abstract class RedBean_QueryWriter_AQueryWriter
         if (!$delete && $this->flagUseCache) {
             $key = serialize([$type, $conditions, $addSql, $inverse, $all]);
             $sql = $this->adapter->getSQL();
-            if (strpos($sql, '-- keep-cache') !== strlen($sql)-13) {
+            if (strpos($sql, '-- keep-cache') !== strlen($sql) - 13) {
                 //If SQL has been taken place outside of this method then something else then
                 //a select query might have happened! (or instruct to keep cache)
                 $this->cache = [];
@@ -2026,17 +2026,17 @@ abstract class RedBean_QueryWriter_AQueryWriter
                 continue;
             }
             $sql = $this->esc($column);
-            $sql .= ' '.($inverse ? ' NOT ' : '').' IN ( ';
+            $sql .= ' ' . ($inverse ? ' NOT ' : '') . ' IN ( ';
             //If its safe to not use bindings please do... (fixes SQLite PDO issue limit 256 bindings)
             if (is_array($conditions)
                 && count($conditions) === 1
                 && isset($conditions['id'])
                 && is_array($values)
                 && preg_match('/^\d+$/', implode('', $values))) {
-                $sql .= implode(',', $values).') ';
+                $sql .= implode(',', $values) . ') ';
                 $sqlConditions[] = $sql;
             } else {
-                $sql .= implode(',', array_fill(0, count($values), '?')).') ';
+                $sql .= implode(',', array_fill(0, count($values), '?')) . ') ';
                 $sqlConditions[] = $sql;
                 if (!is_array($values)) {
                     $values = [$values];
@@ -2048,7 +2048,7 @@ abstract class RedBean_QueryWriter_AQueryWriter
             }
         }
         if (is_array($addSql)) {
-            if (count($addSql)>1) {
+            if (count($addSql) > 1) {
                 $bindings = array_merge($bindings, $addSql[1]);
             } else {
                 $bindings = [];
@@ -2056,7 +2056,7 @@ abstract class RedBean_QueryWriter_AQueryWriter
             $addSql = $addSql[0];
         }
         $sql = '';
-        if (is_array($sqlConditions) && count($sqlConditions)>0) {
+        if (is_array($sqlConditions) && count($sqlConditions) > 0) {
             $sql = implode(' AND ', $sqlConditions);
             $sql = " WHERE ( $sql ) ";
             if ($addSql) {
@@ -2069,8 +2069,8 @@ abstract class RedBean_QueryWriter_AQueryWriter
                 $sql = " WHERE $addSql ";
             }
         }
-        $sql = (($delete) ? 'DELETE FROM ' : 'SELECT * FROM ').$table.$sql;
-        $rows = $this->adapter->get($sql.(($delete) ? '' : ' -- keep-cache'), $bindings);
+        $sql = (($delete) ? 'DELETE FROM ' : 'SELECT * FROM ') . $table . $sql;
+        $rows = $this->adapter->get($sql . (($delete) ? '' : ' -- keep-cache'), $bindings);
         if (!$delete && $this->flagUseCache) {
             $this->cache[$key] = $rows;
         }
@@ -2091,9 +2091,9 @@ abstract class RedBean_QueryWriter_AQueryWriter
     {
         $sql = "SELECT count(*) FROM {$this->esc($beanType)} ";
         if ($addSQL != '') {
-            $addSQL = ' WHERE '.$addSQL;
+            $addSQL = ' WHERE ' . $addSQL;
         }
-        return (int) $this->adapter->getCell($sql.$addSQL, $params);
+        return (int) $this->adapter->getCell($sql . $addSQL, $params);
     }
     /**
      * Checks whether a number can be treated like an int.
@@ -2119,8 +2119,8 @@ abstract class RedBean_QueryWriter_AQueryWriter
         $targetColumn  = $this->esc($targetField);
         $targetColumnNoQ  = $this->esc($targetField, true);
         $db = $this->adapter->getCell('select database()');
-        $fkName = 'fk_'.$tableNoQ.'_'.$columnNoQ.'_'.$targetColumnNoQ.($isDependent ? '_casc' : '');
-        $cName = 'cons_'.$fkName;
+        $fkName = 'fk_' . $tableNoQ . '_' . $columnNoQ . '_' . $targetColumnNoQ . ($isDependent ? '_casc' : '');
+        $cName = 'cons_' . $fkName;
         $cfks =  $this->adapter->getCell("
 			SELECT CONSTRAINT_NAME
 			FROM information_schema.KEY_COLUMN_USAGE
@@ -2141,7 +2141,7 @@ abstract class RedBean_QueryWriter_AQueryWriter
             if ($flagAddKey) {
                 $this->adapter->exec("ALTER TABLE  $table
 				ADD CONSTRAINT $cName FOREIGN KEY $fkName (  $column ) REFERENCES  $targetTable (
-				$targetColumn) ON DELETE ".($isDependent ? 'CASCADE' : 'SET NULL').' ON UPDATE SET NULL ;');
+				$targetColumn) ON DELETE " . ($isDependent ? 'CASCADE' : 'SET NULL') . ' ON UPDATE SET NULL ;');
             }
         } catch(Exception $e) {
         } //Failure of fk-constraints is not a problem
@@ -2206,7 +2206,7 @@ abstract class RedBean_QueryWriter_AQueryWriter
         $property1 = $bean1->getMeta('type') . '_id';
         $property2 = $bean2->getMeta('type') . '_id';
         if ($property1 == $property2) {
-            $property2 = $bean2->getMeta('type').'2_id';
+            $property2 = $bean2->getMeta('type') . '2_id';
         }
         $table = $this->esc($table, true);
         $table1 = $this->esc($table1, true);
@@ -2226,7 +2226,7 @@ abstract class RedBean_QueryWriter_AQueryWriter
     protected function startsWithZeros($value)
     {
         $value = strval($value);
-        if (strlen($value)>1 && strpos($value, '0') === 0 && strpos($value, '0.') !==0) {
+        if (strlen($value) > 1 && strpos($value, '0') === 0 && strpos($value, '0.') !== 0) {
             return true;
         } else {
             return false;
@@ -2429,10 +2429,10 @@ class RedBean_QueryWriter_MySQL extends RedBean_QueryWriter_AQueryWriter impleme
         $table = $this->esc($table);
         sort($columns); //else we get multiple indexes due to order-effects
         foreach ($columns as $k => $v) {
-            $columns[$k]= $this->esc($v);
+            $columns[$k] = $this->esc($v);
         }
         $r = $this->adapter->get("SHOW INDEX FROM $table");
-        $name = 'UQ_'.sha1(implode(',', $columns));
+        $name = 'UQ_' . sha1(implode(',', $columns));
         if ($r) {
             foreach ($r as $i) {
                 if ($i['Key_name'] == $name) {
@@ -2441,7 +2441,7 @@ class RedBean_QueryWriter_MySQL extends RedBean_QueryWriter_AQueryWriter impleme
             }
         }
         $sql = "ALTER IGNORE TABLE $table
-                ADD UNIQUE INDEX $name (".implode(',', $columns).")";
+                ADD UNIQUE INDEX $name (" . implode(',', $columns) . ")";
         $this->adapter->exec($sql);
     }
     /**
@@ -2499,7 +2499,7 @@ class RedBean_QueryWriter_MySQL extends RedBean_QueryWriter_AQueryWriter impleme
 				CONSTRAINT_NAME <>'PRIMARY' AND REFERENCED_TABLE_NAME IS NOT NULL
 					  ", [$db, $table]);
             //already foreign keys added in this association table
-            if ($fks>0) {
+            if ($fks > 0) {
                 return false;
             }
             $columns = $this->getColumns($table);
@@ -2510,12 +2510,12 @@ class RedBean_QueryWriter_MySQL extends RedBean_QueryWriter_AQueryWriter impleme
                 $this->widenColumn($table, $property2, RedBean_QueryWriter_MySQL::C_DATATYPE_UINT32);
             }
             $sql = "
-				ALTER TABLE ".$this->esc($table)."
+				ALTER TABLE " . $this->esc($table) . "
 				ADD FOREIGN KEY($property1) references `$table1`(id) ON DELETE CASCADE;
 			";
             $this->adapter->exec($sql);
             $sql = "
-				ALTER TABLE ".$this->esc($table)."
+				ALTER TABLE " . $this->esc($table) . "
 				ADD FOREIGN KEY($property2) references `$table2`(id) ON DELETE CASCADE
 			";
             $this->adapter->exec($sql);
@@ -2604,7 +2604,7 @@ class RedBean_QueryWriter_SQLiteT extends RedBean_QueryWriter_AQueryWriter imple
         if ($this->startsWithZeros($value)) {
             return self::C_DATATYPE_TEXT;
         }
-        if (is_numeric($value) && (intval($value) == $value) && $value<2147483648) {
+        if (is_numeric($value) && (intval($value) == $value) && $value < 2147483648) {
             return self::C_DATATYPE_INTEGER;
         }
         if ((is_numeric($value) && $value < 2147483648)
@@ -2682,7 +2682,7 @@ class RedBean_QueryWriter_SQLiteT extends RedBean_QueryWriter_AQueryWriter imple
         foreach ($oldColumnNames as $k => $v) {
             $oldColumnNames[$k] = "`$v`";
         }
-        $q[] = "CREATE TEMPORARY TABLE tmp_backup(".implode(",", $oldColumnNames).");";
+        $q[] = "CREATE TEMPORARY TABLE tmp_backup(" . implode(",", $oldColumnNames) . ");";
         $q[] = "INSERT INTO tmp_backup SELECT * FROM `$table`;";
         $q[] = "PRAGMA foreign_keys = 0 ";
         $q[] = "DROP TABLE `$table`;";
@@ -2701,11 +2701,11 @@ class RedBean_QueryWriter_SQLiteT extends RedBean_QueryWriter_AQueryWriter imple
         $q[] = "CREATE TABLE `$table` ( `id` INTEGER PRIMARY KEY AUTOINCREMENT  $newTableDefStr  $fkDef );";
         foreach ($tableMap['indexes'] as $name => $index) {
             if (strpos($name, 'UQ_') === 0) {
-                $cols = explode('__', substr($name, strlen('UQ_'.$table)));
+                $cols = explode('__', substr($name, strlen('UQ_' . $table)));
                 foreach ($cols as $k => $v) {
                     $cols[$k] = "`$v`";
                 }
-                $q[] = "CREATE UNIQUE INDEX $name ON `$table` (".implode(',', $cols).")";
+                $q[] = "CREATE UNIQUE INDEX $name ON `$table` (" . implode(',', $cols) . ")";
             } else {
                 $q[] = "CREATE INDEX $name ON `$table` ({$index['name']}) ";
             }
@@ -2787,7 +2787,7 @@ class RedBean_QueryWriter_SQLiteT extends RedBean_QueryWriter_AQueryWriter imple
         $keys = $this->adapter->get("PRAGMA foreign_key_list('$table')");
         $keyInfoList = [];
         foreach ($keys as $k) {
-            $keyInfoList['from_'.$k['from'].'_to_table_'.$k['table'].'_col_'.$k['to']] = $k;
+            $keyInfoList['from_' . $k['from'] . '_to_table_' . $k['table'] . '_col_' . $k['to']] = $k;
         }
         return $keyInfoList;
     }
@@ -2797,7 +2797,7 @@ class RedBean_QueryWriter_SQLiteT extends RedBean_QueryWriter_AQueryWriter imple
     public function addUniqueIndex($type, $columns)
     {
         $table = $this->esc($type, true);
-        $name = 'UQ_'.$table.implode('__', $columns);
+        $name = 'UQ_' . $table . implode('__', $columns);
         $t = $this->getTable($type);
         if (isset($t['indexes'][$name])) {
             return;
@@ -2867,7 +2867,7 @@ class RedBean_QueryWriter_SQLiteT extends RedBean_QueryWriter_AQueryWriter imple
     {
         $consSQL = ($constraint ? 'CASCADE' : 'SET NULL');
         $t = $this->getTable($type);
-        $label = 'from_'.$field.'_to_table_'.$targetType.'_col_'.$targetField;
+        $label = 'from_' . $field . '_to_table_' . $targetType . '_col_' . $targetField;
         if (isset($t['keys'][$label])
                 && $t['keys'][$label]['table'] === $targetType
                 && $t['keys'][$label]['from'] === $field
@@ -3057,7 +3057,7 @@ class RedBean_QueryWriter_PostgreSQL extends RedBean_QueryWriter_AQueryWriter im
         if ($sz) {
             return self::C_DATATYPE_TEXT;
         }
-        if ($value === null || ($value instanceof RedBean_Driver_PDO_NULL) ||(is_numeric($value)
+        if ($value === null || ($value instanceof RedBean_Driver_PDO_NULL) || (is_numeric($value)
                   && floor($value) == $value
                   && $value < 2147483648
                   && $value > -2147483648)) {
@@ -3121,7 +3121,7 @@ class RedBean_QueryWriter_PostgreSQL extends RedBean_QueryWriter_AQueryWriter im
 									AND t.relname = '$table'
 								ORDER BY  t.relname,  i.relname;");
 
-        $name = "UQ_".sha1($table.implode(',', $columns));
+        $name = "UQ_" . sha1($table . implode(',', $columns));
         if ($r) {
             foreach ($r as $i) {
                 if (strtolower($i['index_name']) == strtolower($name)) {
@@ -3130,7 +3130,7 @@ class RedBean_QueryWriter_PostgreSQL extends RedBean_QueryWriter_AQueryWriter im
             }
         }
         $sql = "ALTER TABLE \"$table\"
-                ADD CONSTRAINT $name UNIQUE (".implode(',', $columns).")";
+                ADD CONSTRAINT $name UNIQUE (" . implode(',', $columns) . ")";
         $this->adapter->exec($sql);
     }
     /**
@@ -3240,7 +3240,7 @@ class RedBean_QueryWriter_PostgreSQL extends RedBean_QueryWriter_AQueryWriter im
         try {
             $writer = $this;
             $adapter = $this->adapter;
-            $fkCode = 'fk'.md5($table.$property1.$property2);
+            $fkCode = 'fk' . md5($table . $property1 . $property2);
             $sql = "
 						SELECT
 								c.oid,
@@ -3375,9 +3375,9 @@ class RedBean_QueryWriter_CUBRID extends RedBean_QueryWriter_AQueryWriter implem
     {
         $rawTable = $this->esc($table, true);
         $table = $this->esc($table);
-        $sql = 'CREATE TABLE '.$table.' (
+        $sql = 'CREATE TABLE ' . $table . ' (
                    "id" integer AUTO_INCREMENT,
-					CONSTRAINT "pk_'.$rawTable.'_id" PRIMARY KEY("id")
+					CONSTRAINT "pk_' . $rawTable . '_id" PRIMARY KEY("id")
 		            )';
         $this->adapter->exec($sql);
     }
@@ -3474,7 +3474,7 @@ class RedBean_QueryWriter_CUBRID extends RedBean_QueryWriter_AQueryWriter implem
             $columns[$k] = $this->esc($v);
         }
         $r = $this->adapter->get("SHOW INDEX FROM $table");
-        $name = 'UQ_'.sha1(implode(',', $columns));
+        $name = 'UQ_' . sha1(implode(',', $columns));
         if ($r) {
             foreach ($r as $i) {
                 if (strtoupper($i['Key_name']) == strtoupper($name)) {
@@ -3483,7 +3483,7 @@ class RedBean_QueryWriter_CUBRID extends RedBean_QueryWriter_AQueryWriter implem
             }
         }
         $sql = "ALTER TABLE $table
-                ADD CONSTRAINT UNIQUE $name (".implode(',', $columns).")";
+                ADD CONSTRAINT UNIQUE $name (" . implode(',', $columns) . ")";
         $this->adapter->exec($sql);
     }
     /**
@@ -3510,7 +3510,7 @@ class RedBean_QueryWriter_CUBRID extends RedBean_QueryWriter_AQueryWriter implem
         $property1 = $bean1->getMeta('type') . '_id';
         $property2 = $bean2->getMeta('type') . '_id';
         if ($property1 == $property2) {
-            $property2 = $bean2->getMeta('type').'2_id';
+            $property2 = $bean2->getMeta('type') . '2_id';
         }
         //Dispatch to right method
         return $this->constrain($table, $table1, $table2, $property1, $property2);
@@ -3644,9 +3644,7 @@ class RedBean_QueryWriter_CUBRID extends RedBean_QueryWriter_AQueryWriter implem
     }
 }
 
-class RedBean_Exception extends LogicException
-{
-}
+class RedBean_Exception extends LogicException {}
 
 class RedBean_Exception_SQL extends RuntimeException
 {
@@ -3682,13 +3680,11 @@ class RedBean_Exception_SQL extends RuntimeException
      */
     public function __toString()
     {
-        return '['.$this->getSQLState().'] - '.$this->getMessage();
+        return '[' . $this->getSQLState() . '] - ' . $this->getMessage();
     }
 }
 
-class RedBean_Exception_Security extends RedBean_Exception
-{
-}
+class RedBean_Exception_Security extends RedBean_Exception {}
 
 class RedBean_OODB extends RedBean_Observable
 {
@@ -4014,7 +4010,7 @@ class RedBean_OODB extends RedBean_Observable
             $bean = $bean->unbox();
         }
         if (!($bean instanceof RedBean_OODBBean)) {
-            throw new RedBean_Exception_Security('OODB Store requires a bean, got: '.gettype($bean));
+            throw new RedBean_Exception_Security('OODB Store requires a bean, got: ' . gettype($bean));
         }
         $processLists = false;
         foreach ($bean as $k => $v) {
@@ -4044,15 +4040,15 @@ class RedBean_OODB extends RedBean_Observable
                     $v = $v->unbox();
                 }
                 if ($v instanceof RedBean_OODBBean) {
-                    $linkField = $p.'_id';
+                    $linkField = $p . '_id';
                     $bean->$linkField = $this->prepareEmbeddedBean($v);
-                    $bean->setMeta('cast.'.$linkField, 'id');
+                    $bean->setMeta('cast.' . $linkField, 'id');
                     $embeddedBeans[$linkField] = $v;
                     $tmpCollectionStore[$p] = $bean->$p;
                     $bean->removeProperty($p);
                 }
                 if (is_array($v)) {
-                    $originals = $bean->getMeta('sys.shadow.'.$p);
+                    $originals = $bean->getMeta('sys.shadow.' . $p);
                     if (!$originals) {
                         $originals = [];
                     }
@@ -4070,7 +4066,7 @@ class RedBean_OODB extends RedBean_Observable
         $this->storeBean($bean);
         if ($processLists) {
             $this->processEmbeddedBeans($bean, $embeddedBeans);
-            $myFieldLink = $bean->getMeta('type').'_id';
+            $myFieldLink = $bean->getMeta('type') . '_id';
             $this->processTrashcan($bean, $ownTrashcan);
             $this->processAdditions($bean, $ownAdditions);
             $this->processResidue($ownresidue);
@@ -4216,13 +4212,13 @@ class RedBean_OODB extends RedBean_Observable
      */
     private function processTrashcan($bean, $ownTrashcan)
     {
-        $myFieldLink = $bean->getMeta('type').'_id';
-        if (is_array($ownTrashcan) && count($ownTrashcan)>0) {
+        $myFieldLink = $bean->getMeta('type') . '_id';
+        if (is_array($ownTrashcan) && count($ownTrashcan) > 0) {
             $first = reset($ownTrashcan);
             if ($first instanceof RedBean_OODBBean) {
-                $alias = $bean->getMeta('sys.alias.'.$first->getMeta('type'));
+                $alias = $bean->getMeta('sys.alias.' . $first->getMeta('type'));
                 if ($alias) {
-                    $myFieldLink = $alias.'_id';
+                    $myFieldLink = $alias . '_id';
                 }
             }
         }
@@ -4249,7 +4245,7 @@ class RedBean_OODB extends RedBean_Observable
             if (!$this->isFrozen) {
                 $this->writer->addIndex(
                     $bean->getMeta('type'),
-                    'index_foreignkey_'.$bean->getMeta('type').'_'.$embeddedBean->getMeta('type'),
+                    'index_foreignkey_' . $bean->getMeta('type') . '_' . $embeddedBean->getMeta('type'),
                     $linkField
                 );
                 $isDep = $this->isDependentOn($bean->getMeta('type'), $embeddedBean->getMeta('type'));
@@ -4269,25 +4265,25 @@ class RedBean_OODB extends RedBean_Observable
      */
     private function processAdditions($bean, $ownAdditions)
     {
-        $myFieldLink = $bean->getMeta('type').'_id';
-        if ($bean && count($ownAdditions)>0) {
+        $myFieldLink = $bean->getMeta('type') . '_id';
+        if ($bean && count($ownAdditions) > 0) {
             $first = reset($ownAdditions);
             if ($first instanceof RedBean_OODBBean) {
-                $alias = $bean->getMeta('sys.alias.'.$first->getMeta('type'));
+                $alias = $bean->getMeta('sys.alias.' . $first->getMeta('type'));
                 if ($alias) {
-                    $myFieldLink = $alias.'_id';
+                    $myFieldLink = $alias . '_id';
                 }
             }
         }
         foreach ($ownAdditions as $addition) {
             if ($addition instanceof RedBean_OODBBean) {
                 $addition->$myFieldLink = $bean->id;
-                $addition->setMeta('cast.'.$myFieldLink, 'id');
+                $addition->setMeta('cast.' . $myFieldLink, 'id');
                 $this->store($addition);
                 if (!$this->isFrozen) {
                     $this->writer->addIndex(
                         $addition->getMeta('type'),
-                        'index_foreignkey_'.$addition->getMeta('type').'_'.$bean->getMeta('type'),
+                        'index_foreignkey_' . $addition->getMeta('type') . '_' . $bean->getMeta('type'),
                         $myFieldLink
                     );
                     $isDep = $this->isDependentOn($addition->getMeta('type'), $bean->getMeta('type'));
@@ -4366,9 +4362,9 @@ class RedBean_OODB extends RedBean_Observable
         foreach ($row as $p => $v) {
             $bean->$p = $v;
         }
-        $this->nesting ++;
+        $this->nesting++;
         $this->signal('open', $bean);
-        $this->nesting --;
+        $this->nesting--;
         $bean->setMeta('tainted', false);
         return $bean;
     }
@@ -4387,7 +4383,7 @@ class RedBean_OODB extends RedBean_Observable
             $bean = $bean->unbox();
         }
         if (!($bean instanceof RedBean_OODBBean)) {
-            throw new RedBean_Exception_Security('OODB Store requires a bean, got: '.gettype($bean));
+            throw new RedBean_Exception_Security('OODB Store requires a bean, got: ' . gettype($bean));
         }
         $this->signal('delete', $bean);
         foreach ($bean as $p => $v) {
@@ -4626,7 +4622,7 @@ class RedBean_OODB extends RedBean_Observable
             $map = $ids = $retrievals[$i] = [];
             $field = (is_numeric($key)) ? $type : $key;//use an alias?
             if (strpos($field, '*') !== false) {
-                $oldFields[]= $oldField;
+                $oldFields[] = $oldField;
                 $field = str_replace('*', implode('.', $oldFields), $field);
             }
             if (strpos($field, '&') !== false) {
@@ -4672,7 +4668,7 @@ class RedBean_OODB extends RedBean_Observable
                     }
                 }
                 $filteredBeans = $filtered;
-                $field = substr($field, $p+1);
+                $field = substr($field, $p + 1);
             }
             $oldField = $field;
             if (strpos($type, '.')) {
@@ -4683,7 +4679,7 @@ class RedBean_OODB extends RedBean_Observable
                     if (strpos($field, 'own') === 0) { //based on bean->id for ownlist
                         $id = $bean->id;
                         $ids[$id] = $id;
-                    } elseif ($id = $bean->{$field.'_id'}) { //based on bean_id for parent
+                    } elseif ($id = $bean->{$field . '_id'}) { //based on bean_id for parent
                         $ids[$id] = $id;
                         if (!isset($map[$id])) {
                             $map[$id] = [];
@@ -4694,12 +4690,12 @@ class RedBean_OODB extends RedBean_Observable
             }
             if (strpos($field, 'shared') === 0) {
                 $bean = reset($filteredBeans);
-                $link = $bean->getMeta('type').'_id';
+                $link = $bean->getMeta('type') . '_id';
                 $keys = $this->assocManager->related($filteredBeans, $type, true);
                 $linkTable = $this->assocManager->getTable([$type, $bean->getMeta('type')]);
                 $linkBeans = $this->batch($linkTable, $keys);
                 $linked = $targetIDs = [];
-                $targetIDField = $type.'_id';
+                $targetIDField = $type . '_id';
                 foreach ($linkBeans as $linkBean) {
                     $linkID = $linkBean->$link;
                     if (!isset($linked[$linkID])) {
@@ -4732,7 +4728,7 @@ class RedBean_OODB extends RedBean_Observable
                     }
                 }
             } elseif (strpos($field, 'own') === 0) {//preload for own-list using find
-                $link = $bean->getMeta('type').'_id';
+                $link = $bean->getMeta('type') . '_id';
                 $children = $this->find($type, [$link => $ids], $sqlObj, (!is_null($sqlObj)));
                 foreach ($filteredBeans as $filteredBean) {
                     $list = [];
@@ -4774,7 +4770,7 @@ class RedBean_OODB extends RedBean_Observable
                 }
                 array_unshift($params, $bean);
                 call_user_func_array($closure, $params);
-                $key ++;
+                $key++;
             }
         }
     }
@@ -4902,7 +4898,7 @@ class RedBean_AssociationManager extends RedBean_Observable
                 $results[] = $this->associateBeans($bean1, $bean2, $bean);
             }
         }
-        return (count($results)>1) ? $results : reset($results);
+        return (count($results) > 1) ? $results : reset($results);
     }
     /**
      * Associates a pair of beans. This method associates two beans, no matter
@@ -4919,13 +4915,13 @@ class RedBean_AssociationManager extends RedBean_Observable
         $property1 = $bean1->getMeta('type') . '_id';
         $property2 = $bean2->getMeta('type') . '_id';
         if ($property1 == $property2) {
-            $property2 = $bean2->getMeta('type').'2_id';
+            $property2 = $bean2->getMeta('type') . '2_id';
         }
         //add a build command for Unique Indexes
         $bean->setMeta('buildcommand.unique', [[$property1, $property2]]);
         //add a build command for Single Column Index (to improve performance in case unqiue cant be used)
-        $indexName1 = 'index_for_'.$bean->getMeta('type').'_'.$property1;
-        $indexName2 = 'index_for_'.$bean->getMeta('type').'_'.$property2;
+        $indexName1 = 'index_for_' . $bean->getMeta('type') . '_' . $property1;
+        $indexName2 = 'index_for_' . $bean->getMeta('type') . '_' . $property2;
         $bean->setMeta('buildcommand.indexes', [$property1 => $indexName1, $property2 => $indexName2]);
         $this->oodb->store($bean1);
         $this->oodb->store($bean2);
@@ -4978,14 +4974,14 @@ class RedBean_AssociationManager extends RedBean_Observable
     public function related($bean, $type, $getLinks = false, $sql = false)
     {
         if (!is_array($bean) && !($bean instanceof RedBean_OODBBean)) {
-            throw new RedBean_Exception_Security('Expected array or RedBean_OODBBean but got:'.gettype($bean));
+            throw new RedBean_Exception_Security('Expected array or RedBean_OODBBean but got:' . gettype($bean));
         }
         $ids = [];
         if (is_array($bean)) {
             $beans = $bean;
             foreach ($beans as $b) {
                 if (!($b instanceof RedBean_OODBBean)) {
-                    throw new RedBean_Exception_Security('Expected RedBean_OODBBean in array but got:'.gettype($b));
+                    throw new RedBean_Exception_Security('Expected RedBean_OODBBean in array but got:' . gettype($b));
                 }
                 $ids[] = $b->id;
             }
@@ -5001,11 +4997,11 @@ class RedBean_AssociationManager extends RedBean_Observable
             $cross = 0;
         }
         if (!$getLinks) {
-            $targetproperty = $type.'_id';
+            $targetproperty = $type . '_id';
         } else {
             $targetproperty = 'id';
         }
-        $property = $bean->getMeta('type').'_id';
+        $property = $bean->getMeta('type') . '_id';
         try {
             $sqlFetchKeys = $this->writer->selectRecord($table, [$property => $ids], $sql, false);
             $sqlResult = [];
@@ -5068,8 +5064,8 @@ class RedBean_AssociationManager extends RedBean_Observable
                 } else {
                     $cross = 0;
                 }
-                $property1 = $type.'_id';
-                $property2 = $bean2->getMeta('type').'_id';
+                $property1 = $type . '_id';
+                $property2 = $bean2->getMeta('type') . '_id';
                 $value1 = (int) $bean1->id;
                 $value2 = (int) $bean2->id;
                 try {
@@ -5130,12 +5126,12 @@ class RedBean_AssociationManager extends RedBean_Observable
         $this->oodb->store($bean);
         $table = $this->getTable([$bean->getMeta('type'), $type]);
         if ($type == $bean->getMeta('type')) {
-            $property2 = $type.'2_id';
+            $property2 = $type . '2_id';
             $cross = 1;
         } else {
             $cross = 0;
         }
-        $property = $bean->getMeta('type').'_id';
+        $property = $bean->getMeta('type') . '_id';
         try {
             $this->writer->selectRecord($table, [$property => [$bean->id]], null, true);
             if ($cross) {
@@ -5176,8 +5172,8 @@ class RedBean_AssociationManager extends RedBean_Observable
         } else {
             $cross = 0;
         }
-        $property1 = $type.'_id';
-        $property2 = $bean2->getMeta('type').'_id';
+        $property1 = $type . '_id';
+        $property2 = $bean2->getMeta('type') . '_id';
         $value1 = (int) $bean1->id;
         $value2 = (int) $bean2->id;
         try {
@@ -5207,7 +5203,7 @@ class RedBean_AssociationManager extends RedBean_Observable
             }
             return false;
         }
-        return (count($rows)>0);
+        return (count($rows) > 0);
     }
     /**
      * @deprecated
@@ -5580,7 +5576,7 @@ class RedBean_ModelHelper implements RedBean_Observer
         if (self::$modelFormatter) {
             $modelID = self::$modelFormatter->formatModel($model, $bean);
         } else {
-            $modelID = 'Model_'.ucfirst($model);
+            $modelID = 'Model_' . ucfirst($model);
         }
         self::$modelCache[$model] = $modelID;
         return self::$modelCache[$model];
@@ -5641,180 +5637,180 @@ class RedBean_ModelHelper implements RedBean_Observer
     }
 }
 
- class RedBean_SQLHelper
- {
-     /**
-      * @var RedBean_Adapter
-      */
-     protected $adapter;
-     /**
-      * @var boolean
-      */
-     protected $capture = false;
-     /**
-      * @var string
-      */
-     protected $sql = '';
-     /**
-      * @var array
-      */
-     protected $params = [];
-     /**
-      * Constructor
-      *
-      * @param RedBean_DBAdapter $adapter database adapter for querying
-      */
-     public function __construct(RedBean_Adapter $adapter)
-     {
-         $this->adapter = $adapter;
-     }
-     /**
-      * Magic method to construct SQL query
-      *
-      * @param string $funcName name of the next SQL statement/keyword
-      * @param array  $args     list of statements to be seperated by commas
-      *
-      * @return mixed $result   either self or result depending on mode
-      */
-     public function __call($funcName, $args = [])
-     {
-         $funcName = str_replace('_', ' ', $funcName);
-         if ($this->capture) {
-             $this->sql .= ' '.$funcName . ' '.implode(',', $args);
-             return $this;
-         } else {
-             return $this->adapter->getCell('SELECT '.$funcName.'('.implode(',', $args).')');
-         }
-     }
-     /**
-      * Begins SQL query
-      *
-      * @return RedBean_SQLHelper $this chainable
-      */
-     public function begin()
-     {
-         $this->capture = true;
-         return $this;
-     }
-     /**
-      * Adds a value to the parameter list
-      *
-      * @param mixed $param parameter to be added
-      *
-      * @return RedBean_SQLHelper $this chainable
-      */
-     public function put($param)
-     {
-         $this->params[] = $param;
-         return $this;
-     }
-     /**
-      * Executes query and returns result
-      *
-      * @return mixed $result
-      */
-     public function get($what = '')
-     {
-         $what = 'get'.ucfirst($what);
-         $rs = $this->adapter->$what($this->sql, $this->params);
-         $this->clear();
-         return $rs;
-     }
-     /**
-      * Clears the parameter list as well as the SQL query string.
-      *
-      * @return RedBean_SQLHelper $this chainable
-      */
-     public function clear()
-     {
-         $this->sql = '';
-         $this->params = [];
-         $this->capture = false; //turn off capture mode (issue #142)
-         return $this;
-     }
-     /**
-      * To explicitly add a piece of SQL.
-      *
-      * @param string $sql sql
-      *
-      * @return RedBean_SQLHelper
-      */
-     public function addSQL($sql)
-     {
-         if ($this->capture) {
-             $this->sql .= ' '.$sql.' ';
-             return $this;
-         }
-     }
-     /**
-      * Returns query parts.
-      *
-      * @return array $queryParts query parts.
-      */
-     public function getQuery()
-     {
-         $list = [$this->sql, $this->params];
-         $this->clear();
-         return $list;
-     }
-     /**
-      * Nests another query builder query in the current query.
-      *
-      * @param RedBean_SQLHelper $sqlHelper
-      */
-     public function nest(RedBean_SQLHelper $sqlHelper)
-     {
-         [$sql, $params] = $sqlHelper->getQuery();
-         $this->sql .= $sql;
-         $this->params += $params;
-         return $this;
-     }
-     /**
-      * Writes a '(' to the sql query.
-      */
-     public function open()
-     {
-         if ($this->capture) {
-             $this->sql .= ' ( ';
-             return $this;
-         }
-     }
-     /**
-      * Writes a ')' to the sql query.
-      */
-     public function close()
-     {
-         if ($this->capture) {
-             $this->sql .= ' ) ';
-             return $this;
-         }
-     }
-     /**
-      * Generates question mark slots for an array of values.
-      *
-      * @param array $array Array with values to generate slots for
-      *
-      * @return string $slots
-      */
-     public function genSlots($array)
-     {
-         if (is_array($array) && count($array)>0) {
-             $filler = array_fill(0, count($array), '?');
-             return implode(',', $filler);
-         } else {
-             return '';
-         }
-     }
-     /**
-      * Returns a new SQL Helper with the same adapter as the current one.
-      *
-      * @return RedBean_SQLHelper
-      */
-     public function getNew()
-     {
-         return new self($this->adapter);
-     }
- }
+class RedBean_SQLHelper
+{
+    /**
+     * @var RedBean_Adapter
+     */
+    protected $adapter;
+    /**
+     * @var boolean
+     */
+    protected $capture = false;
+    /**
+     * @var string
+     */
+    protected $sql = '';
+    /**
+     * @var array
+     */
+    protected $params = [];
+    /**
+     * Constructor
+     *
+     * @param RedBean_DBAdapter $adapter database adapter for querying
+     */
+    public function __construct(RedBean_Adapter $adapter)
+    {
+        $this->adapter = $adapter;
+    }
+    /**
+     * Magic method to construct SQL query
+     *
+     * @param string $funcName name of the next SQL statement/keyword
+     * @param array  $args     list of statements to be seperated by commas
+     *
+     * @return mixed $result   either self or result depending on mode
+     */
+    public function __call($funcName, $args = [])
+    {
+        $funcName = str_replace('_', ' ', $funcName);
+        if ($this->capture) {
+            $this->sql .= ' ' . $funcName . ' ' . implode(',', $args);
+            return $this;
+        } else {
+            return $this->adapter->getCell('SELECT ' . $funcName . '(' . implode(',', $args) . ')');
+        }
+    }
+    /**
+     * Begins SQL query
+     *
+     * @return RedBean_SQLHelper $this chainable
+     */
+    public function begin()
+    {
+        $this->capture = true;
+        return $this;
+    }
+    /**
+     * Adds a value to the parameter list
+     *
+     * @param mixed $param parameter to be added
+     *
+     * @return RedBean_SQLHelper $this chainable
+     */
+    public function put($param)
+    {
+        $this->params[] = $param;
+        return $this;
+    }
+    /**
+     * Executes query and returns result
+     *
+     * @return mixed $result
+     */
+    public function get($what = '')
+    {
+        $what = 'get' . ucfirst($what);
+        $rs = $this->adapter->$what($this->sql, $this->params);
+        $this->clear();
+        return $rs;
+    }
+    /**
+     * Clears the parameter list as well as the SQL query string.
+     *
+     * @return RedBean_SQLHelper $this chainable
+     */
+    public function clear()
+    {
+        $this->sql = '';
+        $this->params = [];
+        $this->capture = false; //turn off capture mode (issue #142)
+        return $this;
+    }
+    /**
+     * To explicitly add a piece of SQL.
+     *
+     * @param string $sql sql
+     *
+     * @return RedBean_SQLHelper
+     */
+    public function addSQL($sql)
+    {
+        if ($this->capture) {
+            $this->sql .= ' ' . $sql . ' ';
+            return $this;
+        }
+    }
+    /**
+     * Returns query parts.
+     *
+     * @return array $queryParts query parts.
+     */
+    public function getQuery()
+    {
+        $list = [$this->sql, $this->params];
+        $this->clear();
+        return $list;
+    }
+    /**
+     * Nests another query builder query in the current query.
+     *
+     * @param RedBean_SQLHelper $sqlHelper
+     */
+    public function nest(RedBean_SQLHelper $sqlHelper)
+    {
+        [$sql, $params] = $sqlHelper->getQuery();
+        $this->sql .= $sql;
+        $this->params += $params;
+        return $this;
+    }
+    /**
+     * Writes a '(' to the sql query.
+     */
+    public function open()
+    {
+        if ($this->capture) {
+            $this->sql .= ' ( ';
+            return $this;
+        }
+    }
+    /**
+     * Writes a ')' to the sql query.
+     */
+    public function close()
+    {
+        if ($this->capture) {
+            $this->sql .= ' ) ';
+            return $this;
+        }
+    }
+    /**
+     * Generates question mark slots for an array of values.
+     *
+     * @param array $array Array with values to generate slots for
+     *
+     * @return string $slots
+     */
+    public function genSlots($array)
+    {
+        if (is_array($array) && count($array) > 0) {
+            $filler = array_fill(0, count($array), '?');
+            return implode(',', $filler);
+        } else {
+            return '';
+        }
+    }
+    /**
+     * Returns a new SQL Helper with the same adapter as the current one.
+     *
+     * @return RedBean_SQLHelper
+     */
+    public function getNew()
+    {
+        return new self($this->adapter);
+    }
+}
 
 class RedBean_TagManager
 {
@@ -5882,7 +5878,7 @@ class RedBean_TagManager
         if ($all) {
             return (implode(',', $same) === implode(',', $tags));
         }
-        return (bool) (count($same)>0);
+        return (bool) (count($same) > 0);
     }
     /**
      * Removes all sepcified tags from the bean. The tags specified in
@@ -5983,7 +5979,7 @@ class RedBean_TagManager
         }
         $collection = [];
         $tags = $this->redbean->find('tag', ['title' => $tags]);
-        if (is_array($tags) && count($tags)>0) {
+        if (is_array($tags) && count($tags) > 0) {
             $collectionKeys = $this->associationManager->related($tags, $beanType);
             if ($collectionKeys) {
                 $collection = $this->redbean->batch($beanType, $collectionKeys);
@@ -6140,7 +6136,7 @@ class RedBean_Finder
             [$sql, $values] = $sql->getQuery();
         }
         if (!is_array($values)) {
-            throw new InvalidArgumentException('Expected array, '.gettype($values).' given.');
+            throw new InvalidArgumentException('Expected array, ' . gettype($values) . ' given.');
         }
         return $this->redbean->find($type, [], [$sql, $values], true);
     }
@@ -6308,7 +6304,7 @@ class RedBean_Facade
             $tmp = 'tmp';
         }
         if (is_null($dsn)) {
-            $dsn = 'sqlite:/'.$tmp.'/red.db';
+            $dsn = 'sqlite:/' . $tmp . '/red.db';
         }
         self::addDatabase('default', $dsn, $username, $password);
         self::selectDatabase('default');
@@ -6511,7 +6507,7 @@ class RedBean_Facade
     public static function dispense($type, $num = 1)
     {
         if (!preg_match('/^[a-z0-9]+$/', $type) && self::$strictType) {
-            throw new RedBean_Exception_Security('Invalid type: '.$type);
+            throw new RedBean_Exception_Security('Invalid type: ' . $type);
         }
         return self::$redbean->dispense($type, $num);
     }
@@ -7387,14 +7383,12 @@ class RedBean_Facade
 if (!function_exists('lcfirst')) {
     function lcfirst($str)
     {
-        return (string)(strtolower(substr($str, 0, 1)).substr($str, 1));
+        return (string)(strtolower(substr($str, 0, 1)) . substr($str, 1));
     }
 }
 
 
-interface RedBean_Plugin
-{
-};
+interface RedBean_Plugin {};
 
 class RedBean_Plugin_BeanCan implements RedBean_Plugin
 {
@@ -7530,7 +7524,7 @@ class RedBean_Plugin_BeanCan implements RedBean_Plugin
                     return $this->resp(call_user_func_array([$beanModel, $action], $data), $id);
             }
         } catch(Exception $exception) {
-            return $this->resp(null, $id, -32099, $exception->getCode().'-'.$exception->getMessage());
+            return $this->resp(null, $id, -32099, $exception->getCode() . '-' . $exception->getMessage());
         }
     }
     /**
@@ -7587,9 +7581,7 @@ class RedBean_Plugin_QueryLogger implements RedBean_Observer, RedBean_Plugin
      * Singleton pattern
      * Constructor - private
      */
-    private function __construct()
-    {
-    }
+    private function __construct() {}
     /**
      * Implementation of the onEvent() method for Observer interface.
      * If a query gets executed this method gets invoked because the
@@ -7746,7 +7738,7 @@ class RedBean_Plugin_Cooker implements RedBean_Plugin
             foreach ($array as $key => $value) {
                 $listBean = $this->graph($value, $filterEmpty);
                 if (!($listBean instanceof RedBean_OODBBean)) {
-                    throw new RedBean_Exception_Security('Expected bean but got :'.gettype($listBean));
+                    throw new RedBean_Exception_Security('Expected bean but got :' . gettype($listBean));
                 }
                 if ($listBean->isEmpty()) {
                     if (!$filterEmpty) {
@@ -7758,7 +7750,7 @@ class RedBean_Plugin_Cooker implements RedBean_Plugin
             }
             return $beans;
         } else {
-            throw new RedBean_Exception_Security('Expected array but got :'.gettype($array));
+            throw new RedBean_Exception_Security('Expected array but got :' . gettype($array));
         }
     }
     /**
@@ -7823,10 +7815,10 @@ class RedBean_Plugin_Cache extends RedBean_OODB implements RedBean_Plugin
     public function load($type, $id)
     {
         if (isset($this->cache[$type][$id])) {
-            $this->hits ++;
+            $this->hits++;
             $bean = $this->cache[$type][$id];
         } else {
-            $this->misses ++;
+            $this->misses++;
             $bean = parent::load($type, $id);
             if ($bean->id) {
                 if (!isset($this->cache[$type])) {
@@ -7967,7 +7959,7 @@ class RedBean_DependencyInjector
         $object = new $modelClassName();
         if ($this->dependencies && is_array($this->dependencies)) {
             foreach ($this->dependencies as $key => $dep) {
-                $depSetter = 'set'.$key;
+                $depSetter = 'set' . $key;
                 if (method_exists($object, $depSetter)) {
                     $object->$depSetter($dep);
                 }
@@ -8082,7 +8074,7 @@ class RedBean_DuplicationManager
      */
     protected function hasOwnList($type, $target)
     {
-        return (isset($this->columns[$target][$type.'_id']));
+        return (isset($this->columns[$target][$type . '_id']));
     }
     /**
      * Determines whether the bea has a shared list based on
@@ -8152,7 +8144,7 @@ class RedBean_DuplicationManager
     protected function duplicate($bean, $trail = [], $pid = false)
     {
         $type = $bean->getMeta('type');
-        $key = $type.$bean->getID();
+        $key = $type . $bean->getID();
         if (isset($trail[$key])) {
             return $bean;
         }
@@ -8168,8 +8160,8 @@ class RedBean_DuplicationManager
             if ($table == $type) {
                 continue;
             }
-            $owned = 'own'.ucfirst($table);
-            $shared = 'shared'.ucfirst($table);
+            $owned = 'own' . ucfirst($table);
+            $shared = 'shared' . ucfirst($table);
             if ($this->hasSharedList($type, $table)) {
                 if ($beans = $bean->$shared) {
                     $copy->$shared = [];
@@ -8184,9 +8176,9 @@ class RedBean_DuplicationManager
                         array_push($copy->$owned, $this->duplicate($subBean, $trail, $pid));
                     }
                 }
-                $copy->setMeta('sys.shadow.'.$owned, null);
+                $copy->setMeta('sys.shadow.' . $owned, null);
             }
-            $copy->setMeta('sys.shadow.'.$shared, null);
+            $copy->setMeta('sys.shadow.' . $shared, null);
         }
         if ($pid) {
             $copy->id = $bean->id;
@@ -8224,7 +8216,7 @@ class RedBean_DuplicationManager
 
 class R extends RedBean_Facade
 {
-    public static function graph($array, $filterEmpty=false)
+    public static function graph($array, $filterEmpty = false)
     {
         $c = new RedBean_Plugin_Cooker();
         $c->setToolbox(self::$toolbox);

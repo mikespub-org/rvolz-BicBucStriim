@@ -4,9 +4,7 @@
  */
 
 # A database item class
-class Item
-{
-}
+class Item {}
 
 # Utiliy classes for Calibre DB items
 class Author extends Item
@@ -14,62 +12,34 @@ class Author extends Item
     public $sort;
     public $name;
 }
-class AuthorBook extends Item
-{
-}
+class AuthorBook extends Item {}
 class Book extends Item
 {
     public $id;
 }
-class BookAuthorLink extends Item
-{
-}
-class BooksCustomColumnLink extends Item
-{
-}
-class BookSeriesLink extends Item
-{
-}
-class BookTagLink extends Item
-{
-}
-class BookLanguageLink extends Item
-{
-}
-class Comment extends Item
-{
-}
-class CustomColumn extends Item
-{
-}
-class CustomColumns extends Item
-{
-}
-class Data extends Item
-{
-}
+class BookAuthorLink extends Item {}
+class BooksCustomColumnLink extends Item {}
+class BookSeriesLink extends Item {}
+class BookTagLink extends Item {}
+class BookLanguageLink extends Item {}
+class Comment extends Item {}
+class CustomColumn extends Item {}
+class CustomColumns extends Item {}
+class Data extends Item {}
 class Language extends Item
 {
     public $lang_code;
     public $key;
 }
-class Series extends Item
-{
-}
-class SeriesBook extends Item
-{
-}
+class Series extends Item {}
+class SeriesBook extends Item {}
 class Tag extends Item
 {
     public $name;
     public $key;
 }
-class TagBook extends Item
-{
-}
-class Identifier extends Item
-{
-}
+class TagBook extends Item {}
+class Identifier extends Item {}
 
 
 # Search types for Calibre::findSliceFiltered
@@ -181,11 +151,11 @@ class Utilities
     public static function bookPath($cd, $bp, $file)
     {
         try {
-            $path = $cd.'/'.$bp.'/'.$file;
+            $path = $cd . '/' . $bp . '/' . $file;
             stat($path);
         } catch (Exception $e) {
             $p = explode("/", $bp);
-            $path = $cd.'/'.ucwords($p[0]).'/'.$p[1].'/'.$file;
+            $path = $cd . '/' . ucwords($p[0]) . '/' . $p[1] . '/' . $file;
         }
         return $path;
     }

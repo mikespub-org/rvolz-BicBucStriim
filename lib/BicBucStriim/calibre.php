@@ -155,8 +155,8 @@ class Calibre
             $params['lang'] = $filter->lang_id;
         }
         if (!is_null($search)) {
-            $params['search_l'] = '%'. mb_convert_case($search, MB_CASE_LOWER, 'UTF-8') . '%';
-            $params['search_t'] = '%'. mb_convert_case($search, MB_CASE_TITLE, 'UTF-8') . '%';
+            $params['search_l'] = '%' . mb_convert_case($search, MB_CASE_LOWER, 'UTF-8') . '%';
+            $params['search_t'] = '%' . mb_convert_case($search, MB_CASE_TITLE, 'UTF-8') . '%';
         }
         return $params;
     }
@@ -174,8 +174,8 @@ class Calibre
             $params['lang'] = $filter->lang_id;
         }
         if (!is_null($search)) {
-            $params['search_l'] = '%'. mb_convert_case($search, MB_CASE_LOWER, 'UTF-8') . '%';
-            $params['search_t'] = '%'. mb_convert_case($search, MB_CASE_TITLE, 'UTF-8') . '%';
+            $params['search_l'] = '%' . mb_convert_case($search, MB_CASE_LOWER, 'UTF-8') . '%';
+            $params['search_t'] = '%' . mb_convert_case($search, MB_CASE_TITLE, 'UTF-8') . '%';
         }
         if (!is_null($length)) {
             $params['length'] = $length;
@@ -514,7 +514,7 @@ class Calibre
         $book_ids = $this->findPrepared(
             'BookAuthorLink',
             'SELECT * FROM books_authors_link WHERE author=:id',
-            ['id'=>$id]
+            ['id' => $id]
         );
         $books = [];
         foreach ($book_ids as $bid) {
@@ -533,7 +533,7 @@ class Calibre
     {
         $allSeriesIds = [];
         foreach ($books as $book) {
-            $series_ids = $this->findPrepared('BookSeriesLink', 'SELECT * FROM books_series_link WHERE book=:id', ['id'=>$book->id]);
+            $series_ids = $this->findPrepared('BookSeriesLink', 'SELECT * FROM books_series_link WHERE book=:id', ['id' => $book->id]);
             foreach ($series_ids as $sid) {
                 array_push($allSeriesIds, $sid->series);
             }
@@ -619,7 +619,7 @@ class Calibre
         return $this->findPrepared(
             'Author',
             'SELECT a.id, a.name, a.sort, (SELECT COUNT(*) FROM books_authors_link AS bal WHERE a.id = bal.author) AS anzahl FROM authors AS a WHERE substr(upper(a.sort),1,1)=:initial ORDER BY a.sort',
-            ['initial'=>$initial]
+            ['initial' => $initial]
         );
     }
 
@@ -739,7 +739,7 @@ class Calibre
         return $this->findPrepared(
             'Tag',
             'SELECT tags.id, tags.name, (SELECT COUNT(*) FROM books_tags_link AS btl WHERE tags.id = btl.tag ) AS anzahl FROM tags WHERE substr(upper(tags.name),1,1)=:initial ORDER BY tags.name',
-            ['initial'=>$initial]
+            ['initial' => $initial]
         );
     }
 
@@ -882,7 +882,7 @@ class Calibre
         $author_ids = $this->findPrepared(
             'BookAuthorLink',
             'SELECT * FROM books_authors_link WHERE book=:id',
-            ['id'=>$id]
+            ['id' => $id]
         );
         $authors = [];
         foreach ($author_ids as $aid) {
@@ -892,7 +892,7 @@ class Calibre
         $series_ids = $this->findPrepared(
             'BookSeriesLink',
             'SELECT * FROM books_series_link WHERE book=:id',
-            ['id'=>$id]
+            ['id' => $id]
         );
         $series = [];
         foreach ($series_ids as $aid) {
@@ -902,7 +902,7 @@ class Calibre
         $tag_ids = $this->findPrepared(
             'BookTagLink',
             'SELECT * FROM books_tags_link WHERE book=:id',
-            ['id'=>$id]
+            ['id' => $id]
         );
         $tags = [];
         foreach ($tag_ids as $tid) {
@@ -923,13 +923,13 @@ class Calibre
         $formats = $this->findPrepared(
             'Data',
             'SELECT * FROM data WHERE book=:id',
-            ['id'=>$id]
+            ['id' => $id]
         );
         $comment = $this->findOne('Comment', 'SELECT * FROM comments WHERE book=:id', ['id' => $id]);
         $ids = $this->findPrepared(
             'Identifier',
             'SELECT * FROM identifiers WHERE book=:id',
-            ['id'=>$id]
+            ['id' => $id]
         );
         if (is_null($comment)) {
             $comment_text = '';
@@ -960,7 +960,7 @@ class Calibre
         if (is_null($book)) {
             return null;
         }
-        $tag_ids = $this->findPrepared('BookTagLink', 'SELECT * FROM books_tags_link WHERE book=:id', ['id'=>$id]);
+        $tag_ids = $this->findPrepared('BookTagLink', 'SELECT * FROM books_tags_link WHERE book=:id', ['id' => $id]);
         $tags = [];
         foreach ($tag_ids as $tid) {
             $tag = $this->findOne('Tag', 'SELECT * FROM tags WHERE id=:id', ['id' => $tid->tag]);
@@ -1010,13 +1010,13 @@ class Calibre
                 $lvs = $this->findPrepared(
                     'BooksCustomColumnLink',
                     'SELECT * FROM books_custom_column_' . $column_id . '_link WHERE book=:id',
-                    ['id'=>$book_id]
+                    ['id' => $book_id]
                 );
                 foreach ($lvs as $lv) {
                     $cvs = $this->findPrepared(
                         'CustomColumn',
                         'SELECT * FROM custom_column_' . $column_id . ' WHERE id=:id',
-                        ['id'=>$lv->value]
+                        ['id' => $lv->value]
                     );
                     foreach ($cvs as $cv) {
                         $ccs = $this->addCc($column, $cv->value, $ccs);
@@ -1027,7 +1027,7 @@ class Calibre
                 $cvs = $this->findPrepared(
                     'CustomColumn',
                     'SELECT * FROM custom_column_' . $column_id . ' WHERE book=:id',
-                    ['id'=>$book_id]
+                    ['id' => $book_id]
                 );
                 foreach ($cvs as $cv) {
                     $ccs = $this->addCc($column, $cv->value, $ccs);
@@ -1050,13 +1050,13 @@ class Calibre
         if (is_null($book)) {
             return null;
         }
-        $author_ids = $this->findPrepared('BookAuthorLink', 'SELECT * FROM books_authors_link WHERE book=:id', ['id'=>$book->id]);
+        $author_ids = $this->findPrepared('BookAuthorLink', 'SELECT * FROM books_authors_link WHERE book=:id', ['id' => $book->id]);
         $authors = [];
         foreach ($author_ids as $aid) {
             $author = $this->findOne('Author', 'SELECT * FROM authors WHERE id=:id', ['id' => $aid->author]);
             array_push($authors, $author);
         }
-        $tag_ids = $this->findPrepared('BookTagLink', 'SELECT * FROM books_tags_link WHERE book=:id', ['id'=>$book->id]);
+        $tag_ids = $this->findPrepared('BookTagLink', 'SELECT * FROM books_tags_link WHERE book=:id', ['id' => $book->id]);
         $tags = [];
         foreach ($tag_ids as $tid) {
             $tag = $this->findOne('Tag', 'SELECT * FROM tags WHERE id=:id', ['id' => $tid->tag]);
@@ -1082,7 +1082,7 @@ class Calibre
         # Strip html excluding the most basic tags and remove all tag attributes
         $comment_text = strip_tags($comment_text, '<div><strong><i><em><b><p><br><br/>');
         $comment_text = preg_replace("/<([a-z][a-z0-9]*)[^>]*?(\/?)>/i", '<$1$2>', $comment_text);
-        $formats = $this->findPrepared('Data', 'SELECT * FROM data WHERE book=:id', ['id'=>$book->id]);
+        $formats = $this->findPrepared('Data', 'SELECT * FROM data WHERE book=:id', ['id' => $book->id]);
         return ['book' => $book, 'authors' => $authors, 'tags' => $tags,
             'formats' => $formats, 'comment' => $comment_text, 'language' => $lang_text];
     }
@@ -1132,7 +1132,7 @@ class Calibre
      */
     public function titleGetFormats($bookid)
     {
-        return $this->findPrepared('Data', 'SELECT * FROM data WHERE book=:id', ['id'=>$bookid]);
+        return $this->findPrepared('Data', 'SELECT * FROM data WHERE book=:id', ['id' => $bookid]);
     }
 
     /**
@@ -1151,7 +1151,7 @@ class Calibre
         $formats = $this->findPrepared(
             'Data',
             "SELECT * FROM data WHERE book=:id AND (format='EPUB' OR format='HTML' OR format='PDF')",
-            ['id'=>$id]
+            ['id' => $id]
         );
         if (empty($formats)) {
             return null;
@@ -1178,7 +1178,7 @@ class Calibre
         $books = $this->findPrepared(
             'Book',
             'SELECT BSL.book, Books.* FROM books_series_link BSL, books Books WHERE Books.id=BSL.book AND series=:id ORDER BY series_index',
-            ['id'=>$id]
+            ['id' => $id]
         );
         return ['series' => $series, 'books' => $books];
     }
@@ -1262,7 +1262,7 @@ class Calibre
             $seriesNames = $this->findPrepared(
                 'Series',
                 'SELECT series.id, series.name, (SELECT COUNT(*) FROM books_series_link AS btl WHERE series.id = btl.series) AS anzahl FROM series WHERE substr(upper(series.name),1,1)=:initial ORDER BY series.name',
-                ['initial'=>$initial]
+                ['initial' => $initial]
             );
         }
         return $seriesNames;
@@ -1300,7 +1300,7 @@ class Calibre
      */
     public function kindleFormatSort($a, $b)
     {
-        //global $kindleformats;        
+        //global $kindleformats;
         $kindleformats[0] = "EPUB";
         $kindleformats[1] = "HTML";
         $kindleformats[2] = "PDF";

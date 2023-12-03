@@ -16,6 +16,4 @@ use Aura\Session\Segment as AuraSessionSegment;
  * Segment that integrates Aura Auth and Session..
  *
  */
-class Segment extends AuraSessionSegment implements SegmentInterface
-{
-}
+class Segment extends AuraSessionSegment implements SegmentInterface {}

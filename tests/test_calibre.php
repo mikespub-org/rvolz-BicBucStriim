@@ -59,7 +59,7 @@ class TestOfCalibre extends UnitTestCase
 
     public function testLibraryStatsTagFilter()
     {
-        $result = $this->calibre->libraryStats(new CalibreFilter($lang=null, $tag=21));
+        $result = $this->calibre->libraryStats(new CalibreFilter($lang = null, $tag = 21));
         $this->assertEqual(6, $result["titles"]);
         $this->assertEqual(6, $result["authors"]);
         $this->assertEqual(6, $result["tags"]);
@@ -68,7 +68,7 @@ class TestOfCalibre extends UnitTestCase
 
     public function testLibraryStatsLanguageFilter()
     {
-        $result = $this->calibre->libraryStats(new CalibreFilter($lang=3, $tag=null));
+        $result = $this->calibre->libraryStats(new CalibreFilter($lang = 3, $tag = null));
         $this->assertEqual(1, $result["titles"]);
         $this->assertEqual(6, $result["authors"]);
         $this->assertEqual(6, $result["tags"]);
@@ -77,7 +77,7 @@ class TestOfCalibre extends UnitTestCase
 
     public function testLibraryStatsLanguageAndTagFilter()
     {
-        $result = $this->calibre->libraryStats(new CalibreFilter($lang=1, $tag=3));
+        $result = $this->calibre->libraryStats(new CalibreFilter($lang = 1, $tag = 3));
         $this->assertEqual(1, $result["titles"]);
         $this->assertEqual(6, $result["authors"]);
         $this->assertEqual(6, $result["tags"]);

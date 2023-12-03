@@ -25,7 +25,7 @@ class CalibreFilter
      * @param string $lang the calibre id of the language, default null
      * @param string $tag  the calibre id of the tag, default null
      */
-    public function __construct($lang=null, $tag=null)
+    public function __construct($lang = null, $tag = null)
     {
         $this->lang_id = $lang;
         $this->tag_id = $tag;

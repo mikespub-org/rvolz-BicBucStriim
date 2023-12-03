@@ -408,7 +408,7 @@ function admin_modify_idtemplate($id)
     // parameter checking
     if (!preg_match('/^\w+$/u', $id)) {
         $app->getLog()->warn('admin_modify_idtemplate: invalid template id ' . $id);
-        $app->halt(400, "Invalid ID for template: "+$id);
+        $app->halt(400, "Invalid ID for template: " + $id);
     }
 
     $template_data = $app->request()->put();
@@ -448,7 +448,7 @@ function admin_clear_idtemplate($id)
     // parameter checking
     if (!preg_match('/^\w+$/u', $id)) {
         $app->getLog()->warn('admin_clear_idtemplate: invalid template id ' . $id);
-        $app->halt(400, "Invalid ID for template: "+$id);
+        $app->halt(400, "Invalid ID for template: " + $id);
     }
 
     $app->getLog()->debug('admin_clear_idtemplate: ' . var_export($id, true));
@@ -2186,7 +2186,7 @@ function mkRootUrl()
         } else {
             // Use forwarding info
             $app->getLog()->debug("mkRootUrl: Using forwarding information " . $info);
-            $root = $info->protocol. '://'. $info->host. $app->request()->getRootUri();
+            $root = $info->protocol . '://' . $info->host . $app->request()->getRootUri();
         }
     }
     $app->getLog()->debug("mkRootUrl: Using root url " . $root);

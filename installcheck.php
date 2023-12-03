@@ -35,7 +35,7 @@ function mod_rewrite_enabled()
         $mod_rewrite = in_array('mod_rewrite', $modules);
     } else {
         # Recent Apache versions (Synology DSM5) prefix envvars with the module name
-        $mod_rewrite =  (getenv('HTTP_MOD_REWRITE')=='On' || getenv('REDIRECT_HTTP_MOD_REWRITE')=='On') ? true : false ;
+        $mod_rewrite =  (getenv('HTTP_MOD_REWRITE') == 'On' || getenv('REDIRECT_HTTP_MOD_REWRITE') == 'On') ? true : false ;
     }
     return $mod_rewrite;
 }
@@ -74,12 +74,12 @@ function check_calibre($dir)
         if (is_readable($dir)) {
             $ret['dir_is_readable'] = true;
             $ret['dir_is_executable'] = is_executable($dir);
-            $mdb = realpath($dir).'/metadata.db';
+            $mdb = realpath($dir) . '/metadata.db';
             $ret['realpath'] = $mdb;
             if (file_exists($mdb)) {
                 $ret['status'] = 1;
                 try {
-                    $mydb = new PDO('sqlite:'.$mdb, null, null, []);
+                    $mydb = new PDO('sqlite:' . $mdb, null, null, []);
                     $ret['library_ok'] = true;
                 } catch (PDOException $e) {
                     ;
@@ -137,7 +137,7 @@ echo $template->render([
     'is_a' => $is_a,
     'srv' => $srv,
     'mre' => $mre,
-    'calibre_dir'=> $calibre_dir,
+    'calibre_dir' => $calibre_dir,
     'cd' => $cd,
     'htaccess' => file_exists('./.htaccess'),
     'hsql' => has_sqlite(),
