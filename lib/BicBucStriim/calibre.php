@@ -1138,7 +1138,7 @@ class Calibre
     /**
      * Returns a Kindle supported format of a book or NULL.
      * We always return the best of the available formats supported by Kindle devices
-     * E.g. when there is both a Mobi and a PDF file for a given book, we always return the Mobi
+     * E.g. when there is both a Epub and a PDF file for a given book, we always return the Epub
      * @param  int $id book id
      * @return ?object   $format    the kindle format object for the book or NULL
      */
@@ -1150,7 +1150,7 @@ class Calibre
         }
         $formats = $this->findPrepared(
             'Data',
-            "SELECT * FROM data WHERE book=:id AND (format='AZW' OR format='AZW3' OR format='MOBI' OR format='HTML' OR format='PDF')",
+            "SELECT * FROM data WHERE book=:id AND (format='EPUB' OR format='HTML' OR format='PDF')",
             ['id'=>$id]
         );
         if (empty($formats)) {
@@ -1300,12 +1300,10 @@ class Calibre
      */
     public function kindleFormatSort($a, $b)
     {
-        //global $kindleformats;
-        $kindleformats[0] = "AZW3";
-        $kindleformats[1] = "AZW";
-        $kindleformats[3] = "MOBI";
-        $kindleformats[4] = "HTML";
-        $kindleformats[5] = "PDF";
+        //global $kindleformats;        
+        $kindleformats[0] = "EPUB";
+        $kindleformats[1] = "HTML";
+        $kindleformats[2] = "PDF";
         $sort = 0;
         foreach ($kindleformats as $key => $value) {
             if ($a->format == $value) {
