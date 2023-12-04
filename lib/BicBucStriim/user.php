@@ -8,12 +8,14 @@
  *
  */
 
-class Model_User extends RedBean_OODBBean
+ /**
+  * @property mixed $id
+  */
+class Model_User extends RedBean_SimpleModel
 {
-    public $id;
     public function to_json()
     {
-        $props = self::getProperties();
+        $props = $this->unbox()->getProperties();
         print "to_json";
         print_r($props);
         return json_encode($props);

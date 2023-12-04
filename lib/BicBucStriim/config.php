@@ -8,8 +8,10 @@
  *
  */
 
-class Model_Config extends RedBean_OODBBean
+/**
+ * @property mixed $name
+ * @property mixed $val
+ */
+class Model_Config extends RedBean_SimpleModel
 {
-    public $name;
-    public $val;
 }
