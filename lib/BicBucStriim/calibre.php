@@ -437,7 +437,7 @@ class Calibre
      * @param  int $nrOfTitles number of titles, page size. Default is 30.
      * @param  object $filter CalibreFilter
      * @return array of books
-     * @deprecated
+     * @todo use timestampOrderedTitlesSlice
      */
     public function last30Books($lang, $nrOfTitles = 30, $filter = null)
     {
@@ -594,13 +594,13 @@ class Calibre
     public function authorsInitials()
     {
         $initials = $this->findPrepared(
-            'Item',
+            'Initial',
             'SELECT DISTINCT substr(upper(sort),1,1) AS initial FROM authors ORDER BY initial ASC',
             []
         );
         $ret = [];
         foreach ($initials as $initial) {
-            $i = new Item();
+            $i = new Initial();
             $ctr = $this->findOne('Item', 'SELECT COUNT(*) as ctr FROM authors WHERE substr(upper(sort),1,1)=:initial', ['initial' => $initial->initial]);
             $i->initial = $initial->initial;
             $i->ctr = $ctr->ctr;
@@ -714,13 +714,13 @@ class Calibre
     public function tagsInitials()
     {
         $initials = $this->findPrepared(
-            'Item',
+            'Initial',
             'SELECT DISTINCT substr(upper(name),1,1) AS initial FROM tags ORDER BY initial ASC',
             []
         );
         $ret = [];
         foreach ($initials as $initial) {
-            $i = new Item();
+            $i = new Initial();
             $ctr = $this->findOne('Item', 'SELECT COUNT(*) as ctr FROM tags WHERE substr(upper(name),1,1)=:initial', ['initial' => $initial->initial]);
             $i->initial = $initial->initial;
             $i->ctr = $ctr->ctr;
@@ -1042,7 +1042,7 @@ class Calibre
      * Find a subset of the details for a book that is sufficient for an OPDS
      * partial acquisition feed. The function assumes that the book record has
      * already been loaded.
-     * @param  Book $book complete book record from title()
+     * @param  ?Book $book complete book record from title()
      * @return ?array        the book and its authors, tags and formats
      */
     public function titleDetailsOpds($book)
@@ -1230,13 +1230,13 @@ class Calibre
     public function seriesInitials()
     {
         $initials = $this->findPrepared(
-            'Item',
+            'Initial',
             'SELECT DISTINCT substr(upper(name),1,1) AS initial FROM series ORDER BY initial ASC',
             []
         );
         $ret = [];
         foreach ($initials as $initial) {
-            $i = new Item();
+            $i = new Initial();
             $ctr = $this->findOne('Item', 'SELECT COUNT(*) as ctr FROM series WHERE substr(upper(name),1,1)=:initial', ['initial' => $initial->initial]);
             $i->initial = $initial->initial;
             $i->ctr = $ctr->ctr;

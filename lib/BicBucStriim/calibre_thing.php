@@ -8,12 +8,17 @@
  *
  */
 
+ /**
+  * @property mixed $ownLink
+  * @property mixed $ownNote
+  * @property mixed $ownArtefact
+  * @property mixed $ctype
+  * @property mixed $cid
+  * @property mixed $cname
+  * @property mixed $refctr
+  */
 class Model_CalibreThing extends RedBean_SimpleModel
 {
-    public $ownLink;
-    public $ownNote;
-    public $ownArtefact;
-
     /**
      * Return author links releated to this Calibre entitiy.
      * @return array 	all available author links

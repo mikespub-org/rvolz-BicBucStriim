@@ -11,19 +11,19 @@
 class CalibreFilter
 {
     /**
-     * @var string Calibre language ID
+     * @var string|int|null Calibre language ID
      */
     public $lang_id = null;
     /**
-     * @var string Calibre tag ID
+     * @var string|int|null Calibre tag ID
      */
     public $tag_id = null;
 
     /**
      * Initialize the filter.
      *
-     * @param string $lang the calibre id of the language, default null
-     * @param string $tag  the calibre id of the tag, default null
+     * @param string|int|null $lang the calibre id of the language, default null
+     * @param string|int|null $tag  the calibre id of the tag, default null
      */
     public function __construct($lang = null, $tag = null)
     {

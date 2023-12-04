@@ -102,7 +102,7 @@ class OpdsGenerator
 
     /**
      * Generate an acquisition catalog for the newest books
-     * @param  string   $of=NULL   output URI or NULL for string output
+     * @param  ?string   $of=NULL   output URI or NULL for string output
      * @param  array    $entries   an array of Book
      * @param  boolean  $protected true = we need password authentication before a download
      */
@@ -128,11 +128,11 @@ class OpdsGenerator
 
     /**
      * Generate a paginated acquisition catalog for the all books
-     * @param  string   $of=NULL   output URI or NULL for string output
+     * @param  ?string  $of=NULL   output URI or NULL for string output
      * @param  array    $entries   an array of Book
      * @param  boolean  $protected true = we need password authentication before a download
      * @param  int      $page      number of page to show, minimum 0
-     * @param  int      $next      number of the next page to show, or NULL
+     * @param  ?int     $next      number of the next page to show, or NULL
      * @param  int      $last      number of the last page
      */
     public function titlesCatalog($of, $entries, $protected, $page, $next, $last)
@@ -165,7 +165,7 @@ class OpdsGenerator
 
     /**
      * Generate a list of initials of author names
-     * @param  string   $of=NULL   output URI or NULL for string output
+     * @param  ?string   $of=NULL   output URI or NULL for string output
      * @param  array    $entries   an array of Items
      */
     public function authorsRootCatalog($of, $entries)
@@ -196,7 +196,7 @@ class OpdsGenerator
 
     /**
      * generate a list of author entries with book counts
-     * @param  string   $of=NULL   output URI or NULL for string output
+     * @param  ?string   $of=NULL   output URI or NULL for string output
      * @param  array    $entries   an array of Authors
      * @param  string   $initial   the initial character
      */
@@ -232,13 +232,13 @@ class OpdsGenerator
 
     /**
      * generate a list of book entries for an author
-     * @param  string   $of=NULL    output URI or NULL for string output
+     * @param  ?string  $of=NULL    output URI or NULL for string output
      * @param  array    $entries    an array of Books
      * @param  string   $initial    the initial character
      * @param  object   $author     the author
      * @param  bool     $protected  download protection y/n?
      * @param  int      $page      number of page to show, minimum 0
-     * @param  int      $next      number of the next page to show, or NULL
+     * @param  ?int     $next      number of the next page to show, or NULL
      * @param  int      $last      number of the last page
      */
     public function booksForAuthorCatalog($of, $entries, $initial, $author, $protected, $page, $next, $last)
@@ -273,7 +273,7 @@ class OpdsGenerator
 
     /**
      * Generate a list of initials of tag names
-     * @param  string   $of=NULL   output URI or NULL for string output
+     * @param  ?string   $of=NULL   output URI or NULL for string output
      * @param  array    $entries   an array of Items
      */
     public function tagsRootCatalog($of, $entries)
@@ -304,7 +304,7 @@ class OpdsGenerator
 
     /**
      * generate a list of tag entries with book counts
-     * @param  string   $of=NULL   output URI or NULL for string output
+     * @param  ?string   $of=NULL   output URI or NULL for string output
      * @param  array    $entries   an array of Tags
      * @param  string   $initial   the initial character
      */
@@ -340,13 +340,13 @@ class OpdsGenerator
 
     /**
      * generate a list of book entries for a tag
-     * @param  string   $of=NULL    output URI or NULL for string output
+     * @param  ?string  $of=NULL    output URI or NULL for string output
      * @param  array    $entries    an array of Books
      * @param  string   $initial    the initial character
      * @param  object   $tag        the tag
      * @param  bool     $protected  download protection y/n?
      * @param  int      $page      number of page to show, minimum 0
-     * @param  int      $next      number of the next page to show, or NULL
+     * @param  ?int     $next      number of the next page to show, or NULL
      * @param  int      $last      number of the last page
      */
     public function booksForTagCatalog($of, $entries, $initial, $tag, $protected, $page, $next, $last)
@@ -381,7 +381,7 @@ class OpdsGenerator
 
     /**
      * Generate a list of initials of series names
-     * @param  string   $of=NULL   output URI or NULL for string output
+     * @param  ?string  $of=NULL   output URI or NULL for string output
      * @param  array    $entries   an array of Items
      */
     public function seriesRootCatalog($of, $entries)
@@ -420,7 +420,7 @@ class OpdsGenerator
 
     /**
      * generate a list of series entries with book counts
-     * @param  string   $of=NULL   output URI or NULL for string output
+     * @param  ?string  $of=NULL   output URI or NULL for string output
      * @param  array    $entries   an array of Series
      * @param  string   $initial   the initial character
      */
@@ -456,13 +456,13 @@ class OpdsGenerator
 
     /**
      * generate a list of book entries for a series
-     * @param  string   $of=NULL    output URI or NULL for string output
+     * @param  ?string  $of=NULL    output URI or NULL for string output
      * @param  array    $entries    an array of Books
      * @param  string   $initial    the initial character
      * @param  object   $series     the series
      * @param  bool     $protected  download protection y/n?
      * @param  int      $page      number of page to show, minimum 0
-     * @param  int      $next      number of the next page to show, or NULL
+     * @param  ?int     $next      number of the next page to show, or NULL
      * @param  int      $last      number of the last page
      */
     public function booksForSeriesCatalog($of, $entries, $initial, $series, $protected, $page, $next, $last)
@@ -553,11 +553,11 @@ class OpdsGenerator
 
     /**
      * Generate a paginated acquisition catalog for books as search results
-     * @param  string   $of=NULL   output URI or NULL for string output
+     * @param  ?string  $of=NULL   output URI or NULL for string output
      * @param  array    $entries   an array of Book
      * @param  boolean  $protected true = we need password authentication before a download
      * @param  int      $page      number of page to show, minimum 0
-     * @param  int      $next      number of the nextPage to show, or NULL
+     * @param  ?int     $next      number of the nextPage to show, or NULL
      * @param  int      $last      number of the last page
      * @param  string   $search    search terms
      * @param  int      $total     total number of search results
@@ -833,7 +833,7 @@ class OpdsGenerator
 
     /**
      * Open and initialize the XML stream
-     * @param  string $of=NULL URI or NULL
+     * @param  ?string $of=NULL URI or NULL
      */
     public function openStream($of = null)
     {
@@ -848,7 +848,7 @@ class OpdsGenerator
 
     /**
      * Close the XML stream and output the result
-     * @param  string $of=NULL Proper URI or NULL
+     * @param  ?string $of=NULL Proper URI or NULL
      * @return ?string          The XML string or NULL if output is sent to the URI
      */
     public function closeStream($of = null)

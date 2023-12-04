@@ -16,26 +16,6 @@ parameters:
 			path: index.php
 
 		-
-			message: "#^Access to an undefined property Model_CalibreThing\\:\\:\\$cid\\.$#"
-			count: 1
-			path: lib/BicBucStriim/bicbucstriim.php
-
-		-
-			message: "#^Access to an undefined property Model_CalibreThing\\:\\:\\$cname\\.$#"
-			count: 1
-			path: lib/BicBucStriim/bicbucstriim.php
-
-		-
-			message: "#^Access to an undefined property Model_CalibreThing\\:\\:\\$ctype\\.$#"
-			count: 1
-			path: lib/BicBucStriim/bicbucstriim.php
-
-		-
-			message: "#^Access to an undefined property Model_CalibreThing\\:\\:\\$refctr\\.$#"
-			count: 1
-			path: lib/BicBucStriim/bicbucstriim.php
-
-		-
 			message: "#^Access to an undefined property RedBean_OODBBean\\:\\:\\$val\\.$#"
 			count: 1
 			path: lib/BicBucStriim/bicbucstriim.php
@@ -76,44 +56,9 @@ parameters:
 			path: lib/BicBucStriim/bicbucstriim.php
 
 		-
-			message: "#^Access to an undefined property Book\\:\\:\\$addInfo\\.$#"
-			count: 3
-			path: lib/BicBucStriim/calibre.php
-
-		-
-			message: "#^Access to an undefined property Book\\|Book\\:\\:\\$addInfo\\.$#"
-			count: 1
-			path: lib/BicBucStriim/calibre.php
-
-		-
-			message: "#^Access to an undefined property Item\\:\\:\\$ctr\\.$#"
-			count: 3
-			path: lib/BicBucStriim/calibre.php
-
-		-
-			message: "#^Access to an undefined property Item\\:\\:\\$initial\\.$#"
-			count: 3
-			path: lib/BicBucStriim/calibre.php
-
-		-
 			message: "#^Access to an undefined property Slim\\\\Slim\\:\\:\\$calibre\\.$#"
 			count: 1
 			path: lib/BicBucStriim/calibre_config_middleware.php
-
-		-
-			message: "#^Access to an undefined property Model_CalibreThing\\:\\:\\$cid\\.$#"
-			count: 1
-			path: lib/BicBucStriim/data.php
-
-		-
-			message: "#^Access to an undefined property Model_CalibreThing\\:\\:\\$cname\\.$#"
-			count: 1
-			path: lib/BicBucStriim/data.php
-
-		-
-			message: "#^Access to an undefined property Model_CalibreThing\\:\\:\\$ctype\\.$#"
-			count: 1
-			path: lib/BicBucStriim/data.php
 
 		-
 			message: "#^Access to an undefined property RedBean_SimpleModel\\:\\:\\$atype\\.$#"
@@ -124,6 +69,11 @@ parameters:
 			message: "#^Access to an undefined property RedBean_SimpleModel\\:\\:\\$url\\.$#"
 			count: 1
 			path: lib/BicBucStriim/data.php
+
+		-
+			message: "#^Call to an undefined method DOMNode\\:\\:attr\\(\\)\\.$#"
+			count: 1
+			path: lib/BicBucStriim/epub.php
 
 		-
 			message: "#^Access to an undefined property Slim\\\\Slim\\:\\:\\$auth\\.$#"

@@ -97,7 +97,7 @@ class EPub
      *      'Simpson, Jacqeline' => 'Jacqueline Simpson',
      * )
      *
-     * @params array $authors
+     * @param array|string|false $authors
      */
     public function Authors($authors = false)
     {
@@ -160,7 +160,7 @@ class EPub
     /**
      * Set or get the book title
      *
-     * @param string $title
+     * @param string|false $title
      */
     public function Title($title = false)
     {
@@ -170,7 +170,7 @@ class EPub
     /**
      * Set or get the book's language
      *
-     * @param string $lang
+     * @param string|false $lang
      */
     public function Language($lang = false)
     {
@@ -180,7 +180,7 @@ class EPub
     /**
      * Set or get the book' publisher info
      *
-     * @param string $publisher
+     * @param string|false $publisher
      */
     public function Publisher($publisher = false)
     {
@@ -190,7 +190,7 @@ class EPub
     /**
      * Set or get the book's copyright info
      *
-     * @param string $rights
+     * @param string|false $rights
      */
     public function Copyright($rights = false)
     {
@@ -200,7 +200,7 @@ class EPub
     /**
      * Set or get the book's description
      *
-     * @param string $description
+     * @param string|false $description
      */
     public function Description($description = false)
     {
@@ -210,7 +210,7 @@ class EPub
     /**
      * Set or get the book's ISBN number
      *
-     * @param string $isbn
+     * @param string|false $isbn
      */
     public function ISBN($isbn = false)
     {
@@ -220,7 +220,7 @@ class EPub
     /**
      * Set or get the Google Books ID
      *
-     * @param string $google
+     * @param string|false $google
      */
     public function Google($google = false)
     {
@@ -230,7 +230,7 @@ class EPub
     /**
      * Set or get the Amazon ID of the book
      *
-     * @param string $amazon
+     * @param string|false $amazon
      */
     public function Amazon($amazon = false)
     {
@@ -243,7 +243,7 @@ class EPub
      * Subject should be given as array, but a comma separated string will also
      * be accepted.
      *
-     * @param array $subjects
+     * @param array|string|false $subjects
      */
     public function Subjects($subjects = false)
     {
@@ -298,8 +298,8 @@ class EPub
      * image contents are not in the epub file, yet. The image will be added when
      * the save() method is called.
      *
-     * @param  string $path local filesystem path to a new cover image
-     * @param  string $mime mime type of the given file
+     * @param  string|false $path local filesystem path to a new cover image
+     * @param  string|false $mime mime type of the given file
      * @return array
      */
     public function Cover($path = false, $mime = false)
@@ -376,9 +376,9 @@ class EPub
      * It should only be used for attributes that are expected to be unique
      *
      * @param string $item   XML node to set/get
-     * @param string $value  New node value
-     * @param string $att    Attribute name
-     * @param string $aval   Attribute value
+     * @param string|false $value  New node value
+     * @param string|false $att    Attribute name
+     * @param string|false $aval   Attribute value
      */
     protected function getset($item, $value = false, $att = false, $aval = false)
     {
@@ -497,6 +497,7 @@ class EPubDOMElement extends DOMElement
     public function newChild($name, $value = '')
     {
         [$ns, $local] = $this->splitns($name);
+        $nsuri = '';
         if ($ns) {
             $nsuri = $this->namespaces[$ns];
             if ($this->isDefaultNamespace($nsuri)) {

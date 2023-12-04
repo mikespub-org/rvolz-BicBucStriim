@@ -16,6 +16,9 @@ class AuthorBook extends Item {}
 class Book extends Item
 {
     public $id;
+    public $language;
+    public $formats;
+    public $addInfo;
 }
 class BookAuthorLink extends Item {}
 class BooksCustomColumnLink extends Item {}
@@ -26,6 +29,11 @@ class Comment extends Item {}
 class CustomColumn extends Item {}
 class CustomColumns extends Item {}
 class Data extends Item {}
+class Initial extends Item
+{
+    public $initial;
+    public $ctr;
+}
 class Language extends Item
 {
     public $lang_code;

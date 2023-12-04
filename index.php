@@ -9,7 +9,6 @@
 
 require 'vendor/autoload.php';
 set_include_path(get_include_path() . PATH_SEPARATOR . './lib/BicBucStriim');
-set_include_path(get_include_path() . PATH_SEPARATOR . './vendor');
 require 'rb.php';
 require_once 'langs.php';
 require_once 'l10n.php';
@@ -30,7 +29,7 @@ ini_set('session.gc_maxlifetime', 3600);
 # Running slim/slim 2.x on PHP 8.2 needs php error_reporting set to E_ALL & ~E_DEPRECATED & ~E_STRICT (= production default)
 //error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT);
 
-use dflydev\markdown\MarkdownExtraParser;
+use Michelf\MarkdownExtra;
 
 # Allowed languages, i.e. languages with translations
 $allowedLangs = ['de', 'en', 'es', 'fr', 'gl', 'hu', 'it', 'nl', 'pl'];
@@ -44,9 +43,9 @@ $appversion = '1.6.6';
 # Init app and routes
 $app = new \Slim\Slim([
     'view' => new \Slim\Views\Twig(),
-    'mode' => 'production',
+    #'mode' => 'production',
     #'mode' => 'debug',
-    #'mode' => 'development',
+    'mode' => 'development',
 ]);
 
 $app->configureMode('production', 'confprod');
@@ -101,10 +100,9 @@ function confdebug()
         'cookies.lifetime' => '1 day',
         'cookies.secret_key' => 'b4924c3579e2850a6fad8597da7ad24bf43ab78e',
     ]);
-    require 'vendor/DateTimeFileWriter.php';
     $app->getLog()->setEnabled(true);
     $app->getLog()->setLevel(\Slim\Log::DEBUG);
-    $app->getLog()->setWriter(new \Slim\Extras\Log\DateTimeFileWriter(['path' => './data', 'name_format' => 'Y-m-d']));
+    $app->getLog()->setWriter(new \Slim\Logger\DateTimeFileWriter(['path' => './data', 'name_format' => 'Y-m-d']));
     $app->getLog()->info($appname . ' ' . $appversion . ': Running in debug mode.');
     error_reporting(E_ALL | E_STRICT);
     $app->getLog()->info('Running on PHP: ' . PHP_VERSION);
@@ -408,7 +406,7 @@ function admin_modify_idtemplate($id)
     // parameter checking
     if (!preg_match('/^\w+$/u', $id)) {
         $app->getLog()->warn('admin_modify_idtemplate: invalid template id ' . $id);
-        $app->halt(400, "Invalid ID for template: " + $id);
+        $app->halt(400, "Invalid ID for template: " . $id);
     }
 
     $template_data = $app->request()->put();
@@ -448,7 +446,7 @@ function admin_clear_idtemplate($id)
     // parameter checking
     if (!preg_match('/^\w+$/u', $id)) {
         $app->getLog()->warn('admin_clear_idtemplate: invalid template id ' . $id);
-        $app->halt(400, "Invalid ID for template: " + $id);
+        $app->halt(400, "Invalid ID for template: " . $id);
     }
 
     $app->getLog()->debug('admin_clear_idtemplate: ' . var_export($id, true));
@@ -919,8 +917,8 @@ function edit_author_notes($id)
     $note_data = $app->request()->post();
     $app->getLog()->debug('edit_author_notes: note ' . var_export($note_data, true));
     try {
-        $markdownParser = new MarkdownExtraParser();
-        $html = $markdownParser->transformMarkdown($note_data['ntext']);
+        $markdownParser = new MarkdownExtra();
+        $html = $markdownParser->transform($note_data['ntext']);
         $author = $app->calibre->author($id);
         $note = $app->bbs->editAuthorNote($id, $author->name, $note_data['mime'], $note_data['ntext']);
     } catch (Exception $e) {
@@ -1235,7 +1233,7 @@ function cover($id)
     $rot = $app->request()->getRootUri();
     $book = $app->calibre->title($id);
     if (is_null($book)) {
-        $app->getLog()->debug("cover: book not found: " + $id);
+        $app->getLog()->debug("cover: book not found: " . $id);
         $app->response()->status(404);
         return;
     }
@@ -1272,7 +1270,7 @@ function thumbnail($id)
     $rot = $app->request()->getRootUri();
     $book = $app->calibre->title($id);
     if (is_null($book)) {
-        $app->getLog()->error("thumbnail: book not found: " + $id);
+        $app->getLog()->error("thumbnail: book not found: " . $id);
         $app->response()->status(404);
         return;
     }
@@ -1544,8 +1542,8 @@ function authorDetailsSlice($id, $index = 0)
         $author->notes_source = null;
     }
     if (!empty($author->notes_source)) {
-        $markdownParser = new MarkdownExtraParser();
-        $author->notes = $markdownParser->transformMarkdown($author->notes_source);
+        $markdownParser = new MarkdownExtra();
+        $author->notes = $markdownParser->transform($author->notes_source);
     } else {
         $author->notes = null;
     }
@@ -1590,8 +1588,8 @@ function authorNotes($id)
         $author->notes_source = null;
     }
     if (!empty($author->notes_source)) {
-        $markdownParser = new MarkdownExtraParser();
-        $author->notes = $markdownParser->transformMarkdown($author->notes_source);
+        $markdownParser = new MarkdownExtra();
+        $author->notes = $markdownParser->transform($author->notes_source);
     } else {
         $author->notes = null;
     }

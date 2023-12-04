@@ -114,7 +114,7 @@ class BicBucStriim
     /**
      * Find a specific configuration value by name
      * @param string 	$name 	configuration parameter name
-     * @return RedBean_OODBBean	config paramter or null
+     * @return ?RedBean_OODBBean	config paramter or null
      */
     public function config($name)
     {
@@ -492,7 +492,7 @@ class BicBucStriim
      * The function expects the input file to be a JPEG.
      *
      * @param  int 		$id 		book id
-     * @param  string 	$cover 	    path to cover image
+     * @param  ?string 	$cover 	    path to cover image
      * @param  bool  	$clipped	true = clip the thumbnail, else stuff it
      * @return string thumbnail path or NULL
      */
