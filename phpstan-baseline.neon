@@ -16,59 +16,29 @@ parameters:
 			path: index.php
 
 		-
-			message: "#^Access to an undefined property RedBeanPHP\\\\OODBBean\\:\\:\\$val\\.$#"
+			message: "#^Call to an undefined method Model_Config\\:\\:getMeta\\(\\)\\.$#"
 			count: 1
 			path: lib/BicBucStriim/bicbucstriim.php
 
 		-
-			message: "#^Access to an undefined property iterable\\<RedBeanPHP\\\\OODBBean\\>&RedBeanPHP\\\\OODBBean\\:\\:\\$atype\\.$#"
+			message: "#^Method BicBucStriim\\:\\:config\\(\\) should return Model_Config\\|null but returns RedBeanPHP\\\\OODBBean\\|null\\.$#"
 			count: 1
 			path: lib/BicBucStriim/bicbucstriim.php
 
 		-
-			message: "#^Access to an undefined property iterable\\<RedBeanPHP\\\\OODBBean\\>&RedBeanPHP\\\\OODBBean\\:\\:\\$label\\.$#"
+			message: "#^Method BicBucStriim\\:\\:getCalibreThing\\(\\) should return Model_CalibreThing\\|null but returns RedBeanPHP\\\\OODBBean\\|null\\.$#"
 			count: 1
 			path: lib/BicBucStriim/bicbucstriim.php
 
 		-
-			message: "#^Access to an undefined property iterable\\<RedBeanPHP\\\\OODBBean\\>&RedBeanPHP\\\\OODBBean\\:\\:\\$ltype\\.$#"
+			message: "#^Method BicBucStriim\\:\\:idTemplate\\(\\) should return Model_IdTemplate\\|null but returns RedBeanPHP\\\\OODBBean\\|null\\.$#"
 			count: 1
-			path: lib/BicBucStriim/bicbucstriim.php
-
-		-
-			message: "#^Access to an undefined property iterable\\<RedBeanPHP\\\\OODBBean\\>&RedBeanPHP\\\\OODBBean\\:\\:\\$mime\\.$#"
-			count: 1
-			path: lib/BicBucStriim/bicbucstriim.php
-
-		-
-			message: "#^Access to an undefined property iterable\\<RedBeanPHP\\\\OODBBean\\>&RedBeanPHP\\\\OODBBean\\:\\:\\$ntext\\.$#"
-			count: 1
-			path: lib/BicBucStriim/bicbucstriim.php
-
-		-
-			message: "#^Access to an undefined property iterable\\<RedBeanPHP\\\\OODBBean\\>&RedBeanPHP\\\\OODBBean\\:\\:\\$ntype\\.$#"
-			count: 1
-			path: lib/BicBucStriim/bicbucstriim.php
-
-		-
-			message: "#^Access to an undefined property iterable\\<RedBeanPHP\\\\OODBBean\\>&RedBeanPHP\\\\OODBBean\\:\\:\\$url\\.$#"
-			count: 2
 			path: lib/BicBucStriim/bicbucstriim.php
 
 		-
 			message: "#^Access to an undefined property Slim\\\\Slim\\:\\:\\$calibre\\.$#"
 			count: 1
 			path: lib/BicBucStriim/calibre_config_middleware.php
-
-		-
-			message: "#^Access to an undefined property RedBeanPHP\\\\SimpleModel\\:\\:\\$atype\\.$#"
-			count: 1
-			path: lib/BicBucStriim/data.php
-
-		-
-			message: "#^Access to an undefined property RedBeanPHP\\\\SimpleModel\\:\\:\\$url\\.$#"
-			count: 1
-			path: lib/BicBucStriim/data.php
 
 		-
 			message: "#^Call to an undefined method DOMNode\\:\\:attr\\(\\)\\.$#"

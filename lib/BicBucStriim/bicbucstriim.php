@@ -9,7 +9,7 @@
  */
 
 require_once 'data_constants.php';
-require_once 'calibre_thing.php';
+require_once 'Models/calibre_thing.php';
 class BicBucStriim
 {
     # Name to the bbs db
@@ -118,7 +118,7 @@ class BicBucStriim
     /**
      * Find a specific configuration value by name
      * @param string 	$name 	configuration parameter name
-     * @return ?\RedBeanPHP\OODBBean	config paramter or null
+     * @return ?Model_Config	config paramter or null
      */
     public function config($name)
     {
@@ -272,7 +272,7 @@ class BicBucStriim
     /**
      * Find a specific ID template in the settings DB
      * @param string $name 	template name
-     * @return ?object		IdTemplate or null
+     * @return ?Model_IdTemplate	IdTemplate or null
      */
     public function idTemplate($name)
     {
@@ -284,11 +284,11 @@ class BicBucStriim
      * @param string $name 		unique template name
      * @param string $value 	URL template
      * @param string $label 	display label
-     * @return object   template record or null if there was an error
+     * @return Model_IdTemplate template record or null if there was an error
      */
     public function addIdTemplate($name, $value, $label)
     {
-        /** @var IdUrlTemplate $template */
+        /** @var Model_IdTemplate $template */
         $template = R::dispense('idtemplate');
         $template->name = $name;
         $template->val = $value;
@@ -341,7 +341,7 @@ class BicBucStriim
      * Find a Calibre item.
      * @param int 	$calibreType
      * @param int 	$calibreId
-     * @return 		?object, the Calibre item
+     * @return 		?Model_CalibreThing, the Calibre item
      */
     public function getCalibreThing($calibreType, $calibreId)
     {
@@ -364,7 +364,7 @@ class BicBucStriim
      * @param int 		$calibreType
      * @param int 		$calibreId
      * @param string 	$calibreName
-     * @return 			object, the Calibre item
+     * @return 			Model_CalibreThing, the Calibre item
      */
     public function addCalibreThing($calibreType, $calibreId, $calibreName)
     {
@@ -445,9 +445,9 @@ class BicBucStriim
             $created = $this->thumbnailStuffed($file, $png, self::THUMB_RES, self::THUMB_RES, $fname);
         }
 
-        /** @var \RedBeanPHP\SimpleModel $artefact */
         $artefact = $calibreThing->getAuthorThumbnail();
         if (is_null($artefact)) {
+            /** @var Model_Artefact $artefact */
             $artefact = R::dispense('artefact');
             $artefact->atype = DataConstants::AUTHOR_THUMBNAIL_ARTEFACT;
             $artefact->url = $fname;
@@ -461,7 +461,7 @@ class BicBucStriim
     /**
      * Get the file name of an author's thumbnail image.
      * @param int 	$authorId 	Calibre ID of the author
-     * @return 		?\RedBeanPHP\SimpleModel file name of the thumbnail image, or null
+     * @return 		?Model_Artefact file name of the thumbnail image, or null
      */
     public function getAuthorThumbnail($authorId)
     {
@@ -548,7 +548,7 @@ class BicBucStriim
     /**
      * Return all links defined for an author.
      * @param int 	$authorId 	Calibre ID for the author
-     * @return array 	author links
+     * @return array<Model_Link> author links
      */
     public function authorLinks($authorId)
     {
@@ -566,7 +566,7 @@ class BicBucStriim
      * @param string 	$authorName 	Calibre name for author
      * @param string 	$label 		link label
      * @param string 	$url 		link url
-     * @return object 	created author link
+     * @return Model_Link 	created author link
      */
     public function addAuthorLink($authorId, $authorName, $label, $url)
     {
@@ -574,6 +574,7 @@ class BicBucStriim
         if (is_null($calibreThing)) {
             $calibreThing = $this->addCalibreThing(DataConstants::CALIBRE_AUTHOR_TYPE, $authorId, $authorName);
         }
+        /** @var Model_Link $link */
         $link = R::dispense('link');
         $link->ltype = DataConstants::AUTHOR_LINK;
         $link->label = $label;
@@ -600,6 +601,7 @@ class BicBucStriim
             } catch (Exception $e) {
                 $link = null;
             }
+            /** @var ?Model_Link $link */
             if (!is_null($link)) {
                 unset($calibreThing->ownLinkList[$link->id]);
                 R::trash($link);
@@ -618,7 +620,7 @@ class BicBucStriim
     /**
      * Get the note text fro an author.
      * @param int 	$authorId 	Calibre ID of the author
-     * @return 		?object 		note text or null
+     * @return 		?Model_Note 		note text or null
      */
     public function authorNote($authorId)
     {
@@ -636,7 +638,7 @@ class BicBucStriim
      * @param string 	$authorName 	Calibre name for author
      * @param string 	$mime 		mime type for the note's content
      * @param string 	$noteText	note content
-     * @return object 	created/edited note
+     * @return Model_Note 	created/edited note
      */
     public function editAuthorNote($authorId, $authorName, $mime, $noteText)
     {
@@ -646,6 +648,7 @@ class BicBucStriim
         }
         $note = $calibreThing->getAuthorNote();
         if (is_null($note)) {
+            /** @var Model_Note $note */
             $note = R::dispense('note');
             $note->ntype = DataConstants::AUTHOR_NOTE;
             $note->mime = $mime;

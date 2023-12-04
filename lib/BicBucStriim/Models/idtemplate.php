@@ -9,8 +9,10 @@
  */
 
 /**
- * RedBeanPHP FUSE object for 'config'
+ * RedBeanPHP FUSE object for 'idtemplate'
+ * @property mixed $id
  * @property mixed $name
  * @property mixed $val
+ * @property mixed $label
  */
-class Model_Config extends \RedBeanPHP\SimpleModel {}
+class Model_IdTemplate extends \RedBeanPHP\SimpleModel {}

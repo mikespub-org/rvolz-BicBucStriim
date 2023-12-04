@@ -14,6 +14,7 @@
  * @property mixed $ownLinkList
  * @property mixed $ownNoteList
  * @property mixed $ownArtefactList
+ * @property mixed $id
  * @property mixed $ctype
  * @property mixed $cid
  * @property mixed $cname
@@ -23,7 +24,7 @@ class Model_CalibreThing extends \RedBeanPHP\SimpleModel
 {
     /**
      * Return author links releated to this Calibre entitiy.
-     * @return array 	all available author links
+     * @return array<Model_Link> all available author links
      */
     public function getAuthorLinks()
     {
@@ -36,7 +37,7 @@ class Model_CalibreThing extends \RedBeanPHP\SimpleModel
 
     /**
      * Return the author note text related to this Calibre entitiy.
-     * @return ?\RedBeanPHP\SimpleModel 	text or null
+     * @return ?Model_Note 	text or null
      */
     public function getAuthorNote()
     {
@@ -54,7 +55,7 @@ class Model_CalibreThing extends \RedBeanPHP\SimpleModel
 
     /**
      * Return the author thumbnail file related to this Calibre entitiy.
-     * @return ?\RedBeanPHP\SimpleModel 	Path to thumbnail file or null
+     * @return ?Model_Artefact 	Path to thumbnail file or null
      */
     public function getAuthorThumbnail()
     {
