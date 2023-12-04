@@ -9,9 +9,8 @@
  */
 
 /**
+ * RedBeanPHP FUSE object for 'config'
  * @property mixed $name
  * @property mixed $val
  */
-class Model_Config extends RedBean_SimpleModel
-{
-}
+class Model_Config extends \RedBeanPHP\SimpleModel {}

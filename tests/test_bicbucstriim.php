@@ -237,7 +237,7 @@ class TestOfBicBucStriim extends UnitTestCase
         $result2 = $this->bbs->getCalibreThing(DataConstants::CALIBRE_AUTHOR_TYPE, 1);
         $this->assertEqual('Author Name', $result2->cname);
         $this->assertEqual(1, $result2->refctr);
-        $artefacts = $result2->ownArtefact;
+        $artefacts = $result2->ownArtefactList;
         $this->assertEqual(1, count($artefacts));
         $result = $artefacts[1];
         $this->assertNotNull($result);
@@ -245,7 +245,7 @@ class TestOfBicBucStriim extends UnitTestCase
         $this->assertEqual(self::DATA . '/authors/author_1_thm.png', $result->url);
     }
 
-    public function skipTestGetAuthorThumbnail()
+    public function testGetAuthorThumbnail()
     {
         $this->assertTrue($this->bbs->editAuthorThumbnail(1, 'Author Name', true, 'tests/fixtures/author1.jpg', 'image/jpeg'));
         $this->assertTrue($this->bbs->editAuthorThumbnail(2, 'Author Name', true, 'tests/fixtures/author1.jpg', 'image/jpeg'));
@@ -257,7 +257,7 @@ class TestOfBicBucStriim extends UnitTestCase
         $this->assertNotNull($result);
     }
 
-    public function skipTestDeleteAuthorThumbnail()
+    public function testDeleteAuthorThumbnail()
     {
         $this->assertTrue($this->bbs->editAuthorThumbnail(1, 'Author Name', true, 'tests/fixtures/author1.jpg', 'image/jpeg'));
         $this->assertNotNull($this->bbs->getAuthorThumbnail(1));
@@ -268,7 +268,7 @@ class TestOfBicBucStriim extends UnitTestCase
         $this->assertEqual(0, R::count('calibrething'));
     }
 
-    public function skipTestAuthorLinks()
+    public function testAuthorLinks()
     {
         $this->assertEqual(0, count($this->bbs->authorLinks(1)));
         $this->bbs->addAuthorLink(2, 'Author 1', 'google', 'http://google.com/1');
@@ -285,7 +285,7 @@ class TestOfBicBucStriim extends UnitTestCase
         $this->assertEqual(1, R::count('link'));
     }
 
-    public function skipTestAuthorNote()
+    public function testAuthorNote()
     {
         $this->assertNull($this->bbs->authorNote(1));
         $this->bbs->editAuthorNote(2, 'Author 1', 'text/plain', 'Goodbye, goodbye!');

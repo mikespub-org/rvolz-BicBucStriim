@@ -8,10 +8,16 @@
  *
  */
 
- /**
-  * @property mixed $id
-  */
-class Model_User extends RedBean_SimpleModel
+/**
+ * RedBeanPHP FUSE object for 'user'
+ * @property mixed $id
+ * @property mixed $username
+ * @property mixed $password
+ * @property mixed $tags
+ * @property mixed $languages
+ * @property mixed $role
+ */
+class Model_User extends \RedBeanPHP\SimpleModel
 {
     public function to_json()
     {

@@ -63,6 +63,10 @@ class BicBucStriim
             $this->mydb->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             $this->mydb->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
             $this->last_error = $this->mydb->errorCode();
+            if (R::hasDatabase('default')) {
+                R::close();
+                R::removeToolBoxByKey('default');
+            }
             R::setup('sqlite:' . $rp);
             R::freeze($freeze);
         } else {
@@ -114,7 +118,7 @@ class BicBucStriim
     /**
      * Find a specific configuration value by name
      * @param string 	$name 	configuration parameter name
-     * @return ?RedBean_OODBBean	config paramter or null
+     * @return ?\RedBeanPHP\OODBBean	config paramter or null
      */
     public function config($name)
     {
@@ -369,7 +373,7 @@ class BicBucStriim
         $calibreThing->ctype = $calibreType;
         $calibreThing->cid = $calibreId;
         $calibreThing->cname = $calibreName;
-        $calibreThing->ownArtefact = [];
+        $calibreThing->ownArtefactList = [];
         $calibreThing->refctr = 0;
         $id = R::store($calibreThing);
         return $calibreThing;
@@ -392,7 +396,7 @@ class BicBucStriim
             $artefact = $calibreThing->getAuthorThumbnail();
             if (!is_null($artefact)) {
                 $ret = unlink($artefact->url);
-                unset($calibreThing->ownArtefact[$artefact->id]);
+                unset($calibreThing->ownArtefactList[$artefact->id]);
                 $calibreThing->refctr -= 1;
                 R::trash($artefact);
                 if ($calibreThing->refctr == 0) {
@@ -441,13 +445,13 @@ class BicBucStriim
             $created = $this->thumbnailStuffed($file, $png, self::THUMB_RES, self::THUMB_RES, $fname);
         }
 
-        /** @var RedBean_SimpleModel $artefact */
+        /** @var \RedBeanPHP\SimpleModel $artefact */
         $artefact = $calibreThing->getAuthorThumbnail();
         if (is_null($artefact)) {
             $artefact = R::dispense('artefact');
             $artefact->atype = DataConstants::AUTHOR_THUMBNAIL_ARTEFACT;
             $artefact->url = $fname;
-            $calibreThing->ownArtefact[] = $artefact;
+            $calibreThing->ownArtefactList[] = $artefact;
             $calibreThing->refctr += 1;
             R::store($calibreThing);
         }
@@ -457,7 +461,7 @@ class BicBucStriim
     /**
      * Get the file name of an author's thumbnail image.
      * @param int 	$authorId 	Calibre ID of the author
-     * @return 		?RedBean_SimpleModel file name of the thumbnail image, or null
+     * @return 		?\RedBeanPHP\SimpleModel file name of the thumbnail image, or null
      */
     public function getAuthorThumbnail($authorId)
     {
@@ -574,7 +578,7 @@ class BicBucStriim
         $link->ltype = DataConstants::AUTHOR_LINK;
         $link->label = $label;
         $link->url = $url;
-        $calibreThing->ownLink[] = $link;
+        $calibreThing->ownLinkList[] = $link;
         $calibreThing->refctr += 1;
         R::store($calibreThing);
         return $link;
@@ -592,12 +596,12 @@ class BicBucStriim
         $calibreThing = $this->getCalibreThing(DataConstants::CALIBRE_AUTHOR_TYPE, $authorId);
         if (!is_null($calibreThing)) {
             try {
-                $link = $calibreThing->ownLink[$linkId];
+                $link = $calibreThing->ownLinkList[$linkId];
             } catch (Exception $e) {
                 $link = null;
             }
             if (!is_null($link)) {
-                unset($calibreThing->ownLink[$link->id]);
+                unset($calibreThing->ownLinkList[$link->id]);
                 R::trash($link);
                 $calibreThing->refctr -= 1;
                 if ($calibreThing->refctr == 0) {
@@ -646,7 +650,7 @@ class BicBucStriim
             $note->ntype = DataConstants::AUTHOR_NOTE;
             $note->mime = $mime;
             $note->ntext = $noteText;
-            $calibreThing->ownNote[] = $note;
+            $calibreThing->ownNoteList[] = $note;
             $calibreThing->refctr += 1;
             R::store($calibreThing);
         } else {
@@ -669,7 +673,7 @@ class BicBucStriim
         if (!is_null($calibreThing)) {
             $note = $calibreThing->getAuthorNote();
             if (!is_null($note)) {
-                unset($calibreThing->ownNote[$note->id]);
+                unset($calibreThing->ownNoteList[$note->id]);
                 $calibreThing->refctr -= 1;
                 R::trash($note);
                 if ($calibreThing->refctr == 0) {

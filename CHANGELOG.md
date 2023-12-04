@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.6.x] - 20xx-xx-xx
 ## Changed
+- Fixed one-to-many relations for 'calibrething' authors
+- Updated gabordemooij/redbean package to version 5.7 for PHP 8.x
 - Fixed a few more phpstan level 3 issues
 - Moved vendor/rb.php to lib/BicBucStriim using gabordemooij/redbean package
 - Moved vendor/epub.php to lib/BicBucStriim

@@ -20,7 +20,9 @@ class BbsData
 
     public function __construct($db, $data_dir)
     {
-        R::setup('sqlite:' . $db);
+        if (!R::hasDatabase('default')) {
+            R::setup('sqlite:' . $db);
+        }
         $this->data_dir = $data_dir;
         $this->authors_dir = $this->data_dir . '/authors';
         if (!file_exists($this->authors_dir)) {
@@ -47,7 +49,7 @@ class BbsData
         $calibreThing->ctype = $calibreType;
         $calibreThing->cid = $calibreId;
         $calibreThing->cname = $calibreName;
-        $calibreThing->ownArtefact = [];
+        $calibreThing->ownArtefactList = [];
         $id = R::store($calibreThing);
         return $calibreThing;
     }
@@ -60,7 +62,7 @@ class BbsData
             $artefact = $calibreThing->getAuthorThumbnail();
             if (!is_null($artefact)) {
                 $ret = unlink($artefact->url);
-                unset($calibreThing->ownArtefact[$artefact->id]);
+                unset($calibreThing->ownArtefactList[$artefact->id]);
                 R::store($calibreThing);
             }
         }
@@ -83,11 +85,11 @@ class BbsData
 
         $artefact = $calibreThing->getAuthorThumbnail();
         if (is_null($artefact)) {
-            /** @var RedBean_SimpleModel $artefact */
+            /** @var \RedBeanPHP\SimpleModel $artefact */
             $artefact = R::dispense('artefact');
             $artefact->atype = DataConstants::AUTHOR_THUMBNAIL_ARTEFACT;
             $artefact->url = $fname;
-            $calibreThing->ownArtefact[] = $artefact;
+            $calibreThing->ownArtefactList[] = $artefact;
             R::store($calibreThing);
         }
         return $created;

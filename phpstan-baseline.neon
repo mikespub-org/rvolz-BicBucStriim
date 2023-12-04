@@ -16,42 +16,42 @@ parameters:
 			path: index.php
 
 		-
-			message: "#^Access to an undefined property RedBean_OODBBean\\:\\:\\$val\\.$#"
+			message: "#^Access to an undefined property RedBeanPHP\\\\OODBBean\\:\\:\\$val\\.$#"
 			count: 1
 			path: lib/BicBucStriim/bicbucstriim.php
 
 		-
-			message: "#^Cannot access property \\$atype on array\\|RedBean_OODBBean\\.$#"
+			message: "#^Access to an undefined property iterable\\<RedBeanPHP\\\\OODBBean\\>&RedBeanPHP\\\\OODBBean\\:\\:\\$atype\\.$#"
 			count: 1
 			path: lib/BicBucStriim/bicbucstriim.php
 
 		-
-			message: "#^Cannot access property \\$label on array\\|RedBean_OODBBean\\.$#"
+			message: "#^Access to an undefined property iterable\\<RedBeanPHP\\\\OODBBean\\>&RedBeanPHP\\\\OODBBean\\:\\:\\$label\\.$#"
 			count: 1
 			path: lib/BicBucStriim/bicbucstriim.php
 
 		-
-			message: "#^Cannot access property \\$ltype on array\\|RedBean_OODBBean\\.$#"
+			message: "#^Access to an undefined property iterable\\<RedBeanPHP\\\\OODBBean\\>&RedBeanPHP\\\\OODBBean\\:\\:\\$ltype\\.$#"
 			count: 1
 			path: lib/BicBucStriim/bicbucstriim.php
 
 		-
-			message: "#^Cannot access property \\$mime on array\\|RedBean_OODBBean\\.$#"
+			message: "#^Access to an undefined property iterable\\<RedBeanPHP\\\\OODBBean\\>&RedBeanPHP\\\\OODBBean\\:\\:\\$mime\\.$#"
 			count: 1
 			path: lib/BicBucStriim/bicbucstriim.php
 
 		-
-			message: "#^Cannot access property \\$ntext on array\\|RedBean_OODBBean\\.$#"
+			message: "#^Access to an undefined property iterable\\<RedBeanPHP\\\\OODBBean\\>&RedBeanPHP\\\\OODBBean\\:\\:\\$ntext\\.$#"
 			count: 1
 			path: lib/BicBucStriim/bicbucstriim.php
 
 		-
-			message: "#^Cannot access property \\$ntype on array\\|RedBean_OODBBean\\.$#"
+			message: "#^Access to an undefined property iterable\\<RedBeanPHP\\\\OODBBean\\>&RedBeanPHP\\\\OODBBean\\:\\:\\$ntype\\.$#"
 			count: 1
 			path: lib/BicBucStriim/bicbucstriim.php
 
 		-
-			message: "#^Cannot access property \\$url on array\\|RedBean_OODBBean\\.$#"
+			message: "#^Access to an undefined property iterable\\<RedBeanPHP\\\\OODBBean\\>&RedBeanPHP\\\\OODBBean\\:\\:\\$url\\.$#"
 			count: 2
 			path: lib/BicBucStriim/bicbucstriim.php
 
@@ -61,12 +61,12 @@ parameters:
 			path: lib/BicBucStriim/calibre_config_middleware.php
 
 		-
-			message: "#^Access to an undefined property RedBean_SimpleModel\\:\\:\\$atype\\.$#"
+			message: "#^Access to an undefined property RedBeanPHP\\\\SimpleModel\\:\\:\\$atype\\.$#"
 			count: 1
 			path: lib/BicBucStriim/data.php
 
 		-
-			message: "#^Access to an undefined property RedBean_SimpleModel\\:\\:\\$url\\.$#"
+			message: "#^Access to an undefined property RedBeanPHP\\\\SimpleModel\\:\\:\\$url\\.$#"
 			count: 1
 			path: lib/BicBucStriim/data.php
 
