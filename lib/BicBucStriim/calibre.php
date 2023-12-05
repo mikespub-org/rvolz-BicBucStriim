@@ -493,7 +493,7 @@ class Calibre
     /**
      * Return just the pure author information.
      * @param integer $id Calibre ID for author
-     * @return object    Calibre author record
+     * @return ?Author    Calibre author record
      */
     public function author($id)
     {
@@ -1140,7 +1140,7 @@ class Calibre
      * We always return the best of the available formats supported by Kindle devices
      * E.g. when there is both a Epub and a PDF file for a given book, we always return the Epub
      * @param  int $id book id
-     * @return ?object   $format    the kindle format object for the book or NULL
+     * @return ?Data   $format    the kindle format object for the book or NULL
      */
     public function titleGetKindleFormat($id)
     {

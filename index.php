@@ -392,7 +392,7 @@ function admin_get_idtemplates()
         $ni->label = '';
         array_push($idtemplates, $ni);
     }
-    $app->getLog()->debug('admin_get_idtemplates ' . var_export($idtemplates, true));
+    $app->getLog()->debug('admin_get_idtemplates ' . json_encode($idtemplates));
     $app->render('admin_idtemplates.html', [
         'page' => mkPage(getMessageString('admin_idtemplates'), 0, 2),
         'templates' => $idtemplates,
@@ -427,7 +427,7 @@ function admin_modify_idtemplate($id)
     if (!is_null($ntemplate)) {
         $resp->status(200);
         $msg = getMessageString('admin_modified');
-        $answer = json_encode(['template' => $ntemplate->getProperties(), 'msg' => $msg]);
+        $answer = json_encode(['template' => $ntemplate->unbox()->getProperties(), 'msg' => $msg]);
         $resp->header('Content-type', 'application/json');
     } else {
         $resp->status(500);
@@ -568,7 +568,7 @@ function admin_get_user($id)
     $nt->name = getMessageString('admin_no_selection');
     $nt->key = '';
     array_unshift($tags, $nt);
-    $app->getLog()->debug('admin_get_user: ' . var_export($user, true));
+    $app->getLog()->debug('admin_get_user: ' . json_encode($user));
     $app->render('admin_user.html', [
         'page' => mkPage(getMessageString('admin_users'), 0, 3),
         'user' => $user,
@@ -597,7 +597,7 @@ function admin_add_user()
     if (isset($user) && !is_null($user)) {
         $resp->status(200);
         $msg = getMessageString('admin_modified');
-        $answer = json_encode(['user' => $user->getProperties(), 'msg' => $msg]);
+        $answer = json_encode(['user' => $user->unbox()->getProperties(), 'msg' => $msg]);
         $resp->header('Content-type', 'application/json');
     } else {
         $resp->status(500);
@@ -660,12 +660,12 @@ function admin_modify_user($id)
         $user_data['tags'],
         $user_data['role']
     );
-    $app->getLog()->debug('admin_modify_user: ' . var_export($user, true));
+    $app->getLog()->debug('admin_modify_user: ' . json_encode($user));
     $resp = $app->response();
     if (isset($user) && !is_null($user)) {
         $resp->status(200);
         $msg = getMessageString('admin_modified');
-        $answer = json_encode(['user' => $user->getProperties(), 'msg' => $msg]);
+        $answer = json_encode(['user' => $user->unbox()->getProperties(), 'msg' => $msg]);
         $resp->header('Content-type', 'application/json');
     } else {
         $resp->status(500);
@@ -929,7 +929,7 @@ function edit_author_notes($id)
     if (!is_null($note)) {
         $resp->status(200);
         $msg = getMessageString('admin_modified');
-        $note2 = $note->getProperties();
+        $note2 = $note->unbox()->getProperties();
         $note2['html'] = $html;
         $answer = json_encode(['note' => $note2, 'msg' => $msg]);
         $resp->header('Content-type', 'application/json');
@@ -996,7 +996,7 @@ function new_author_link($id)
     if (!is_null($link)) {
         $resp->status(200);
         $msg = getMessageString('admin_modified');
-        $answer = json_encode(['link' => $link->getProperties(), 'msg' => $msg]);
+        $answer = json_encode(['link' => $link->unbox()->getProperties(), 'msg' => $msg]);
         $resp->header('Content-type', 'application/json');
     } else {
         $resp->status(500);
@@ -1309,6 +1309,7 @@ function book($id, $file)
     if (is_null($details)) {
         $app->getLog()->warn("book: no book found for " . $id);
         $app->notFound();
+        return;
     }
     // for people trying to circumvent filtering by direct access
     if (title_forbidden($details)) {
@@ -1383,6 +1384,7 @@ function kindle($id, $file)
     if (is_null($book)) {
         $app->getLog()->debug("kindle: book not found: " . $id);
         $app->notFound();
+        return;
     }
 
     $details = $app->calibre->titleDetails($globalSettings['lang'], $id);
@@ -1498,6 +1500,7 @@ function author($id)
     if (is_null($details)) {
         $app->getLog()->debug("no author");
         $app->notFound();
+        return;
     }
     $app->render('author_detail.html', [
         'page' => mkPage(getMessageString('author_details'), 3, 2),
@@ -1528,11 +1531,13 @@ function authorDetailsSlice($id, $index = 0)
     if (is_null($tl)) {
         $app->getLog()->debug('no author ' . $id);
         $app->notFound();
+        return;
     }
     $books = array_map('checkThumbnail', $tl['entries']);
 
     $series = $app->calibre->authorSeries($id, $books);
 
+    /** @var Author $author */
     $author = $tl['author'];
     $author->thumbnail = $app->bbs->getAuthorThumbnail($id);
     $note = $app->bbs->authorNote($id);
@@ -1552,7 +1557,7 @@ function authorDetailsSlice($id, $index = 0)
     $app->render('author_detail.html', [
         'page' => mkPage(getMessageString('author_details'), 3, 2),
         'url' => 'authors/' . $id,
-        'author' => $tl['author'],
+        'author' => $author,
         'books' => $books,
         'series' => $series,
         'curpage' => $tl['page'],
@@ -1576,10 +1581,12 @@ function authorNotes($id)
         $app->halt(400, "Bad parameter");
     }
 
+    /** @var ?Author $author */
     $author = $app->calibre->author($id);
     if (is_null($author)) {
         $app->getLog()->debug('authorNotes: author id not found ' . $id);
         $app->notFound();
+        return;
     }
     $note = $app->bbs->authorNote($id);
     if (!is_null($note)) {
@@ -1645,6 +1652,7 @@ function series($id)
     if (is_null($details)) {
         $app->getLog()->debug('no series ' . $id);
         $app->notFound();
+        return;
     }
     $app->render('series_detail.html', [
         'page' => mkPage(getMessageString('series_details'), 5, 3),
@@ -1674,6 +1682,7 @@ function seriesDetailsSlice($id, $index = 0)
     if (is_null($tl)) {
         $app->getLog()->debug('seriesDetailsSlice: no series ' . $id);
         $app->notFound();
+        return;
     }
     $books = array_map('checkThumbnail', $tl['entries']);
     $app->render('series_detail.html', [
@@ -1725,6 +1734,7 @@ function tag($id)
     if (is_null($details)) {
         $app->getLog()->debug("no tag");
         $app->notFound();
+        return;
     }
     $app->render('tag_detail.html', [
         'page' => mkPage(getMessageString('tag_details'), 4, 3),
@@ -1755,6 +1765,7 @@ function tagDetailsSlice($id, $index = 0)
     if (is_null($tl)) {
         $app->getLog()->debug('no tag ' . $id);
         $app->notFound();
+        return;
     }
     $books = array_map('checkThumbnail', $tl['entries']);
     $app->render('tag_detail.html', [

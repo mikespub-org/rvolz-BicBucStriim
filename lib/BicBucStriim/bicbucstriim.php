@@ -122,7 +122,11 @@ class BicBucStriim
      */
     public function config($name)
     {
-        return R::findOne('config', ' name = :name', [':name' => $name]);
+        $config = R::findOne('config', ' name = :name', [':name' => $name]);
+        if (!is_null($config)) {
+            $config = Model_Config::cast($config);
+        }
+        return $config;
     }
 
     /**
@@ -135,13 +139,13 @@ class BicBucStriim
             $config = $this->config($name);
             if (is_null($config)) {
                 /** @var Model_Config @config */
-                $config = R::dispense('config');
+                $config = Model_Config::cast(R::dispense('config'));
                 $config->name = $name;
                 $config->val = $val;
             } else {
                 $config->val = $val;
             }
-            if ($config->getMeta('tainted')) {
+            if ($config->unbox()->getMeta('tainted')) {
                 R::store($config);
             }
         }
@@ -157,16 +161,15 @@ class BicBucStriim
 
     /**
      * Find a specific user in the settings DB
-     * @return ?object user data or NULL if not found
+     * @return ?Model_User user data or NULL if not found
      */
     public function user($userid)
     {
-        /** @var Model_User $user */
         $user = R::load('user', $userid);
-        if (!$user->id) {
+        if (empty($user->id)) {
             return null;
         } else {
-            return $user;
+            return Model_User::cast($user);
         }
     }
 
@@ -175,7 +178,7 @@ class BicBucStriim
      * The username must be unique. Name and password must not be empty.
      * @param $username string login name for the account, must be unique
      * @param $password string clear text password
-     * @return ?object user account or null if the user exists or one of the parameters is empty
+     * @return ?Model_User user account or null if the user exists or one of the parameters is empty
      * @throws Exception if the DB operation failed
      */
     public function addUser($username, $password)
@@ -189,7 +192,7 @@ class BicBucStriim
         }
         $mdp = password_hash($password, PASSWORD_BCRYPT);
         /** @var Model_User $user */
-        $user = R::dispense('user');
+        $user = Model_User::cast(R::dispense('user'));
         $user->username = $username;
         $user->password = $mdp;
         $user->tags = null;
@@ -229,7 +232,7 @@ class BicBucStriim
      * @param string 	$languages 	comma-delimited set of language identifiers
      * @param string 	$tags 		string comma-delimited set of tags
      * @param string 	$role       "1" for admin "0" for normal user
-     * @return ?object updated user account or null if there was an error
+     * @return ?Model_User updated user account or null if there was an error
      */
     public function changeUser($userid, $password, $languages, $tags, $role)
     {
@@ -272,11 +275,15 @@ class BicBucStriim
     /**
      * Find a specific ID template in the settings DB
      * @param string $name 	template name
-     * @return ?Model_IdTemplate	IdTemplate or null
+     * @return ?Model_Idtemplate	IdTemplate or null
      */
     public function idTemplate($name)
     {
-        return R::findOne('idtemplate', ' name = :name', [':name' => $name]);
+        $template = R::findOne('idtemplate', ' name = :name', [':name' => $name]);
+        if (!is_null($template)) {
+            $template = Model_Idtemplate::cast($template);
+        }
+        return $template;
     }
 
     /**
@@ -284,12 +291,12 @@ class BicBucStriim
      * @param string $name 		unique template name
      * @param string $value 	URL template
      * @param string $label 	display label
-     * @return Model_IdTemplate template record or null if there was an error
+     * @return Model_Idtemplate template record or null if there was an error
      */
     public function addIdTemplate($name, $value, $label)
     {
-        /** @var Model_IdTemplate $template */
-        $template = R::dispense('idtemplate');
+        /** @var Model_Idtemplate $template */
+        $template = Model_Idtemplate::cast(R::dispense('idtemplate'));
         $template->name = $name;
         $template->val = $value;
         $template->label = $label;
@@ -318,7 +325,7 @@ class BicBucStriim
      * @param string $name 		template name
      * @param string $value 	URL template
      * @param string $label 	display label
-     * @return ?object updated template or null if there was an error
+     * @return ?Model_Idtemplate updated template or null if there was an error
      */
     public function changeIdTemplate($name, $value, $label)
     {
@@ -341,11 +348,11 @@ class BicBucStriim
      * Find a Calibre item.
      * @param int 	$calibreType
      * @param int 	$calibreId
-     * @return 		?Model_CalibreThing, the Calibre item
+     * @return ?Model_Calibrething the Calibre item
      */
     public function getCalibreThing($calibreType, $calibreId)
     {
-        return R::findOne(
+        $calibreThing = R::findOne(
             'calibrething',
             ' ctype = :type and cid = :id',
             [
@@ -353,6 +360,10 @@ class BicBucStriim
                 'id' => $calibreId,
                 ]
         );
+        if (!is_null($calibreThing)) {
+            $calibreThing = Model_Calibrething::cast($calibreThing);
+        }
+        return $calibreThing;
     }
 
     /**
@@ -364,12 +375,12 @@ class BicBucStriim
      * @param int 		$calibreType
      * @param int 		$calibreId
      * @param string 	$calibreName
-     * @return 			Model_CalibreThing, the Calibre item
+     * @return Model_Calibrething the Calibre item
      */
     public function addCalibreThing($calibreType, $calibreId, $calibreName)
     {
-        /** @var Model_CalibreThing $calibreThing */
-        $calibreThing = R::dispense('calibrething');
+        /** @var Model_Calibrething $calibreThing */
+        $calibreThing = Model_Calibrething::cast(R::dispense('calibrething'));
         $calibreThing->ctype = $calibreType;
         $calibreThing->cid = $calibreId;
         $calibreThing->cname = $calibreName;
@@ -396,7 +407,7 @@ class BicBucStriim
             $artefact = $calibreThing->getAuthorThumbnail();
             if (!is_null($artefact)) {
                 $ret = unlink($artefact->url);
-                unset($calibreThing->ownArtefactList[$artefact->id]);
+                $calibreThing->deleteArtefact($artefact->id);
                 $calibreThing->refctr -= 1;
                 R::trash($artefact);
                 if ($calibreThing->refctr == 0) {
@@ -448,10 +459,10 @@ class BicBucStriim
         $artefact = $calibreThing->getAuthorThumbnail();
         if (is_null($artefact)) {
             /** @var Model_Artefact $artefact */
-            $artefact = R::dispense('artefact');
+            $artefact = Model_Artefact::cast(R::dispense('artefact'));
             $artefact->atype = DataConstants::AUTHOR_THUMBNAIL_ARTEFACT;
             $artefact->url = $fname;
-            $calibreThing->ownArtefactList[] = $artefact;
+            $calibreThing->addArtefact($artefact);
             $calibreThing->refctr += 1;
             R::store($calibreThing);
         }
@@ -575,11 +586,11 @@ class BicBucStriim
             $calibreThing = $this->addCalibreThing(DataConstants::CALIBRE_AUTHOR_TYPE, $authorId, $authorName);
         }
         /** @var Model_Link $link */
-        $link = R::dispense('link');
+        $link = Model_Link::cast(R::dispense('link'));
         $link->ltype = DataConstants::AUTHOR_LINK;
         $link->label = $label;
         $link->url = $url;
-        $calibreThing->ownLinkList[] = $link;
+        $calibreThing->addLink($link);
         $calibreThing->refctr += 1;
         R::store($calibreThing);
         return $link;
@@ -603,7 +614,7 @@ class BicBucStriim
             }
             /** @var ?Model_Link $link */
             if (!is_null($link)) {
-                unset($calibreThing->ownLinkList[$link->id]);
+                $calibreThing->deleteLink($link->id);
                 R::trash($link);
                 $calibreThing->refctr -= 1;
                 if ($calibreThing->refctr == 0) {
@@ -649,11 +660,11 @@ class BicBucStriim
         $note = $calibreThing->getAuthorNote();
         if (is_null($note)) {
             /** @var Model_Note $note */
-            $note = R::dispense('note');
+            $note = Model_Note::cast(R::dispense('note'));
             $note->ntype = DataConstants::AUTHOR_NOTE;
             $note->mime = $mime;
             $note->ntext = $noteText;
-            $calibreThing->ownNoteList[] = $note;
+            $calibreThing->addNote($note);
             $calibreThing->refctr += 1;
             R::store($calibreThing);
         } else {
@@ -676,7 +687,7 @@ class BicBucStriim
         if (!is_null($calibreThing)) {
             $note = $calibreThing->getAuthorNote();
             if (!is_null($note)) {
-                unset($calibreThing->ownNoteList[$note->id]);
+                $calibreThing->deleteNote($note->id);
                 $calibreThing->refctr -= 1;
                 R::trash($note);
                 if ($calibreThing->refctr == 0) {

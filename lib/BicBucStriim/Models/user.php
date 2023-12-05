@@ -9,7 +9,7 @@
  */
 
 /**
- * RedBeanPHP FUSE object for 'user'
+ * RedBeanPHP FUSE model for 'user' bean
  * @property mixed $id
  * @property mixed $username
  * @property mixed $password
@@ -17,7 +17,7 @@
  * @property mixed $languages
  * @property mixed $role
  */
-class Model_User extends \RedBeanPHP\SimpleModel
+class Model_User extends \RedBeanPHP\TypedModel
 {
     public function to_json()
     {

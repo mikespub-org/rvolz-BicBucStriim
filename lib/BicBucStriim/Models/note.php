@@ -9,10 +9,10 @@
  */
 
 /**
- * RedBeanPHP FUSE object for 'note'
+ * RedBeanPHP FUSE model for 'note' bean
  * @property mixed $id
  * @property mixed $ntype
  * @property mixed $mime
  * @property mixed $ntext
  */
-class Model_Note extends \RedBeanPHP\SimpleModel {}
+class Model_Note extends \RedBeanPHP\TypedModel {}

@@ -11,6 +11,10 @@ class Author extends Item
 {
     public $sort;
     public $name;
+    public $thumbnail;
+    public $notes_source;
+    public $notes;
+    public $links;
 }
 class AuthorBook extends Item {}
 class Book extends Item

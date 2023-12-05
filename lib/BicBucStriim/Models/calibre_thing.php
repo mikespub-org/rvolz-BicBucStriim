@@ -9,7 +9,7 @@
  */
 
 /**
- * RedBeanPHP FUSE object for 'calibrething' with one-to-many relation of author with link, note and artefact
+ * RedBeanPHP FUSE model for 'calibrething' bean with one-to-many relation of author with link, note and artefact
  * See https://www.redbeanphp.com/index.php?p=/one_to_many
  * @property mixed $ownLinkList
  * @property mixed $ownNoteList
@@ -20,7 +20,7 @@
  * @property mixed $cname
  * @property mixed $refctr
  */
-class Model_CalibreThing extends \RedBeanPHP\SimpleModel
+class Model_Calibrething extends \RedBeanPHP\TypedModel
 {
     /**
      * Return author links releated to this Calibre entitiy.
@@ -33,6 +33,16 @@ class Model_CalibreThing extends \RedBeanPHP\SimpleModel
         return array_values(array_filter($links ?? [], function ($link) {
             return($link->ltype == DataConstants::AUTHOR_LINK);
         }));
+    }
+
+    public function addLink($link)
+    {
+        $this->bean->ownLinkList[] = $link;
+    }
+
+    public function deleteLink($linkId)
+    {
+        unset($this->bean->ownLinkList[$linkId]);
     }
 
     /**
@@ -49,8 +59,18 @@ class Model_CalibreThing extends \RedBeanPHP\SimpleModel
         if (empty($notes)) {
             return null;
         } else {
-            return $notes[0];
+            return Model_Note::cast($notes[0]);
         }
+    }
+
+    public function addNote($note)
+    {
+        $this->bean->ownNoteList[] = $note;
+    }
+
+    public function deleteNote($noteId)
+    {
+        unset($this->bean->ownNoteList[$noteId]);
     }
 
     /**
@@ -67,7 +87,17 @@ class Model_CalibreThing extends \RedBeanPHP\SimpleModel
         if (empty($artefacts)) {
             return null;
         } else {
-            return $artefacts[0];
+            return Model_Artefact::cast($artefacts[0]);
         }
+    }
+
+    public function addArtefact($artefact)
+    {
+        $this->bean->ownArtefactList[] = $artefact;
+    }
+
+    public function deleteArtefact($artefactId)
+    {
+        unset($this->bean->ownArtefactList[$artefactId]);
     }
 }

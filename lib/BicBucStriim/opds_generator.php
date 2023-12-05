@@ -628,7 +628,7 @@ class OpdsGenerator
         $this->xmlw->startElement("dc:language");
         $this->xmlw->text($entry['language']);
         $this->xmlw->endElement();
-        if (isset($entry['book']->thumbnail) && $entry['book']->thumbnail) {
+        if (isset($entry['book']->thumbnail) && $entry['book']->thumbnail && !empty($entry['book']->id)) {
             $tlink = $this->bbs_root . '/data/titles/thumb_' . $entry['book']->id . '.png';
         } else {
             $tlink = $titleLink . '/thumbnail/';

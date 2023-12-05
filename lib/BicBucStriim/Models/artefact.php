@@ -9,9 +9,9 @@
  */
 
 /**
- * RedBeanPHP FUSE object for 'artefact'
+ * RedBeanPHP FUSE model for 'artefact' bean
  * @property mixed $id
  * @property mixed $atype
  * @property mixed $url
  */
-class Model_Artefact extends \RedBeanPHP\SimpleModel {}
+class Model_Artefact extends \RedBeanPHP\TypedModel {}

@@ -9,10 +9,10 @@
  */
 
 /**
- * RedBeanPHP FUSE object for 'link'
+ * RedBeanPHP FUSE model for 'link' bean
  * @property mixed $id
  * @property mixed $ltype
  * @property mixed $label
  * @property mixed $url
  */
-class Model_Link extends \RedBeanPHP\SimpleModel {}
+class Model_Link extends \RedBeanPHP\TypedModel {}
