@@ -23,8 +23,8 @@ class CalibreConfigMiddleware extends \Slim\Middleware
      */
     public function call()
     {
-        global $globalSettings;
         $app = $this->app;
+        $globalSettings = $app->config('globalSettings');
         $request = $app->request;
 
         if ($request->getResourceUri() != '/login/') {

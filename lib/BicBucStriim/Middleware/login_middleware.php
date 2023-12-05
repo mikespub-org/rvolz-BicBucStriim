@@ -37,9 +37,8 @@ class LoginMiddleware extends \Slim\Middleware
 
     public function authBeforeDispatch()
     {
-        global $globalSettings;
-
         $app = $this->app;
+        $globalSettings = $app->config('globalSettings');
         $request = $app->request;
         $resource = $request->getResourceUri();
         $accept = $request->headers('ACCEPT');
@@ -203,7 +202,8 @@ class LoginMiddleware extends \Slim\Middleware
 
     protected function mkRootUrl()
     {
-        global $app, $globalSettings;
+        $app = $this->app;
+        $globalSettings = $app->config('globalSettings');
 
         if ($globalSettings[RELATIVE_URLS] == '1') {
             $root = rtrim($app->request()->getRootUri(), "/");

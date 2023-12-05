@@ -34,7 +34,7 @@ $app->run();
  */
 function myNotFound()
 {
-    global $app, $globalSettings;
+    global $app;
     $app->render('error.html', [
         'page' => mkPage(getMessageString('not_found1')),
         'title' => getMessageString('not_found1'),
@@ -580,6 +580,7 @@ function admin_change_json()
         if (count($nconfigs) > 0) {
             $app->bbs->saveConfigs($nconfigs);
             $app->getLog()->debug('admin_change: changes saved');
+            $app->config('globalSettings', $globalSettings);
         }
         $app->getLog()->debug('admin_change: ended');
         $app->render('admin_configuration.html', [

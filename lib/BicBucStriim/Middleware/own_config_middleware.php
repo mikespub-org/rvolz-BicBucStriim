@@ -20,7 +20,6 @@ class OwnConfigMiddleware extends \Slim\Middleware
 
     public function call()
     {
-        global $globalSettings;
         $app = $this->app;
         $config_status = $this->check_config_db();
         if ($config_status == 0) {
@@ -37,10 +36,10 @@ class OwnConfigMiddleware extends \Slim\Middleware
 
     protected function check_config_db()
     {
-        global $globalSettings, $we_have_config;
         $we_have_config = 0;
         /** @var \Slim\Slim $app */
         $app = $this->app;
+        $globalSettings = $app->config('globalSettings');
         if ($app->bbs->dbOk()) {
             $we_have_config = 1;
             $css = $app->bbs->configs();
@@ -54,6 +53,7 @@ class OwnConfigMiddleware extends \Slim\Middleware
                     ));
                 }
             }
+            $app->config('globalSettings', $globalSettings);
 
             if ($globalSettings[DB_VERSION] != DB_SCHEMA_VERSION) {
                 $app->getLog()->warn('own_config_middleware: old db schema detected. please run update');
