@@ -8,20 +8,6 @@
  */
 
 require 'vendor/autoload.php';
-define('REDBEAN_MODEL_PREFIX', '\\BicBucStriim\\AppData\\Model_');
-set_include_path(get_include_path() . PATH_SEPARATOR . './lib/BicBucStriim');
-require_once 'langs.php';
-require_once 'l10n.php';
-require_once 'app_constants.php';
-require_once 'opds_generator.php';
-require_once 'mailer.php';
-require_once 'metadata_epub.php';
-require_once 'deprecated.php';
-
-# The session gc lifetime needs to be at least as high as the Aura.Auth idle ttl, which defaults to 3600
-ini_set('session.gc_maxlifetime', 3600);
-# Running slim/slim 2.x on PHP 8.2 needs php error_reporting set to E_ALL & ~E_DEPRECATED & ~E_STRICT (= production default)
-//error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT);
 
 use BicBucStriim\Calibre\Calibre;
 use BicBucStriim\Calibre\Author;
@@ -29,184 +15,12 @@ use BicBucStriim\Calibre\Language;
 use BicBucStriim\Calibre\Tag;
 use Michelf\MarkdownExtra;
 
-# Allowed languages, i.e. languages with translations
-$allowedLangs = ['de', 'en', 'es', 'fr', 'gl', 'hu', 'it', 'nl', 'pl'];
-# Fallback language if the browser prefers another than the allowed languages
-$fallbackLang = 'en';
-# Application Name
-$appname = 'BicBucStriim';
-# App version
-$appversion = '1.6.6';
-
 # Init app and routes
-$app = new \Slim\Slim([
-    'view' => new \Slim\Views\Twig(),
-    'mode' => 'production',
-    #'mode' => 'debug',
-    #'mode' => 'development',
-]);
-
-$app->configureMode('production', 'confprod');
-$app->configureMode('development', 'confdev');
-$app->configureMode('debug', 'confdebug');
-
-/**
- * Configure app for production
- */
-function confprod()
-{
-    global $app, $appname, $appversion;
-    $app->config([
-        'debug' => false,
-        'cookies.lifetime' => '1 day',
-        'cookies.secret_key' => 'b4924c3579e2850a6fad8597da7ad24bf43ab78e',
-
-    ]);
-    $app->getLog()->setEnabled(true);
-    $app->getLog()->setLevel(\Slim\Log::WARN);
-    $app->getLog()->info($appname . ' ' . $appversion . ': Running in production mode.');
-    $app->getLog()->info('Running on PHP: ' . PHP_VERSION);
-    error_reporting(E_ALL ^ (E_DEPRECATED | E_USER_DEPRECATED));
-}
-
-/**
- * Configure app for development
- */
-function confdev()
-{
-    global $app, $appname, $appversion;
-    $app->config([
-        'debug' => true,
-        'cookies.lifetime' => '5 minutes',
-        'cookies.secret_key' => 'b4924c3579e2850a6fad8597da7ad24bf43ab78e',
-
-    ]);
-    $app->getLog()->setEnabled(true);
-    $app->getLog()->setLevel(\Slim\Log::DEBUG);
-    $app->getLog()->info($appname . ' ' . $appversion . ': Running in development mode.');
-    $app->getLog()->info('Running on PHP: ' . PHP_VERSION);
-}
-
-/**
- * Configure app for debug mode: production + log everything to file
- */
-function confdebug()
-{
-    global $app, $appname, $appversion;
-    $app->config([
-        'debug' => true,
-        'cookies.lifetime' => '1 day',
-        'cookies.secret_key' => 'b4924c3579e2850a6fad8597da7ad24bf43ab78e',
-    ]);
-    $app->getLog()->setEnabled(true);
-    $app->getLog()->setLevel(\Slim\Log::DEBUG);
-    $app->getLog()->setWriter(new \Slim\Logger\DateTimeFileWriter(['path' => './data', 'name_format' => 'Y-m-d']));
-    $app->getLog()->info($appname . ' ' . $appversion . ': Running in debug mode.');
-    error_reporting(E_ALL | E_STRICT);
-    $app->getLog()->info('Running on PHP: ' . PHP_VERSION);
-}
-
-# Init app globals
-$globalSettings = [];
-$globalSettings['appname'] = $appname;
-$globalSettings['version'] = $appversion;
-$globalSettings['sep'] = ' :: ';
-# Find the user language, either one of the allowed languages or
-# English as a fallback.
-$globalSettings['lang'] = getUserLang($allowedLangs, $fallbackLang);
-$globalSettings['l10n'] = new L10n($globalSettings['lang']);
-$globalSettings['langa'] = $globalSettings['l10n']->langa;
-$globalSettings['langb'] = $globalSettings['l10n']->langb;
-# Init admin settings with std values, for upgrades or db errors
-$globalSettings[CALIBRE_DIR] = '';
-$globalSettings[DB_VERSION] = DB_SCHEMA_VERSION;
-$globalSettings[KINDLE] = 0;
-$globalSettings[KINDLE_FROM_EMAIL] = '';
-$globalSettings[THUMB_GEN_CLIPPED] = 1;
-$globalSettings[PAGE_SIZE] = 30;
-$globalSettings[DISPLAY_APP_NAME] = $appname;
-$globalSettings[MAILER] = Mailer::MAIL;
-$globalSettings[SMTP_USER] = '';
-$globalSettings[SMTP_PASSWORD] = '';
-$globalSettings[SMTP_SERVER] = '';
-$globalSettings[SMTP_PORT] = 25;
-$globalSettings[SMTP_ENCRYPTION] = 0;
-$globalSettings[METADATA_UPDATE] = 0;
-$globalSettings[LOGIN_REQUIRED] = 1;
-$globalSettings[TITLE_TIME_SORT] = TITLE_TIME_SORT_TIMESTAMP;
-$globalSettings[RELATIVE_URLS] = 1;
-
-$knownConfigs = [CALIBRE_DIR, DB_VERSION, KINDLE, KINDLE_FROM_EMAIL,
-    THUMB_GEN_CLIPPED, PAGE_SIZE, DISPLAY_APP_NAME, MAILER, SMTP_SERVER,
-    SMTP_PORT, SMTP_USER, SMTP_PASSWORD, SMTP_ENCRYPTION, METADATA_UPDATE,
-    LOGIN_REQUIRED, TITLE_TIME_SORT, RELATIVE_URLS];
-
-# Freeze (true) DB schema before release! Set to false for DB development.
-$app->bbs = new \BicBucStriim\AppData\BicBucStriim('data/data.db', true);
-$app->add(new \BicBucStriim\Middleware\CalibreConfigMiddleware(CALIBRE_DIR));
-$app->add(new \BicBucStriim\Middleware\LoginMiddleware($appname, ['js', 'img', 'style']));
-$app->add(new \BicBucStriim\Middleware\OwnConfigMiddleware($knownConfigs));
-$app->add(new \BicBucStriim\Middleware\CachingMiddleware(['/admin', '/login']));
+$app = require(__DIR__ . '/lib/BicBucStriim/config.php');
 
 ###### Init routes for production
-$app->notFound('myNotFound');
-$app->get('/', 'main');
-$app->get('/admin/', 'check_admin', 'admin');
-$app->get('/admin/configuration/', 'check_admin', 'admin_configuration');
-$app->post('/admin/configuration/', 'check_admin', 'admin_change_json');
-$app->get('/admin/idtemplates/', 'check_admin', 'admin_get_idtemplates');
-$app->put('/admin/idtemplates/:id/', 'check_admin', 'admin_modify_idtemplate');
-$app->delete('/admin/idtemplates/:id/', 'check_admin', 'admin_clear_idtemplate');
-$app->get('/admin/mail/', 'check_admin', 'admin_get_smtp_config');
-$app->put('/admin/mail/', 'check_admin', 'admin_change_smtp_config');
-$app->get('/admin/users/', 'check_admin', 'admin_get_users');
-$app->post('/admin/users/', 'check_admin', 'admin_add_user');
-$app->get('/admin/users/:id/', 'check_admin', 'admin_get_user');
-$app->put('/admin/users/:id/', 'check_admin', 'admin_modify_user');
-$app->delete('/admin/users/:id/', 'check_admin', 'admin_delete_user');
-$app->get('/admin/version/', 'check_admin', 'admin_check_version');
-$app->get('/authors/:id/notes/', 'check_admin', 'authorNotes');
-#$app->post('/authors/:id/notes/', 'check_admin', 'authorNotesEdit');
-$app->get('/authors/:id/:page/', 'authorDetailsSlice');
-$app->get('/authorslist/:id/', 'authorsSlice');
-$app->get('/login/', 'show_login');
-$app->post('/login/', 'perform_login');
-$app->get('/logout/', 'logout');
-$app->post('/metadata/authors/:id/thumbnail/', 'check_admin', 'edit_author_thm');
-$app->delete('/metadata/authors/:id/thumbnail/', 'check_admin', 'del_author_thm');
-$app->post('/metadata/authors/:id/notes/', 'check_admin', 'edit_author_notes');
-$app->delete('/metadata/authors/:id/notes/', 'check_admin', 'del_author_notes');
-$app->post('/metadata/authors/:id/links/', 'check_admin', 'new_author_link');
-$app->delete('/metadata/authors/:id/links/:link_id/', 'check_admin', 'del_author_link');
-$app->get('/search/', 'globalSearch');
-$app->get('/series/:id/:page/', 'seriesDetailsSlice');
-$app->get('/serieslist/:id/', 'seriesSlice');
-$app->get('/tags/:id/:page/', 'tagDetailsSlice');
-$app->get('/tagslist/:id/', 'tagsSlice');
-$app->get('/titles/:id/', 'title');
-$app->get('/titles/:id/cover/', 'cover');
-$app->get('/titles/:id/file/:file', 'book');
-$app->post('/titles/:id/kindle/:file', 'kindle');
-$app->get('/titles/:id/thumbnail/', 'thumbnail');
-$app->get('/titleslist/:id/', 'titlesSlice');
-$app->get('/opds/', 'opdsRoot');
-$app->get('/opds/newest/', 'opdsNewest');
-$app->get('/opds/titleslist/:id/', 'opdsByTitle');
-$app->get('/opds/authorslist/', 'opdsByAuthorInitial');
-$app->get('/opds/authorslist/:initial/', 'opdsByAuthorNamesForInitial');
-$app->get('/opds/authorslist/:initial/:id/:page/', 'opdsByAuthor');
-$app->get('/opds/tagslist/', 'opdsByTagInitial');
-$app->get('/opds/tagslist/:initial/', 'opdsByTagNamesForInitial');
-$app->get('/opds/tagslist/:initial/:id/:page/', 'opdsByTag');
-$app->get('/opds/serieslist/', 'opdsBySeriesInitial');
-$app->get('/opds/serieslist/:initial/', 'opdsBySeriesNamesForInitial');
-$app->get('/opds/serieslist/:initial/:id/:page/', 'opdsBySeries');
-$app->get('/opds/opensearch.xml', 'opdsSearchDescriptor');
-$app->get('/opds/searchlist/:id/', 'opdsBySearch');
-$app->get('/opds/titles/:id/', 'title');
-$app->get('/opds/titles/:id/cover/', 'cover');
-$app->get('/opds/titles/:id/file/:file', 'book');
-$app->get('/opds/titles/:id/thumbnail/', 'thumbnail');
+$routes = require(__DIR__ . '/lib/BicBucStriim/routes.php');
+$routes($app);
 
 $app->run();
 
@@ -469,8 +283,9 @@ function admin_clear_idtemplate($id)
  */
 function admin_get_smtp_config()
 {
-    global $app, $globalSettings;
+    global $app;
 
+    $globalSettings = $app->config('globalSettings');
     $mail = ['username' => $globalSettings[SMTP_USER],
         'password' => $globalSettings[SMTP_PASSWORD],
         'smtpserver' => $globalSettings[SMTP_SERVER],
@@ -680,7 +495,8 @@ function admin_modify_user($id)
  */
 function admin_change_json()
 {
-    global $app, $globalSettings;
+    global $app;
+    $globalSettings = $app->config('globalSettings');
     $app->getLog()->debug('admin_change: started');
     # Check access permission
     if (!is_admin()) {
@@ -781,7 +597,8 @@ function admin_change_json()
  */
 function admin_check_version()
 {
-    global $app, $globalSettings;
+    global $app;
+    $globalSettings = $app->config('globalSettings');
     $versionAnswer = [];
     $contents = file_get_contents(VERSION_URL);
     if ($contents == false) {
@@ -825,7 +642,8 @@ function admin_check_version()
 
 function edit_author_thm($id)
 {
-    global $app, $globalSettings;
+    global $app;
+    $globalSettings = $app->config('globalSettings');
 
     // parameter checking
     if (!is_numeric($id)) {
@@ -1044,7 +862,8 @@ function del_author_link($id, $link)
  */
 function main()
 {
-    global $app, $globalSettings;
+    global $app;
+    $globalSettings = $app->config('globalSettings');
 
     $filter = getFilter();
     $books1 = $app->calibre->last30Books($globalSettings['lang'], $globalSettings[PAGE_SIZE], $filter);
@@ -1061,7 +880,8 @@ function main()
 # If there are more entries per category, there will be a link to the full results.
 function globalSearch()
 {
-    global $app, $globalSettings;
+    global $app;
+    $globalSettings = $app->config('globalSettings');
 
     // TODO check search paramater?
 
@@ -1096,7 +916,8 @@ function globalSearch()
 # A list of titles at $index -> /titlesList/:index
 function titlesSlice($index = 0)
 {
-    global $app, $globalSettings;
+    global $app;
+    $globalSettings = $app->config('globalSettings');
 
     // parameter checking
     if (!is_numeric($index)) {
@@ -1153,7 +974,8 @@ function human_filesize($bytes, $decimals = 0)
 # Show a single title > /titles/:id. The ID ist the Calibre ID
 function title($id)
 {
-    global $app, $globalSettings;
+    global $app;
+    $globalSettings = $app->config('globalSettings');
 
     // Add filter for huma nreadable filesize
     $filter = new Twig_SimpleFilter('hfsize', function ($string) {
@@ -1255,7 +1077,8 @@ function cover($id)
 # Route: /titles/:id/thumbnail
 function thumbnail($id)
 {
-    global $app, $globalSettings;
+    global $app;
+    $globalSettings = $app->config('globalSettings');
 
     // parameter checking
     if (!is_numeric($id)) {
@@ -1294,7 +1117,8 @@ function thumbnail($id)
 # Route: /titles/:id/file/:file
 function book($id, $file)
 {
-    global $app, $globalSettings;
+    global $app;
+    $globalSettings = $app->config('globalSettings');
 
     // parameter checking
     if (!is_numeric($id)) {
@@ -1368,7 +1192,8 @@ function book($id, $file)
 # Route: /titles/:id/kindle/:file
 function kindle($id, $file)
 {
-    global $app, $globalSettings;
+    global $app;
+    $globalSettings = $app->config('globalSettings');
 
     // parameter checking
     if (!is_numeric($id)) {
@@ -1455,7 +1280,8 @@ function kindle($id, $file)
  */
 function authorsSlice($index = 0)
 {
-    global $app, $globalSettings;
+    global $app;
+    $globalSettings = $app->config('globalSettings');
 
     // parameter checking
     if (!is_numeric($index)) {
@@ -1516,7 +1342,8 @@ function author($id)
  */
 function authorDetailsSlice($id, $index = 0)
 {
-    global $app, $globalSettings;
+    global $app;
+    $globalSettings = $app->config('globalSettings');
 
     // parameter checking
     if (!is_numeric($id) || !is_numeric($index)) {
@@ -1612,7 +1439,8 @@ function authorNotes($id)
  */
 function seriesSlice($index = 0)
 {
-    global $app, $globalSettings;
+    global $app;
+    $globalSettings = $app->config('globalSettings');
 
     // parameter checking
     if (!is_numeric($index)) {
@@ -1667,7 +1495,8 @@ function series($id)
  */
 function seriesDetailsSlice($id, $index = 0)
 {
-    global $app, $globalSettings;
+    global $app;
+    $globalSettings = $app->config('globalSettings');
 
     // parameter checking
     if (!is_numeric($id) || !is_numeric($index)) {
@@ -1699,7 +1528,8 @@ function seriesDetailsSlice($id, $index = 0)
  */
 function tagsSlice($index = 0)
 {
-    global $app, $globalSettings;
+    global $app;
+    $globalSettings = $app->config('globalSettings');
 
     // parameter checking
     if (!is_numeric($index)) {
@@ -1750,7 +1580,8 @@ function tag($id)
  */
 function tagDetailsSlice($id, $index = 0)
 {
-    global $app, $globalSettings;
+    global $app;
+    $globalSettings = $app->config('globalSettings');
 
     // parameter checking
     if (!is_numeric($id) || !is_numeric($index)) {
@@ -1801,7 +1632,8 @@ function opdsRoot()
  */
 function opdsNewest()
 {
-    global $app, $globalSettings;
+    global $app;
+    $globalSettings = $app->config('globalSettings');
 
     $filter = getFilter();
     $just_books = $app->calibre->last30Books($globalSettings['lang'], $globalSettings[PAGE_SIZE], $filter);
@@ -1828,7 +1660,8 @@ function opdsNewest()
  */
 function opdsByTitle($index = 0)
 {
-    global $app, $globalSettings;
+    global $app;
+    $globalSettings = $app->config('globalSettings');
 
     // parameter checking
     if (!is_numeric($index)) {
@@ -1898,7 +1731,8 @@ function opdsByAuthorNamesForInitial($initial)
  */
 function opdsByAuthor($initial, $id, $page)
 {
-    global $app, $globalSettings;
+    global $app;
+    $globalSettings = $app->config('globalSettings');
 
     // parameter checking
     if (!is_numeric($id) || !is_numeric($page)) {
@@ -1967,7 +1801,8 @@ function opdsByTagNamesForInitial($initial)
  */
 function opdsByTag($initial, $id, $page)
 {
-    global $app, $globalSettings;
+    global $app;
+    $globalSettings = $app->config('globalSettings');
 
     // parameter checking
     if (!is_numeric($id) || !is_numeric($page)) {
@@ -2034,7 +1869,8 @@ function opdsBySeriesNamesForInitial($initial)
  */
 function opdsBySeries($initial, $id, $page)
 {
-    global $app, $globalSettings;
+    global $app;
+    $globalSettings = $app->config('globalSettings');
 
     // parameter checking
     if (!is_numeric($id) || !is_numeric($page)) {
@@ -2080,7 +1916,8 @@ function opdsSearchDescriptor()
  */
 function opdsBySearch($index = 0)
 {
-    global $app, $globalSettings;
+    global $app;
+    $globalSettings = $app->config('globalSettings');
 
     // parameter checking
     if (!is_numeric($index)) {
@@ -2180,7 +2017,8 @@ function getForwardingInfo(\Slim\Http\Headers $headers)
 
 function mkRootUrl()
 {
-    global $app, $globalSettings;
+    global $app;
+    $globalSettings = $app->config('globalSettings');
 
     if ($globalSettings[RELATIVE_URLS] == '1') {
         $root = rtrim($app->request()->getRootUri(), "/");
@@ -2203,12 +2041,12 @@ function mkRootUrl()
 # Initialize the OPDS generator
 function mkOpdsGenerator(\Slim\Slim $app)
 {
-    global $appversion, $globalSettings;
+    $globalSettings = $app->config('globalSettings');
 
     $root = mkRootUrl();
     $gen = new OpdsGenerator(
         $root,
-        $appversion,
+        $globalSettings['version'],
         $app->calibre->calibre_dir,
         date(DATE_ATOM, $app->calibre->calibre_last_modified),
         $globalSettings['l10n']
@@ -2229,7 +2067,8 @@ function mkOpdsResponse($app, $content, $type)
 # Utility function to fill the page array
 function mkPage($subtitle = '', $menu = 0, $level = 0)
 {
-    global $app, $globalSettings;
+    global $app;
+    $globalSettings = $app->config('globalSettings');
 
     if ($subtitle == '') {
         $title = $globalSettings[DISPLAY_APP_NAME];
@@ -2311,7 +2150,8 @@ function title_forbidden($book_details)
  */
 function getMessageString($id)
 {
-    global $globalSettings;
+    global $app;
+    $globalSettings = $app->config('globalSettings');
     $msg = $globalSettings['l10n']->message($id);
     return $msg;
 }
@@ -2393,7 +2233,8 @@ function getUserLang($allowedLangs, $fallbackLang)
  */
 function has_global_setting($key)
 {
-    global $globalSettings;
+    global $app;
+    $globalSettings = $app->config('globalSettings');
     return (isset($globalSettings[$key]) && !empty($globalSettings[$key]));
 }
 
@@ -2403,8 +2244,9 @@ function has_global_setting($key)
  */
 function has_valid_calibre_dir()
 {
-    global $globalSettings;
-    return (has_global_setting(CALIBRE_DIR) &&
+    global $app;
+    $globalSettings = $app->config('globalSettings');
+    return (!empty($globalSettings[CALIBRE_DIR]) &&
         Calibre::checkForCalibre($globalSettings[CALIBRE_DIR]));
 }
 

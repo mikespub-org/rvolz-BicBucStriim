@@ -1,6 +1,5 @@
 <?php
 
-require 'vendor/autoload.php';
 class Mailer
 {
     // SMTP transport

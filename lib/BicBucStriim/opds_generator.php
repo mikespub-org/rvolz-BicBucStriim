@@ -1,7 +1,7 @@
 <?php
 
-require_once 'utilities.php';
-require_once 'l10n.php';
+use Utilities;
+
 /**
  * Generator for OPDS 1.1 Catalogs of BicBucStriim
  */

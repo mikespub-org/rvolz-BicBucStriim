@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add namespaces to AppData, Calibre and Middleware classes
 - New RedBeanPHP FUSE model for artefact, idtemplate, link and note
 ## Changed
+- Split off config and routes from index.php
 - Moved middleware files to lib/BicBucStriim/Middleware
 - Moved Calibre items and searchtype from utilities.php to lib/BicBucStriim/Calibre
 - Moved calibre_thing.php, config.php and user.php to lib/BicBucStriim/AppData

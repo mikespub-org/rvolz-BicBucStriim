@@ -8,7 +8,7 @@
  *
  */
 
-require_once 'epub.php';
+use EPub;
 
 /**
  * Update the metadata of an EPUB file. Creates temporary copies
