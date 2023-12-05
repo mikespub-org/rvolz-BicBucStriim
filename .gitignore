@@ -15,11 +15,11 @@ work
 worklib
 /.phpunit.result.cache
 vendor
-!vendor/rb.php
-!vendor/epub.php
-!vendor/DateTimeFileWriter.php
 .env
 .vscode/
 .yarn/
 .yarnrc.yml
-
+.php-cs-fixer.cache
+data/authors/*.png
+data/titles/*.png
+bicbucstriim*.zip
