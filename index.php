@@ -8,18 +8,12 @@
  */
 
 require 'vendor/autoload.php';
+define('REDBEAN_MODEL_PREFIX', '\\BicBucStriim\\AppData\\Model_');
 set_include_path(get_include_path() . PATH_SEPARATOR . './lib/BicBucStriim');
-require 'rb.php';
 require_once 'langs.php';
 require_once 'l10n.php';
 require_once 'app_constants.php';
-require_once 'bicbucstriim.php';
-require_once 'calibre.php';
 require_once 'opds_generator.php';
-require_once 'own_config_middleware.php';
-require_once 'calibre_config_middleware.php';
-require_once 'login_middleware.php';
-require_once 'caching_middleware.php';
 require_once 'mailer.php';
 require_once 'metadata_epub.php';
 require_once 'deprecated.php';
@@ -29,6 +23,10 @@ ini_set('session.gc_maxlifetime', 3600);
 # Running slim/slim 2.x on PHP 8.2 needs php error_reporting set to E_ALL & ~E_DEPRECATED & ~E_STRICT (= production default)
 //error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT);
 
+use BicBucStriim\Calibre\Calibre;
+use BicBucStriim\Calibre\Author;
+use BicBucStriim\Calibre\Language;
+use BicBucStriim\Calibre\Tag;
 use Michelf\MarkdownExtra;
 
 # Allowed languages, i.e. languages with translations
@@ -144,11 +142,11 @@ $knownConfigs = [CALIBRE_DIR, DB_VERSION, KINDLE, KINDLE_FROM_EMAIL,
     LOGIN_REQUIRED, TITLE_TIME_SORT, RELATIVE_URLS];
 
 # Freeze (true) DB schema before release! Set to false for DB development.
-$app->bbs = new BicBucStriim('data/data.db', true);
-$app->add(new \CalibreConfigMiddleware(CALIBRE_DIR));
-$app->add(new \LoginMiddleware($appname, ['js', 'img', 'style']));
-$app->add(new \OwnConfigMiddleware($knownConfigs));
-$app->add(new \CachingMiddleware(['/admin', '/login']));
+$app->bbs = new \BicBucStriim\AppData\BicBucStriim('data/data.db', true);
+$app->add(new \BicBucStriim\Middleware\CalibreConfigMiddleware(CALIBRE_DIR));
+$app->add(new \BicBucStriim\Middleware\LoginMiddleware($appname, ['js', 'img', 'style']));
+$app->add(new \BicBucStriim\Middleware\OwnConfigMiddleware($knownConfigs));
+$app->add(new \BicBucStriim\Middleware\CachingMiddleware(['/admin', '/login']));
 
 ###### Init routes for production
 $app->notFound('myNotFound');
@@ -2152,7 +2150,7 @@ function getFilter()
         }
         $app->getLog()->debug('getFilter: Using language ' . $lang . ', tag ' . $tag);
     }
-    return new CalibreFilter($lang, $tag);
+    return new \BicBucStriim\Calibre\CalibreFilter($lang, $tag);
 }
 
 

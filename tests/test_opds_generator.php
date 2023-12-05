@@ -7,11 +7,13 @@
  * - opds_validator (https://github.com/zetaben/opds-validator)
  */
 set_include_path("tests:vendor");
+require_once('autoload.php');
 require_once('simpletest/simpletest/autorun.php');
 require_once('lib/BicBucStriim/l10n.php');
-require_once('lib/BicBucStriim/bicbucstriim.php');
-require_once('lib/BicBucStriim/opds_generator.php');
 
+use BicBucStriim\AppData\BicBucStriim;
+use BicBucStriim\Calibre\Calibre;
+use BicBucStriim\Calibre\CalibreFilter;
 
 class TestOfOpdsGenerator extends UnitTestCase
 {
@@ -56,7 +58,7 @@ class TestOfOpdsGenerator extends UnitTestCase
     # Validation helper: validate relaxng
     public function opdsValidateSchema($feed)
     {
-        $res = system('jing ' . self::OPDS_RNG . ' ' . $feed);
+        $res = system('cd ~/seblucas-cops/test;java -jar jing.jar ' . realpath(self::OPDS_RNG) . ' ' . realpath($feed));
         if ($res != '') {
             echo 'RelaxNG validation error: ' . $res;
             return false;
@@ -68,7 +70,7 @@ class TestOfOpdsGenerator extends UnitTestCase
     # Validation helper: validate opds
     public function opdsValidate($feed, $version)
     {
-        $cmd = 'cd ~/lib/java/opds-validator;java -jar OPDSValidator.jar -v' . $version . ' ' . realpath($feed);
+        $cmd = 'cd ~/seblucas-cops/test;java -jar OPDSValidator.jar -v' . $version . ' ' . realpath($feed);
         $res = system($cmd);
         if ($res != '') {
             echo 'OPDS validation error: ' . $res;

@@ -84,8 +84,8 @@ Requirements
 
 BicBucStriim publishes Calibre libraries via a web server, so it requires some modules to be pre-installed on your machine. The required modules are common ones for NAS, however you should check first if your device supports them:
 
-* Apache web server with PHP 5.3.7+, including support for mcrypt and sqlite3
-* Optional: if PHP module *intl* (php5-intl) is installed, book languages will be displayed
+* Apache web server with PHP ~~5.3.7+~~8.0+, including support for ~~mcrypt~~sodium and sqlite3
+* Optional: if PHP module *intl* (php~~5~~-intl) is installed, book languages will be displayed
 
 If you can't/won't use Apache: BicBucStriim is known to work with other web servers too. Check the wiki for other configurations.
 

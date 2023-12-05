@@ -4,16 +4,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.6.x] - 20xx-xx-xx
+## [1.7.x] - 20xx-xx-xx
+## Added
+- Add namespaces to AppData, Calibre and Middleware classes
+- New RedBeanPHP FUSE model for artefact, idtemplate, link and note
 ## Changed
-- Fixed one-to-many relations for 'calibrething' authors
+- Moved middleware files to lib/BicBucStriim/Middleware
+- Moved Calibre items and searchtype from utilities.php to lib/BicBucStriim/Calibre
+- Moved calibre_thing.php, config.php and user.php to lib/BicBucStriim/AppData
+- Fixed one-to-many relations for 'calibrething' authors with tests
 - Updated gabordemooij/redbean package to version 5.7 for PHP 8.x
 - Fixed a few more phpstan level 3 issues
 - Moved vendor/rb.php to lib/BicBucStriim using gabordemooij/redbean package
 - Moved vendor/epub.php to lib/BicBucStriim
 - Replaced vendor/DateTimeFileWriter.php with package slim/logger
 - Replaced abandoned package dflydev/markdown with michelf/php-markdown
-- Skipped non-working tests for author thumbnail, links and note
 ### Removed
 - Removed package ircmaxell/password-compat as no longer relevant (PHP < 5.5)
 

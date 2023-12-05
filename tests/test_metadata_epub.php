@@ -5,9 +5,13 @@
  */
 
 set_include_path("tests:vendor");
+require_once('autoload.php');
 require_once('simpletest/simpletest/autorun.php');
-require_once('lib/BicBucStriim/calibre.php');
-require_once('lib/BicBucStriim/metadata_epub.php');
+
+use BicBucStriim\Calibre\Calibre;
+use BicBucStriim\Calibre\Author;
+use BicBucStriim\Calibre\Tag;
+
 class TestOfMetadataEpub extends UnitTestCase
 {
     public const DATA = './tests/data';

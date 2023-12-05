@@ -8,6 +8,8 @@
  *
  */
 
+namespace BicBucStriim\AppData;
+
 /**
  * RedBeanPHP FUSE model for 'config' bean
  * @property mixed $id

@@ -7,7 +7,7 @@
  *
  */
 
-require 'vendor/autoload.php';
+namespace BicBucStriim\Middleware;
 
 class CachingMiddleware extends \Slim\Middleware
 {
@@ -34,7 +34,7 @@ class CachingMiddleware extends \Slim\Middleware
         $request = $app->request;
         $resource = $request->getResourceUri();
         foreach ($this->resources as $noCacheResource) {
-            if (Utilities::stringStartsWith($resource, $noCacheResource)) {
+            if (\Utilities::stringStartsWith($resource, $noCacheResource)) {
                 session_cache_limiter('nocache');
                 $app->getLog()->debug('caching_middleware: caching disabled for ' . $resource);
                 break;

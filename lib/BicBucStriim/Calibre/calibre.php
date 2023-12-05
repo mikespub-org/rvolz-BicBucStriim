@@ -7,8 +7,11 @@
  *
  */
 
-require_once 'utilities.php';
-require_once 'calibre_filter.php';
+namespace BicBucStriim\Calibre;
+
+use PDO;
+use Locale;
+use Exception;
 
 class Calibre
 {
@@ -824,7 +827,7 @@ class Calibre
         if (is_null($book)) {
             return null;
         } else {
-            return Utilities::bookPath($this->calibre_dir, $book->path, 'cover.jpg');
+            return \Utilities::bookPath($this->calibre_dir, $book->path, 'cover.jpg');
         }
     }
 
@@ -1121,7 +1124,7 @@ class Calibre
         if (is_null($book)) {
             return null;
         } else {
-            return Utilities::bookPath($this->calibre_dir, $book->path, $file);
+            return \Utilities::bookPath($this->calibre_dir, $book->path, $file);
         }
     }
 

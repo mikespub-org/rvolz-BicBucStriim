@@ -8,6 +8,8 @@
  *
  */
 
+namespace BicBucStriim\AppData;
+
 /**
  * RedBeanPHP FUSE model for 'calibrething' bean with one-to-many relation of author with link, note and artefact
  * See https://www.redbeanphp.com/index.php?p=/one_to_many

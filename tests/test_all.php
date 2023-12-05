@@ -1,9 +1,12 @@
 <?php
 
+if (!defined('REDBEAN_MODEL_PREFIX')) {
+    define('REDBEAN_MODEL_PREFIX', '\\BicBucStriim\\AppData\\Model_');
+}
 set_include_path("tests:vendor");
-#require_once('lib/simpletest/autorun.php');
 require 'autoload.php';
 require 'simpletest/simpletest/autorun.php';
+
 class TestsAll extends TestSuite
 {
     public function __construct(string $label = 'All Tests')

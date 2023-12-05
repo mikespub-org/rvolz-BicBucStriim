@@ -7,11 +7,7 @@
  *
  */
 
-require 'vendor/autoload.php';
-require_once 'lib/BicBucStriim/bicbucstriim.php';
-require_once 'lib/BicBucStriim/session_factory.php';
-require_once 'lib/BicBucStriim/session.php';
-use Aura\Auth;
+namespace BicBucStriim\Middleware;
 
 class LoginMiddleware extends \Slim\Middleware
 {
@@ -126,7 +122,7 @@ class LoginMiddleware extends \Slim\Middleware
         $resume_service = $auth_factory->newResumeService($pdo_adapter);
         try {
             $resume_service->resume($app->auth);
-        } catch(ErrorException $e) {
+        } catch(\ErrorException $e) {
             $app->getLog()->warn('login error: bad cookie data ' . var_export(get_class($e), true));
         }
         $app->getLog()->debug("after resume: " . $app->auth->getStatus());
@@ -158,7 +154,7 @@ class LoginMiddleware extends \Slim\Middleware
                         'username' => $auth[0],
                         'password' => $auth[1]]);
                     $app->getLog()->debug('login status: ' . var_export($app->auth->getStatus(), true));
-                } catch (Auth\Exception $e) {
+                } catch (\Aura\Auth\Exception $e) {
                     $app->getLog()->debug('login error: ' . var_export(get_class($e), true));
                 }
                 return $app->auth->isValid();
@@ -233,19 +229,19 @@ class LoginMiddleware extends \Slim\Middleware
      * First we look for the standard 'Forwarded' header from RFC 7239, then for the non-standard X-Forwarded-... headers.
      *
      * @param \Slim\Http\Headers $headers
-     * @return null|UrlInfo
+     * @return null|\UrlInfo
      */
     protected function getForwardingInfo(\Slim\Http\Headers $headers)
     {
         $info = null;
         $forwarded = $headers->get('Forwarded');
         if (!is_null($forwarded)) {
-            $info = new UrlInfo($forwarded);
+            $info = new \UrlInfo($forwarded);
         } else {
             $fhost = $headers->get('X-Forwarded-Host');
             $fproto = $headers->get('X-Forwarded-Proto');
             if (!is_null($fhost)) {
-                $info = new UrlInfo($fhost, $fproto);
+                $info = new \UrlInfo($fhost, $fproto);
             }
         }
         return $info;

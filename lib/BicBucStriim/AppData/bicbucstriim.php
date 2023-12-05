@@ -8,8 +8,11 @@
  *
  */
 
-require_once 'data_constants.php';
-require_once 'Models/calibre_thing.php';
+namespace BicBucStriim\AppData;
+
+use PDO;
+use Exception;
+
 class BicBucStriim
 {
     # Name to the bbs db
@@ -150,6 +153,7 @@ class BicBucStriim
             }
         }
     }
+
     /**
      * Find all user records in the settings DB
      * @return array user data
@@ -744,7 +748,7 @@ class BicBucStriim
     private function thumbnailStuffed($cover, $png, $newwidth, $newheight, $thumb_path)
     {
         [$width, $height] = getimagesize($cover);
-        $thumb = Utilities::transparentImage($newwidth, $newheight);
+        $thumb = $this->transparentImage($newwidth, $newheight);
         if ($png) {
             $source = imagecreatefrompng($cover);
         } else {

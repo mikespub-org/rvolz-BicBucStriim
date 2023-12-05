@@ -8,6 +8,8 @@
  *
  */
 
+namespace BicBucStriim\Calibre;
+
 class CalibreFilter
 {
     /**

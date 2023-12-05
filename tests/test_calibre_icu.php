@@ -3,9 +3,11 @@
  * Test our workaround to search for items with non-ascii names
  */
 set_include_path("tests:vendor");
+require_once('autoload.php');
 require_once('simpletest/simpletest/autorun.php');
-require_once('lib/BicBucStriim/calibre.php');
-require_once('lib/BicBucStriim/calibre_filter.php');
+
+use BicBucStriim\Calibre\Calibre;
+use BicBucStriim\Calibre\CalibreFilter;
 
 class TestOfCalibreIcu extends UnitTestCase
 {

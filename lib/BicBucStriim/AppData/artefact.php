@@ -8,11 +8,12 @@
  *
  */
 
+namespace BicBucStriim\AppData;
+
 /**
- * RedBeanPHP FUSE model for 'link' bean
+ * RedBeanPHP FUSE model for 'artefact' bean
  * @property mixed $id
- * @property mixed $ltype
- * @property mixed $label
+ * @property mixed $atype
  * @property mixed $url
  */
-class Model_Link extends \RedBeanPHP\TypedModel {}
+class Model_Artefact extends \RedBeanPHP\TypedModel {}

@@ -1,5 +1,7 @@
 <?php
 
+namespace BicBucStriim\AppData;
+
 class R extends \RedBeanPHP\Facade
 {
     /**

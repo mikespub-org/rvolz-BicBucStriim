@@ -6,69 +6,6 @@
 # A database item class
 class Item {}
 
-# Utiliy classes for Calibre DB items
-class Author extends Item
-{
-    public $sort;
-    public $name;
-    public $thumbnail;
-    public $notes_source;
-    public $notes;
-    public $links;
-}
-class AuthorBook extends Item {}
-class Book extends Item
-{
-    public $id;
-    public $language;
-    public $formats;
-    public $addInfo;
-}
-class BookAuthorLink extends Item {}
-class BooksCustomColumnLink extends Item {}
-class BookSeriesLink extends Item {}
-class BookTagLink extends Item {}
-class BookLanguageLink extends Item {}
-class Comment extends Item {}
-class CustomColumn extends Item {}
-class CustomColumns extends Item {}
-class Data extends Item {}
-class Initial extends Item
-{
-    public $initial;
-    public $ctr;
-}
-class Language extends Item
-{
-    public $lang_code;
-    public $key;
-}
-class Series extends Item {}
-class SeriesBook extends Item {}
-class Tag extends Item
-{
-    public $name;
-    public $key;
-}
-class TagBook extends Item {}
-class Identifier extends Item {}
-
-
-# Search types for Calibre::findSliceFiltered
-abstract class CalibreSearchType
-{
-    public const Author = 1;
-    public const AuthorBook = 2;
-    public const Book = 3;
-    public const Series = 4;
-    public const SeriesBook = 5;
-    public const Tag = 6;
-    public const TagBook = 7;
-    public const TimestampOrderedBook = 8;
-    public const PubDateOrderedBook = 9;
-    public const LastModifiedOrderedBook = 10;
-}
-
 # Configuration utilities for BBS
 class Encryption extends Item
 {

@@ -58,6 +58,7 @@ class MetadataEpub
 
     /**
      * Return the path to the updated file
+     * @return string
      */
     public function getUpdatedFile()
     {

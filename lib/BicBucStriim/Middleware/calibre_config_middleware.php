@@ -1,7 +1,6 @@
 <?php
 
-require 'vendor/autoload.php';
-require_once 'lib/BicBucStriim/calibre.php';
+namespace BicBucStriim\Middleware;
 
 class CalibreConfigMiddleware extends \Slim\Middleware
 {
@@ -42,7 +41,7 @@ class CalibreConfigMiddleware extends \Slim\Middleware
             } else {
                 # Setup the connection to the Calibre metadata db
                 $clp = $globalSettings[$this->calibreDir] . '/metadata.db';
-                $app->calibre = new Calibre($clp);
+                $app->calibre = new \BicBucStriim\Calibre\Calibre($clp);
                 if (!$app->calibre->libraryOk()) {
                     $app->getLog()->error('check_config: Exception while opening metadata db ' . $clp . '. Showing admin page.');
                     // app->redirect not useable in middleware

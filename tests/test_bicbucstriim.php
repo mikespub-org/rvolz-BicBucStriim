@@ -1,10 +1,16 @@
 <?php
 
+if (!defined('REDBEAN_MODEL_PREFIX')) {
+    define('REDBEAN_MODEL_PREFIX', '\\BicBucStriim\\AppData\\Model_');
+}
 set_include_path("tests:vendor");
-require_once 'simpletest/simpletest/autorun.php';
-require_once 'lib/BicBucStriim/rb.php';
-require_once 'lib/BicBucStriim/data_constants.php';
-require_once 'lib/BicBucStriim/bicbucstriim.php';
+require_once('autoload.php');
+require_once('simpletest/simpletest/autorun.php');
+
+use BicBucStriim\AppData\BicBucStriim;
+use BicBucStriim\AppData\DataConstants;
+use BicBucStriim\AppData\R;
+
 class TestOfBicBucStriim extends UnitTestCase
 {
     public const SCHEMA = './data/schema.sql';

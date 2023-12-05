@@ -6,6 +6,9 @@
  * Licensed under MIT License, see LICENSE
  *
  */
+
+namespace BicBucStriim\AppData;
+
 class DataConstants
 {
     // CalibreThing types

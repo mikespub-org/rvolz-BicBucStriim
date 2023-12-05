@@ -95,9 +95,9 @@ function check_php()
     $pv = preg_split('/\./', phpversion());
     $maj = intval($pv[0]);
     $min = intval($pv[1]);
-    if ($maj == 5 && $min >= 3) {
+    if ($maj == 8 && $min >= 0) {
         return true;
-    } elseif ($maj > 5) {
+    } elseif ($maj > 8) {
         return true;
     } else {
         return false;
@@ -145,7 +145,6 @@ echo $template->render([
     'hgd2v' => $gdv,
     'dwrit' => fw('./data'),
     'intl' => extension_loaded('intl'),
-    'mcrypt' => extension_loaded('mcrypt'),
     'sodium' => extension_loaded('sodium'),
     'mwrit' => fw('./data/data.db'),
     'opd' => ini_get('open_basedir'),

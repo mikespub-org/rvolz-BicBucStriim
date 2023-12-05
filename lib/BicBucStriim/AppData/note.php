@@ -8,6 +8,8 @@
  *
  */
 
+namespace BicBucStriim\AppData;
+
 /**
  * RedBeanPHP FUSE model for 'note' bean
  * @property mixed $id

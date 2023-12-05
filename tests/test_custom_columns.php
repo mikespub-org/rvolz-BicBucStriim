@@ -1,8 +1,10 @@
 <?php
 
 set_include_path("tests:vendor");
+require_once('autoload.php');
 require_once('simpletest/simpletest/autorun.php');
-require_once('lib/BicBucStriim/bicbucstriim.php');
+
+use BicBucStriim\Calibre\Calibre;
 
 class TestOfCustomColumns extends UnitTestCase
 {
