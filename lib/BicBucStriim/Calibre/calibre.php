@@ -102,6 +102,9 @@ class Calibre
      */
     protected function find($class, $sql)
     {
+        if (!str_contains($class, __NAMESPACE__ . '\\')) {
+            $class = __NAMESPACE__ . '\\' . $class;
+        }
         $stmt = $this->calibre->query($sql, PDO::FETCH_CLASS, $class);
         $this->last_error = $stmt->errorCode();
         $items = $stmt->fetchAll();
@@ -120,6 +123,9 @@ class Calibre
      */
     protected function findPrepared($class, $sql, $params)
     {
+        if (!str_contains($class, __NAMESPACE__ . '\\')) {
+            $class = __NAMESPACE__ . '\\' . $class;
+        }
         $stmt = $this->calibre->prepare($sql);
         $stmt->execute($params);
         $this->last_error = $stmt->errorCode();
