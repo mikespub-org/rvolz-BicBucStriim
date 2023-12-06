@@ -5,10 +5,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [1.7.x] - 20xx-xx-xx
-## Added
+### Changed
+- Replaced abandoned package swiftmailer/swiftmailer with phpmailer/phpmailer
+
+## [1.7.0] - 2023-12-06
+### Added
 - Add namespaces to AppData, Calibre and Middleware classes
 - New RedBeanPHP FUSE model for artefact, idtemplate, link and note
-## Changed
+### Changed
+- Split off actions by group from index.php
 - Split off config and routes from index.php
 - Moved middleware files to lib/BicBucStriim/Middleware
 - Moved Calibre items and searchtype from utilities.php to lib/BicBucStriim/Calibre
@@ -24,17 +29,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Removed package ircmaxell/password-compat as no longer relevant (PHP < 5.5)
 
 ## [1.6.6] - 2023-12-04
-## Changed
+### Changed
 - Merged #1 by @Tocamadera, Amazon will start winding down MOBI format
 
 ## [1.6.5] - 2023-07-25
-## Changed
+### Changed
 - Use production mode by default
 
 ## [1.6.4] - 2023-03-26
 ### Added
 - Added placeholders in data/titles and data/authors
-## Changed
+### Changed
 - Adapted Dockerfile for permissions
 - Updated version and changelog
 
@@ -43,17 +48,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added docker files
 
 ## [1.6.2] - 2023-03-22
-## Changed
+### Changed
 - Added fixes for PHP 8.2
 
 ## [1.6.1] - 2023-03-20
-## Changed
+### Changed
 - Run php-cs-fixer with PHP80Migration rule
 
 ## [1.6.0] - 2023-03-20
 ### Added
 - Added deprecated.php file for get_magic_quotes_gpc()
-## Changed
+### Changed
 - Updated package versions in composer.json
 - Replaced JS packaging library with PHP version due to packaging error, #369
 
@@ -81,11 +86,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Merged Polish translation by @xro, #299
 - Updated infrastructure
 
-##[1.4.1] - 2017-11-28 
+## [1.4.1] - 2017-11-28 
 ### Changed
 - Updated MIME type for AZW3 download, #265
 
-##[1.4.0] - 2017-11-08
+## [1.4.0] - 2017-11-08
 ### Added
 - Enabled language processing für ES, GL, HU
 - Merged code by @rand82 for showing series in author pages, #255
