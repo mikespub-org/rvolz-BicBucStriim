@@ -37,7 +37,7 @@ class OwnConfigMiddleware extends \Slim\Middleware
     protected function check_config_db()
     {
         $we_have_config = 0;
-        /** @var \Slim\Slim $app */
+        /** @var \BicBucStriim\App $app */
         $app = $this->app;
         $globalSettings = $app->config('globalSettings');
         if ($app->bbs->dbOk()) {

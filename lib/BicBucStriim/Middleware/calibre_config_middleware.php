@@ -23,6 +23,7 @@ class CalibreConfigMiddleware extends \Slim\Middleware
      */
     public function call()
     {
+        /** @var \BicBucStriim\App $app */
         $app = $this->app;
         $globalSettings = $app->config('globalSettings');
         $request = $app->request;
@@ -33,8 +34,8 @@ class CalibreConfigMiddleware extends \Slim\Middleware
                 $app->getLog()->warn('check_config: Calibre library path not configured.');
                 if ($app->request->getResourceUri() != '/admin/configuration/') {
                     // app->redirect not useable in middleware
-                    $app->response->status(302);
-                    $app->response->header('Location', $app->request->getRootUri() . '/admin/configuration/');
+                    $app->response->setStatus(302);
+                    $app->response->headers->set('Location', $app->request->getRootUri() . '/admin/configuration/');
                 } else {
                     $this->next->call();
                 }
@@ -45,8 +46,8 @@ class CalibreConfigMiddleware extends \Slim\Middleware
                 if (!$app->calibre->libraryOk()) {
                     $app->getLog()->error('check_config: Exception while opening metadata db ' . $clp . '. Showing admin page.');
                     // app->redirect not useable in middleware
-                    $app->response->status(302);
-                    $app->response->header('Location', $app->request->getRootUri() . '/admin/configuration/');
+                    $app->response->setStatus(302);
+                    $app->response->headers->set('Location', $app->request->getRootUri() . '/admin/configuration/');
                 } else {
                     $this->next->call();
                 }

@@ -1,7 +1,5 @@
 <?php
 
-use Utilities;
-
 /**
  * Generator for OPDS 1.1 Catalogs of BicBucStriim
  */
@@ -612,7 +610,8 @@ class OpdsGenerator
      */
     public function partialAcquisitionEntry($entry, $protected)
     {
-        $titleLink = $this->bbs_root . '/opds/titles/' . $entry['book']->id;
+        // @todo align opds routes with or without /opds/
+        $titleLink = $this->bbs_root . '/titles/' . $entry['book']->id;
         $this->xmlw->startElement('entry');
         $this->xmlw->writeElement('id', 'urn:bicbucstriim:' . $titleLink);
         $this->xmlw->writeElement('title', $entry['book']->title);

@@ -115,6 +115,61 @@ $(document).on('pageinit', '#pauthor_detail', function() {
 
 });
 
+// Clear flash when showing page
+$(document).on('pageload', '#pauthor_notes', function () {
+    $('div#flash').empty();
+});
+
+// Author metadata on author notes page
+$(document).on('pageinit', '#pauthor_notes', function() {
+
+    $('div#flash').empty();
+
+	// Delete author notes
+	$('#delete-notes').on('vclick', function() {
+		var root = $(this).data('proot');
+		var author = $(this).data('author');
+		var jh = $.ajax({
+			url: root+'/metadata/authors/'+author+'/notes/',
+			type: 'DELETE',
+			success: function(data) {
+				location.reload(true);
+				//$('#notes-edit').val('');
+				//$('#author-notes').empty();
+				//$('div#flash').empty().append('<p class="success">'+data.msg+'</p>');
+				//$('#pauthor_notes').trigger('change');
+			},
+			error: function(jqXHR, responseText, errorThrown) {
+				$('div#flash').empty().append('<p class="error">'+jqXHR.responseText+'</p>');
+				$('#pauthor_notes').trigger('change');		
+			}
+		});
+		return false;
+	});
+
+	// Edit author notes
+	$('form#author-note-edit').on('submit', function(event){
+		event.preventDefault();		
+		var url = $(this).attr('action');
+		var note = {
+			ntext: $(this).find('#note-edit').val(),
+			mime: 'text/markdown'
+		};
+		$.post(url, note, function(data, textStatus, jqXHR) {
+			location.reload(true);
+			//$('div#flash').empty().append('<p class="success">'+data.msg+'</p>');
+			//$('#pauthor_notes').trigger('change');
+		})
+		.fail(function (jqXHR) {
+			$('div#flash').empty().append('<p class="error">'+jqXHR.responseText+'</p>');
+			$('#pauthor_notes').trigger('change');		
+		});
+		return false;
+	});
+
+});
+
+
 // Admin ID templates management 
 $(document).on('pageinit', '#padmin_idtemplates', function() {
 

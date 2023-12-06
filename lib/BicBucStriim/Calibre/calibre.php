@@ -705,9 +705,11 @@ class Calibre
         return ['tag' => $tag] + $slice;
     }
 
-    # Search a list of tags defined by the parameters $index and $length.
-    # If $search is defined it is used to filter the tag names, ignoring case.
-    # Return an array with elements: current page, no. of pages, $length entries
+    /**
+     * Search a list of tags defined by the parameters $index and $length.
+     * If $search is defined it is used to filter the tag names, ignoring case.
+     * Return an array with elements: current page, no. of pages, $length entries
+     */
     public function tagsSlice($index = 0, $length = 100, $search = null)
     {
         return $this->findSliceFiltered(CalibreSearchType::Tag, $index, $length, new CalibreFilter(), $search, null);
@@ -819,14 +821,17 @@ class Calibre
         return $books;
     }
 
-
-    # Find only one book
+    /**
+     * Find only one book
+     */
     public function title($id)
     {
         return $this->findOne('Book', 'SELECT * FROM books WHERE id=:id', ['id' => $id]);
     }
 
-    # Returns the path to the cover image of a book or NULL.
+    /**
+     * Returns the path to the cover image of a book or NULL.
+     */
     public function titleCover($id)
     {
         $book = $this->title($id);
@@ -981,8 +986,9 @@ class Calibre
             'langcodes' => $langcodes];
     }
 
-
-    # Add a new cc value. If the key already exists, combine the values with a string join.
+    /**
+     * Add a new cc value. If the key already exists, combine the values with a string join.
+     */
     private function addCc($def, $value, $result)
     {
         if (array_key_exists($def->name, $result)) {
@@ -1277,9 +1283,11 @@ class Calibre
         return $seriesNames;
     }
 
-    # Generate a list where the items are grouped and separated by
-    # the initial character.
-    # If the item has a 'sort' field that is used, else the name.
+    /**
+     * Generate a list where the items are grouped and separated by
+     * the initial character.
+     * If the item has a 'sort' field that is used, else the name.
+     */
     public function mkInitialedList($items)
     {
         $grouped_items = [];

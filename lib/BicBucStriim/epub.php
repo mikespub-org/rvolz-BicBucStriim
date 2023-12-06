@@ -38,6 +38,7 @@ class EPub
         $xml->loadXML($data);
         $xpath = new EPubDOMXPath($xml);
         $nodes = $xpath->query('//n:rootfiles/n:rootfile[@media-type="application/oebps-package+xml"]');
+        /** @phpstan-ignore-next-line */
         $this->meta = $nodes->item(0)->attr('full-path');
 
         // load metadata

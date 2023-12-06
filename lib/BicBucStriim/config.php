@@ -2,7 +2,8 @@
 /**
  * BicBucStriim
  *
- * Copyright 2012-2016 Rainer Volz
+ * Copyright 2012-2023 Rainer Volz
+ * Copyright 2023-     mikespub
  * Licensed under MIT License, see LICENSE
  *
  */
@@ -28,7 +29,7 @@ $appname = 'BicBucStriim';
 $appversion = '1.6.6';
 
 # Init app and routes
-$app = new \Slim\Slim([
+$app = new \BicBucStriim\App([
     'view' => new \Slim\Views\Twig(),
     'mode' => 'production',
     #'mode' => 'debug',
@@ -102,7 +103,7 @@ $globalSettings['version'] = $appversion;
 $globalSettings['sep'] = ' :: ';
 # Find the user language, either one of the allowed languages or
 # English as a fallback.
-$globalSettings['lang'] = getUserLang($allowedLangs, $fallbackLang);
+$globalSettings['lang'] = Utilities::getUserLang($allowedLangs, $fallbackLang);
 $globalSettings['l10n'] = new L10n($globalSettings['lang']);
 $globalSettings['langa'] = $globalSettings['l10n']->langa;
 $globalSettings['langb'] = $globalSettings['l10n']->langb;

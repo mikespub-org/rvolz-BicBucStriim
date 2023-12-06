@@ -114,6 +114,7 @@ class TestOfOpdsGenerator extends UnitTestCase
 
     public function testPartialAcquisitionEntry()
     {
+        // @todo align opds routes with or without /opds/
         $expected = '<entry>
  <id>urn:bicbucstriim:/bbs/opds/titles/2</id>
  <title>Trutz Simplex</title>
@@ -143,6 +144,7 @@ class TestOfOpdsGenerator extends UnitTestCase
 
     public function testPartialAcquisitionEntryWithProtection()
     {
+        // @todo align opds routes with or without /opds/
         $expected = '<entry>
  <id>urn:bicbucstriim:/bbs/opds/titles/2</id>
  <title>Trutz Simplex</title>
