@@ -43,7 +43,7 @@ class CalibreConfigMiddleware extends \Slim\Middleware
                 # Setup the connection to the Calibre metadata db
                 $clp = $globalSettings[$this->calibreDir] . '/metadata.db';
                 $app->calibre = new \BicBucStriim\Calibre\Calibre($clp);
-                if (!$app->calibre->libraryOk()) {
+                if (!$app->calibre->libraryOk() && $app->request->getResourceUri() != '/admin/configuration/') {
                     $app->getLog()->error('check_config: Exception while opening metadata db ' . $clp . '. Showing admin page.');
                     // app->redirect not useable in middleware
                     $app->response->setStatus(302);

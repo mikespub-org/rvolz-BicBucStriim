@@ -6,7 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.7.x] - 20xx-xx-xx
 ### Changed
+- Adapted Twig files from abandoned slim/views package in lib/SlimViews for maintenance
+- Updated twig/twig package to version 2.15 and then 3.8 for maintenance
 - Replaced abandoned package swiftmailer/swiftmailer with phpmailer/phpmailer
+### Removed
+- Dropped abandoned package slim/views from composer.json
 
 ## [1.7.0] - 2023-12-06
 ### Added

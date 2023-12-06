@@ -30,7 +30,7 @@ $appversion = '1.6.6';
 
 # Init app and routes
 $app = new \BicBucStriim\App([
-    'view' => new \Slim\Views\Twig(),
+    'view' => new \BicBucStriim\TwigView(),
     'mode' => 'production',
     #'mode' => 'debug',
     #'mode' => 'development',

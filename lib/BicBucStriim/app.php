@@ -24,6 +24,6 @@ class App extends \Slim\Slim
     public $logout_service;
     /** @var bool */
     public $must_login;
-    ///** @var \Slim\Views\Twig set in container as singleton by Slim\Slim constructor */
+    ///** @var \BicBucStriim\TwigView set in container as singleton by Slim\Slim constructor */
     //public $view;
 }

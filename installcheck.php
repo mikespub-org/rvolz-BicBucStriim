@@ -9,13 +9,10 @@
  */
 
 require 'lib/BicBucStriim/inst_utils.php';
-# Use this instead of the Composer autoload for PHP 5.2 compatibility
-# At least the PHP version check should run with PHP 5.2
-require_once 'vendor/twig/twig/lib/Twig/Autoloader.php';
-Twig_Autoloader::register();
+require_once 'vendor/autoload.php';
 
-$loader = new Twig_Loader_Filesystem('templates');
-$twig = new Twig_Environment($loader, []);
+$loader = new \Twig\Loader\FilesystemLoader('templates');
+$twig = new \Twig\Environment($loader, []);
 
 # Check for Apache server
 function is_apache($srv)
@@ -128,7 +125,7 @@ if ($gdv >= 2) {
 }
 
 
-$template = $twig->loadTemplate('installcheck.html');
+$template = $twig->load('installcheck.html');
 echo $template->render([
     'page' => [
         'rot' => '',

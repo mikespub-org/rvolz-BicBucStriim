@@ -14,7 +14,7 @@ use BicBucStriim\Calibre\Author;
 use Michelf\MarkdownExtra;
 use Exception;
 use Mailer;
-use Twig_SimpleFilter;
+use Twig\TwigFilter;
 use Utilities;
 use MetadataEpub;
 
@@ -253,10 +253,10 @@ class MainActions extends DefaultActions
         $globalSettings = $app->config('globalSettings');
 
         // Add filter for human readable filesize
-        $filter = new Twig_SimpleFilter('hfsize', function ($string) {
+        $filter = new TwigFilter('hfsize', function ($string) {
             return $this->human_filesize($string);
         });
-        /** @var \Slim\Views\Twig */
+        /** @var \BicBucStriim\TwigView $view */
         $view = $app->view();
         $tenv = $view->getInstance();
         $tenv->addFilter($filter);
