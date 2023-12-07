@@ -2,14 +2,15 @@
 /**
  * BicBucStriim
  *
- * Copyright 2012-2014 Rainer Volz
+ * Copyright 2012-2023 Rainer Volz
+ * Copyright 2023-     mikespub
  * Licensed under MIT License, see LICENSE
  *
  */
 
 namespace BicBucStriim\Middleware;
 
-class LoginMiddleware extends \Slim\Middleware
+class LoginMiddleware extends DefaultMiddleware
 {
     protected $realm;
     protected $static_resource_paths;
@@ -23,7 +24,6 @@ class LoginMiddleware extends \Slim\Middleware
      */
     public function __construct($realm, $statics)
     {
-        $app = $this->app;
         $this->realm = $realm;
         $this->static_resource_paths = $statics;
     }
@@ -31,48 +31,55 @@ class LoginMiddleware extends \Slim\Middleware
 
     public function call()
     {
-        $this->app->hook('slim.before.dispatch', [$this, 'authBeforeDispatch']);
+        // Slim 3+ framework does not support hooks anymore
+        $this->app()->hook('slim.before.dispatch', [$this, 'authBeforeDispatch']);
+        /**
+        try {
+            $this->authBeforeDispatch();
+        } catch (\Slim\Exception\Stop $e) {
+            $this->response()->write(ob_get_clean());
+            return;
+        }
+         */
         $this->next->call();
     }
 
     public function authBeforeDispatch()
     {
-        /** @var \BicBucStriim\App $app */
-        $app = $this->app;
-        $globalSettings = $app->config('globalSettings');
-        $request = $app->request;
+        $globalSettings = $this->settings();
+        $request = $this->request();
         $resource = $request->getResourceUri();
         $accept = $request->headers('ACCEPT');
-        $app->getLog()->debug('login resource: ' . $resource);
+        $this->log()->debug('login resource: ' . $resource);
         if ($globalSettings[LOGIN_REQUIRED] == 1) {
             if (!$this->is_static_resource($resource) && !$this->is_authorized()) {
                 if ($resource === '/login/') {
                     // special case login page
-                    $app->getLog()->debug('login: login page authorized');
+                    $this->log()->debug('login: login page authorized');
                     return;
                 } elseif (stripos($resource, '/opds') === 0) {
-                    $app->getLog()->debug('login: unauthorized OPDS request');
-                    $app->response->headers->set('WWW-Authenticate', sprintf('Basic realm="%s"', $this->realm));
-                    $app->halt(401, 'Please authenticate');
-                } elseif ($app->request->getMethod() != 'GET' && ($app->request->isXhr() || $app->request->isAjax())) {
-                    $app->getLog()->debug('login: unauthorized JSON request');
-                    $app->response->headers->set('WWW-Authenticate', sprintf('Basic realm="%s"', $this->realm));
-                    $app->halt(401, 'Please authenticate');
+                    $this->log()->debug('login: unauthorized OPDS request');
+                    $this->response()->headers->set('WWW-Authenticate', sprintf('Basic realm="%s"', $this->realm));
+                    $this->halt(401, 'Please authenticate');
+                } elseif ($request->getMethod() != 'GET' && ($request->isXhr() || $request->isAjax())) {
+                    $this->log()->debug('login: unauthorized JSON request');
+                    $this->response()->headers->set('WWW-Authenticate', sprintf('Basic realm="%s"', $this->realm));
+                    $this->halt(401, 'Please authenticate');
                 } else {
-                    $app->getLog()->debug('login: redirecting to login');
+                    $this->log()->debug('login: redirecting to login');
                     // now we can also use the native app->redirect method!
-                    $this->app->redirect(\Utilities::getRootUrl($app) . '/login/');
+                    $this->app()->redirect(\Utilities::getRootUrl($this) . '/login/');
                 }
             }
         } else {
             if ($resource === '/login/') {
                 $this->is_authorized();
                 // special case login page
-                $app->getLog()->debug('login: login page authorized');
+                $this->log()->debug('login: login page authorized');
                 return;
             } elseif (stripos($resource, '/admin') === 0 && !$this->is_static_resource($resource) && !$this->is_authorized()) {
-                $app->getLog()->debug('login: redirecting to login');
-                $this->app->redirect(\Utilities::getRootUrl($app) . '/login/');
+                $this->log()->debug('login: redirecting to login');
+                $this->app()->redirect(\Utilities::getRootUrl($this) . '/login/');
             }
         }
     }
@@ -107,58 +114,56 @@ class LoginMiddleware extends \Slim\Middleware
      */
     protected function is_authorized()
     {
-        /** @var \BicBucStriim\App $app */
-        $app = $this->app;
-        $req = $app->request;
+        $request = $this->request();
         $session_factory = new \BicBucStriim\SessionFactory();
         $session = $session_factory->newInstance($_COOKIE);
-        $session->setCookieParams(['path' => $app->request->getRootUri() . '/']);
+        $session->setCookieParams(['path' => $request->getRootUri() . '/']);
         $auth_factory = new \Aura\Auth\AuthFactory($_COOKIE, $session);
-        $app->auth = $auth_factory->newInstance();
+        $this->auth($auth_factory->newInstance());
         $hash = new \Aura\Auth\Verifier\PasswordVerifier(PASSWORD_BCRYPT);
         $cols = ['username', 'password', 'id', 'email', 'role', 'languages', 'tags'];
-        $pdo_adapter = $auth_factory->newPdoAdapter($app->bbs->mydb, $hash, $cols, 'user');
-        $app->login_service = $auth_factory->newLoginService($pdo_adapter);
-        $app->logout_service = $auth_factory->newLogoutService($pdo_adapter);
+        $pdo_adapter = $auth_factory->newPdoAdapter($this->bbs()->mydb, $hash, $cols, 'user');
+        $this->app()->login_service = $auth_factory->newLoginService($pdo_adapter);
+        $this->app()->logout_service = $auth_factory->newLogoutService($pdo_adapter);
         $resume_service = $auth_factory->newResumeService($pdo_adapter);
         try {
-            $resume_service->resume($app->auth);
+            $resume_service->resume($this->auth());
         } catch(\ErrorException $e) {
-            $app->getLog()->warn('login error: bad cookie data ' . var_export(get_class($e), true));
+            $this->log()->warn('login error: bad cookie data ' . var_export(get_class($e), true));
         }
-        $app->getLog()->debug("after resume: " . $app->auth->getStatus());
-        if ($app->auth->isValid()) {
+        $this->log()->debug("after resume: " . $this->auth()->getStatus());
+        if ($this->auth()->isValid()) {
             // already logged in -- check for bad cookie contents
-            $ud = $app->auth->getUserData();
+            $ud = $this->auth()->getUserData();
             if (is_array($ud) && array_key_exists('role', $ud) && array_key_exists('id', $ud)) {
                 // contents seems ok
                 return true;
             } else {
-                $app->getLog()->warn("bad cookie contents: killing session");
+                $this->log()->warn("bad cookie contents: killing session");
                 // bad cookie contents, kill it
                 $session->destroy();
                 return false;
             }
         } else {
             // not logged in - check for login info
-            $auth = $this->checkPhpAuth($req);
+            $auth = $this->checkPhpAuth($request);
             if (is_null($auth)) {
-                $auth = $this->checkHttpAuth($req);
+                $auth = $this->checkHttpAuth($request);
             }
-            $app->getLog()->debug('login auth: ' . var_export($auth, true));
+            $this->log()->debug('login auth: ' . var_export($auth, true));
             // if auth info found check the database
             if (is_null($auth)) {
                 return false;
             } else {
                 try {
-                    $app->login_service->login($app->auth, [
+                    $this->app()->login_service->login($this->auth(), [
                         'username' => $auth[0],
                         'password' => $auth[1]]);
-                    $app->getLog()->debug('login status: ' . var_export($app->auth->getStatus(), true));
+                    $this->log()->debug('login status: ' . var_export($this->auth()->getStatus(), true));
                 } catch (\Aura\Auth\Exception $e) {
-                    $app->getLog()->debug('login error: ' . var_export(get_class($e), true));
+                    $this->log()->debug('login error: ' . var_export(get_class($e), true));
                 }
-                return $app->auth->isValid();
+                return $this->auth()->isValid();
             }
         }
     }

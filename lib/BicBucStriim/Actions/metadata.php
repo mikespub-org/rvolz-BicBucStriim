@@ -40,20 +40,19 @@ class MetadataActions extends DefaultActions
      */
     public function edit_author_thm($id)
     {
-        $app = $this->app;
-        $globalSettings = $app->config('globalSettings');
+        $globalSettings = $this->settings();
 
         // parameter checking
         if (!is_numeric($id)) {
-            $app->getLog()->warn('edit_author_thm: invalid author id ' . $id);
-            $app->halt(400, "Bad parameter");
+            $this->log()->warn('edit_author_thm: invalid author id ' . $id);
+            $this->halt(400, "Bad parameter");
         }
 
         $allowedExts = ["jpeg", "jpg", "png"];
         #$temp = explode(".", $_FILES["file"]["name"]);
         #$extension = end($temp);
         $extension = pathinfo($_FILES["file"]["name"], PATHINFO_EXTENSION);
-        $app->getLog()->debug('edit_author_thm: ' . $_FILES["file"]["name"]);
+        $this->log()->debug('edit_author_thm: ' . $_FILES["file"]["name"]);
         if ((($_FILES["file"]["type"] == "image/jpeg")
                 || ($_FILES["file"]["type"] == "image/jpg")
                 || ($_FILES["file"]["type"] == "image/pjpeg")
@@ -62,25 +61,25 @@ class MetadataActions extends DefaultActions
             && ($_FILES["file"]["size"] < 3145728)
             && in_array($extension, $allowedExts)
         ) {
-            $app->getLog()->debug('edit_author_thm: filetype ' . $_FILES["file"]["type"] . ', size ' . $_FILES["file"]["size"]);
+            $this->log()->debug('edit_author_thm: filetype ' . $_FILES["file"]["type"] . ', size ' . $_FILES["file"]["size"]);
             if ($_FILES["file"]["error"] > 0) {
-                $app->getLog()->debug('edit_author_thm: upload error ' . $_FILES["file"]["error"]);
-                $app->flash('error', $this->getMessageString('author_thumbnail_upload_error1') . ': ' . $_FILES["file"]["error"]);
-                $rot = $app->request()->getRootUri();
-                $app->redirect($rot . '/authors/' . $id . '/0/');
+                $this->log()->debug('edit_author_thm: upload error ' . $_FILES["file"]["error"]);
+                $this->app()->flash('error', $this->getMessageString('author_thumbnail_upload_error1') . ': ' . $_FILES["file"]["error"]);
+                $rot = $this->request()->getRootUri();
+                $this->app()->redirect($rot . '/authors/' . $id . '/0/');
             } else {
-                $app->getLog()->debug('edit_author_thm: upload ok, converting');
-                $author = $app->calibre->author($id);
-                $created = $app->bbs->editAuthorThumbnail($id, $author->name, $globalSettings[THUMB_GEN_CLIPPED], $_FILES["file"]["tmp_name"], $_FILES["file"]["type"]);
-                $app->getLog()->debug('edit_author_thm: converted, redirecting');
-                $rot = $app->request()->getRootUri();
-                $app->redirect($rot . '/authors/' . $id . '/0/');
+                $this->log()->debug('edit_author_thm: upload ok, converting');
+                $author = $this->calibre()->author($id);
+                $created = $this->bbs()->editAuthorThumbnail($id, $author->name, $globalSettings[THUMB_GEN_CLIPPED], $_FILES["file"]["tmp_name"], $_FILES["file"]["type"]);
+                $this->log()->debug('edit_author_thm: converted, redirecting');
+                $rot = $this->request()->getRootUri();
+                $this->app()->redirect($rot . '/authors/' . $id . '/0/');
             }
         } else {
-            $app->getLog()->warn('edit_author_thm: Uploaded thumbnail too big or wrong type');
-            $app->flash('error', $this->getMessageString('author_thumbnail_upload_error2'));
-            $rot = $app->request()->getRootUri();
-            $app->redirect($rot . '/authors/' . $id . '/0/');
+            $this->log()->warn('edit_author_thm: Uploaded thumbnail too big or wrong type');
+            $this->app()->flash('error', $this->getMessageString('author_thumbnail_upload_error2'));
+            $rot = $this->request()->getRootUri();
+            $this->app()->redirect($rot . '/authors/' . $id . '/0/');
         }
     }
 
@@ -89,29 +88,22 @@ class MetadataActions extends DefaultActions
      */
     public function del_author_thm($id)
     {
-        $app = $this->app;
-
         // parameter checking
         if (!is_numeric($id)) {
-            $app->getLog()->warn('del_author_thm: invalid author id ' . $id);
-            $app->halt(400, "Bad parameter");
+            $this->log()->warn('del_author_thm: invalid author id ' . $id);
+            $this->halt(400, "Bad parameter");
         }
 
-        $app->getLog()->debug('del_author_thm: ' . $id);
-        $del = $app->bbs->deleteAuthorThumbnail($id);
-        $resp = $app->response();
+        $this->log()->debug('del_author_thm: ' . $id);
+        $del = $this->bbs()->deleteAuthorThumbnail($id);
         if ($del) {
-            $resp->setStatus(200);
             $msg = $this->getMessageString('admin_modified');
             $answer = json_encode(['msg' => $msg]);
-            $resp->headers->set('Content-type', 'application/json');
+            $this->mkResponse($answer, 'application/json', 200);
         } else {
-            $resp->setStatus(500);
-            $resp->headers->set('Content-type', 'text/plain');
             $answer = $this->getMessageString('admin_modify_error');
+            $this->mkResponse($answer, 'text/plain', 500);
         }
-        $resp->headers->set('Content-Length', strlen($answer));
-        $resp->setBody($answer);
     }
 
     /**
@@ -119,43 +111,36 @@ class MetadataActions extends DefaultActions
      */
     public function edit_author_notes($id)
     {
-        $app = $this->app;
-
         // parameter checking
         if (!is_numeric($id)) {
-            $app->getLog()->warn('edit_author_notes: invalid author id ' . $id);
-            $app->halt(400, "Bad parameter");
+            $this->log()->warn('edit_author_notes: invalid author id ' . $id);
+            $this->halt(400, "Bad parameter");
         }
 
-        $app->getLog()->debug('edit_author_notes: ' . $id);
-        $note_data = $app->request()->post();
-        $app->getLog()->debug('edit_author_notes: note ' . var_export($note_data, true));
+        $this->log()->debug('edit_author_notes: ' . $id);
+        $note_data = $this->request()->post();
+        $this->log()->debug('edit_author_notes: note ' . var_export($note_data, true));
         try {
             $markdownParser = new MarkdownExtra();
             $html = $markdownParser->transform($note_data['ntext']);
-            $author = $app->calibre->author($id);
-            $note = $app->bbs->editAuthorNote($id, $author->name, $note_data['mime'], $note_data['ntext']);
+            $author = $this->calibre()->author($id);
+            $note = $this->bbs()->editAuthorNote($id, $author->name, $note_data['mime'], $note_data['ntext']);
         } catch (Exception $e) {
-            $app->getLog()->error('edit_author_notes: error for editing note ' . var_export($note_data, true));
-            $app->getLog()->error('edit_author_notes: exception ' . $e->getMessage());
+            $this->log()->error('edit_author_notes: error for editing note ' . var_export($note_data, true));
+            $this->log()->error('edit_author_notes: exception ' . $e->getMessage());
             $html = null;
             $note = null;
         }
-        $resp = $app->response();
         if (!is_null($note)) {
-            $resp->setStatus(200);
             $msg = $this->getMessageString('admin_modified');
             $note2 = $note->unbox()->getProperties();
             $note2['html'] = $html;
             $answer = json_encode(['note' => $note2, 'msg' => $msg]);
-            $resp->headers->set('Content-type', 'application/json');
+            $this->mkResponse($answer, 'application/json', 200);
         } else {
-            $resp->setStatus(500);
-            $resp->headers->set('Content-type', 'text/plain');
             $answer = $this->getMessageString('admin_modify_error');
+            $this->mkResponse($answer, 'text/plain', 500);
         }
-        $resp->headers->set('Content-Length', strlen($answer));
-        $resp->setBody($answer);
     }
 
     /**
@@ -163,29 +148,22 @@ class MetadataActions extends DefaultActions
      */
     public function del_author_notes($id)
     {
-        $app = $this->app;
-
         // parameter checking
         if (!is_numeric($id)) {
-            $app->getLog()->warn('del_author_notes: invalid author id ' . $id);
-            $app->halt(400, "Bad parameter");
+            $this->log()->warn('del_author_notes: invalid author id ' . $id);
+            $this->halt(400, "Bad parameter");
         }
 
-        $app->getLog()->debug('del_author_notes: ' . $id);
-        $del = $app->bbs->deleteAuthorNote($id);
-        $resp = $app->response();
+        $this->log()->debug('del_author_notes: ' . $id);
+        $del = $this->bbs()->deleteAuthorNote($id);
         if ($del) {
-            $resp->setStatus(200);
             $msg = $this->getMessageString('admin_modified');
             $answer = json_encode(['msg' => $msg]);
-            $resp->headers->set('Content-type', 'application/json');
+            $this->mkResponse($answer, 'application/json', 200);
         } else {
-            $resp->setStatus(500);
-            $resp->headers->set('Content-type', 'text/plain');
             $answer = $this->getMessageString('admin_modify_error');
+            $this->mkResponse($answer, 'text/plain', 500);
         }
-        $resp->headers->set('Content-Length', strlen($answer));
-        $resp->setBody($answer);
     }
 
     /**
@@ -193,34 +171,27 @@ class MetadataActions extends DefaultActions
      */
     public function new_author_link($id)
     {
-        $app = $this->app;
-
         // parameter checking
         if (!is_numeric($id)) {
-            $app->getLog()->warn('new_author_link: invalid author id ' . $id);
-            $app->halt(400, "Bad parameter");
+            $this->log()->warn('new_author_link: invalid author id ' . $id);
+            $this->halt(400, "Bad parameter");
         }
 
-        $link_data = $app->request()->post();
-        $app->getLog()->debug('new_author_link: ' . var_export($link_data, true));
-        $author = $app->calibre->author($id);
+        $link_data = $this->request()->post();
+        $this->log()->debug('new_author_link: ' . var_export($link_data, true));
+        $author = $this->calibre()->author($id);
         $link = null;
         if (!is_null($author)) {
-            $link = $app->bbs->addAuthorLink($id, $author->name, $link_data['label'], $link_data['url']);
+            $link = $this->bbs()->addAuthorLink($id, $author->name, $link_data['label'], $link_data['url']);
         }
-        $resp = $app->response();
         if (!is_null($link)) {
-            $resp->setStatus(200);
             $msg = $this->getMessageString('admin_modified');
             $answer = json_encode(['link' => $link->unbox()->getProperties(), 'msg' => $msg]);
-            $resp->headers->set('Content-type', 'application/json');
+            $this->mkResponse($answer, 'application/json', 200);
         } else {
-            $resp->setStatus(500);
-            $resp->headers->set('Content-type', 'text/plain');
             $answer = $this->getMessageString('admin_modify_error');
+            $this->mkResponse($answer, 'text/plain', 500);
         }
-        $resp->headers->set('Content-Length', strlen($answer));
-        $resp->setBody($answer);
     }
 
     /**
@@ -228,28 +199,21 @@ class MetadataActions extends DefaultActions
      */
     public function del_author_link($id, $link)
     {
-        $app = $this->app;
-
         // parameter checking
         if (!is_numeric($id) || !is_numeric($link)) {
-            $app->getLog()->warn('del_author_link: invalid author id ' . $id . ' or link id ' . $link);
-            $app->halt(400, "Bad parameter");
+            $this->log()->warn('del_author_link: invalid author id ' . $id . ' or link id ' . $link);
+            $this->halt(400, "Bad parameter");
         }
 
-        $app->getLog()->debug('del_author_link: author ' . $id . ', link ' . $link);
-        $ret = $app->bbs->deleteAuthorLink($id, $link);
-        $resp = $app->response();
+        $this->log()->debug('del_author_link: author ' . $id . ', link ' . $link);
+        $ret = $this->bbs()->deleteAuthorLink($id, $link);
         if ($ret) {
-            $resp->setStatus(200);
             $msg = $this->getMessageString('admin_modified');
             $answer = json_encode(['msg' => $msg]);
-            $resp->headers->set('Content-type', 'application/json');
+            $this->mkResponse($answer, 'application/json', 200);
         } else {
-            $resp->setStatus(500);
-            $resp->headers->set('Content-type', 'text/plain');
             $answer = $this->getMessageString('admin_modify_error');
+            $this->mkResponse($answer, 'text/plain', 500);
         }
-        $resp->headers->set('Content-Length', strlen($answer));
-        $resp->setBody($answer);
     }
 }

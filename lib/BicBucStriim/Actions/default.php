@@ -15,8 +15,10 @@ use Utilities;
 /*********************************************************************
  * Default actions
  ********************************************************************/
-class DefaultActions
+class DefaultActions implements \BicBucStriim\Traits\AppInterface
 {
+    use \BicBucStriim\Traits\AppTrait;
+
     /** @var \BicBucStriim\App */
     protected $app;
 
@@ -28,7 +30,10 @@ class DefaultActions
      */
     public static function addRoutes($app, $prefix = null)
     {
+        // Slim 2 framework uses callable - we need $app instance
         $self = new self($app);
+        $app->get('/', [$self, 'hello']);
+        $app->get('/:name', [$self, 'hello']);
     }
 
     /**
@@ -40,14 +45,23 @@ class DefaultActions
     }
 
     /**
+     * Hello function (example)
+     * @param ?string $name
+     */
+    public function hello($name = null)
+    {
+        $name ??= 'world';
+        $answer = 'Hello, ' . $name . '!';
+        $this->mkResponse($answer, 'text/plain');
+    }
+
+    /**
      * Check admin rights and redirect if necessary
      */
     public function check_admin()
     {
-        $app = $this->app;
-
         if (!$this->is_admin()) {
-            $app->render('error.html', [
+            $this->render('error.html', [
                 'page' => $this->mkPage('error', 0, 0),
                 'error' => $this->getMessageString('error_no_access')]);
         }
@@ -59,8 +73,7 @@ class DefaultActions
      */
     public function is_authenticated()
     {
-        $app = $this->app;
-        return (is_object($app->auth) && $app->auth->isValid());
+        return (is_object($this->auth()) && $this->auth()->isValid());
     }
 
     /**
@@ -70,9 +83,8 @@ class DefaultActions
      */
     public function is_admin()
     {
-        $app = $this->app;
         if ($this->is_authenticated()) {
-            $user = $app->auth->getUserData();
+            $user = $this->auth()->getUserData();
             return (intval($user['role']) === 1);
         } else {
             return false;
@@ -81,22 +93,50 @@ class DefaultActions
 
     public function getFilter()
     {
-        $app = $this->app;
-
         $lang = null;
         $tag = null;
         if ($this->is_authenticated()) {
-            $user = $app->auth->getUserData();
-            $app->getLog()->debug('getFilter: ' . var_export($user, true));
+            $user = $this->auth()->getUserData();
+            $this->log()->debug('getFilter: ' . var_export($user, true));
             if (!empty($user['languages'])) {
-                $lang = $app->calibre->getLanguageId($user['languages']);
+                $lang = $this->calibre()->getLanguageId($user['languages']);
             }
             if (!empty($user['tags'])) {
-                $tag = $app->calibre->getTagId($user['tags']);
+                $tag = $this->calibre()->getTagId($user['tags']);
             }
-            $app->getLog()->debug('getFilter: Using language ' . $lang . ', tag ' . $tag);
+            $this->log()->debug('getFilter: Using language ' . $lang . ', tag ' . $tag);
         }
         return new \BicBucStriim\Calibre\CalibreFilter($lang, $tag);
+    }
+
+    /**
+     * Render a template
+     * @param  string $template The name of the template passed into the view's render() method
+     * @param  array  $data     Associative array of data made available to the view
+     * @param  ?int    $status   The HTTP response status code to use (optional)
+     * @return void
+     */
+    public function render($template, $data = [], $status = null)
+    {
+        // Slim 2 framework will replace data, render template and echo output via slim view display()
+        $this->app()->render($template, $data, $status);
+    }
+
+    /**
+     * Create and send the typical response
+     * @param string $content
+     * @param string $type
+     * @param int $status
+     * @return void
+     */
+    public function mkResponse($content, $type, $status = 200)
+    {
+        // Slim 2 framework will finalize response after slim call() and echo output in run()
+        $resp = $this->response();
+        $resp->setStatus($status);
+        $resp->headers->set('Content-type', $type);
+        $resp->headers->set('Content-Length', strlen($content));
+        $resp->setBody($content);
     }
 
     /**
@@ -104,8 +144,7 @@ class DefaultActions
      */
     public function mkPage($messageId = '', $menu = 0, $level = 0)
     {
-        $app = $this->app;
-        $globalSettings = $app->config('globalSettings');
+        $globalSettings = $this->settings();
 
         $subtitle = $this->getMessageString($messageId);
         if ($subtitle == '') {
@@ -113,7 +152,7 @@ class DefaultActions
         } else {
             $title = $globalSettings[DISPLAY_APP_NAME] . $globalSettings['sep'] . $subtitle;
         }
-        $rot = Utilities::getRootUrl($app);
+        $rot = Utilities::getRootUrl($this);
         $auth = $this->is_authenticated();
         if ($globalSettings[LOGIN_REQUIRED]) {
             $adm = $this->is_admin();
@@ -144,8 +183,7 @@ class DefaultActions
      */
     public function getMessageString($id)
     {
-        $app = $this->app;
-        $globalSettings = $app->config('globalSettings');
+        $globalSettings = $this->settings();
         $msg = $globalSettings['l10n']->message($id);
         return $msg;
     }

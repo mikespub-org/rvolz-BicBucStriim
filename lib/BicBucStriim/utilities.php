@@ -196,28 +196,28 @@ class Utilities
 
     /**
      * Get root url
-     * @param \BicBucStriim\App $app
+     * @param \BicBucStriim\Traits\AppInterface $handler
      * @return string root url
      */
-    public static function getRootUrl($app)
+    public static function getRootUrl($handler)
     {
-        $globalSettings = $app->config('globalSettings');
+        $globalSettings = $handler->settings();
 
         if ($globalSettings[RELATIVE_URLS] == '1') {
-            $root = rtrim($app->request()->getRootUri(), "/");
+            $root = rtrim($handler->request()->getRootUri(), "/");
         } else {
             // Get forwarding information, if available
-            $info = static::getForwardingInfo($app->request->headers);
+            $info = static::getForwardingInfo($handler->request()->headers);
             if (is_null($info) || !$info->is_valid()) {
                 // No forwarding info available
-                $root = rtrim($app->request()->getUrl() . $app->request()->getRootUri(), "/");
+                $root = rtrim($handler->request()->getUrl() . $handler->request()->getRootUri(), "/");
             } else {
                 // Use forwarding info
-                $app->getLog()->debug("getRootUrl: Using forwarding information " . $info);
-                $root = $info->protocol . '://' . $info->host . $app->request()->getRootUri();
+                $handler->log()->debug("getRootUrl: Using forwarding information " . $info);
+                $root = $info->protocol . '://' . $info->host . $handler->request()->getRootUri();
             }
         }
-        $app->getLog()->debug("getRootUrl: Using root url " . $root);
+        $handler->log()->debug("getRootUrl: Using root url " . $root);
         return $root;
     }
 

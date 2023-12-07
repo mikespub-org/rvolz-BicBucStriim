@@ -67,14 +67,13 @@ class OpdsActions extends DefaultActions
      */
     public function opdsNewest()
     {
-        $app = $this->app;
-        $globalSettings = $app->config('globalSettings');
+        $globalSettings = $this->settings();
 
         $filter = $this->getFilter();
-        $just_books = $app->calibre->last30Books($globalSettings['lang'], $globalSettings[PAGE_SIZE], $filter);
+        $just_books = $this->calibre()->last30Books($globalSettings['lang'], $globalSettings[PAGE_SIZE], $filter);
         $books1 = [];
         foreach ($just_books as $book) {
-            $record = $app->calibre->titleDetailsOpds($book);
+            $record = $this->calibre()->titleDetailsOpds($book);
             if (!empty($record['formats'])) {
                 array_push($books1, $record);
             }
@@ -95,23 +94,22 @@ class OpdsActions extends DefaultActions
      */
     public function opdsByTitle($index = 0)
     {
-        $app = $this->app;
-        $globalSettings = $app->config('globalSettings');
+        $globalSettings = $this->settings();
 
         // parameter checking
         if (!is_numeric($index)) {
-            $app->getLog()->warn('opdsByTitle: invalid page id ' . $index);
-            $app->halt(400, "Bad parameter");
+            $this->log()->warn('opdsByTitle: invalid page id ' . $index);
+            $this->halt(400, "Bad parameter");
         }
 
         $filter = $this->getFilter();
-        $search = $app->request()->get('search');
+        $search = $this->request()->get('search');
         if (isset($search)) {
-            $tl = $app->calibre->titlesSlice($globalSettings['lang'], $index, $globalSettings[PAGE_SIZE], $filter, $search);
+            $tl = $this->calibre()->titlesSlice($globalSettings['lang'], $index, $globalSettings[PAGE_SIZE], $filter, $search);
         } else {
-            $tl = $app->calibre->titlesSlice($globalSettings['lang'], $index, $globalSettings[PAGE_SIZE], $filter);
+            $tl = $this->calibre()->titlesSlice($globalSettings['lang'], $index, $globalSettings[PAGE_SIZE], $filter);
         }
-        $books1 = $app->calibre->titleDetailsFilteredOpds($tl['entries']);
+        $books1 = $this->calibre()->titleDetailsFilteredOpds($tl['entries']);
         $books = array_map([$this, 'checkThumbnailOpds'], $books1);
         $gen = $this->mkOpdsGenerator();
         $cat = $gen->titlesCatalog(
@@ -130,9 +128,7 @@ class OpdsActions extends DefaultActions
      */
     public function opdsByAuthorInitial()
     {
-        $app = $this->app;
-
-        $initials = $app->calibre->authorsInitials();
+        $initials = $this->calibre()->authorsInitials();
         $gen = $this->mkOpdsGenerator();
         $cat = $gen->authorsRootCatalog(null, $initials);
         $this->mkOpdsResponse($cat, OpdsGenerator::OPDS_MIME_NAV);
@@ -144,15 +140,13 @@ class OpdsActions extends DefaultActions
      */
     public function opdsByAuthorNamesForInitial($initial)
     {
-        $app = $this->app;
-
         // parameter checking
         if (!(ctype_upper($initial))) {
-            $app->getLog()->warn('opdsByAuthorNamesForInitial: invalid initial ' . $initial);
-            $app->halt(400, "Bad parameter");
+            $this->log()->warn('opdsByAuthorNamesForInitial: invalid initial ' . $initial);
+            $this->halt(400, "Bad parameter");
         }
 
-        $authors = $app->calibre->authorsNamesForInitial($initial);
+        $authors = $this->calibre()->authorsNamesForInitial($initial);
         $gen = $this->mkOpdsGenerator();
         $cat = $gen->authorsNamesForInitialCatalog(null, $authors, $initial);
         $this->mkOpdsResponse($cat, OpdsGenerator::OPDS_MIME_NAV);
@@ -166,21 +160,20 @@ class OpdsActions extends DefaultActions
      */
     public function opdsByAuthor($initial, $id, $page)
     {
-        $app = $this->app;
-        $globalSettings = $app->config('globalSettings');
+        $globalSettings = $this->settings();
 
         // parameter checking
         if (!is_numeric($id) || !is_numeric($page)) {
-            $app->getLog()->warn('opdsByAuthor: invalid author id ' . $id . ' or page id ' . $page);
-            $app->halt(400, "Bad parameter");
+            $this->log()->warn('opdsByAuthor: invalid author id ' . $id . ' or page id ' . $page);
+            $this->halt(400, "Bad parameter");
         }
 
         $filter = $this->getFilter();
-        $tl = $app->calibre->authorDetailsSlice($globalSettings['lang'], $id, $page, $globalSettings[PAGE_SIZE], $filter);
-        $app->getLog()->debug('opdsByAuthor 1 ' . var_export($tl, true));
-        $books1 = $app->calibre->titleDetailsFilteredOpds($tl['entries']);
+        $tl = $this->calibre()->authorDetailsSlice($globalSettings['lang'], $id, $page, $globalSettings[PAGE_SIZE], $filter);
+        $this->log()->debug('opdsByAuthor 1 ' . var_export($tl, true));
+        $books1 = $this->calibre()->titleDetailsFilteredOpds($tl['entries']);
         $books = array_map([$this, 'checkThumbnailOpds'], $books1);
-        $app->getLog()->debug('opdsByAuthor 2 ' . var_export($books, true));
+        $this->log()->debug('opdsByAuthor 2 ' . var_export($books, true));
         $gen = $this->mkOpdsGenerator();
         $cat = $gen->booksForAuthorCatalog(
             null,
@@ -200,9 +193,7 @@ class OpdsActions extends DefaultActions
      */
     public function opdsByTagInitial()
     {
-        $app = $this->app;
-
-        $initials = $app->calibre->tagsInitials();
+        $initials = $this->calibre()->tagsInitials();
         $gen = $this->mkOpdsGenerator();
         $cat = $gen->tagsRootCatalog(null, $initials);
         $this->mkOpdsResponse($cat, OpdsGenerator::OPDS_MIME_NAV);
@@ -214,15 +205,13 @@ class OpdsActions extends DefaultActions
      */
     public function opdsByTagNamesForInitial($initial)
     {
-        $app = $this->app;
-
         // parameter checking
         if (!(ctype_upper($initial))) {
-            $app->getLog()->warn('opdsByTagNamesForInitial: invalid initial ' . $initial);
-            $app->halt(400, "Bad parameter");
+            $this->log()->warn('opdsByTagNamesForInitial: invalid initial ' . $initial);
+            $this->halt(400, "Bad parameter");
         }
 
-        $tags = $app->calibre->tagsNamesForInitial($initial);
+        $tags = $this->calibre()->tagsNamesForInitial($initial);
         $gen = $this->mkOpdsGenerator();
         $cat = $gen->tagsNamesForInitialCatalog(null, $tags, $initial);
         $this->mkOpdsResponse($cat, OpdsGenerator::OPDS_MIME_NAV);
@@ -236,18 +225,17 @@ class OpdsActions extends DefaultActions
      */
     public function opdsByTag($initial, $id, $page)
     {
-        $app = $this->app;
-        $globalSettings = $app->config('globalSettings');
+        $globalSettings = $this->settings();
 
         // parameter checking
         if (!is_numeric($id) || !is_numeric($page)) {
-            $app->getLog()->warn('opdsByTag: invalid tag id ' . $id . ' or page id ' . $page);
-            $app->halt(400, "Bad parameter");
+            $this->log()->warn('opdsByTag: invalid tag id ' . $id . ' or page id ' . $page);
+            $this->halt(400, "Bad parameter");
         }
 
         $filter = $this->getFilter();
-        $tl = $app->calibre->tagDetailsSlice($globalSettings['lang'], $id, $page, $globalSettings[PAGE_SIZE], $filter);
-        $books1 = $app->calibre->titleDetailsFilteredOpds($tl['entries']);
+        $tl = $this->calibre()->tagDetailsSlice($globalSettings['lang'], $id, $page, $globalSettings[PAGE_SIZE], $filter);
+        $books1 = $this->calibre()->titleDetailsFilteredOpds($tl['entries']);
         $books = array_map([$this, 'checkThumbnailOpds'], $books1);
         $gen = $this->mkOpdsGenerator();
         $cat = $gen->booksForTagCatalog(
@@ -268,9 +256,7 @@ class OpdsActions extends DefaultActions
      */
     public function opdsBySeriesInitial()
     {
-        $app = $this->app;
-
-        $initials = $app->calibre->seriesInitials();
+        $initials = $this->calibre()->seriesInitials();
         $gen = $this->mkOpdsGenerator();
         $cat = $gen->seriesRootCatalog(null, $initials);
         $this->mkOpdsResponse($cat, OpdsGenerator::OPDS_MIME_NAV);
@@ -282,15 +268,13 @@ class OpdsActions extends DefaultActions
      */
     public function opdsBySeriesNamesForInitial($initial)
     {
-        $app = $this->app;
-
         // parameter checking
         if (!($initial == 'all' || ctype_upper($initial))) {
-            $app->getLog()->warn('opdsBySeriesNamesForInitial: invalid initial ' . $initial);
-            $app->halt(400, "Bad parameter");
+            $this->log()->warn('opdsBySeriesNamesForInitial: invalid initial ' . $initial);
+            $this->halt(400, "Bad parameter");
         }
 
-        $tags = $app->calibre->seriesNamesForInitial($initial);
+        $tags = $this->calibre()->seriesNamesForInitial($initial);
         $gen = $this->mkOpdsGenerator();
         $cat = $gen->seriesNamesForInitialCatalog(null, $tags, $initial);
         $this->mkOpdsResponse($cat, OpdsGenerator::OPDS_MIME_NAV);
@@ -304,18 +288,17 @@ class OpdsActions extends DefaultActions
      */
     public function opdsBySeries($initial, $id, $page)
     {
-        $app = $this->app;
-        $globalSettings = $app->config('globalSettings');
+        $globalSettings = $this->settings();
 
         // parameter checking
         if (!is_numeric($id) || !is_numeric($page)) {
-            $app->getLog()->warn('opdsBySeries: invalid series id ' . $id . ' or page id ' . $page);
-            $app->halt(400, "Bad parameter");
+            $this->log()->warn('opdsBySeries: invalid series id ' . $id . ' or page id ' . $page);
+            $this->halt(400, "Bad parameter");
         }
 
         $filter = $this->getFilter();
-        $tl = $app->calibre->seriesDetailsSlice($globalSettings['lang'], $id, $page, $globalSettings[PAGE_SIZE], $filter);
-        $books1 = $app->calibre->titleDetailsFilteredOpds($tl['entries']);
+        $tl = $this->calibre()->seriesDetailsSlice($globalSettings['lang'], $id, $page, $globalSettings[PAGE_SIZE], $filter);
+        $books1 = $this->calibre()->titleDetailsFilteredOpds($tl['entries']);
         $books = array_map([$this, 'checkThumbnailOpds'], $books1);
         $gen = $this->mkOpdsGenerator();
         $cat = $gen->booksForSeriesCatalog(
@@ -349,25 +332,24 @@ class OpdsActions extends DefaultActions
      */
     public function opdsBySearch($index = 0)
     {
-        $app = $this->app;
-        $globalSettings = $app->config('globalSettings');
+        $globalSettings = $this->settings();
 
         // parameter checking
         if (!is_numeric($index)) {
-            $app->getLog()->warn('opdsBySearch: invalid page id ' . $index);
-            $app->halt(400, "Bad parameter");
+            $this->log()->warn('opdsBySearch: invalid page id ' . $index);
+            $this->halt(400, "Bad parameter");
         }
 
-        $search = $app->request()->get('search');
+        $search = $this->request()->get('search');
         if (!isset($search)) {
-            $app->getLog()->error('opdsBySearch called without search criteria, page ' . $index);
+            $this->log()->error('opdsBySearch called without search criteria, page ' . $index);
             // 400 Bad request
-            $app->response()->setStatus(400);
+            $this->response()->setStatus(400);
             return;
         }
         $filter = $this->getFilter();
-        $tl = $app->calibre->titlesSlice($globalSettings['lang'], $index, $globalSettings[PAGE_SIZE], $filter, $search);
-        $books1 = $app->calibre->titleDetailsFilteredOpds($tl['entries']);
+        $tl = $this->calibre()->titlesSlice($globalSettings['lang'], $index, $globalSettings[PAGE_SIZE], $filter, $search);
+        $books1 = $this->calibre()->titleDetailsFilteredOpds($tl['entries']);
         $books = array_map([$this, 'checkThumbnailOpds'], $books1);
         $gen = $this->mkOpdsGenerator();
         $cat = $gen->searchCatalog(
@@ -389,22 +371,21 @@ class OpdsActions extends DefaultActions
      */
     public function opdsLogout()
     {
-        $app = $this->app;
-        $globalSettings = $app->config('globalSettings');
+        $globalSettings = $this->settings();
 
-        $app->getLog()->debug('opdsLogout: OPDS logout request');
+        $this->log()->debug('opdsLogout: OPDS logout request');
         if ($this->is_authenticated()) {
-            $username = $app->auth->getUserName();
-            $app->getLog()->debug("logging out user: " . $username);
-            $app->logout_service->logout($app->auth);
+            $username = $this->auth()->getUserName();
+            $this->log()->debug("logging out user: " . $username);
+            $this->app()->logout_service->logout($this->auth());
             if ($this->is_authenticated()) {
-                $app->getLog()->error("error logging out user: " . $username);
+                $this->log()->error("error logging out user: " . $username);
             } else {
-                $app->getLog()->info("logged out user: " . $username);
+                $this->log()->info("logged out user: " . $username);
             }
         }
-        $app->response->headers->set('WWW-Authenticate', sprintf('Basic realm="%s"', $globalSettings['appname']));
-        $app->halt(401, 'Please authenticate');
+        $this->response()->headers->set('WWW-Authenticate', sprintf('Basic realm="%s"', $globalSettings['appname']));
+        $this->halt(401, 'Please authenticate');
     }
 
     /*********************************************************************
@@ -413,8 +394,7 @@ class OpdsActions extends DefaultActions
 
     public function checkThumbnailOpds($record)
     {
-        $app = $this->app;
-        $record['book']->thumbnail = $app->bbs->isTitleThumbnailAvailable($record['book']->id);
+        $record['book']->thumbnail = $this->bbs()->isTitleThumbnailAvailable($record['book']->id);
         return $record;
     }
 
@@ -423,15 +403,14 @@ class OpdsActions extends DefaultActions
      */
     public function mkOpdsGenerator()
     {
-        $app = $this->app;
-        $globalSettings = $app->config('globalSettings');
+        $globalSettings = $this->settings();
 
-        $root = Utilities::getRootUrl($app);
+        $root = Utilities::getRootUrl($this);
         $gen = new OpdsGenerator(
             $root,
             $globalSettings['version'],
-            $app->calibre->calibre_dir,
-            date(DATE_ATOM, $app->calibre->calibre_last_modified),
+            $this->calibre()->calibre_dir,
+            date(DATE_ATOM, $this->calibre()->calibre_last_modified),
             $globalSettings['l10n']
         );
         return $gen;
@@ -440,16 +419,10 @@ class OpdsActions extends DefaultActions
     /**
      * Create and send the typical OPDS response
      */
-    public function mkOpdsResponse($content, $type)
+    public function mkOpdsResponse($content, $type, $status = 200)
     {
-        $app = $this->app;
-        $resp = $app->response();
-        $resp->setStatus(200);
-        $resp->headers->set('Content-type', $type);
-        $resp->headers->set('Content-Length', strlen($content));
-        $resp->setBody($content);
+        $this->mkResponse($content, $type, $status);
     }
-
 
     /**
      * Calculate the next page number for search results

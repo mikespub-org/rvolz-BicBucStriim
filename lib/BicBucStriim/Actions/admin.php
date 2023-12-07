@@ -55,9 +55,7 @@ class AdminActions extends DefaultActions
      */
     public function admin()
     {
-        $app = $this->app;
-
-        $app->render('admin.html', [
+        $this->render('admin.html', [
             'page' => $this->mkPage('admin', 0, 1),
             'isadmin' => $this->is_admin()]);
     }
@@ -96,9 +94,7 @@ class AdminActions extends DefaultActions
      */
     public function configuration()
     {
-        $app = $this->app;
-
-        $app->render('admin_configuration.html', [
+        $this->render('admin_configuration.html', [
             'page' => $this->mkPage('admin', 0, 2),
             'mailers' => $this->mkMailers(),
             'ttss' => $this->mkTitleTimeSortOptions(),
@@ -110,10 +106,8 @@ class AdminActions extends DefaultActions
      */
     public function get_idtemplates()
     {
-        $app = $this->app;
-
-        $idtemplates = $app->bbs->idTemplates();
-        $idtypes = $app->calibre->idTypes();
+        $idtemplates = $this->bbs()->idTemplates();
+        $idtypes = $this->calibre()->idTypes();
         $ids2add = [];
         foreach ($idtypes as $idtype) {
             if (empty($idtemplates)) {
@@ -138,8 +132,8 @@ class AdminActions extends DefaultActions
             $ni->label = '';
             array_push($idtemplates, $ni);
         }
-        $app->getLog()->debug('admin_get_idtemplates ' . json_encode($idtemplates));
-        $app->render('admin_idtemplates.html', [
+        $this->log()->debug('admin_get_idtemplates ' . json_encode($idtemplates));
+        $this->render('admin_idtemplates.html', [
             'page' => $this->mkPage('admin_idtemplates', 0, 2),
             'templates' => $idtemplates,
             'isadmin' => $this->is_admin()]);
@@ -147,69 +141,55 @@ class AdminActions extends DefaultActions
 
     public function modify_idtemplate($id)
     {
-        $app = $this->app;
-
         // parameter checking
         if (!preg_match('/^\w+$/u', $id)) {
-            $app->getLog()->warn('admin_modify_idtemplate: invalid template id ' . $id);
-            $app->halt(400, "Invalid ID for template: " . $id);
+            $this->log()->warn('admin_modify_idtemplate: invalid template id ' . $id);
+            $this->halt(400, "Invalid ID for template: " . $id);
         }
 
-        $template_data = $app->request()->put();
-        $app->getLog()->debug('admin_modify_idtemplate: ' . var_export($template_data, true));
+        $template_data = $this->request()->put();
+        $this->log()->debug('admin_modify_idtemplate: ' . var_export($template_data, true));
         try {
-            $template = $app->bbs->idTemplate($id);
+            $template = $this->bbs()->idTemplate($id);
             if (is_null($template)) {
-                $ntemplate = $app->bbs->addIdTemplate($id, $template_data['url'], $template_data['label']);
+                $ntemplate = $this->bbs()->addIdTemplate($id, $template_data['url'], $template_data['label']);
             } else {
-                $ntemplate = $app->bbs->changeIdTemplate($id, $template_data['url'], $template_data['label']);
+                $ntemplate = $this->bbs()->changeIdTemplate($id, $template_data['url'], $template_data['label']);
             }
         } catch (Exception $e) {
-            $app->getLog()->error('admin_modify_idtemplate: error while adding template' . var_export($template_data, true));
-            $app->getLog()->error('admin_modify_idtemplate: exception ' . $e->getMessage());
+            $this->log()->error('admin_modify_idtemplate: error while adding template' . var_export($template_data, true));
+            $this->log()->error('admin_modify_idtemplate: exception ' . $e->getMessage());
             $ntemplate = null;
         }
-        $resp = $app->response();
         if (!is_null($ntemplate)) {
-            $resp->setStatus(200);
             $msg = $this->getMessageString('admin_modified');
             $answer = json_encode(['template' => $ntemplate->unbox()->getProperties(), 'msg' => $msg]);
-            $resp->headers->set('Content-type', 'application/json');
+            $this->mkResponse($answer, 'application/json', 200);
         } else {
-            $resp->setStatus(500);
-            $resp->headers->set('Content-type', 'text/plain');
             $answer = $this->getMessageString('admin_modify_error');
+            $this->mkResponse($answer, 'text/plain', 500);
         }
-        #$app->getLog()->debug('admin_modify_idtemplate 2: '.var_export($ntemplate, true));
-        $resp->headers->set('Content-Length', strlen($answer));
-        $resp->setBody($answer);
+        #$this->log()->debug('admin_modify_idtemplate 2: '.var_export($ntemplate, true));
     }
 
     public function clear_idtemplate($id)
     {
-        $app = $this->app;
-
         // parameter checking
         if (!preg_match('/^\w+$/u', $id)) {
-            $app->getLog()->warn('admin_clear_idtemplate: invalid template id ' . $id);
-            $app->halt(400, "Invalid ID for template: " . $id);
+            $this->log()->warn('admin_clear_idtemplate: invalid template id ' . $id);
+            $this->halt(400, "Invalid ID for template: " . $id);
         }
 
-        $app->getLog()->debug('admin_clear_idtemplate: ' . var_export($id, true));
-        $success = $app->bbs->deleteIdTemplate($id);
-        $resp = $app->response();
+        $this->log()->debug('admin_clear_idtemplate: ' . var_export($id, true));
+        $success = $this->bbs()->deleteIdTemplate($id);
         if ($success) {
-            $resp->setStatus(200);
             $msg = $this->getMessageString('admin_modified');
             $answer = json_encode(['msg' => $msg]);
-            $resp->headers->set('Content-type', 'application/json');
+            $this->mkResponse($answer, 'application/json', 200);
         } else {
-            $resp->setStatus(404);
             $answer = $this->getMessageString('admin_modify_error');
-            $resp->headers->set('Content-type', 'text/plain');
+            $this->mkResponse($answer, 'text/plain', 404);
         }
-        $resp->headers->set('Content-Length', strlen($answer));
-        $resp->setBody($answer);
     }
 
     /**
@@ -217,15 +197,13 @@ class AdminActions extends DefaultActions
      */
     public function get_smtp_config()
     {
-        $app = $this->app;
-
-        $globalSettings = $app->config('globalSettings');
+        $globalSettings = $this->settings();
         $mail = ['username' => $globalSettings[SMTP_USER],
             'password' => $globalSettings[SMTP_PASSWORD],
             'smtpserver' => $globalSettings[SMTP_SERVER],
             'smtpport' => $globalSettings[SMTP_PORT],
             'smtpenc' => $globalSettings[SMTP_ENCRYPTION]];
-        $app->render('admin_mail.html', [
+        $this->render('admin_mail.html', [
             'page' => $this->mkPage('admin_mail', 0, 2),
             'mail' => $mail,
             'encryptions' => $this->mkEncryptions(),
@@ -251,18 +229,15 @@ class AdminActions extends DefaultActions
      */
     public function change_smtp_config()
     {
-        $app = $this->app;
-
-        $mail_data = $app->request()->put();
-        $app->getLog()->debug('admin_change_smtp_configuration: ' . var_export($mail_data, true));
+        $mail_data = $this->request()->put();
+        $this->log()->debug('admin_change_smtp_configuration: ' . var_export($mail_data, true));
         $mail_config = [SMTP_USER => $mail_data['username'],
             SMTP_PASSWORD => $mail_data['password'],
             SMTP_SERVER => $mail_data['smtpserver'],
             SMTP_PORT => $mail_data['smtpport'],
             SMTP_ENCRYPTION => $mail_data['smtpenc']];
-        $app->bbs->saveConfigs($mail_config);
-        $resp = $app->response();
-        $app->render('admin_mail.html', [
+        $this->bbs()->saveConfigs($mail_config);
+        $this->render('admin_mail.html', [
             'page' => $this->mkPage('admin_smtp', 0, 2),
             'mail' => $mail_data,
             'encryptions' => $this->mkEncryptions(),
@@ -275,10 +250,8 @@ class AdminActions extends DefaultActions
      */
     public function get_users()
     {
-        $app = $this->app;
-
-        $users = $app->bbs->users();
-        $app->render('admin_users.html', [
+        $users = $this->bbs()->users();
+        $this->render('admin_users.html', [
             'page' => $this->mkPage('admin_users', 0, 2),
             'users' => $users,
             'isadmin' => $this->is_admin()]);
@@ -290,16 +263,14 @@ class AdminActions extends DefaultActions
      */
     public function get_user($id)
     {
-        $app = $this->app;
-
         // parameter checking
         if (!is_numeric($id)) {
-            $app->getLog()->warn('admin_get_user: invalid user id ' . $id);
-            $app->halt(400, "Bad parameter");
+            $this->log()->warn('admin_get_user: invalid user id ' . $id);
+            $this->halt(400, "Bad parameter");
         }
 
-        $user = $app->bbs->user($id);
-        $languages = $app->calibre->languages();
+        $user = $this->bbs()->user($id);
+        $languages = $this->calibre()->languages();
         foreach ($languages as $language) {
             $language->key = $language->lang_code;
         }
@@ -307,7 +278,7 @@ class AdminActions extends DefaultActions
         $nl->lang_code = $this->getMessageString('admin_no_selection');
         $nl->key = '';
         array_unshift($languages, $nl);
-        $tags = $app->calibre->tags();
+        $tags = $this->calibre()->tags();
         foreach ($tags as $tag) {
             $tag->key = $tag->name;
         }
@@ -315,8 +286,8 @@ class AdminActions extends DefaultActions
         $nt->name = $this->getMessageString('admin_no_selection');
         $nt->key = '';
         array_unshift($tags, $nt);
-        $app->getLog()->debug('admin_get_user: ' . json_encode($user));
-        $app->render('admin_user.html', [
+        $this->log()->debug('admin_get_user: ' . json_encode($user));
+        $this->render('admin_user.html', [
             'page' => $this->mkPage('admin_users', 0, 3),
             'user' => $user,
             'languages' => $languages,
@@ -329,30 +300,23 @@ class AdminActions extends DefaultActions
      */
     public function add_user()
     {
-        $app = $this->app;
-
-        $user_data = $app->request()->post();
-        $app->getLog()->debug('admin_add_user: ' . var_export($user_data, true));
+        $user_data = $this->request()->post();
+        $this->log()->debug('admin_add_user: ' . var_export($user_data, true));
         try {
-            $user = $app->bbs->addUser($user_data['username'], $user_data['password']);
+            $user = $this->bbs()->addUser($user_data['username'], $user_data['password']);
         } catch (Exception $e) {
-            $app->getLog()->error('admin_add_user: error for adding user ' . var_export($user_data, true));
-            $app->getLog()->error('admin_add_user: exception ' . $e->getMessage());
+            $this->log()->error('admin_add_user: error for adding user ' . var_export($user_data, true));
+            $this->log()->error('admin_add_user: exception ' . $e->getMessage());
             $user = null;
         }
-        $resp = $app->response();
         if (isset($user) && !is_null($user)) {
-            $resp->setStatus(200);
             $msg = $this->getMessageString('admin_modified');
             $answer = json_encode(['user' => $user->unbox()->getProperties(), 'msg' => $msg]);
-            $resp->headers->set('Content-type', 'application/json');
+            $this->mkResponse($answer, 'application/json', 200);
         } else {
-            $resp->setStatus(500);
-            $resp->headers->set('Content-type', 'text/plain');
             $answer = $this->getMessageString('admin_modify_error');
+            $this->mkResponse($answer, 'text/plain', 500);
         }
-        $resp->headers->set('Content-Length', strlen($answer));
-        $resp->setBody($answer);
     }
 
     /**
@@ -360,29 +324,22 @@ class AdminActions extends DefaultActions
      */
     public function delete_user($id)
     {
-        $app = $this->app;
-
         // parameter checking
         if (!is_numeric($id)) {
-            $app->getLog()->warn('admin_delete_user: invalid user id ' . $id);
-            $app->halt(400, "Bad parameter");
+            $this->log()->warn('admin_delete_user: invalid user id ' . $id);
+            $this->halt(400, "Bad parameter");
         }
 
-        $app->getLog()->debug('admin_delete_user: ' . var_export($id, true));
-        $success = $app->bbs->deleteUser($id);
-        $resp = $app->response();
+        $this->log()->debug('admin_delete_user: ' . var_export($id, true));
+        $success = $this->bbs()->deleteUser($id);
         if ($success) {
-            $resp->setStatus(200);
             $msg = $this->getMessageString('admin_modified');
             $answer = json_encode(['msg' => $msg]);
-            $resp->headers->set('Content-type', 'application/json');
+            $this->mkResponse($answer, 'application/json', 200);
         } else {
-            $resp->setStatus(500);
-            $resp->headers->set('Content-type', 'text/plain');
             $answer = $this->getMessageString('admin_modify_error');
+            $this->mkResponse($answer, 'text/plain', 500);
         }
-        $resp->headers->set('Content-Length', strlen($answer));
-        $resp->setBody($answer);
     }
 
     /**
@@ -390,37 +347,30 @@ class AdminActions extends DefaultActions
      */
     public function modify_user($id)
     {
-        $app = $this->app;
-
         // parameter checking
         if (!is_numeric($id)) {
-            $app->getLog()->warn('admin_modify_user: invalid user id ' . $id);
-            $app->halt(400, "Bad parameter");
+            $this->log()->warn('admin_modify_user: invalid user id ' . $id);
+            $this->halt(400, "Bad parameter");
         }
 
-        $user_data = $app->request()->put();
-        $app->getLog()->debug('admin_modify_user: ' . var_export($user_data, true));
-        $user = $app->bbs->changeUser(
+        $user_data = $this->request()->put();
+        $this->log()->debug('admin_modify_user: ' . var_export($user_data, true));
+        $user = $this->bbs()->changeUser(
             $id,
             $user_data['password'],
             $user_data['languages'],
             $user_data['tags'],
             $user_data['role']
         );
-        $app->getLog()->debug('admin_modify_user: ' . json_encode($user));
-        $resp = $app->response();
+        $this->log()->debug('admin_modify_user: ' . json_encode($user));
         if (isset($user) && !is_null($user)) {
-            $resp->setStatus(200);
             $msg = $this->getMessageString('admin_modified');
             $answer = json_encode(['user' => $user->unbox()->getProperties(), 'msg' => $msg]);
-            $resp->headers->set('Content-type', 'application/json');
+            $this->mkResponse($answer, 'application/json', 200);
         } else {
-            $resp->setStatus(500);
-            $resp->headers->set('Content-type', 'text/plain');
             $answer = $this->getMessageString('admin_modify_error');
+            $this->mkResponse($answer, 'text/plain', 500);
         }
-        $resp->headers->set('Content-Length', strlen($answer));
-        $resp->setBody($answer);
     }
 
 
@@ -429,23 +379,22 @@ class AdminActions extends DefaultActions
      */
     public function change_json()
     {
-        $app = $this->app;
-        $globalSettings = $app->config('globalSettings');
-        $app->getLog()->debug('admin_change: started');
+        $globalSettings = $this->settings();
+        $this->log()->debug('admin_change: started');
         # Check access permission
         if (!$this->is_admin()) {
-            $app->getLog()->warn('admin_change: no admin permission');
-            $app->render('admin_configuration.html', [
+            $this->log()->warn('admin_change: no admin permission');
+            $this->render('admin_configuration.html', [
                 'page' => $this->mkPage('admin'),
                 'messages' => [$this->getMessageString('invalid_password')],
                 'isadmin' => false]);
             return;
         }
         $nconfigs = [];
-        $req_configs = $app->request()->post();
+        $req_configs = $this->request()->post();
         $errors = [];
         $messages = [];
-        $app->getLog()->debug('admin_change: ' . var_export($req_configs, true));
+        $this->log()->debug('admin_change: ' . var_export($req_configs, true));
 
         ## Check for consistency - calibre directory
         # Calibre dir is still empty and no change in sight --> error
@@ -458,10 +407,10 @@ class AdminActions extends DefaultActions
             if ($req_calibre_dir != $globalSettings[CALIBRE_DIR]) {
                 if (!Calibre::checkForCalibre($req_calibre_dir)) {
                     array_push($errors, 1);
-                } elseif ($app->bbs->clearThumbnails()) {
-                    $app->getLog()->info('admin_change: Lib changed, deleted existing thumbnails.');
+                } elseif ($this->bbs()->clearThumbnails()) {
+                    $this->log()->info('admin_change: Lib changed, deleted existing thumbnails.');
                 } else {
-                    $app->getLog()->info('admin_change: Lib changed, deletion of existing thumbnails failed.');
+                    $this->log()->info('admin_change: Lib changed, deletion of existing thumbnails failed.');
                 }
             }
         }
@@ -477,27 +426,27 @@ class AdminActions extends DefaultActions
 
         ## Check for a change in the thumbnail generation method
         if ($req_configs[THUMB_GEN_CLIPPED] != $globalSettings[THUMB_GEN_CLIPPED]) {
-            $app->getLog()->info('admin_change: Thumbnail generation method changed. Existing Thumbnails will be deleted.');
+            $this->log()->info('admin_change: Thumbnail generation method changed. Existing Thumbnails will be deleted.');
             # Delete old thumbnails if necessary
-            if ($app->bbs->clearThumbnails()) {
-                $app->getLog()->info('admin_change: Deleted exisiting thumbnails.');
+            if ($this->bbs()->clearThumbnails()) {
+                $this->log()->info('admin_change: Deleted exisiting thumbnails.');
             } else {
-                $app->getLog()->info('admin_change: Deletion of exisiting thumbnails failed.');
+                $this->log()->info('admin_change: Deletion of exisiting thumbnails failed.');
             }
         }
 
         ## Check for a change in page size, min 1, max 100
         if ($req_configs[PAGE_SIZE] != $globalSettings[PAGE_SIZE]) {
             if ($req_configs[PAGE_SIZE] < 1 || $req_configs[PAGE_SIZE] > 100) {
-                $app->getLog()->warn('admin_change: Invalid page size requested: ' . $req_configs[PAGE_SIZE]);
+                $this->log()->warn('admin_change: Invalid page size requested: ' . $req_configs[PAGE_SIZE]);
                 array_push($errors, 4);
             }
         }
 
         # Don't save just return the error status
         if (count($errors) > 0) {
-            $app->getLog()->error('admin_change: ended with error ' . var_export($errors, true));
-            $app->render('admin_configuration.html', [
+            $this->log()->error('admin_change: ended with error ' . var_export($errors, true));
+            $this->render('admin_configuration.html', [
                 'page' => $this->mkPage('admin'),
                 'isadmin' => true,
                 'errors' => $errors]);
@@ -507,17 +456,17 @@ class AdminActions extends DefaultActions
                 if (!isset($globalSettings[$key]) || $value != $globalSettings[$key]) {
                     $nconfigs[$key] = $value;
                     $globalSettings[$key] = $value;
-                    $app->getLog()->debug('admin_change: ' . $key . ' changed: ' . $value);
+                    $this->log()->debug('admin_change: ' . $key . ' changed: ' . $value);
                 }
             }
             # Save changes
             if (count($nconfigs) > 0) {
-                $app->bbs->saveConfigs($nconfigs);
-                $app->getLog()->debug('admin_change: changes saved');
-                $app->config('globalSettings', $globalSettings);
+                $this->bbs()->saveConfigs($nconfigs);
+                $this->log()->debug('admin_change: changes saved');
+                $this->settings($globalSettings);
             }
-            $app->getLog()->debug('admin_change: ended');
-            $app->render('admin_configuration.html', [
+            $this->log()->debug('admin_change: ended');
+            $this->render('admin_configuration.html', [
                 'page' => $this->mkPage('admin', 0, 2),
                 'messages' => [$this->getMessageString('changes_saved')],
                 'mailers' => $this->mkMailers(),
@@ -532,8 +481,7 @@ class AdminActions extends DefaultActions
      */
     public function check_version()
     {
-        $app = $this->app;
-        $globalSettings = $app->config('globalSettings');
+        $globalSettings = $this->settings();
         $versionAnswer = [];
         $contents = file_get_contents(VERSION_URL);
         if ($contents == false) {
@@ -558,7 +506,7 @@ class AdminActions extends DefaultActions
                 $versionAnswer = sprintf($this->getMessageString('admin_no_new_version'), $globalSettings['version']);
             }
         }
-        $app->render('admin_version.html', [
+        $this->render('admin_version.html', [
             'page' => $this->mkPage('admin_check_version', 0, 2),
             'versionClass' => $versionClass,
             'versionAnswer' => $versionAnswer,
@@ -576,8 +524,7 @@ class AdminActions extends DefaultActions
      */
     public function has_valid_calibre_dir()
     {
-        $app = $this->app;
-        $globalSettings = $app->config('globalSettings');
+        $globalSettings = $this->settings();
         return (!empty($globalSettings[CALIBRE_DIR]) &&
             Calibre::checkForCalibre($globalSettings[CALIBRE_DIR]));
     }

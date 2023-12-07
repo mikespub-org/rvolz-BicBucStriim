@@ -2,14 +2,15 @@
 /**
  * BicBucStriim
  *
- * Copyright 2012-2014 Rainer Volz
+ * Copyright 2012-2023 Rainer Volz
+ * Copyright 2023-     mikespub
  * Licensed under MIT License, see LICENSE
  *
  */
 
 namespace BicBucStriim\Middleware;
 
-class CachingMiddleware extends \Slim\Middleware
+class CachingMiddleware extends DefaultMiddleware
 {
     protected $resources;
 
@@ -30,13 +31,12 @@ class CachingMiddleware extends \Slim\Middleware
      */
     public function call()
     {
-        $app = $this->app;
-        $request = $app->request;
+        $request = $this->request();
         $resource = $request->getResourceUri();
         foreach ($this->resources as $noCacheResource) {
             if (\Utilities::stringStartsWith($resource, $noCacheResource)) {
                 session_cache_limiter('nocache');
-                $app->getLog()->debug('caching_middleware: caching disabled for ' . $resource);
+                $this->log()->debug('caching_middleware: caching disabled for ' . $resource);
                 break;
             }
         }
