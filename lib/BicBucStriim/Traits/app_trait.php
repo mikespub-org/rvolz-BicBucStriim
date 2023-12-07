@@ -107,12 +107,72 @@ trait AppTrait
     }
 
     /**
-     * Halt
+     * Create and send an error to authenticate (401)
+     * @param  string   $realm      The realm
      * @param  int      $status     The HTTP response status
      * @param  string   $message    The HTTP response body
      */
-    public function halt($status, $message = '')
+    public function mkAuthenticate($realm, $status = 401, $message = 'Please authenticate')
+    {
+        $this->response()->headers->set('WWW-Authenticate', sprintf('Basic realm="%s"', $realm));
+        $this->mkError($status, $message);
+    }
+
+    /**
+     * Create and send an error response (halt)
+     * @param  int      $status     The HTTP response status
+     * @param  string   $message    The HTTP response body
+     */
+    public function mkError($status, $message = '')
     {
         $this->app->halt($status, $message);
+    }
+
+    /**
+     * Create and send a redirect response (redirect)
+     * @param  string   $url        The destination URL
+     * @param  int      $status     The HTTP redirect status code (optional)
+     * @param  bool     $halt       Invoke response->halt() or not (optional for middleware)
+     */
+    public function mkRedirect($url, $status = 302, $halt = true)
+    {
+        if ($halt) {
+            $this->app->redirect($url, $status);
+        } else {
+            $this->response()->redirect($url, $status);
+        }
+    }
+
+    /**
+     * Create and send a normal response
+     * @param string $content
+     * @param string $type
+     * @param int $status
+     * @return void
+     */
+    public function mkResponse($content, $type, $status = 200)
+    {
+        // Slim 2 framework will finalize response after slim call() and echo output in run()
+        $resp = $this->response();
+        $resp->setStatus($status);
+        $resp->headers->set('Content-type', $type);
+        $resp->headers->set('Content-Length', strlen($content));
+        $resp->setBody($content);
+    }
+
+    /**
+     * Create and send a file response
+     * @param string $filepath
+     * @param string $type
+     * @param int $status
+     * @return void
+     */
+    public function mkSendFile($filepath, $type, $status = 200)
+    {
+        $resp = $this->response();
+        $resp->setStatus($status);
+        $resp->headers->set('Content-type', $type);
+        $resp->headers->set('Content-Length', filesize($filepath));
+        readfile($filepath);
     }
 }

@@ -30,12 +30,12 @@ class OwnConfigMiddleware extends DefaultMiddleware
     {
         $config_status = $this->check_config_db();
         if ($config_status == 0) {
-            $this->halt(500, 'No or bad configuration database. Please use <a href="' .
+            $this->mkError(500, 'No or bad configuration database. Please use <a href="' .
                 $this->request()->getRootUri() .
                 '/installcheck.php">installcheck.php</a> to check for errors.');
         } elseif ($config_status == 2) {
             // TODO Redirect to an update script in the future
-            $this->halt(500, 'Old configuration database detected. Please refer to the <a href="http://projekte.textmulch.de/bicbucstriim/#upgrading">upgrade documentation</a> for more information.');
+            $this->mkError(500, 'Old configuration database detected. Please refer to the <a href="http://projekte.textmulch.de/bicbucstriim/#upgrading">upgrade documentation</a> for more information.');
         } else {
             $this->next->call();
         }

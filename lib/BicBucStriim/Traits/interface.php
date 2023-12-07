@@ -68,9 +68,43 @@ interface AppInterface
     public function settings($settings = null);
 
     /**
-     * Halt
+     * Create and send an error to authenticate (401)
+     * @param  string   $realm      The realm
      * @param  int      $status     The HTTP response status
      * @param  string   $message    The HTTP response body
      */
-    public function halt($status, $message = '');
+    public function mkAuthenticate($realm, $status = 401, $message = 'Please authenticate');
+
+    /**
+     * Create and send an error response (halt)
+     * @param  int      $status     The HTTP response status
+     * @param  string   $message    The HTTP response body
+     */
+    public function mkError($status, $message = '');
+
+    /**
+     * Create and send a redirect response (redirect)
+     * @param  string   $url        The destination URL
+     * @param  int      $status     The HTTP redirect status code (optional)
+     * @param  bool     $halt       Invoke response->halt() or not (optional for middleware)
+     */
+    public function mkRedirect($url, $status = 302, $halt = true);
+
+    /**
+     * Create and send a normal response
+     * @param string $content
+     * @param string $type
+     * @param int $status
+     * @return void
+     */
+    public function mkResponse($content, $type, $status = 200);
+
+    /**
+     * Create and send a file response
+     * @param string $filepath
+     * @param string $type
+     * @param int $status
+     * @return void
+     */
+    public function mkSendFile($filepath, $type, $status = 200);
 }

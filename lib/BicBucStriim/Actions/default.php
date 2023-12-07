@@ -123,23 +123,6 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
     }
 
     /**
-     * Create and send the typical response
-     * @param string $content
-     * @param string $type
-     * @param int $status
-     * @return void
-     */
-    public function mkResponse($content, $type, $status = 200)
-    {
-        // Slim 2 framework will finalize response after slim call() and echo output in run()
-        $resp = $this->response();
-        $resp->setStatus($status);
-        $resp->headers->set('Content-type', $type);
-        $resp->headers->set('Content-Length', strlen($content));
-        $resp->setBody($content);
-    }
-
-    /**
      * Utility function to fill the page array
      */
     public function mkPage($messageId = '', $menu = 0, $level = 0)

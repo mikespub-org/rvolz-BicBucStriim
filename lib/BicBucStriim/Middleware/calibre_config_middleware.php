@@ -40,8 +40,7 @@ class CalibreConfigMiddleware extends DefaultMiddleware
                 $this->log()->warn('check_config: Calibre library path not configured.');
                 if ($request->getResourceUri() != '/admin/configuration/') {
                     // app->redirect not useable in middleware
-                    $this->response()->setStatus(302);
-                    $this->response()->headers->set('Location', $request->getRootUri() . '/admin/configuration/');
+                    $this->mkRedirect($request->getRootUri() . '/admin/configuration/', 302, false);
                 } else {
                     $this->next->call();
                 }
@@ -52,8 +51,7 @@ class CalibreConfigMiddleware extends DefaultMiddleware
                 if (!$this->calibre()->libraryOk() && $request->getResourceUri() != '/admin/configuration/') {
                     $this->log()->error('check_config: Exception while opening metadata db ' . $clp . '. Showing admin page.');
                     // app->redirect not useable in middleware
-                    $this->response()->setStatus(302);
-                    $this->response()->headers->set('Location', $request->getRootUri() . '/admin/configuration/');
+                    $this->mkRedirect($request->getRootUri() . '/admin/configuration/', 302, false);
                 } else {
                     $this->next->call();
                 }

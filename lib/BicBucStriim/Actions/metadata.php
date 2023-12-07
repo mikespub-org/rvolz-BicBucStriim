@@ -45,7 +45,8 @@ class MetadataActions extends DefaultActions
         // parameter checking
         if (!is_numeric($id)) {
             $this->log()->warn('edit_author_thm: invalid author id ' . $id);
-            $this->halt(400, "Bad parameter");
+            $this->mkError(400, "Bad parameter");
+            return;
         }
 
         $allowedExts = ["jpeg", "jpg", "png"];
@@ -66,20 +67,20 @@ class MetadataActions extends DefaultActions
                 $this->log()->debug('edit_author_thm: upload error ' . $_FILES["file"]["error"]);
                 $this->app()->flash('error', $this->getMessageString('author_thumbnail_upload_error1') . ': ' . $_FILES["file"]["error"]);
                 $rot = $this->request()->getRootUri();
-                $this->app()->redirect($rot . '/authors/' . $id . '/0/');
+                $this->mkRedirect($rot . '/authors/' . $id . '/0/');
             } else {
                 $this->log()->debug('edit_author_thm: upload ok, converting');
                 $author = $this->calibre()->author($id);
                 $created = $this->bbs()->editAuthorThumbnail($id, $author->name, $globalSettings[THUMB_GEN_CLIPPED], $_FILES["file"]["tmp_name"], $_FILES["file"]["type"]);
                 $this->log()->debug('edit_author_thm: converted, redirecting');
                 $rot = $this->request()->getRootUri();
-                $this->app()->redirect($rot . '/authors/' . $id . '/0/');
+                $this->mkRedirect($rot . '/authors/' . $id . '/0/');
             }
         } else {
             $this->log()->warn('edit_author_thm: Uploaded thumbnail too big or wrong type');
             $this->app()->flash('error', $this->getMessageString('author_thumbnail_upload_error2'));
             $rot = $this->request()->getRootUri();
-            $this->app()->redirect($rot . '/authors/' . $id . '/0/');
+            $this->mkRedirect($rot . '/authors/' . $id . '/0/');
         }
     }
 
@@ -91,7 +92,8 @@ class MetadataActions extends DefaultActions
         // parameter checking
         if (!is_numeric($id)) {
             $this->log()->warn('del_author_thm: invalid author id ' . $id);
-            $this->halt(400, "Bad parameter");
+            $this->mkError(400, "Bad parameter");
+            return;
         }
 
         $this->log()->debug('del_author_thm: ' . $id);
@@ -114,7 +116,8 @@ class MetadataActions extends DefaultActions
         // parameter checking
         if (!is_numeric($id)) {
             $this->log()->warn('edit_author_notes: invalid author id ' . $id);
-            $this->halt(400, "Bad parameter");
+            $this->mkError(400, "Bad parameter");
+            return;
         }
 
         $this->log()->debug('edit_author_notes: ' . $id);
@@ -151,7 +154,8 @@ class MetadataActions extends DefaultActions
         // parameter checking
         if (!is_numeric($id)) {
             $this->log()->warn('del_author_notes: invalid author id ' . $id);
-            $this->halt(400, "Bad parameter");
+            $this->mkError(400, "Bad parameter");
+            return;
         }
 
         $this->log()->debug('del_author_notes: ' . $id);
@@ -174,7 +178,8 @@ class MetadataActions extends DefaultActions
         // parameter checking
         if (!is_numeric($id)) {
             $this->log()->warn('new_author_link: invalid author id ' . $id);
-            $this->halt(400, "Bad parameter");
+            $this->mkError(400, "Bad parameter");
+            return;
         }
 
         $link_data = $this->request()->post();
@@ -202,7 +207,8 @@ class MetadataActions extends DefaultActions
         // parameter checking
         if (!is_numeric($id) || !is_numeric($link)) {
             $this->log()->warn('del_author_link: invalid author id ' . $id . ' or link id ' . $link);
-            $this->halt(400, "Bad parameter");
+            $this->mkError(400, "Bad parameter");
+            return;
         }
 
         $this->log()->debug('del_author_link: author ' . $id . ', link ' . $link);

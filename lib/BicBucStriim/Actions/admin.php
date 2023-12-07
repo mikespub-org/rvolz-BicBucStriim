@@ -144,7 +144,8 @@ class AdminActions extends DefaultActions
         // parameter checking
         if (!preg_match('/^\w+$/u', $id)) {
             $this->log()->warn('admin_modify_idtemplate: invalid template id ' . $id);
-            $this->halt(400, "Invalid ID for template: " . $id);
+            $this->mkError(400, "Invalid ID for template: " . $id);
+            return;
         }
 
         $template_data = $this->request()->put();
@@ -177,7 +178,8 @@ class AdminActions extends DefaultActions
         // parameter checking
         if (!preg_match('/^\w+$/u', $id)) {
             $this->log()->warn('admin_clear_idtemplate: invalid template id ' . $id);
-            $this->halt(400, "Invalid ID for template: " . $id);
+            $this->mkError(400, "Invalid ID for template: " . $id);
+            return;
         }
 
         $this->log()->debug('admin_clear_idtemplate: ' . var_export($id, true));
@@ -266,7 +268,8 @@ class AdminActions extends DefaultActions
         // parameter checking
         if (!is_numeric($id)) {
             $this->log()->warn('admin_get_user: invalid user id ' . $id);
-            $this->halt(400, "Bad parameter");
+            $this->mkError(400, "Bad parameter");
+            return;
         }
 
         $user = $this->bbs()->user($id);
@@ -327,7 +330,8 @@ class AdminActions extends DefaultActions
         // parameter checking
         if (!is_numeric($id)) {
             $this->log()->warn('admin_delete_user: invalid user id ' . $id);
-            $this->halt(400, "Bad parameter");
+            $this->mkError(400, "Bad parameter");
+            return;
         }
 
         $this->log()->debug('admin_delete_user: ' . var_export($id, true));
@@ -350,7 +354,8 @@ class AdminActions extends DefaultActions
         // parameter checking
         if (!is_numeric($id)) {
             $this->log()->warn('admin_modify_user: invalid user id ' . $id);
-            $this->halt(400, "Bad parameter");
+            $this->mkError(400, "Bad parameter");
+            return;
         }
 
         $user_data = $this->request()->put();

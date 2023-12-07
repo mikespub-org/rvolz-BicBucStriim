@@ -99,7 +99,8 @@ class OpdsActions extends DefaultActions
         // parameter checking
         if (!is_numeric($index)) {
             $this->log()->warn('opdsByTitle: invalid page id ' . $index);
-            $this->halt(400, "Bad parameter");
+            $this->mkError(400, "Bad parameter");
+            return;
         }
 
         $filter = $this->getFilter();
@@ -143,7 +144,8 @@ class OpdsActions extends DefaultActions
         // parameter checking
         if (!(ctype_upper($initial))) {
             $this->log()->warn('opdsByAuthorNamesForInitial: invalid initial ' . $initial);
-            $this->halt(400, "Bad parameter");
+            $this->mkError(400, "Bad parameter");
+            return;
         }
 
         $authors = $this->calibre()->authorsNamesForInitial($initial);
@@ -165,7 +167,8 @@ class OpdsActions extends DefaultActions
         // parameter checking
         if (!is_numeric($id) || !is_numeric($page)) {
             $this->log()->warn('opdsByAuthor: invalid author id ' . $id . ' or page id ' . $page);
-            $this->halt(400, "Bad parameter");
+            $this->mkError(400, "Bad parameter");
+            return;
         }
 
         $filter = $this->getFilter();
@@ -208,7 +211,8 @@ class OpdsActions extends DefaultActions
         // parameter checking
         if (!(ctype_upper($initial))) {
             $this->log()->warn('opdsByTagNamesForInitial: invalid initial ' . $initial);
-            $this->halt(400, "Bad parameter");
+            $this->mkError(400, "Bad parameter");
+            return;
         }
 
         $tags = $this->calibre()->tagsNamesForInitial($initial);
@@ -230,7 +234,8 @@ class OpdsActions extends DefaultActions
         // parameter checking
         if (!is_numeric($id) || !is_numeric($page)) {
             $this->log()->warn('opdsByTag: invalid tag id ' . $id . ' or page id ' . $page);
-            $this->halt(400, "Bad parameter");
+            $this->mkError(400, "Bad parameter");
+            return;
         }
 
         $filter = $this->getFilter();
@@ -271,7 +276,8 @@ class OpdsActions extends DefaultActions
         // parameter checking
         if (!($initial == 'all' || ctype_upper($initial))) {
             $this->log()->warn('opdsBySeriesNamesForInitial: invalid initial ' . $initial);
-            $this->halt(400, "Bad parameter");
+            $this->mkError(400, "Bad parameter");
+            return;
         }
 
         $tags = $this->calibre()->seriesNamesForInitial($initial);
@@ -293,7 +299,8 @@ class OpdsActions extends DefaultActions
         // parameter checking
         if (!is_numeric($id) || !is_numeric($page)) {
             $this->log()->warn('opdsBySeries: invalid series id ' . $id . ' or page id ' . $page);
-            $this->halt(400, "Bad parameter");
+            $this->mkError(400, "Bad parameter");
+            return;
         }
 
         $filter = $this->getFilter();
@@ -337,14 +344,15 @@ class OpdsActions extends DefaultActions
         // parameter checking
         if (!is_numeric($index)) {
             $this->log()->warn('opdsBySearch: invalid page id ' . $index);
-            $this->halt(400, "Bad parameter");
+            $this->mkError(400, "Bad parameter");
+            return;
         }
 
         $search = $this->request()->get('search');
         if (!isset($search)) {
             $this->log()->error('opdsBySearch called without search criteria, page ' . $index);
             // 400 Bad request
-            $this->response()->setStatus(400);
+            $this->mkError(400);
             return;
         }
         $filter = $this->getFilter();
@@ -384,8 +392,7 @@ class OpdsActions extends DefaultActions
                 $this->log()->info("logged out user: " . $username);
             }
         }
-        $this->response()->headers->set('WWW-Authenticate', sprintf('Basic realm="%s"', $globalSettings['appname']));
-        $this->halt(401, 'Please authenticate');
+        $this->mkAuthenticate($globalSettings['appname']);
     }
 
     /*********************************************************************
