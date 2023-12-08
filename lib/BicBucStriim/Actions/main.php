@@ -30,25 +30,38 @@ class MainActions extends DefaultActions
     {
         $self = new self($app);
         $app->notFound([$self, 'myNotFound']);
-        $app->get('/', [$self, 'main']);
-        $app->get('/login/', [$self, 'show_login']);
-        $app->post('/login/', [$self, 'perform_login']);
-        $app->get('/logout/', [$self, 'logout']);
-        $app->get('/authors/:id/notes/', [$self, 'check_admin'], [$self, 'authorNotes']);
-        #$app->post('/authors/:id/notes/', [$self, 'check_admin'], [$self, 'authorNotesEdit']);
-        $app->get('/authors/:id/:page/', [$self, 'authorDetailsSlice']);
-        $app->get('/authorslist/:id/', [$self, 'authorsSlice']);
-        $app->get('/search/', [$self, 'globalSearch']);
-        $app->get('/series/:id/:page/', [$self, 'seriesDetailsSlice']);
-        $app->get('/serieslist/:id/', [$self, 'seriesSlice']);
-        $app->get('/tags/:id/:page/', [$self, 'tagDetailsSlice']);
-        $app->get('/tagslist/:id/', [$self, 'tagsSlice']);
-        $app->get('/titles/:id/', [$self, 'title']);
-        $app->get('/titles/:id/cover/', [$self, 'cover']);
-        $app->get('/titles/:id/file/:file', [$self, 'book']);
-        $app->post('/titles/:id/kindle/:file', [$self, 'kindle']);
-        $app->get('/titles/:id/thumbnail/', [$self, 'thumbnail']);
-        $app->get('/titleslist/:id/', [$self, 'titlesSlice']);
+        static::mapRoutes($app, $self);
+    }
+
+    /**
+     * Get routes for main actions
+     * @param self $self
+     * @return array<mixed> list of [method(s), path, callable(s)] for each action
+     */
+    public static function getRoutes($self)
+    {
+        return [
+            // method(s), path, callable(s)
+            ['GET', '/', [$self, 'main']],
+            ['GET', '/login/', [$self, 'show_login']],
+            ['POST', '/login/', [$self, 'perform_login']],
+            ['GET', '/logout/', [$self, 'logout']],
+            ['GET', '/authors/:id/notes/', [$self, 'check_admin'], [$self, 'authorNotes']],
+            //['POST', '/authors/:id/notes/', [$self, 'check_admin'], [$self, 'authorNotesEdit']],
+            ['GET', '/authors/:id/:page/', [$self, 'authorDetailsSlice']],
+            ['GET', '/authorslist/:id/', [$self, 'authorsSlice']],
+            ['GET', '/search/', [$self, 'globalSearch']],
+            ['GET', '/series/:id/:page/', [$self, 'seriesDetailsSlice']],
+            ['GET', '/serieslist/:id/', [$self, 'seriesSlice']],
+            ['GET', '/tags/:id/:page/', [$self, 'tagDetailsSlice']],
+            ['GET', '/tagslist/:id/', [$self, 'tagsSlice']],
+            ['GET', '/titles/:id/', [$self, 'title']],
+            ['GET', '/titles/:id/cover/', [$self, 'cover']],
+            ['GET', '/titles/:id/file/:file', [$self, 'book']],
+            ['POST', '/titles/:id/kindle/:file', [$self, 'kindle']],
+            ['GET', '/titles/:id/thumbnail/', [$self, 'thumbnail']],
+            ['GET', '/titleslist/:id/', [$self, 'titlesSlice']],
+        ];
     }
 
     /**

@@ -24,14 +24,28 @@ class MetadataActions extends DefaultActions
     public static function addRoutes($app, $prefix = '/metadata')
     {
         $self = new self($app);
+        // check admin for all actions in this group
         $app->group($prefix, [$self, 'check_admin'], function () use ($app, $self) {
-            $app->post('/authors/:id/thumbnail/', [$self, 'edit_author_thm']);
-            $app->delete('/authors/:id/thumbnail/', [$self, 'del_author_thm']);
-            $app->post('/authors/:id/notes/', [$self, 'edit_author_notes']);
-            $app->delete('/authors/:id/notes/', [$self, 'del_author_notes']);
-            $app->post('/authors/:id/links/', [$self, 'new_author_link']);
-            $app->delete('/authors/:id/links/:link_id/', [$self, 'del_author_link']);
+            static::mapRoutes($app, $self);
         });
+    }
+
+    /**
+     * Get routes for metadata actions
+     * @param self $self
+     * @return array<mixed> list of [method(s), path, callable(s)] for each action
+     */
+    public static function getRoutes($self)
+    {
+        return [
+            // method(s), path, callable(s)
+            ['POST', '/authors/:id/thumbnail/', [$self, 'edit_author_thm']],
+            ['DELETE', '/authors/:id/thumbnail/', [$self, 'del_author_thm']],
+            ['POST', '/authors/:id/notes/', [$self, 'edit_author_notes']],
+            ['DELETE', '/authors/:id/notes/', [$self, 'del_author_notes']],
+            ['POST', '/authors/:id/links/', [$self, 'new_author_link']],
+            ['DELETE', '/authors/:id/links/:link_id/', [$self, 'del_author_link']],
+        ];
     }
 
     /**

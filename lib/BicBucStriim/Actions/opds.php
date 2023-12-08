@@ -25,27 +25,40 @@ class OpdsActions extends DefaultActions
     {
         $self = new self($app);
         $app->group($prefix, function () use ($app, $self) {
-            $app->get('/', [$self, 'opdsRoot']);
-            $app->get('/newest/', [$self, 'opdsNewest']);
-            $app->get('/titleslist/:id/', [$self, 'opdsByTitle']);
-            $app->get('/authorslist/', [$self, 'opdsByAuthorInitial']);
-            $app->get('/authorslist/:initial/', [$self, 'opdsByAuthorNamesForInitial']);
-            $app->get('/authorslist/:initial/:id/:page/', [$self, 'opdsByAuthor']);
-            $app->get('/tagslist/', [$self, 'opdsByTagInitial']);
-            $app->get('/tagslist/:initial/', [$self, 'opdsByTagNamesForInitial']);
-            $app->get('/tagslist/:initial/:id/:page/', [$self, 'opdsByTag']);
-            $app->get('/serieslist/', [$self, 'opdsBySeriesInitial']);
-            $app->get('/serieslist/:initial/', [$self, 'opdsBySeriesNamesForInitial']);
-            $app->get('/serieslist/:initial/:id/:page/', [$self, 'opdsBySeries']);
-            $app->get('/opensearch.xml', [$self, 'opdsSearchDescriptor']);
-            $app->get('/searchlist/:id/', [$self, 'opdsBySearch']);
-            // @todo either split off titles actions and call here, or adapt partialAcquisitionEntry() in OPDS Generator
-            //$app->get('/titles/:id/', [$self, 'title']);
-            //$app->get('/titles/:id/cover/', [$self, 'cover']);
-            //$app->get('/titles/:id/file/:file', [$self, 'book']);
-            //$app->get('/titles/:id/thumbnail/', [$self, 'thumbnail']);
-            $app->get('/logout/', [$self, 'opdsLogout']);
+            static::mapRoutes($app, $self);
         });
+    }
+
+    /**
+     * Get routes for OPDS actions
+     * @param self $self
+     * @return array<mixed> list of [method(s), path, callable(s)] for each action
+     */
+    public static function getRoutes($self)
+    {
+        return [
+            // method(s), path, callable(s)
+            ['GET', '/', [$self, 'opdsRoot']],
+            ['GET', '/newest/', [$self, 'opdsNewest']],
+            ['GET', '/titleslist/:id/', [$self, 'opdsByTitle']],
+            ['GET', '/authorslist/', [$self, 'opdsByAuthorInitial']],
+            ['GET', '/authorslist/:initial/', [$self, 'opdsByAuthorNamesForInitial']],
+            ['GET', '/authorslist/:initial/:id/:page/', [$self, 'opdsByAuthor']],
+            ['GET', '/tagslist/', [$self, 'opdsByTagInitial']],
+            ['GET', '/tagslist/:initial/', [$self, 'opdsByTagNamesForInitial']],
+            ['GET', '/tagslist/:initial/:id/:page/', [$self, 'opdsByTag']],
+            ['GET', '/serieslist/', [$self, 'opdsBySeriesInitial']],
+            ['GET', '/serieslist/:initial/', [$self, 'opdsBySeriesNamesForInitial']],
+            ['GET', '/serieslist/:initial/:id/:page/', [$self, 'opdsBySeries']],
+            ['GET', '/opensearch.xml', [$self, 'opdsSearchDescriptor']],
+            ['GET', '/searchlist/:id/', [$self, 'opdsBySearch']],
+            // @todo either split off titles actions and call here, or adapt partialAcquisitionEntry() in OPDS Generator
+            //['GET', '/titles/:id/', [$self, 'title']],
+            //['GET', '/titles/:id/cover/', [$self, 'cover']],
+            //['GET', '/titles/:id/file/:file', [$self, 'book']],
+            //['GET', '/titles/:id/thumbnail/', [$self, 'thumbnail']],
+            ['GET', '/logout/', [$self, 'opdsLogout']],
+        ];
     }
 
     /**

@@ -32,22 +32,36 @@ class AdminActions extends DefaultActions
     public static function addRoutes($app, $prefix = '/admin')
     {
         $self = new self($app);
+        // check admin for all actions in this group
         $app->group($prefix, [$self, 'check_admin'], function () use ($app, $self) {
-            $app->get('/', [$self, 'admin']);
-            $app->get('/configuration/', [$self, 'configuration']);
-            $app->post('/configuration/', [$self, 'change_json']);
-            $app->get('/idtemplates/', [$self, 'get_idtemplates']);
-            $app->put('/idtemplates/:id/', [$self, 'modify_idtemplate']);
-            $app->delete('/idtemplates/:id/', [$self, 'clear_idtemplate']);
-            $app->get('/mail/', [$self, 'get_smtp_config']);
-            $app->put('/mail/', [$self, 'change_smtp_config']);
-            $app->get('/users/', [$self, 'get_users']);
-            $app->post('/users/', [$self, 'add_user']);
-            $app->get('/users/:id/', [$self, 'get_user']);
-            $app->put('/users/:id/', [$self, 'modify_user']);
-            $app->delete('/users/:id/', [$self, 'delete_user']);
-            $app->get('/version/', [$self, 'check_version']);
+            static::mapRoutes($app, $self);
         });
+    }
+
+    /**
+     * Get routes for admin actions
+     * @param self $self
+     * @return array<mixed> list of [method(s), path, callable(s)] for each action
+     */
+    public static function getRoutes($self)
+    {
+        return [
+            // method(s), path, callable(s)
+            ['GET', '/', [$self, 'admin']],
+            ['GET', '/configuration/', [$self, 'configuration']],
+            ['POST', '/configuration/', [$self, 'change_json']],
+            ['GET', '/idtemplates/', [$self, 'get_idtemplates']],
+            ['PUT', '/idtemplates/:id/', [$self, 'modify_idtemplate']],
+            ['DELETE', '/idtemplates/:id/', [$self, 'clear_idtemplate']],
+            ['GET', '/mail/', [$self, 'get_smtp_config']],
+            ['PUT', '/mail/', [$self, 'change_smtp_config']],
+            ['GET', '/users/', [$self, 'get_users']],
+            ['POST', '/users/', [$self, 'add_user']],
+            ['GET', '/users/:id/', [$self, 'get_user']],
+            ['PUT', '/users/:id/', [$self, 'modify_user']],
+            ['DELETE', '/users/:id/', [$self, 'delete_user']],
+            ['GET', '/version/', [$self, 'check_version']],
+        ];
     }
 
     /**

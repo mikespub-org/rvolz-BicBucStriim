@@ -32,8 +32,40 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
     {
         // Slim 2 framework uses callable - we need $app instance
         $self = new self($app);
-        $app->get('/', [$self, 'hello']);
-        $app->get('/:name', [$self, 'hello']);
+        static::mapRoutes($app, $self);
+    }
+
+    /**
+     * Map routes for default actions
+     * @param \BicBucStriim\App $app
+     * @param self $self
+     * @return void
+     */
+    public static function mapRoutes($app, $self)
+    {
+        $routes = static::getRoutes($self);
+        foreach ($routes as $route) {
+            $method = array_shift($route);
+            $path = array_shift($route);
+            if (is_string($method) && $method === 'GET') {
+                $method = ['GET', 'HEAD'];
+            }
+            $app->map($path, ...$route)->via($method);
+        }
+    }
+
+    /**
+     * Get routes for default actions
+     * @param self $self
+     * @return array<mixed> list of [method(s), path, callable(s)] for each action
+     */
+    public static function getRoutes($self)
+    {
+        return [
+            // method(s), path, callable(s)
+            ['GET', '/', [$self, 'hello']],
+            ['GET', '/:name', [$self, 'hello']],
+        ];
     }
 
     /**
