@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.7.x] - 20xx-xx-xx
 ### Changed
+- Moved config files to config directory and split to clarify source code
+- Changed mapping of routes to actions to make it more adaptable
+- Moved Slim 2 app dependencies to trait and added standard responses
 - Adapted Twig files from abandoned slim/views package in lib/SlimViews for maintenance
 - Updated twig/twig package to version 2.15 and then 3.8 for maintenance
 - Replaced abandoned package swiftmailer/swiftmailer with phpmailer/phpmailer

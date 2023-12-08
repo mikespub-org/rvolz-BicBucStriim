@@ -6,7 +6,7 @@
  * Time: 09:37
  */
 
-namespace BicBucStriim;
+namespace BicBucStriim\Session;
 
 use Aura\Session\Randval;
 use Aura\Session\CsrfTokenFactory;

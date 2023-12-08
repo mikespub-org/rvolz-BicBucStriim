@@ -10,6 +10,8 @@
 
 namespace BicBucStriim;
 
+require_once __DIR__ . '/deprecated.php';
+
 class App extends \Slim\Slim
 {
     /** @var \Aura\Auth\Auth */

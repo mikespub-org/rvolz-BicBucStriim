@@ -2,7 +2,6 @@
 /**
 * Localization helper
 */
-require_once __DIR__ . '/langs.php';
 
 class L10n extends ArrayObject
 {

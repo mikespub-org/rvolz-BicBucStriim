@@ -10,10 +10,6 @@
 require 'vendor/autoload.php';
 
 # Init app and routes
-$app = require(__DIR__ . '/lib/BicBucStriim/config.php');
-
-###### Init routes for production
-$routes = require(__DIR__ . '/lib/BicBucStriim/routes.php');
-$routes($app);
+$app = require(__DIR__ . '/config/config.php');
 
 $app->run();

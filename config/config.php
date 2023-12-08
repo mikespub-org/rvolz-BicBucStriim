@@ -11,8 +11,7 @@
 define('REDBEAN_MODEL_PREFIX', '\\BicBucStriim\\AppData\\Model_');
 
 require_once __DIR__ . '/langs.php';
-require_once __DIR__ . '/app_constants.php';
-require_once __DIR__ . '/deprecated.php';
+require_once __DIR__ . '/constants.php';
 
 # The session gc lifetime needs to be at least as high as the Aura.Auth idle ttl, which defaults to 3600
 ini_set('session.gc_maxlifetime', 3600);
@@ -140,5 +139,9 @@ $app->add(new \BicBucStriim\Middleware\CalibreConfigMiddleware(CALIBRE_DIR));
 $app->add(new \BicBucStriim\Middleware\LoginMiddleware($appname, ['js', 'img', 'style']));
 $app->add(new \BicBucStriim\Middleware\OwnConfigMiddleware($knownConfigs));
 $app->add(new \BicBucStriim\Middleware\CachingMiddleware(['/admin', '/login']));
+
+###### Init routes for production
+$routes = require(__DIR__ . '/routes.php');
+$routes($app);
 
 return $app;

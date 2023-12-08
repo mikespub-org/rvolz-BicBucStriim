@@ -6,7 +6,7 @@
  * Time: 09:31
  */
 
-namespace BicBucStriim;
+namespace BicBucStriim\Session;
 
 use Aura\Auth\Session\SegmentInterface;
 use Aura\Session\Segment as AuraSessionSegment;

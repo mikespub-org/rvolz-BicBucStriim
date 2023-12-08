@@ -9,7 +9,7 @@
 set_include_path("tests:vendor");
 require_once('autoload.php');
 require_once('simpletest/simpletest/autorun.php');
-require_once('lib/BicBucStriim/l10n.php');
+require_once('config/langs.php');
 
 use BicBucStriim\AppData\BicBucStriim;
 use BicBucStriim\Calibre\Calibre;

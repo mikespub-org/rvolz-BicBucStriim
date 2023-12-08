@@ -1,6 +1,6 @@
 <?php
 
-namespace BicBucStriim;
+namespace BicBucStriim\Session;
 
 use Aura\Auth\Session\SessionInterface;
 use Aura\Session\Session as AuraSession;

@@ -115,7 +115,7 @@ class LoginMiddleware extends DefaultMiddleware
     protected function is_authorized()
     {
         $request = $this->request();
-        $session_factory = new \BicBucStriim\SessionFactory();
+        $session_factory = new \BicBucStriim\Session\SessionFactory();
         $session = $session_factory->newInstance($_COOKIE);
         $session->setCookieParams(['path' => $request->getRootUri() . '/']);
         $auth_factory = new \Aura\Auth\AuthFactory($_COOKIE, $session);

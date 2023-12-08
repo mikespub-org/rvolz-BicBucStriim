@@ -6,7 +6,7 @@
  * Time: 09:39
  */
 
-namespace BicBucStriim;
+namespace BicBucStriim\Session;
 
 use Aura\Session\Session;
 
