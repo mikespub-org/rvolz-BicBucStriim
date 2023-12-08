@@ -14,7 +14,7 @@ use BicBucStriim\Actions\MetadataActions;
 use BicBucStriim\Actions\OpdsActions;
 
 ###### Init routes for production
-return function ($app) {
+return function ($app, $settings) {
     MainActions::addRoutes($app);
     AdminActions::addRoutes($app, '/admin');
     MetadataActions::addRoutes($app, '/metadata');

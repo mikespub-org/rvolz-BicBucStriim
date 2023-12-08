@@ -10,6 +10,6 @@
 require 'vendor/autoload.php';
 
 # Init app and routes
-$app = require(__DIR__ . '/config/config.php');
+$app = require(__DIR__ . '/config/bootstrap.php');
 
 $app->run();

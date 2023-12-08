@@ -10,35 +10,47 @@ Forked Branches for PHP 8.x
 | [master](https://github.com/mikespub-org/rvolz-BicBucStriim/tree/master) | [master](https://github.com/mikespub-org/rvolz-BicBucStriim/tree/master) | [updated](https://github.com/mikespub-org/rvolz-BicBucStriim/tree/updated) | New | - | Unused | - |
 | [BicBucStriim-352](https://github.com/mikespub-org/rvolz-BicBucStriim/tree/BicBucStriim-352) | [BicBucStriim-352](https://github.com/mikespub-org/rvolz-BicBucStriim/tree/BicBucStriim-352) | [frontend](https://github.com/mikespub-org/rvolz-BicBucStriim/tree/frontend) | New | New | Unfinished | - |
 
-New Code Structure since v1.7.0
+New Code Structure since v1.7.x
 -------------------------------
 
-Most of the legacy code inside `index.php` was split off and moved under `lib/BicBucStriim`, with `config.php` containing the configuration settings, and `routes.php` adding the routes to the different `Actions` by group. There were no functional changes, but this should make code maintenance a bit easier than one huge file with everything in it :-)
+Most of the legacy code inside `index.php` was split off and moved under `config` and `src`, with `config/settings.php` containing the configuration settings, and `config/routes.php` adding the routes to the different `src/Actions` by group. There were no functional changes, but this should make code maintenance a bit easier than one huge file with everything in it :-)
 
 ```bash
+config/
+├── bootstrap.php
+├── config.php
+├── constants.php
+├── langs.php
+├── middleware.php
+├── routes.php
+└── settings.php
 index.php
-lib/
-└── BicBucStriim
-    ├── Actions
-    │   ├── admin.php
-    │   ├── default.php
-    │   ├── main.php
-    │   ├── metadata.php
-    │   └── opds.php
-    ├── AppData
-    │   ├── bicbucstriim.php
-    │   ├── calibre_thing.php
-    │   └── ...
-    ├── Calibre
-    │   ├── calibre.php
-    │   └── ...
-    ├── Middleware
-    │   ├── caching_middleware.php
-    │   └── ...
-    ├── app.php
-    ├── config.php
-    ├── routes.php
-    └── ...
+src
+├── Actions
+│   ├── admin.php
+│   ├── default.php
+│   ├── main.php
+│   ├── metadata.php
+│   └── opds.php
+├── AppData
+│   ├── bicbucstriim.php
+│   ├── calibre_thing.php
+│   └── ...
+├── Calibre
+│   ├── calibre.php
+│   └── ...
+├── Middleware
+│   ├── caching_middleware.php
+│   └── ...
+├── Session
+│   ├── ...
+│   └── session_factory.php
+├── Traits
+│   ├── app_trait.php
+│   └── ...
+├── app.php
+├── ...
+└── view.php
 ```
 
 Introduction (original)
