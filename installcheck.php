@@ -8,7 +8,7 @@
  *
  */
 
-require 'lib/BicBucStriim/inst_utils.php';
+require 'src/inst_utils.php';
 require_once 'vendor/autoload.php';
 
 $loader = new \Twig\Loader\FilesystemLoader('templates');

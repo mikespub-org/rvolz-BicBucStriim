@@ -5,7 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [1.7.x] - 20xx-xx-xx
+### Added
+- Added BicBucStriim\Session namespace
 ### Changed
+- Moved lib/BicBucStriim to src directory to clarify source code
+- Moved session files to lib/BicBucStriim/Session
 - Moved config files to config directory and split to clarify source code
 - Changed mapping of routes to actions to make it more adaptable
 - Moved Slim 2 app dependencies to trait and added standard responses

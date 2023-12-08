@@ -11,7 +11,7 @@
 set_include_path("tests:vendor");
 require_once('autoload.php');
 require_once('simpletest/simpletest/autorun.php');
-require 'lib/BicBucStriim/inst_utils.php';
+require 'src/inst_utils.php';
 
 
 class TestOfInstUtils extends UnitTestCase

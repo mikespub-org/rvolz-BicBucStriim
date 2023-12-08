@@ -12,7 +12,9 @@ $archive = $zippy->create('bicbucstriim.zip', [
     'js' => 'js',
     'style/style.css' => 'style/style.css',
     'style/jquery' => 'style/jquery',
-    'lib/BicBucStriim' => 'lib/BicBucStriim',
+    'config' => 'config',
+    'src' => 'src',
+    'lib/SlimViews' => 'lib/SlimViews',
     'vendor' => 'vendor',
     /**
     'vendor/autoload.php' => 'vendor/autoload.php',
