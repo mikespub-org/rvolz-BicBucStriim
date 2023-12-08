@@ -3,6 +3,10 @@
 * Localization helper
 */
 
+namespace BicBucStriim\Utilities;
+
+use ArrayObject;
+
 class L10n extends ArrayObject
 {
     /**

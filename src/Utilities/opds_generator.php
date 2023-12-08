@@ -1,5 +1,9 @@
 <?php
 
+namespace BicBucStriim\Utilities;
+
+use XMLWriter;
+
 /**
  * Generator for OPDS 1.1 Catalogs of BicBucStriim
  */
@@ -638,8 +642,8 @@ class OpdsGenerator
         foreach ($entry['formats'] as $format) {
             $fname = $format->name;
             $ext = strtolower($format->format);
-            $bp = Utilities::bookPath($this->calibre_dir, $entry['book']->path, $fname . '.' . $ext);
-            $mt = Utilities::titleMimeType($bp);
+            $bp = \Utilities::bookPath($this->calibre_dir, $entry['book']->path, $fname . '.' . $ext);
+            $mt = \Utilities::titleMimeType($bp);
             if ($protected) {
                 $this->indirectDownloadLink($titleLink . '/showaccess/', $mt);
             } else {

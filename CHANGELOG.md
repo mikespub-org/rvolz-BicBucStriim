@@ -6,8 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.7.x] - 20xx-xx-xx
 ### Added
-- Added BicBucStriim\Session namespace
+- Added BicBucStriim\Session and BicBucStriim\Utilities namespaces
 ### Changed
+- Split utilities and move files to BicBucStriim\Utilities namespace
 - Moved lib/BicBucStriim to src directory to clarify source code
 - Moved session files to lib/BicBucStriim/Session
 - Moved config files to config directory and split to clarify source code

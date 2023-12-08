@@ -8,15 +8,23 @@
  *
  */
 
-use BicBucStriim\Actions\AdminActions;
-use BicBucStriim\Actions\MainActions;
-use BicBucStriim\Actions\MetadataActions;
-use BicBucStriim\Actions\OpdsActions;
+namespace BicBucStriim;
+
+function getActions($settings)
+{
+    return [
+        // classname, prefix
+        [Actions\MainActions::class, null],
+        [Actions\AdminActions::class, '/admin'],
+        [Actions\MetadataActions::class, '/metadata'],
+        [Actions\OpdsActions::class, '/opds'],
+    ];
+}
 
 ###### Init routes for production
 return function ($app, $settings) {
-    MainActions::addRoutes($app);
-    AdminActions::addRoutes($app, '/admin');
-    MetadataActions::addRoutes($app, '/metadata');
-    OpdsActions::addRoutes($app, '/opds');
+    $actions = getActions($settings);
+    foreach ($actions as [$class, $prefix]) {
+        $class::addRoutes($app, $prefix);
+    }
 };

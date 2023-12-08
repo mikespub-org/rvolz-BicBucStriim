@@ -167,7 +167,7 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
         } else {
             $title = $globalSettings[DISPLAY_APP_NAME] . $globalSettings['sep'] . $subtitle;
         }
-        $rot = Utilities::getRootUrl($this);
+        $rot = $this->getRootUrl();
         $auth = $this->is_authenticated();
         if ($globalSettings[LOGIN_REQUIRED]) {
             $adm = $this->is_admin();

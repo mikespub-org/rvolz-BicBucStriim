@@ -14,6 +14,8 @@ require_once('config/langs.php');
 use BicBucStriim\AppData\BicBucStriim;
 use BicBucStriim\Calibre\Calibre;
 use BicBucStriim\Calibre\CalibreFilter;
+use BicBucStriim\Utilities\OpdsGenerator;
+use BicBucStriim\Utilities\L10n;
 
 class TestOfOpdsGenerator extends UnitTestCase
 {

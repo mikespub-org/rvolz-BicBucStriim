@@ -1,6 +1,6 @@
 <?php
 /**
- * BicBucStriim
+ * BicBucStriim settings
  *
  * Copyright 2012-2023 Rainer Volz
  * Copyright 2023-     mikespub
@@ -10,6 +10,9 @@
 
 require_once __DIR__ . '/langs.php';
 require_once __DIR__ . '/constants.php';
+
+use BicBucStriim\Utilities\L10n;
+use BicBucStriim\Utilities\Mailer;
 
 # Allowed languages, i.e. languages with translations
 $allowedLangs = ['de', 'en', 'es', 'fr', 'gl', 'hu', 'it', 'nl', 'pl'];
@@ -25,6 +28,7 @@ $globalSettings = [];
 $globalSettings['appname'] = $appname;
 $globalSettings['version'] = $appversion;
 $globalSettings['sep'] = ' :: ';
+// @todo move this later in the request handling when we have $request available
 # Find the user language, either one of the allowed languages or
 # English as a fallback.
 $globalSettings['lang'] = Utilities::getUserLang($allowedLangs, $fallbackLang);

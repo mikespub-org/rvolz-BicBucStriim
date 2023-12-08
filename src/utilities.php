@@ -1,87 +1,4 @@
 <?php
-/**
- * Utility items
- */
-
-# A database item class
-class Item {}
-
-# Configuration utilities for BBS
-class Encryption extends Item
-{
-    public $key;
-    public $text;
-}
-class ConfigMailer extends Item
-{
-    public $key;
-    public $text;
-}
-class ConfigTtsOption extends Item
-{
-    public $key;
-    public $text;
-}
-class IdUrlTemplate extends Item
-{
-    public $name;
-    public $val;
-    public $label;
-}
-
-/**
- * Class UrlInfo contains information on how to construct URLs
- */
-class UrlInfo
-{
-    /**
-     * @var string $protocol - protocol used for access, default 'http'
-     */
-    public $protocol = 'http';
-    /**
-     * @var string $host - hostname or ip address used for access
-     */
-    public $host;
-
-    public function __construct()
-    {
-        $na = func_num_args();
-        if ($na == 2) {
-            $fhost = func_get_arg(0);
-            if (!is_null($fhost) && $fhost != 'unknown') {
-                $this->host = $fhost;
-            }
-            $fproto = func_get_arg(1);
-            if (!is_null($fproto)) {
-                $this->protocol = $fproto;
-            }
-        } else {
-            $ffw = func_get_arg(0);
-            $ffws = preg_split('/;/', $ffw, -1, PREG_SPLIT_NO_EMPTY);
-            $opts = [];
-            foreach ($ffws as $ffwi) {
-                $ffwis = preg_split('/=/', $ffwi, -1);
-                $opts[$ffwis[0]] = $ffwis[1];
-            }
-            if (isset($opts['by'])) {
-                $this->host = $opts['by'];
-            }
-            if (isset($opts['proto'])) {
-                $this->protocol = $opts['proto'];
-            }
-        }
-    }
-
-    public function __toString()
-    {
-        return "UrlInfo{ protocol: $this->protocol, host: $this->host}";
-    }
-
-    public function is_valid()
-    {
-        return (!empty($this->host));
-    }
-}
 
 class Utilities
 {
@@ -176,82 +93,13 @@ class Utilities
     }
 
     /**
-     * Create an image with transparent background.
-     *
-     * see http://stackoverflow.com/questions/279236/how-do-i-resize-pngs-with-transparency-in-php#279310
-     *
-     * @param  int  $width
-     * @param  int  $height
-     * @return object image
-     */
-    public static function transparentImage($width, $height)
-    {
-        $img = imagecreatetruecolor($width, $height);
-        imagealphablending($img, false);
-        imagesavealpha($img, true);
-        $backgr = imagecolorallocatealpha($img, 255, 255, 255, 127);
-        imagefilledrectangle($img, 0, 0, $width, $height, $backgr);
-        return $img;
-    }
-
-    /**
-     * Get root url
-     * @param \BicBucStriim\Traits\AppInterface $handler
-     * @return string root url
-     */
-    public static function getRootUrl($handler)
-    {
-        $globalSettings = $handler->settings();
-
-        if ($globalSettings[RELATIVE_URLS] == '1') {
-            $root = rtrim($handler->request()->getRootUri(), "/");
-        } else {
-            // Get forwarding information, if available
-            $info = static::getForwardingInfo($handler->request()->headers);
-            if (is_null($info) || !$info->is_valid()) {
-                // No forwarding info available
-                $root = rtrim($handler->request()->getUrl() . $handler->request()->getRootUri(), "/");
-            } else {
-                // Use forwarding info
-                $handler->log()->debug("getRootUrl: Using forwarding information " . $info);
-                $root = $info->protocol . '://' . $info->host . $handler->request()->getRootUri();
-            }
-        }
-        $handler->log()->debug("getRootUrl: Using root url " . $root);
-        return $root;
-    }
-
-    /**
-     * Return a UrlInfo instance if the request contains forwarding information, or null if not.
-     *
-     * First we look for the standard 'Forwarded' header from RFC 7239, then for the non-standard X-Forwarded-... headers.
-     *
-     * @param \Slim\Http\Headers $headers
-     * @return null|\UrlInfo
-     */
-    public static function getForwardingInfo($headers)
-    {
-        $info = null;
-        $forwarded = $headers->get('Forwarded');
-        if (!is_null($forwarded)) {
-            $info = new \UrlInfo($forwarded);
-        } else {
-            $fhost = $headers->get('X-Forwarded-Host');
-            $fproto = $headers->get('X-Forwarded-Proto');
-            if (!is_null($fhost)) {
-                $info = new \UrlInfo($fhost, $fproto);
-            }
-        }
-        return $info;
-    }
-
-    /**
      * Returns the user language, priority:
      * 1. Language in $_GET['lang']
      * 2. Language in $_SESSION['lang']
      * 3. HTTP_ACCEPT_LANGUAGE
      * 4. Fallback language
      *
+     * @todo move this later in the request handling when we have $request available
      * @param array $allowedLangs list of existing languages
      * @param string $fallbackLang id of the fallback language if nothing helps
      * @return string the user language, like 'de' or 'en'

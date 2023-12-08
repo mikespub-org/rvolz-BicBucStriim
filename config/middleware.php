@@ -1,6 +1,6 @@
 <?php
 /**
- * BicBucStriim
+ * BicBucStriim middleware
  *
  * Copyright 2012-2023 Rainer Volz
  * Copyright 2023-     mikespub
@@ -8,11 +8,21 @@
  *
  */
 
+namespace BicBucStriim;
+
+function getMiddlewareInstances($settings)
+{
+    return [
+        new Middleware\CalibreConfigMiddleware(CALIBRE_DIR),
+        new Middleware\LoginMiddleware($settings['appname'], ['js', 'img', 'style']),
+        new Middleware\OwnConfigMiddleware($settings['knownConfigs']),
+        new Middleware\CachingMiddleware(['/admin', '/login']),
+    ];
+}
+
 return function ($app, $settings) {
-    # Freeze (true) DB schema before release! Set to false for DB development.
-    $app->bbs = new \BicBucStriim\AppData\BicBucStriim('data/data.db', true);
-    $app->add(new \BicBucStriim\Middleware\CalibreConfigMiddleware(CALIBRE_DIR));
-    $app->add(new \BicBucStriim\Middleware\LoginMiddleware($settings['appname'], ['js', 'img', 'style']));
-    $app->add(new \BicBucStriim\Middleware\OwnConfigMiddleware($settings['knownConfigs']));
-    $app->add(new \BicBucStriim\Middleware\CachingMiddleware(['/admin', '/login']));
+    $middlewares = getMiddlewareInstances($settings);
+    foreach ($middlewares as $middleware) {
+        $app->add($middleware);
+    }
 };

@@ -1,6 +1,6 @@
 <?php
 /**
- * BicBucStriim
+ * BicBucStriim bootstrap
  *
  * Copyright 2012-2023 Rainer Volz
  * Copyright 2023-     mikespub
@@ -32,6 +32,9 @@ $config($app, $settings);
 
 # Store $globalSettings in app config
 $app->config('globalSettings', $settings['globalSettings']);
+
+# Freeze (true) DB schema before release! Set to false for DB development.
+$app->bbs = new \BicBucStriim\AppData\BicBucStriim('data/data.db', true);
 
 # Init middleware
 $middleware = require(__DIR__ . '/middleware.php');

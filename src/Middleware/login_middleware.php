@@ -66,9 +66,9 @@ class LoginMiddleware extends DefaultMiddleware
                 } else {
                     $this->log()->debug('login: redirecting to login');
                     // now we can also use the native app->redirect method!
-                    $this->mkRedirect(\Utilities::getRootUrl($this) . '/login/');
+                    $this->mkRedirect($this->getRootUrl() . '/login/');
                     // app->redirect not useable in middleware
-                    //$this->mkRedirect(\Utilities::getRootUrl($this) . '/login/', 302, false);
+                    //$this->mkRedirect($this->getRootUrl() . '/login/', 302, false);
                 }
             }
         } else {
@@ -79,7 +79,7 @@ class LoginMiddleware extends DefaultMiddleware
                 return;
             } elseif (stripos($resource, '/admin') === 0 && !$this->is_static_resource($resource) && !$this->is_authorized()) {
                 $this->log()->debug('login: redirecting to login');
-                $this->mkRedirect(\Utilities::getRootUrl($this) . '/login/');
+                $this->mkRedirect($this->getRootUrl() . '/login/');
             }
         }
     }
@@ -114,6 +114,7 @@ class LoginMiddleware extends DefaultMiddleware
      */
     protected function is_authorized()
     {
+        // @todo replace $_COOKIE with $request->cookies() once fixed?
         $request = $this->request();
         $session_factory = new \BicBucStriim\Session\SessionFactory();
         $session = $session_factory->newInstance($_COOKIE);

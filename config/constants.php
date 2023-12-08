@@ -1,6 +1,6 @@
 <?php
 /**
- * BicBucStriim
+ * BicBucStriim constants
  *
  * Copyright 2012-2015 Rainer Volz
  * Licensed under MIT License, see LICENSE

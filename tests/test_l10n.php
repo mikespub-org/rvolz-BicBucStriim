@@ -5,6 +5,8 @@ require_once('autoload.php');
 require_once('simpletest/simpletest/autorun.php');
 require_once('config/langs.php');
 
+use BicBucStriim\Utilities\L10n;
+
 class TestOfL10N extends UnitTestCase
 {
     public function setUp() {}

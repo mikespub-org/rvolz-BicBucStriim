@@ -4,6 +4,15 @@
  *
  * @author Andreas Gohr <andi@splitbrain.org>
  */
+
+namespace BicBucStriim\Utilities;
+
+use DOMDocument;
+use DOMElement;
+use DOMXPath;
+use ZipArchive;
+use Exception;
+
 class EPub
 {
     public $xml; //FIXME change to protected, later
@@ -34,7 +43,7 @@ class EPub
             throw new Exception('Failed to access epub container data');
         }
         $xml = new DOMDocument();
-        $xml->registerNodeClass('DOMElement', 'EPubDOMElement');
+        $xml->registerNodeClass(DOMElement::class, EPubDOMElement::class);
         $xml->loadXML($data);
         $xpath = new EPubDOMXPath($xml);
         $nodes = $xpath->query('//n:rootfiles/n:rootfile[@media-type="application/oebps-package+xml"]');
@@ -47,7 +56,7 @@ class EPub
             throw new Exception('Failed to access epub metadata');
         }
         $this->xml =  new DOMDocument();
-        $this->xml->registerNodeClass('DOMElement', 'EPubDOMElement');
+        $this->xml->registerNodeClass(DOMElement::class, EPubDOMElement::class);
         $this->xml->loadXML($data);
         $this->xml->formatOutput = true;
         $this->xpath = new EPubDOMXPath($this->xml);
@@ -462,7 +471,7 @@ class EPubDOMXPath extends DOMXPath
     {
         parent::__construct($doc);
 
-        if (is_a($doc->documentElement, 'EPubDOMElement')) {
+        if (is_a($doc->documentElement, EPubDOMElement::class)) {
             foreach ($doc->documentElement->namespaces as $ns => $url) {
                 $this->registerNamespace($ns, $url);
             }

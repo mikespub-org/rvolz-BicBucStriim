@@ -63,6 +63,7 @@ class MetadataActions extends DefaultActions
             return;
         }
 
+        // @todo replace $_FILES with $request files info once available?
         $allowedExts = ["jpeg", "jpg", "png"];
         #$temp = explode(".", $_FILES["file"]["name"]);
         #$extension = end($temp);

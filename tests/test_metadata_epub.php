@@ -11,6 +11,8 @@ require_once('simpletest/simpletest/autorun.php');
 use BicBucStriim\Calibre\Calibre;
 use BicBucStriim\Calibre\Author;
 use BicBucStriim\Calibre\Tag;
+use BicBucStriim\Utilities\EPub;
+use BicBucStriim\Utilities\MetadataEpub;
 
 class TestOfMetadataEpub extends UnitTestCase
 {

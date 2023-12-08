@@ -4,6 +4,8 @@ set_include_path("tests:vendor");
 require_once('autoload.php');
 require_once('simpletest/simpletest/autorun.php');
 
+use BicBucStriim\Utilities\UrlInfo;
+
 class TestOfUtilities extends UnitTestCase
 {
     public const FIXT = './tests/fixtures';

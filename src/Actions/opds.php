@@ -10,8 +10,7 @@
 
 namespace BicBucStriim\Actions;
 
-use Utilities;
-use OpdsGenerator;
+use BicBucStriim\Utilities\OpdsGenerator;
 
 /*********************************************************************
  * OPDS Catalog actions
@@ -425,7 +424,7 @@ class OpdsActions extends DefaultActions
     {
         $globalSettings = $this->settings();
 
-        $root = Utilities::getRootUrl($this);
+        $root = $this->getRootUrl();
         $gen = new OpdsGenerator(
             $root,
             $globalSettings['version'],

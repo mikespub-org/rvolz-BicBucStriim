@@ -10,6 +10,8 @@
 
 namespace BicBucStriim\Traits;
 
+use BicBucStriim\Utilities\UrlInfo;
+
 /*********************************************************************
  * App utility trait
  ********************************************************************/
@@ -104,6 +106,32 @@ trait AppTrait
             $this->app->config('globalSettings', $settings);
         }
         return $this->app->config('globalSettings');
+    }
+
+    /**
+     * Get root url
+     * @return string root url
+     */
+    public function getRootUrl()
+    {
+        $globalSettings = $this->settings();
+
+        if ($globalSettings[RELATIVE_URLS] == '1') {
+            $root = rtrim($this->request()->getRootUri(), "/");
+        } else {
+            // Get forwarding information, if available
+            $info = UrlInfo::getForwardingInfo($this->request()->headers);
+            if (is_null($info) || !$info->is_valid()) {
+                // No forwarding info available
+                $root = rtrim($this->request()->getUrl() . $this->request()->getRootUri(), "/");
+            } else {
+                // Use forwarding info
+                $this->log()->debug("getRootUrl: Using forwarding information " . $info);
+                $root = $info->protocol . '://' . $info->host . $this->request()->getRootUri();
+            }
+        }
+        $this->log()->debug("getRootUrl: Using root url " . $root);
+        return $root;
     }
 
     /**

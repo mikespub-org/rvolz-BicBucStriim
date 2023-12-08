@@ -1,6 +1,6 @@
 <?php
 /**
- * BicBucStriim
+ * BicBucStriim config
  *
  * Copyright 2012-2023 Rainer Volz
  * Copyright 2023-     mikespub

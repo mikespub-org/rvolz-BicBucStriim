@@ -34,7 +34,7 @@ class CachingMiddleware extends DefaultMiddleware
         $request = $this->request();
         $resource = $request->getResourceUri();
         foreach ($this->resources as $noCacheResource) {
-            if (\Utilities::stringStartsWith($resource, $noCacheResource)) {
+            if (str_starts_with($resource, $noCacheResource)) {
                 session_cache_limiter('nocache');
                 $this->log()->debug('caching_middleware: caching disabled for ' . $resource);
                 break;

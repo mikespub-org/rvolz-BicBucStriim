@@ -11,12 +11,12 @@
 namespace BicBucStriim\Actions;
 
 use BicBucStriim\Calibre\Author;
+use BicBucStriim\Utilities\Mailer;
+use BicBucStriim\Utilities\MetadataEpub;
 use Michelf\MarkdownExtra;
 use Exception;
-use Mailer;
 use Twig\TwigFilter;
 use Utilities;
-use MetadataEpub;
 
 /*********************************************************************
  * Main actions

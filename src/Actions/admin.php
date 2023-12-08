@@ -13,12 +13,8 @@ namespace BicBucStriim\Actions;
 use BicBucStriim\Calibre\Calibre;
 use BicBucStriim\Calibre\Language;
 use BicBucStriim\Calibre\Tag;
+use BicBucStriim\Utilities\Mailer;
 use Exception;
-use ConfigMailer;
-use Mailer;
-use ConfigTtsOption;
-use IdUrlTemplate;
-use Encryption;
 use Utilities;
 
 /*********************************************************************

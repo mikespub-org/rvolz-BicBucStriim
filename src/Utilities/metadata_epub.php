@@ -8,7 +8,10 @@
  *
  */
 
-use EPub;
+namespace BicBucStriim\Utilities;
+
+use Exception;
+use Locale;
 
 /**
  * Update the metadata of an EPUB file. Creates temporary copies
