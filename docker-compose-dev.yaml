@@ -9,5 +9,5 @@ services:
       - '8080:80'
     volumes:
       - ./data:/app/data
-      - ./lib:/app/lib
+      - ./config:/app/config
       - ./tests:/app/tests
