@@ -28,4 +28,12 @@ class App extends \Slim\Slim
     public $must_login;
     ///** @var \BicBucStriim\TwigView set in container as singleton by Slim\Slim constructor */
     //public $view;
+
+    /**
+     * @return \Slim\Helper\Set
+     */
+    public function getContainer()
+    {
+        return $this->container;
+    }
 }

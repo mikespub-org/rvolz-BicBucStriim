@@ -22,10 +22,14 @@ trait AppTrait
 
     /**
      * Get BicBucStriim app
+     * @param \BicBucStriim\App|null $app
      * @return \BicBucStriim\App
      */
-    public function app()
+    public function app($app = null)
     {
+        if (!empty($app)) {
+            $this->app = $app;
+        }
         return $this->app;
     }
 
@@ -36,10 +40,7 @@ trait AppTrait
      */
     public function auth($auth = null)
     {
-        if (!empty($auth)) {
-            $this->app->auth = $auth;
-        }
-        return $this->app->auth;
+        return $this->container('auth', $auth);
     }
 
     /**
@@ -49,10 +50,7 @@ trait AppTrait
      */
     public function bbs($bbs = null)
     {
-        if (!empty($bbs)) {
-            $this->app->bbs = $bbs;
-        }
-        return $this->app->bbs;
+        return $this->container('bbs', $bbs);
     }
 
     /**
@@ -62,17 +60,25 @@ trait AppTrait
      */
     public function calibre($calibre = null)
     {
-        if (!empty($calibre)) {
-            $this->app->calibre = $calibre;
-        }
-        return $this->app->calibre;
+        return $this->container('calibre', $calibre);
+    }
+
+    /**
+     * Set flash message for subsequent request
+     * @param  string   $key
+     * @param  mixed    $value
+     * @return void
+     */
+    public function flash($key, $value)
+    {
+        $this->app->flash($key, $value);
     }
 
     /**
      * Get application log
      * @return \Slim\Log
      */
-    public function log()
+    public function log($logger = null)
     {
         return $this->app->getLog();
     }
@@ -106,6 +112,35 @@ trait AppTrait
             $this->app->config('globalSettings', $settings);
         }
         return $this->app->config('globalSettings');
+    }
+
+    /**
+     * Get Twig environment
+     * @param ?\Twig\Environment $twig
+     * @return \Twig\Environment
+     */
+    public function twig($twig = null)
+    {
+        /** @var \BicBucStriim\TwigView $view */
+        $view = $this->app->view();
+        return $view->getInstance();
+    }
+
+    /**
+     * Get container key
+     * @param ?string $key
+     * @param mixed $value
+     * @return mixed
+     */
+    public function container($key = null, $value = null)
+    {
+        if (empty($key)) {
+            return $this->app->getContainer();
+        }
+        if (!empty($value)) {
+            $this->app->getContainer()->set($key, $value);
+        }
+        return $this->app->getContainer()->get($key);
     }
 
     /**

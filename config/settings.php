@@ -22,11 +22,14 @@ $fallbackLang = 'en';
 $appname = 'BicBucStriim';
 # App version
 $appversion = '1.6.6';
+# Base path - null means undefined, empty '' or '/bbs' etc. mean predefined
+$basepath = null;
 
 # Init app globals
 $globalSettings = [];
 $globalSettings['appname'] = $appname;
 $globalSettings['version'] = $appversion;
+$globalSettings['basepath'] = $basepath;
 $globalSettings['sep'] = ' :: ';
 // @todo move this later in the request handling when we have $request available
 # Find the user language, either one of the allowed languages or
@@ -62,6 +65,7 @@ $knownConfigs = [CALIBRE_DIR, DB_VERSION, KINDLE, KINDLE_FROM_EMAIL,
 return [
     'appname' => $appname,
     'appversion' => $appversion,
+    'basepath' => $basepath,
     'globalSettings' => $globalSettings,
     'knownConfigs' => $knownConfigs,
 ];

@@ -7,7 +7,7 @@
 {% include "flash_messages.html" %}
 
 <p>{{page.glob.langa.admin_users_legend2}}</p>
-<form action="{{page.rot}}/admin/users/{{user.id}}" method="put" id="userform" 
+<form action="{{page.rot}}/admin/users/{{user.id}}/" method="put" id="userform" 
 	data-user="{{user.id}}" data-proot="{{page.rot}}">
 	<fieldset data-role="fieldcontain">
 		<label for="edituser_name">{{page.glob.langa.admin_username}}</label>

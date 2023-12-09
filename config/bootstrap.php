@@ -34,7 +34,7 @@ $config($app, $settings);
 $app->config('globalSettings', $settings['globalSettings']);
 
 # Freeze (true) DB schema before release! Set to false for DB development.
-$app->bbs = new \BicBucStriim\AppData\BicBucStriim('data/data.db', true);
+$app->getContainer()->set('bbs', new \BicBucStriim\AppData\BicBucStriim('data/data.db', true));
 
 # Init middleware
 $middleware = require(__DIR__ . '/middleware.php');

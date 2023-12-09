@@ -18,6 +18,16 @@ class DefaultMiddleware extends \Slim\Middleware implements \BicBucStriim\Traits
     protected $app;
 
     /**
+     * Initialize the configuration
+     *
+     * @param \BicBucStriim\App $app
+     */
+    public function __construct($app)
+    {
+        $this->app = $app;
+    }
+
+    /**
      * Call next
      */
     public function call()

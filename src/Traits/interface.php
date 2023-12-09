@@ -17,9 +17,10 @@ interface AppInterface
 {
     /**
      * Get BicBucStriim app
+     * @param \BicBucStriim\App|null $app
      * @return \BicBucStriim\App
      */
-    public function app();
+    public function app($app = null);
 
     /**
      * Get authentication tracker
@@ -43,10 +44,19 @@ interface AppInterface
     public function calibre($calibre = null);
 
     /**
+     * Set flash message for subsequent request
+     * @param  string   $key
+     * @param  mixed    $value
+     * @return void
+     */
+    public function flash($key, $value);
+
+    /**
      * Get application log
+     * @param ?\Slim\Log $logger
      * @return \Slim\Log
      */
-    public function log();
+    public function log($logger = null);
 
     /**
      * Get the Request object
@@ -66,6 +76,27 @@ interface AppInterface
      * @return array<string, mixed>
      */
     public function settings($settings = null);
+
+    /**
+     * Get Twig environment
+     * @param ?\Twig\Environment $twig
+     * @return \Twig\Environment
+     */
+    public function twig($twig = null);
+
+    /**
+     * Get container key
+     * @param ?string $key
+     * @param mixed $value
+     * @return mixed
+     */
+    public function container($key = null, $value = null);
+
+    /**
+     * Get root url
+     * @return string root url
+     */
+    public function getRootUrl();
 
     /**
      * Create and send an error to authenticate (401)

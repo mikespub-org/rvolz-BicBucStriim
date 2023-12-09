@@ -17,10 +17,12 @@ class CalibreConfigMiddleware extends DefaultMiddleware
     /**
      * Initialize the configuration
      *
+     * @param \BicBucStriim\App $app
      * @param string $calibreDir
      */
-    public function __construct($calibreDir)
+    public function __construct($app, $calibreDir)
     {
+        parent::__construct($app);
         $this->calibreDir = $calibreDir;
     }
 
@@ -37,7 +39,7 @@ class CalibreConfigMiddleware extends DefaultMiddleware
         if ($request->getResourceUri() != '/login/') {
             # 'After installation' scenario: here is a config DB but no valid connection to Calibre
             if (empty($globalSettings[$this->calibreDir])) {
-                $this->log()->warn('check_config: Calibre library path not configured.');
+                $this->log()->warning('check_config: Calibre library path not configured.');
                 if ($request->getResourceUri() != '/admin/configuration/') {
                     // app->redirect not useable in middleware
                     $this->mkRedirect($request->getRootUri() . '/admin/configuration/', 302, false);

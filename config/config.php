@@ -20,10 +20,11 @@ function confprod()
         'cookies.secret_key' => 'b4924c3579e2850a6fad8597da7ad24bf43ab78e',
 
     ]);
-    $app->getLog()->setEnabled(true);
-    $app->getLog()->setLevel(\Slim\Log::WARN);
-    $app->getLog()->info($appname . ' ' . $appversion . ': Running in production mode.');
-    $app->getLog()->info('Running on PHP: ' . PHP_VERSION);
+    $logger = $app->getLog();
+    $logger->setEnabled(true);
+    $logger->setLevel(\Slim\Log::WARN);
+    $logger->info($appname . ' ' . $appversion . ': Running in production mode.');
+    $logger->info('Running on PHP: ' . PHP_VERSION);
     error_reporting(E_ALL ^ (E_DEPRECATED | E_USER_DEPRECATED));
 }
 
@@ -39,10 +40,11 @@ function confdev()
         'cookies.secret_key' => 'b4924c3579e2850a6fad8597da7ad24bf43ab78e',
 
     ]);
-    $app->getLog()->setEnabled(true);
-    $app->getLog()->setLevel(\Slim\Log::DEBUG);
-    $app->getLog()->info($appname . ' ' . $appversion . ': Running in development mode.');
-    $app->getLog()->info('Running on PHP: ' . PHP_VERSION);
+    $logger = $app->getLog();
+    $logger->setEnabled(true);
+    $logger->setLevel(\Slim\Log::DEBUG);
+    $logger->info($appname . ' ' . $appversion . ': Running in development mode.');
+    $logger->info('Running on PHP: ' . PHP_VERSION);
 }
 
 /**
@@ -56,12 +58,13 @@ function confdebug()
         'cookies.lifetime' => '1 day',
         'cookies.secret_key' => 'b4924c3579e2850a6fad8597da7ad24bf43ab78e',
     ]);
-    $app->getLog()->setEnabled(true);
-    $app->getLog()->setLevel(\Slim\Log::DEBUG);
-    $app->getLog()->setWriter(new \Slim\Logger\DateTimeFileWriter(['path' => './data', 'name_format' => 'Y-m-d']));
-    $app->getLog()->info($appname . ' ' . $appversion . ': Running in debug mode.');
+    $logger = $app->getLog();
+    $logger->setEnabled(true);
+    $logger->setLevel(\Slim\Log::DEBUG);
+    $logger->setWriter(new \Slim\Logger\DateTimeFileWriter(['path' => './data', 'name_format' => 'Y-m-d']));
+    $logger->info($appname . ' ' . $appversion . ': Running in debug mode.');
     error_reporting(E_ALL | E_STRICT);
-    $app->getLog()->info('Running on PHP: ' . PHP_VERSION);
+    $logger->info('Running on PHP: ' . PHP_VERSION);
 }
 
 return function ($app, $settings) {

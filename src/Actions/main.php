@@ -49,18 +49,18 @@ class MainActions extends DefaultActions
             ['GET', '/authors/:id/notes/', [$self, 'check_admin'], [$self, 'authorNotes']],
             //['POST', '/authors/:id/notes/', [$self, 'check_admin'], [$self, 'authorNotesEdit']],
             ['GET', '/authors/:id/:page/', [$self, 'authorDetailsSlice']],
-            ['GET', '/authorslist/:id/', [$self, 'authorsSlice']],
+            ['GET', '/authorslist/:page/', [$self, 'authorsSlice']],
             ['GET', '/search/', [$self, 'globalSearch']],
             ['GET', '/series/:id/:page/', [$self, 'seriesDetailsSlice']],
-            ['GET', '/serieslist/:id/', [$self, 'seriesSlice']],
+            ['GET', '/serieslist/:page/', [$self, 'seriesSlice']],
             ['GET', '/tags/:id/:page/', [$self, 'tagDetailsSlice']],
-            ['GET', '/tagslist/:id/', [$self, 'tagsSlice']],
+            ['GET', '/tagslist/:page/', [$self, 'tagsSlice']],
             ['GET', '/titles/:id/', [$self, 'title']],
             ['GET', '/titles/:id/cover/', [$self, 'cover']],
             ['GET', '/titles/:id/file/:file', [$self, 'book']],
             ['POST', '/titles/:id/kindle/:file', [$self, 'kindle']],
             ['GET', '/titles/:id/thumbnail/', [$self, 'thumbnail']],
-            ['GET', '/titleslist/:id/', [$self, 'titlesSlice']],
+            ['GET', '/titleslist/:page/', [$self, 'titlesSlice']],
         ];
     }
 
@@ -88,7 +88,7 @@ class MainActions extends DefaultActions
 
     public function perform_login()
     {
-        $login_data = $this->request()->post();
+        $login_data = $this->post();
         $this->log()->debug('login: ' . var_export($login_data, true));
         if (isset($login_data['username']) && isset($login_data['password'])) {
             $uname = $login_data['username'];
@@ -97,7 +97,7 @@ class MainActions extends DefaultActions
                 $this->render('login.html', [
                     'page' => $this->mkPage('login')]);
             } else {
-                $this->app()->login_service->login($this->auth(), ['username' => $uname, 'password' => $upw]);
+                $this->container('login_service')->login($this->auth(), ['username' => $uname, 'password' => $upw]);
                 $success = $this->auth()->getStatus();
                 $this->log()->debug('login success: ' . $success);
                 if ($this->is_authenticated()) {
@@ -120,7 +120,7 @@ class MainActions extends DefaultActions
         if ($this->is_authenticated()) {
             $username = $this->auth()->getUserName();
             $this->log()->debug("logging out user: " . $username);
-            $this->app()->logout_service->logout($this->auth());
+            $this->container('logout_service')->logout($this->auth());
             if ($this->is_authenticated()) {
                 $this->log()->error("error logging out user: " . $username);
             } else {
@@ -163,7 +163,7 @@ class MainActions extends DefaultActions
         // TODO check search paramater?
 
         $filter = $this->getFilter();
-        $search = $this->request()->get('search');
+        $search = $this->get('search');
         $tlb = $this->calibre()->titlesSlice($globalSettings['lang'], 0, $globalSettings[PAGE_SIZE], $filter, trim($search));
         $tlb_books = array_map([$this, 'checkThumbnail'], $tlb['entries']);
         $tla = $this->calibre()->authorsSlice(0, $globalSettings[PAGE_SIZE], trim($search));
@@ -190,44 +190,44 @@ class MainActions extends DefaultActions
     }
 
     /**
-     * A list of titles at $index -> /titlesList/:index
+     * A list of titles at $page -> /titlesList/:page
      */
-    public function titlesSlice($index = 0)
+    public function titlesSlice($page = 0)
     {
         $globalSettings = $this->settings();
 
         // parameter checking
-        if (!is_numeric($index)) {
-            $this->log()->warn('titlesSlice: invalid page id ' . $index);
+        if (!is_numeric($page)) {
+            $this->log()->warning('titlesSlice: invalid page id ' . $page);
             $this->mkError(400, "Bad parameter");
             return;
         }
 
         $filter = $this->getFilter();
-        $search = $this->request()->get('search');
+        $search = $this->get('search');
         if (isset($search)) {
             $search = trim($search);
         }
-        $sort = $this->request()->get('sort');
+        $sort = $this->get('sort');
 
         if (isset($sort) && $sort == 'byReverseDate') {
             switch ($globalSettings[TITLE_TIME_SORT]) {
                 case TITLE_TIME_SORT_TIMESTAMP:
-                    $tl = $this->calibre()->timestampOrderedTitlesSlice($globalSettings['lang'], $index, $globalSettings[PAGE_SIZE], $filter, $search);
+                    $tl = $this->calibre()->timestampOrderedTitlesSlice($globalSettings['lang'], $page, $globalSettings[PAGE_SIZE], $filter, $search);
                     break;
                 case TITLE_TIME_SORT_PUBDATE:
-                    $tl = $this->calibre()->pubdateOrderedTitlesSlice($globalSettings['lang'], $index, $globalSettings[PAGE_SIZE], $filter, $search);
+                    $tl = $this->calibre()->pubdateOrderedTitlesSlice($globalSettings['lang'], $page, $globalSettings[PAGE_SIZE], $filter, $search);
                     break;
                 case TITLE_TIME_SORT_LASTMODIFIED:
-                    $tl = $this->calibre()->lastmodifiedOrderedTitlesSlice($globalSettings['lang'], $index, $globalSettings[PAGE_SIZE], $filter, $search);
+                    $tl = $this->calibre()->lastmodifiedOrderedTitlesSlice($globalSettings['lang'], $page, $globalSettings[PAGE_SIZE], $filter, $search);
                     break;
                 default:
                     $this->log()->error('titlesSlice: invalid sort order ' . $globalSettings[TITLE_TIME_SORT]);
-                    $tl = $this->calibre()->timestampOrderedTitlesSlice($globalSettings['lang'], $index, $globalSettings[PAGE_SIZE], $filter, $search);
+                    $tl = $this->calibre()->timestampOrderedTitlesSlice($globalSettings['lang'], $page, $globalSettings[PAGE_SIZE], $filter, $search);
                     break;
             }
         } else {
-            $tl = $this->calibre()->titlesSlice($globalSettings['lang'], $index, $globalSettings[PAGE_SIZE], $filter, $search);
+            $tl = $this->calibre()->titlesSlice($globalSettings['lang'], $page, $globalSettings[PAGE_SIZE], $filter, $search);
         }
 
         $books = array_map([$this, 'checkThumbnail'], $tl['entries']);
@@ -269,20 +269,20 @@ class MainActions extends DefaultActions
 
         // parameter checking
         if (!is_numeric($id)) {
-            $this->log()->warn('title: invalid title id ' . $id);
+            $this->log()->warning('title: invalid title id ' . $id);
             $this->mkError(400, "Bad parameter");
             return;
         }
 
         $details = $this->calibre()->titleDetails($globalSettings['lang'], $id);
         if (is_null($details)) {
-            $this->log()->warn("title: book not found: " . $id);
+            $this->log()->warning("title: book not found: " . $id);
             $this->myNotFound();
             return;
         }
         // for people trying to circumvent filtering by direct access
         if ($this->title_forbidden($details)) {
-            $this->log()->warn("title: requested book not allowed for user: " . $id);
+            $this->log()->warning("title: requested book not allowed for user: " . $id);
             $this->myNotFound();
             return;
         }
@@ -328,7 +328,7 @@ class MainActions extends DefaultActions
     {
         // parameter checking
         if (!is_numeric($id)) {
-            $this->log()->warn('cover: invalid title id ' . $id);
+            $this->log()->warning('cover: invalid title id ' . $id);
             $this->mkError(400, "Bad parameter");
             return;
         }
@@ -364,7 +364,7 @@ class MainActions extends DefaultActions
 
         // parameter checking
         if (!is_numeric($id)) {
-            $this->log()->warn('thumbnail: invalid title id ' . $id);
+            $this->log()->warning('thumbnail: invalid title id ' . $id);
             $this->mkError(400, "Bad parameter");
             return;
         }
@@ -402,7 +402,7 @@ class MainActions extends DefaultActions
 
         // parameter checking
         if (!is_numeric($id)) {
-            $this->log()->warn('book: invalid title id ' . $id);
+            $this->log()->warning('book: invalid title id ' . $id);
             $this->mkError(400, "Bad parameter");
             return;
         }
@@ -410,13 +410,13 @@ class MainActions extends DefaultActions
 
         $details = $this->calibre()->titleDetails($globalSettings['lang'], $id);
         if (is_null($details)) {
-            $this->log()->warn("book: no book found for " . $id);
+            $this->log()->warning("book: no book found for " . $id);
             $this->myNotFound();
             return;
         }
         // for people trying to circumvent filtering by direct access
         if ($this->title_forbidden($details)) {
-            $this->log()->warn("book: requested book not allowed for user: " . $id);
+            $this->log()->warning("book: requested book not allowed for user: " . $id);
             $this->myNotFound();
             return;
         }
@@ -479,7 +479,7 @@ class MainActions extends DefaultActions
 
         // parameter checking
         if (!is_numeric($id)) {
-            $this->log()->warn('kindle: invalid title id ' . $id);
+            $this->log()->warning('kindle: invalid title id ' . $id);
             $this->mkError(400, "Bad parameter");
             return;
         }
@@ -506,7 +506,7 @@ class MainActions extends DefaultActions
         }
         $filename .= ".epub";
         # Validate request e-mail format
-        $to_email = $this->request()->post('email');
+        $to_email = $this->post('email');
         if (!Utilities::isEMailValid($to_email)) {
             $this->log()->debug("kindle: invalid email, " . $to_email);
             $this->mkError(400);
@@ -537,14 +537,14 @@ class MainActions extends DefaultActions
                 $message = $mailer->createBookMessage($bookpath, $globalSettings[DISPLAY_APP_NAME], $to_email, $globalSettings[KINDLE_FROM_EMAIL], $filename);
                 $send_success = $mailer->sendMessage($message);
                 if ($send_success == 0) {
-                    $this->log()->warn('kindle: book delivery to ' . $to_email . ' failed, dump: ' . $mailer->getDump());
+                    $this->log()->warning('kindle: book delivery to ' . $to_email . ' failed, dump: ' . $mailer->getDump());
                 } else {
                     $this->log()->debug('kindle: book delivered to ' . $to_email . ', result ' . $send_success);
                 }
                 # if there was an exception, log it and return gracefully
             } catch (Exception $e) {
-                $this->log()->warn('kindle: Email exception ' . $e->getMessage());
-                $this->log()->warn('kindle: Mail dump ' . $mailer->getDump());
+                $this->log()->warning('kindle: Email exception ' . $e->getMessage());
+                $this->log()->warning('kindle: Mail dump ' . $mailer->getDump());
             }
             # Store e-mail address in cookie so user needs to enter it only once
             $this->app()->setCookie(KINDLE_COOKIE, $to_email);
@@ -560,25 +560,25 @@ class MainActions extends DefaultActions
 
 
     /**
-     *  A list of authors at $index -> /authorslist/:index
-     * @param int $index author list page index
+     *  A list of authors at $page -> /authorslist/:page
+     * @param int $page author list page index
      */
-    public function authorsSlice($index = 0)
+    public function authorsSlice($page = 0)
     {
         $globalSettings = $this->settings();
 
         // parameter checking
-        if (!is_numeric($index)) {
-            $this->log()->warn('authorsSlice: invalid page id ' . $index);
+        if (!is_numeric($page)) {
+            $this->log()->warning('authorsSlice: invalid page id ' . $page);
             $this->mkError(400, "Bad parameter");
             return;
         }
 
-        $search = $this->request()->get('search');
+        $search = $this->get('search');
         if (isset($search)) {
-            $tl = $this->calibre()->authorsSlice($index, $globalSettings[PAGE_SIZE], trim($search));
+            $tl = $this->calibre()->authorsSlice($page, $globalSettings[PAGE_SIZE], trim($search));
         } else {
-            $tl = $this->calibre()->authorsSlice($index, $globalSettings[PAGE_SIZE]);
+            $tl = $this->calibre()->authorsSlice($page, $globalSettings[PAGE_SIZE]);
         }
 
         foreach ($tl['entries'] as $author) {
@@ -620,22 +620,22 @@ class MainActions extends DefaultActions
      * Shows the detail data for the author plus a paginated list of books
      *
      * @param  integer $id author id
-     * @param  integer $index page index for book list
+     * @param  integer $page page index for book list
      * @return void HTML page
      */
-    public function authorDetailsSlice($id, $index = 0)
+    public function authorDetailsSlice($id, $page = 0)
     {
         $globalSettings = $this->settings();
 
         // parameter checking
-        if (!is_numeric($id) || !is_numeric($index)) {
-            $this->log()->warn('authorDetailsSlice: invalid author id ' . $id . ' or page id ' . $index);
+        if (!is_numeric($id) || !is_numeric($page)) {
+            $this->log()->warning('authorDetailsSlice: invalid author id ' . $id . ' or page id ' . $page);
             $this->mkError(400, "Bad parameter");
             return;
         }
 
         $filter = $this->getFilter();
-        $tl = $this->calibre()->authorDetailsSlice($globalSettings['lang'], $id, $index, $globalSettings[PAGE_SIZE], $filter);
+        $tl = $this->calibre()->authorDetailsSlice($globalSettings['lang'], $id, $page, $globalSettings[PAGE_SIZE], $filter);
         if (is_null($tl)) {
             $this->log()->debug('no author ' . $id);
             $this->myNotFound();
@@ -683,7 +683,7 @@ class MainActions extends DefaultActions
     {
         // parameter checking
         if (!is_numeric($id)) {
-            $this->log()->warn('authorNotes: invalid author id ' . $id);
+            $this->log()->warning('authorNotes: invalid author id ' . $id);
             $this->mkError(400, "Bad parameter");
             return;
         }
@@ -716,26 +716,26 @@ class MainActions extends DefaultActions
 
 
     /**
-     * Return a HTML page of series at page $index.
-     * @param  int $index =0 page index into series list
+     * Return a HTML page of series at page $page.
+     * @param  int $page =0 page index into series list
      */
-    public function seriesSlice($index = 0)
+    public function seriesSlice($page = 0)
     {
         $globalSettings = $this->settings();
 
         // parameter checking
-        if (!is_numeric($index)) {
-            $this->log()->warn('seriesSlice: invalid series index ' . $index);
+        if (!is_numeric($page)) {
+            $this->log()->warning('seriesSlice: invalid series index ' . $page);
             $this->mkError(400, "Bad parameter");
             return;
         }
 
-        $search = $this->request()->get('search');
+        $search = $this->get('search');
         if (isset($search)) {
             $this->log()->debug('seriesSlice: search ' . $search);
-            $tl = $this->calibre()->seriesSlice($index, $globalSettings[PAGE_SIZE], trim($search));
+            $tl = $this->calibre()->seriesSlice($page, $globalSettings[PAGE_SIZE], trim($search));
         } else {
-            $tl = $this->calibre()->seriesSlice($index, $globalSettings[PAGE_SIZE]);
+            $tl = $this->calibre()->seriesSlice($page, $globalSettings[PAGE_SIZE]);
         }
         $this->render('series.html', [
             'page' => $this->mkPage('series', 5, 1),
@@ -771,21 +771,21 @@ class MainActions extends DefaultActions
      * Shows the detail data for the series plus a paginated list of books
      *
      * @param  int $id series id
-     * @param  int $index page index for books
+     * @param  int $page page index for books
      */
-    public function seriesDetailsSlice($id, $index = 0)
+    public function seriesDetailsSlice($id, $page = 0)
     {
         $globalSettings = $this->settings();
 
         // parameter checking
-        if (!is_numeric($id) || !is_numeric($index)) {
-            $this->log()->warn('seriesDetailsSlice: invalid series id ' . $id . ' or page id ' . $index);
+        if (!is_numeric($id) || !is_numeric($page)) {
+            $this->log()->warning('seriesDetailsSlice: invalid series id ' . $id . ' or page id ' . $page);
             $this->mkError(400, "Bad parameter");
             return;
         }
 
         $filter = $this->getFilter();
-        $tl = $this->calibre()->seriesDetailsSlice($globalSettings['lang'], $id, $index, $globalSettings[PAGE_SIZE], $filter);
+        $tl = $this->calibre()->seriesDetailsSlice($globalSettings['lang'], $id, $page, $globalSettings[PAGE_SIZE], $filter);
         if (is_null($tl)) {
             $this->log()->debug('seriesDetailsSlice: no series ' . $id);
             $this->myNotFound();
@@ -803,25 +803,25 @@ class MainActions extends DefaultActions
 
 
     /**
-     * A list of tags at $index -> /tagslist/:index
-     * @param int $index
+     * A list of tags at $page -> /tagslist/:page
+     * @param int $page
      */
-    public function tagsSlice($index = 0)
+    public function tagsSlice($page = 0)
     {
         $globalSettings = $this->settings();
 
         // parameter checking
-        if (!is_numeric($index)) {
-            $this->log()->warn('tagsSlice: invalid page id ' . $index);
+        if (!is_numeric($page)) {
+            $this->log()->warning('tagsSlice: invalid page id ' . $page);
             $this->mkError(400, "Bad parameter");
             return;
         }
 
-        $search = $this->request()->get('search');
+        $search = $this->get('search');
         if (isset($search)) {
-            $tl = $this->calibre()->tagsSlice($index, $globalSettings[PAGE_SIZE], trim($search));
+            $tl = $this->calibre()->tagsSlice($page, $globalSettings[PAGE_SIZE], trim($search));
         } else {
-            $tl = $this->calibre()->tagsSlice($index, $globalSettings[PAGE_SIZE]);
+            $tl = $this->calibre()->tagsSlice($page, $globalSettings[PAGE_SIZE]);
         }
         $this->render('tags.html', [
             'page' => $this->mkPage('tags', 4, 1),
@@ -855,22 +855,22 @@ class MainActions extends DefaultActions
      * Shows the detail data for the tag plus a paginated list of books
      *
      * @param  integer $id series id
-     * @param  integer $index page index for books
+     * @param  integer $page page index for books
      * @return void HTML page
      */
-    public function tagDetailsSlice($id, $index = 0)
+    public function tagDetailsSlice($id, $page = 0)
     {
         $globalSettings = $this->settings();
 
         // parameter checking
-        if (!is_numeric($id) || !is_numeric($index)) {
-            $this->log()->warn('tagsDetailsSlice: invalid tag id ' . $id . ' or page id ' . $index);
+        if (!is_numeric($id) || !is_numeric($page)) {
+            $this->log()->warning('tagsDetailsSlice: invalid tag id ' . $id . ' or page id ' . $page);
             $this->mkError(400, "Bad parameter");
             return;
         }
 
         $filter = $this->getFilter();
-        $tl = $this->calibre()->tagDetailsSlice($globalSettings['lang'], $id, $index, $globalSettings[PAGE_SIZE], $filter);
+        $tl = $this->calibre()->tagDetailsSlice($globalSettings['lang'], $id, $page, $globalSettings[PAGE_SIZE], $filter);
         if (is_null($tl)) {
             $this->log()->debug('no tag ' . $id);
             $this->myNotFound();

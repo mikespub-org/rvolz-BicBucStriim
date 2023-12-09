@@ -39,7 +39,7 @@ class OpdsActions extends DefaultActions
             // method(s), path, callable(s)
             ['GET', '/', [$self, 'opdsRoot']],
             ['GET', '/newest/', [$self, 'opdsNewest']],
-            ['GET', '/titleslist/:id/', [$self, 'opdsByTitle']],
+            ['GET', '/titleslist/:page/', [$self, 'opdsByTitle']],
             ['GET', '/authorslist/', [$self, 'opdsByAuthorInitial']],
             ['GET', '/authorslist/:initial/', [$self, 'opdsByAuthorNamesForInitial']],
             ['GET', '/authorslist/:initial/:id/:page/', [$self, 'opdsByAuthor']],
@@ -50,7 +50,7 @@ class OpdsActions extends DefaultActions
             ['GET', '/serieslist/:initial/', [$self, 'opdsBySeriesNamesForInitial']],
             ['GET', '/serieslist/:initial/:id/:page/', [$self, 'opdsBySeries']],
             ['GET', '/opensearch.xml', [$self, 'opdsSearchDescriptor']],
-            ['GET', '/searchlist/:id/', [$self, 'opdsBySearch']],
+            ['GET', '/searchlist/:page/', [$self, 'opdsBySearch']],
             // @todo either split off titles actions and call here, or adapt partialAcquisitionEntry() in OPDS Generator
             //['GET', '/titles/:id/', [$self, 'title']],
             //['GET', '/titles/:id/cover/', [$self, 'cover']],
@@ -102,25 +102,25 @@ class OpdsActions extends DefaultActions
      * Note: OPDS acquisition feeds need an acquisition link for every item,
      * so books without formats are removed from the output.
      *
-     * @param  integer $index =0 page index
+     * @param  integer $page =0 page index
      */
-    public function opdsByTitle($index = 0)
+    public function opdsByTitle($page = 0)
     {
         $globalSettings = $this->settings();
 
         // parameter checking
-        if (!is_numeric($index)) {
-            $this->log()->warn('opdsByTitle: invalid page id ' . $index);
+        if (!is_numeric($page)) {
+            $this->log()->warning('opdsByTitle: invalid page id ' . $page);
             $this->mkError(400, "Bad parameter");
             return;
         }
 
         $filter = $this->getFilter();
-        $search = $this->request()->get('search');
+        $search = $this->get('search');
         if (isset($search)) {
-            $tl = $this->calibre()->titlesSlice($globalSettings['lang'], $index, $globalSettings[PAGE_SIZE], $filter, $search);
+            $tl = $this->calibre()->titlesSlice($globalSettings['lang'], $page, $globalSettings[PAGE_SIZE], $filter, $search);
         } else {
-            $tl = $this->calibre()->titlesSlice($globalSettings['lang'], $index, $globalSettings[PAGE_SIZE], $filter);
+            $tl = $this->calibre()->titlesSlice($globalSettings['lang'], $page, $globalSettings[PAGE_SIZE], $filter);
         }
         $books1 = $this->calibre()->titleDetailsFilteredOpds($tl['entries']);
         $books = array_map([$this, 'checkThumbnailOpds'], $books1);
@@ -155,7 +155,7 @@ class OpdsActions extends DefaultActions
     {
         // parameter checking
         if (!(ctype_upper($initial))) {
-            $this->log()->warn('opdsByAuthorNamesForInitial: invalid initial ' . $initial);
+            $this->log()->warning('opdsByAuthorNamesForInitial: invalid initial ' . $initial);
             $this->mkError(400, "Bad parameter");
             return;
         }
@@ -178,7 +178,7 @@ class OpdsActions extends DefaultActions
 
         // parameter checking
         if (!is_numeric($id) || !is_numeric($page)) {
-            $this->log()->warn('opdsByAuthor: invalid author id ' . $id . ' or page id ' . $page);
+            $this->log()->warning('opdsByAuthor: invalid author id ' . $id . ' or page id ' . $page);
             $this->mkError(400, "Bad parameter");
             return;
         }
@@ -222,7 +222,7 @@ class OpdsActions extends DefaultActions
     {
         // parameter checking
         if (!(ctype_upper($initial))) {
-            $this->log()->warn('opdsByTagNamesForInitial: invalid initial ' . $initial);
+            $this->log()->warning('opdsByTagNamesForInitial: invalid initial ' . $initial);
             $this->mkError(400, "Bad parameter");
             return;
         }
@@ -245,7 +245,7 @@ class OpdsActions extends DefaultActions
 
         // parameter checking
         if (!is_numeric($id) || !is_numeric($page)) {
-            $this->log()->warn('opdsByTag: invalid tag id ' . $id . ' or page id ' . $page);
+            $this->log()->warning('opdsByTag: invalid tag id ' . $id . ' or page id ' . $page);
             $this->mkError(400, "Bad parameter");
             return;
         }
@@ -287,7 +287,7 @@ class OpdsActions extends DefaultActions
     {
         // parameter checking
         if (!($initial == 'all' || ctype_upper($initial))) {
-            $this->log()->warn('opdsBySeriesNamesForInitial: invalid initial ' . $initial);
+            $this->log()->warning('opdsBySeriesNamesForInitial: invalid initial ' . $initial);
             $this->mkError(400, "Bad parameter");
             return;
         }
@@ -310,7 +310,7 @@ class OpdsActions extends DefaultActions
 
         // parameter checking
         if (!is_numeric($id) || !is_numeric($page)) {
-            $this->log()->warn('opdsBySeries: invalid series id ' . $id . ' or page id ' . $page);
+            $this->log()->warning('opdsBySeries: invalid series id ' . $id . ' or page id ' . $page);
             $this->mkError(400, "Bad parameter");
             return;
         }
@@ -347,28 +347,28 @@ class OpdsActions extends DefaultActions
      * Create and send the catalog page for the current search criteria.
      * The search criteria is a GET paramter string.
      *
-     * @param  integer $index index of page in search
+     * @param  integer $page index of page in search
      */
-    public function opdsBySearch($index = 0)
+    public function opdsBySearch($page = 0)
     {
         $globalSettings = $this->settings();
 
         // parameter checking
-        if (!is_numeric($index)) {
-            $this->log()->warn('opdsBySearch: invalid page id ' . $index);
+        if (!is_numeric($page)) {
+            $this->log()->warning('opdsBySearch: invalid page id ' . $page);
             $this->mkError(400, "Bad parameter");
             return;
         }
 
-        $search = $this->request()->get('search');
+        $search = $this->get('search');
         if (!isset($search)) {
-            $this->log()->error('opdsBySearch called without search criteria, page ' . $index);
+            $this->log()->error('opdsBySearch called without search criteria, page ' . $page);
             // 400 Bad request
             $this->mkError(400);
             return;
         }
         $filter = $this->getFilter();
-        $tl = $this->calibre()->titlesSlice($globalSettings['lang'], $index, $globalSettings[PAGE_SIZE], $filter, $search);
+        $tl = $this->calibre()->titlesSlice($globalSettings['lang'], $page, $globalSettings[PAGE_SIZE], $filter, $search);
         $books1 = $this->calibre()->titleDetailsFilteredOpds($tl['entries']);
         $books = array_map([$this, 'checkThumbnailOpds'], $books1);
         $gen = $this->mkOpdsGenerator();
@@ -397,7 +397,7 @@ class OpdsActions extends DefaultActions
         if ($this->is_authenticated()) {
             $username = $this->auth()->getUserName();
             $this->log()->debug("logging out user: " . $username);
-            $this->app()->logout_service->logout($this->auth());
+            $this->container('logout_service')->logout($this->auth());
             if ($this->is_authenticated()) {
                 $this->log()->error("error logging out user: " . $username);
             } else {

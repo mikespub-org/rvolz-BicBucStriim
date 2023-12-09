@@ -28,7 +28,7 @@
 <ul id="users" data-role="listview" data-split-icon="delete" data-inset="true">
 {% for user in users %}
 	<li data-user="{{user.id}}">
-		<a href="{{page.rot}}/admin/users/{{user.id}}">
+		<a href="{{page.rot}}/admin/users/{{user.id}}/">
 			<h2>{{user.username}}</h2>
 		</a>
 		<a class="user_delete" href="#" data-user="{{user.id}}">

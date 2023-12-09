@@ -88,6 +88,24 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
     }
 
     /**
+     * Get param(s)
+     * @param ?string $name
+     */
+    public function get($name = null)
+    {
+        return $this->request()->get($name);
+    }
+
+    /**
+     * Post param(s)
+     * @param ?string $name
+     */
+    public function post($name = null)
+    {
+        return $this->request()->post($name);
+    }
+
+    /**
      * Check admin rights and redirect if necessary
      */
     public function check_admin()

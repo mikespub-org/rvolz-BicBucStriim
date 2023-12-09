@@ -10,18 +10,18 @@
 
 namespace BicBucStriim;
 
-function getMiddlewareInstances($settings)
+function getMiddlewareInstances($app, $settings)
 {
     return [
-        new Middleware\CalibreConfigMiddleware(CALIBRE_DIR),
-        new Middleware\LoginMiddleware($settings['appname'], ['js', 'img', 'style']),
-        new Middleware\OwnConfigMiddleware($settings['knownConfigs']),
-        new Middleware\CachingMiddleware(['/admin', '/login']),
+        new Middleware\CalibreConfigMiddleware($app, CALIBRE_DIR),
+        new Middleware\LoginMiddleware($app, $settings['appname'], ['js', 'img', 'style']),
+        new Middleware\OwnConfigMiddleware($app, $settings['knownConfigs']),
+        new Middleware\CachingMiddleware($app, ['/admin', '/login']),
     ];
 }
 
 return function ($app, $settings) {
-    $middlewares = getMiddlewareInstances($settings);
+    $middlewares = getMiddlewareInstances($app, $settings);
     foreach ($middlewares as $middleware) {
         $app->add($middleware);
     }

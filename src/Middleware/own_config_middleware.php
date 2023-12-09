@@ -19,10 +19,12 @@ class OwnConfigMiddleware extends DefaultMiddleware
     /**
      * Initialize the configuration
      *
+     * @param \BicBucStriim\App $app
      * @param array $knownConfigs
      */
-    public function __construct($knownConfigs)
+    public function __construct($app, $knownConfigs)
     {
+        parent::__construct($app);
         $this->knownConfigs = $knownConfigs;
     }
 
@@ -52,7 +54,7 @@ class OwnConfigMiddleware extends DefaultMiddleware
                 if (in_array($config->name, $this->knownConfigs)) {
                     $globalSettings[$config->name] = $config->val;
                 } else {
-                    $this->log()->warn(join(
+                    $this->log()->warning(join(
                         'own_config_middleware: ',
                         ['Unknown configuration, name: ', $config->name,', value: ',$config->val]
                     ));
@@ -61,15 +63,15 @@ class OwnConfigMiddleware extends DefaultMiddleware
             $this->settings($globalSettings);
 
             if ($globalSettings[DB_VERSION] != DB_SCHEMA_VERSION) {
-                $this->log()->warn('own_config_middleware: old db schema detected. please run update');
+                $this->log()->warning('own_config_middleware: old db schema detected. please run update');
                 return 2;
             }
 
             if ($globalSettings[LOGIN_REQUIRED] == 1) {
-                $this->app()->must_login = true;
+                $this->container('must_login', true);
                 $this->log()->info('multi user mode: login required');
             } else {
-                $this->app()->must_login = false;
+                $this->container('must_login', false);
                 $this->log()->debug('easy mode: login not required');
             }
             $this->log()->debug("own_config_middleware: config loaded");

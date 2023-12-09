@@ -271,7 +271,7 @@ $(document).on('pageinit', '#padmin_users', function() {
 				userA1H2 = document.createElement('h2'),
 				userA2 = document.createElement('a');
 			userLi.dataset.user = user.id;
-			$(userA1).attr('href', root+'/admin/users/'+user.id);
+			$(userA1).attr('href', root+'/admin/users/'+user.id+'/');
 			$(userA1H2).text(user.username);
 			$(userA2).addClass('user_delete');
 			$(userA2).on('click', function(){
@@ -328,7 +328,7 @@ $(document).on('pageinit', '#padmin_users', function() {
 		var user = $(this).data('user');
 		var root = $(this).data('proot');
 		var jh = $.ajax({
-			url: root+'/admin/users/'+user,
+			url: root+'/admin/users/'+user+'/',
 			type: 'DELETE',
 			async: false,
 			success: function(data) {
@@ -365,7 +365,7 @@ $(document).on('pageinit', '#padmin_user', function() {
 		var root = $(this).data('proot'),
 			id = $(this).data('user');
 		var jh = $.ajax({
-			url: root+'/admin/users/'+id,
+			url: root+'/admin/users/'+id+'/',
 			type: 'PUT',
 			async: false,
 			data: user,

@@ -153,12 +153,12 @@ class AdminActions extends DefaultActions
     {
         // parameter checking
         if (!preg_match('/^\w+$/u', $id)) {
-            $this->log()->warn('admin_modify_idtemplate: invalid template id ' . $id);
+            $this->log()->warning('admin_modify_idtemplate: invalid template id ' . $id);
             $this->mkError(400, "Invalid ID for template: " . $id);
             return;
         }
 
-        $template_data = $this->request()->put();
+        $template_data = $this->post();
         $this->log()->debug('admin_modify_idtemplate: ' . var_export($template_data, true));
         try {
             $template = $this->bbs()->idTemplate($id);
@@ -187,7 +187,7 @@ class AdminActions extends DefaultActions
     {
         // parameter checking
         if (!preg_match('/^\w+$/u', $id)) {
-            $this->log()->warn('admin_clear_idtemplate: invalid template id ' . $id);
+            $this->log()->warning('admin_clear_idtemplate: invalid template id ' . $id);
             $this->mkError(400, "Invalid ID for template: " . $id);
             return;
         }
@@ -241,7 +241,7 @@ class AdminActions extends DefaultActions
      */
     public function change_smtp_config()
     {
-        $mail_data = $this->request()->put();
+        $mail_data = $this->post();
         $this->log()->debug('admin_change_smtp_configuration: ' . var_export($mail_data, true));
         $mail_config = [SMTP_USER => $mail_data['username'],
             SMTP_PASSWORD => $mail_data['password'],
@@ -277,7 +277,7 @@ class AdminActions extends DefaultActions
     {
         // parameter checking
         if (!is_numeric($id)) {
-            $this->log()->warn('admin_get_user: invalid user id ' . $id);
+            $this->log()->warning('admin_get_user: invalid user id ' . $id);
             $this->mkError(400, "Bad parameter");
             return;
         }
@@ -313,7 +313,7 @@ class AdminActions extends DefaultActions
      */
     public function add_user()
     {
-        $user_data = $this->request()->post();
+        $user_data = $this->post();
         $this->log()->debug('admin_add_user: ' . var_export($user_data, true));
         try {
             $user = $this->bbs()->addUser($user_data['username'], $user_data['password']);
@@ -339,7 +339,7 @@ class AdminActions extends DefaultActions
     {
         // parameter checking
         if (!is_numeric($id)) {
-            $this->log()->warn('admin_delete_user: invalid user id ' . $id);
+            $this->log()->warning('admin_delete_user: invalid user id ' . $id);
             $this->mkError(400, "Bad parameter");
             return;
         }
@@ -363,12 +363,12 @@ class AdminActions extends DefaultActions
     {
         // parameter checking
         if (!is_numeric($id)) {
-            $this->log()->warn('admin_modify_user: invalid user id ' . $id);
+            $this->log()->warning('admin_modify_user: invalid user id ' . $id);
             $this->mkError(400, "Bad parameter");
             return;
         }
 
-        $user_data = $this->request()->put();
+        $user_data = $this->post();
         $this->log()->debug('admin_modify_user: ' . var_export($user_data, true));
         $user = $this->bbs()->changeUser(
             $id,
@@ -398,7 +398,7 @@ class AdminActions extends DefaultActions
         $this->log()->debug('admin_change: started');
         # Check access permission
         if (!$this->is_admin()) {
-            $this->log()->warn('admin_change: no admin permission');
+            $this->log()->warning('admin_change: no admin permission');
             $this->render('admin_configuration.html', [
                 'page' => $this->mkPage('admin'),
                 'messages' => [$this->getMessageString('invalid_password')],
@@ -406,7 +406,7 @@ class AdminActions extends DefaultActions
             return;
         }
         $nconfigs = [];
-        $req_configs = $this->request()->post();
+        $req_configs = $this->post();
         $errors = [];
         $messages = [];
         $this->log()->debug('admin_change: ' . var_export($req_configs, true));
@@ -453,7 +453,7 @@ class AdminActions extends DefaultActions
         ## Check for a change in page size, min 1, max 100
         if ($req_configs[PAGE_SIZE] != $globalSettings[PAGE_SIZE]) {
             if ($req_configs[PAGE_SIZE] < 1 || $req_configs[PAGE_SIZE] > 100) {
-                $this->log()->warn('admin_change: Invalid page size requested: ' . $req_configs[PAGE_SIZE]);
+                $this->log()->warning('admin_change: Invalid page size requested: ' . $req_configs[PAGE_SIZE]);
                 array_push($errors, 4);
             }
         }

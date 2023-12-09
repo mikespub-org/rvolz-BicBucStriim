@@ -19,11 +19,13 @@ class LoginMiddleware extends DefaultMiddleware
      * Initialize the PDO connection and merge user
      * config with defaults.
      *
+     * @param \BicBucStriim\App $app
      * @param string $realm
      * @param array $statics
      */
-    public function __construct($realm, $statics)
+    public function __construct($app, $realm, $statics)
     {
+        parent::__construct($app);
         $this->realm = $realm;
         $this->static_resource_paths = $statics;
     }
@@ -124,13 +126,13 @@ class LoginMiddleware extends DefaultMiddleware
         $hash = new \Aura\Auth\Verifier\PasswordVerifier(PASSWORD_BCRYPT);
         $cols = ['username', 'password', 'id', 'email', 'role', 'languages', 'tags'];
         $pdo_adapter = $auth_factory->newPdoAdapter($this->bbs()->mydb, $hash, $cols, 'user');
-        $this->app()->login_service = $auth_factory->newLoginService($pdo_adapter);
-        $this->app()->logout_service = $auth_factory->newLogoutService($pdo_adapter);
+        $this->container('login_service', $auth_factory->newLoginService($pdo_adapter));
+        $this->container('logout_service', $auth_factory->newLogoutService($pdo_adapter));
         $resume_service = $auth_factory->newResumeService($pdo_adapter);
         try {
             $resume_service->resume($this->auth());
         } catch(\ErrorException $e) {
-            $this->log()->warn('login error: bad cookie data ' . var_export(get_class($e), true));
+            $this->log()->warning('login error: bad cookie data ' . var_export(get_class($e), true));
         }
         $this->log()->debug("after resume: " . $this->auth()->getStatus());
         if ($this->auth()->isValid()) {
@@ -140,7 +142,7 @@ class LoginMiddleware extends DefaultMiddleware
                 // contents seems ok
                 return true;
             } else {
-                $this->log()->warn("bad cookie contents: killing session");
+                $this->log()->warning("bad cookie contents: killing session");
                 // bad cookie contents, kill it
                 $session->destroy();
                 return false;
@@ -157,7 +159,7 @@ class LoginMiddleware extends DefaultMiddleware
                 return false;
             } else {
                 try {
-                    $this->app()->login_service->login($this->auth(), [
+                    $this->container('login_service')->login($this->auth(), [
                         'username' => $auth[0],
                         'password' => $auth[1]]);
                     $this->log()->debug('login status: ' . var_export($this->auth()->getStatus(), true));

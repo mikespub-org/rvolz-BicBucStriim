@@ -17,12 +17,15 @@ class CachingMiddleware extends DefaultMiddleware
     /**
      * Initialize the configuration
      *
+     * @param \BicBucStriim\App $app
      * @param array $config an array of resource strings
      */
-    public function __construct($config)
+    public function __construct($app, $config)
     {
+        parent::__construct($app);
         $this->resources = $config;
     }
+
     /**
      * If the current resource belongs to the admin area caching will be disabled.
      *
