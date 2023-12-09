@@ -60,18 +60,18 @@ class UrlInfo
      *
      * First we look for the standard 'Forwarded' header from RFC 7239, then for the non-standard X-Forwarded-... headers.
      *
-     * @param \Slim\Http\Headers $headers
+     * @param array $headers
      * @return null|self
      */
     public static function getForwardingInfo($headers)
     {
         $info = null;
-        $forwarded = $headers->get('Forwarded');
+        $forwarded = $headers['Forwarded'] ?? null;
         if (!is_null($forwarded)) {
             $info = new self($forwarded);
         } else {
-            $fhost = $headers->get('X-Forwarded-Host');
-            $fproto = $headers->get('X-Forwarded-Proto');
+            $fhost = $headers['X-Forwarded-Host'] ?? null;
+            $fproto = $headers['X-Forwarded-Proto'] ?? null;
             if (!is_null($fhost)) {
                 $info = new self($fhost, $fproto);
             }

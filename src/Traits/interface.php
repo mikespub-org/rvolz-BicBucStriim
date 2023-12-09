@@ -17,8 +17,8 @@ interface AppInterface
 {
     /**
      * Get BicBucStriim app
-     * @param \BicBucStriim\App|null $app
-     * @return \BicBucStriim\App
+     * @param \BicBucStriim\App|\Slim\App|object|null $app
+     * @return \BicBucStriim\App|\Slim\App|object
      */
     public function app($app = null);
 
@@ -47,26 +47,25 @@ interface AppInterface
      * Set flash message for subsequent request
      * @param  string   $key
      * @param  mixed    $value
-     * @return void
      */
     public function flash($key, $value);
 
     /**
      * Get application log
-     * @param ?\Slim\Log $logger
-     * @return \Slim\Log
+     * @param ?\Psr\Log\LoggerInterface $logger
+     * @return \Psr\Log\LoggerInterface
      */
     public function log($logger = null);
 
     /**
      * Get the Request object
-     * @return \Slim\Http\Request
+     * @return \Psr\Http\Message\ServerRequestInterface
      */
     public function request();
 
     /**
      * Get the Response object
-     * @return \Slim\Http\Response
+     * @return \Psr\Http\Message\ResponseInterface
      */
     public function response();
 
@@ -97,6 +96,21 @@ interface AppInterface
      * @return string root url
      */
     public function getRootUrl();
+
+    /**
+     * See https://github.com/slimphp/Slim/blob/2.x/Slim/Http/Request.php#L569
+     */
+    public function getUrl();
+
+    /**
+     * See https://github.com/slimphp/Slim/blob/2.x/Slim/Http/Request.php#L533
+     */
+    public function getRootUri();
+
+    /**
+     * See https://github.com/slimphp/Slim/blob/2.x/Slim/Http/Request.php#L560
+     */
+    public function getResourceUri();
 
     /**
      * Create and send an error to authenticate (401)

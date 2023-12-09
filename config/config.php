@@ -11,18 +11,21 @@
 /**
  * Configure app for production
  */
-function confprod()
+function confprod($app, $appname, $appversion)
 {
-    global $app, $appname, $appversion;
-    $app->config([
+    $config = [
         'debug' => false,
         'cookies.lifetime' => '1 day',
         'cookies.secret_key' => 'b4924c3579e2850a6fad8597da7ad24bf43ab78e',
 
-    ]);
-    $logger = $app->getLog();
+    ];
+    foreach ($config as $name => $value) {
+        $app->getContainer()->set($name, $value);
+    }
+    /** @var \BicBucStriim\Utilities\Logger $logger */
+    $logger = $app->getContainer()->get('logger');
     $logger->setEnabled(true);
-    $logger->setLevel(\Slim\Log::WARN);
+    $logger->setMinLevel(\Psr\Log\LogLevel::WARNING, false);
     $logger->info($appname . ' ' . $appversion . ': Running in production mode.');
     $logger->info('Running on PHP: ' . PHP_VERSION);
     error_reporting(E_ALL ^ (E_DEPRECATED | E_USER_DEPRECATED));
@@ -31,18 +34,21 @@ function confprod()
 /**
  * Configure app for development
  */
-function confdev()
+function confdev($app, $appname, $appversion)
 {
-    global $app, $appname, $appversion;
-    $app->config([
+    $config = [
         'debug' => true,
         'cookies.lifetime' => '5 minutes',
         'cookies.secret_key' => 'b4924c3579e2850a6fad8597da7ad24bf43ab78e',
 
-    ]);
-    $logger = $app->getLog();
+    ];
+    foreach ($config as $name => $value) {
+        $app->getContainer()->set($name, $value);
+    }
+    /** @var \BicBucStriim\Utilities\Logger $logger */
+    $logger = $app->getContainer()->get('logger');
     $logger->setEnabled(true);
-    $logger->setLevel(\Slim\Log::DEBUG);
+    $logger->setMinLevel(\Psr\Log\LogLevel::DEBUG, false);
     $logger->info($appname . ' ' . $appversion . ': Running in development mode.');
     $logger->info('Running on PHP: ' . PHP_VERSION);
 }
@@ -50,25 +56,32 @@ function confdev()
 /**
  * Configure app for debug mode: production + log everything to file
  */
-function confdebug()
+function confdebug($app, $appname, $appversion)
 {
-    global $app, $appname, $appversion;
-    $app->config([
+    $config = [
         'debug' => true,
         'cookies.lifetime' => '1 day',
         'cookies.secret_key' => 'b4924c3579e2850a6fad8597da7ad24bf43ab78e',
-    ]);
-    $logger = $app->getLog();
+    ];
+    foreach ($config as $name => $value) {
+        $app->getContainer()->set($name, $value);
+    }
+    /** @var \BicBucStriim\Utilities\Logger $logger */
+    $logger = $app->getContainer()->get('logger');
     $logger->setEnabled(true);
-    $logger->setLevel(\Slim\Log::DEBUG);
-    $logger->setWriter(new \Slim\Logger\DateTimeFileWriter(['path' => './data', 'name_format' => 'Y-m-d']));
+    $logger->setMinLevel(\Psr\Log\LogLevel::DEBUG);
+    // replacement for DateTimeFileWriter that supports Psr\Log
+    $logger->add(new \Apix\Log\Logger\File('./data/debug-' . date('Y-m-d') . '.log'));
     $logger->info($appname . ' ' . $appversion . ': Running in debug mode.');
     error_reporting(E_ALL | E_STRICT);
     $logger->info('Running on PHP: ' . PHP_VERSION);
 }
 
 return function ($app, $settings) {
-    $app->configureMode('production', 'confprod');
-    $app->configureMode('development', 'confdev');
-    $app->configureMode('debug', 'confdebug');
+    $settings['mode'] ??= 'production';
+    match ($settings['mode']) {
+        'development' => confdev($app, $settings['appname'], $settings['appversion']),
+        'debug' => confdebug($app, $settings['appname'], $settings['appversion']),
+        default => confprod($app, $settings['appname'], $settings['appversion']),
+    };
 };

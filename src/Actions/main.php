@@ -29,7 +29,7 @@ class MainActions extends DefaultActions
     public static function addRoutes($app, $prefix = null)
     {
         $self = new self($app);
-        $app->notFound([$self, 'myNotFound']);
+        //$app->notFound([$self, 'myNotFound']);
         static::mapRoutes($app, $self);
     }
 
@@ -46,21 +46,21 @@ class MainActions extends DefaultActions
             ['GET', '/login/', [$self, 'show_login']],
             ['POST', '/login/', [$self, 'perform_login']],
             ['GET', '/logout/', [$self, 'logout']],
-            ['GET', '/authors/:id/notes/', [$self, 'check_admin'], [$self, 'authorNotes']],
-            //['POST', '/authors/:id/notes/', [$self, 'check_admin'], [$self, 'authorNotesEdit']],
-            ['GET', '/authors/:id/:page/', [$self, 'authorDetailsSlice']],
-            ['GET', '/authorslist/:page/', [$self, 'authorsSlice']],
+            ['GET', '/authors/{id}/notes/', [$self, 'check_admin'], [$self, 'authorNotes']],
+            //['POST', '/authors/{id}/notes/', [$self, 'check_admin'], [$self, 'authorNotesEdit']],
+            ['GET', '/authors/{id}/{page}/', [$self, 'authorDetailsSlice']],
+            ['GET', '/authorslist/{page}/', [$self, 'authorsSlice']],
             ['GET', '/search/', [$self, 'globalSearch']],
-            ['GET', '/series/:id/:page/', [$self, 'seriesDetailsSlice']],
-            ['GET', '/serieslist/:page/', [$self, 'seriesSlice']],
-            ['GET', '/tags/:id/:page/', [$self, 'tagDetailsSlice']],
-            ['GET', '/tagslist/:page/', [$self, 'tagsSlice']],
-            ['GET', '/titles/:id/', [$self, 'title']],
-            ['GET', '/titles/:id/cover/', [$self, 'cover']],
-            ['GET', '/titles/:id/file/:file', [$self, 'book']],
-            ['POST', '/titles/:id/kindle/:file', [$self, 'kindle']],
-            ['GET', '/titles/:id/thumbnail/', [$self, 'thumbnail']],
-            ['GET', '/titleslist/:page/', [$self, 'titlesSlice']],
+            ['GET', '/series/{id}/{page}/', [$self, 'seriesDetailsSlice']],
+            ['GET', '/serieslist/{page}/', [$self, 'seriesSlice']],
+            ['GET', '/tags/{id}/{page}/', [$self, 'tagDetailsSlice']],
+            ['GET', '/tagslist/{page}/', [$self, 'tagsSlice']],
+            ['GET', '/titles/{id}/', [$self, 'title']],
+            ['GET', '/titles/{id}/cover/', [$self, 'cover']],
+            ['GET', '/titles/{id}/file/{file}', [$self, 'book']],
+            ['POST', '/titles/{id}/kindle/{file}', [$self, 'kindle']],
+            ['GET', '/titles/{id}/thumbnail/', [$self, 'thumbnail']],
+            ['GET', '/titleslist/{page}/', [$self, 'titlesSlice']],
         ];
     }
 
@@ -79,7 +79,7 @@ class MainActions extends DefaultActions
     {
         if ($this->is_authenticated()) {
             $this->log()->info('user is already logged in : ' . $this->auth()->getUserName());
-            $this->mkRedirect($this->request()->getRootUri() . '/');
+            $this->mkRedirect($this->getRootUri() . '/');
         } else {
             $this->render('login.html', [
                 'page' => $this->mkPage('login')]);
@@ -97,17 +97,21 @@ class MainActions extends DefaultActions
                 $this->render('login.html', [
                     'page' => $this->mkPage('login')]);
             } else {
-                $this->container('login_service')->login($this->auth(), ['username' => $uname, 'password' => $upw]);
-                $success = $this->auth()->getStatus();
-                $this->log()->debug('login success: ' . $success);
-                if ($this->is_authenticated()) {
-                    $this->log()->info('logged in user : ' . $this->auth()->getUserName());
-                    $this->mkRedirect($this->request()->getRootUri() . '/');
-                } else {
-                    $this->log()->error('error logging in user : ' . $login_data['username']);
-                    $this->render('login.html', [
-                        'page' => $this->mkPage('login')]);
+                try {
+                    $this->container('login_service')->login($this->auth(), ['username' => $uname, 'password' => $upw]);
+                    $success = $this->auth()->getStatus();
+                    $this->log()->debug('login success: ' . $success);
+                    if ($this->is_authenticated()) {
+                        $this->log()->info('logged in user : ' . $this->auth()->getUserName());
+                        $this->mkRedirect($this->getRootUri() . '/');
+                        return;
+                    }
+                } catch (Exception $e) {
+                    $this->log()->error('error logging in user : ' . $e->getMessage());
                 }
+                $this->log()->error('error logging in user : ' . $login_data['username']);
+                $this->render('login.html', [
+                    'page' => $this->mkPage('login')]);
             }
         } else {
             $this->render('login.html', [
@@ -190,7 +194,7 @@ class MainActions extends DefaultActions
     }
 
     /**
-     * A list of titles at $page -> /titlesList/:page
+     * A list of titles at $page -> /titleslist/{page}
      */
     public function titlesSlice($page = 0)
     {
@@ -252,7 +256,7 @@ class MainActions extends DefaultActions
     }
 
     /**
-     * Show a single title > /titles/:id. The ID ist the Calibre ID
+     * Show a single title > /titles/{id}/ The ID ist the Calibre ID
      */
     public function title($id)
     {
@@ -262,10 +266,7 @@ class MainActions extends DefaultActions
         $filter = new TwigFilter('hfsize', function ($string) {
             return $this->human_filesize($string);
         });
-        /** @var \BicBucStriim\TwigView $view */
-        $view = $this->app()->view();
-        $tenv = $view->getInstance();
-        $tenv->addFilter($filter);
+        $this->twig()->addFilter($filter);
 
         // parameter checking
         if (!is_numeric($id)) {
@@ -322,7 +323,7 @@ class MainActions extends DefaultActions
     /**
      * Return the cover for the book with ID. Calibre generates only JPEGs, so we always return a JPEG.
      * If there is no cover, return 404.
-     * Route: /titles/:id/cover
+     * Route: /titles/{id}/cover/
      */
     public function cover($id)
     {
@@ -334,7 +335,7 @@ class MainActions extends DefaultActions
         }
 
         $has_cover = false;
-        $rot = $this->request()->getRootUri();
+        $rot = $this->getRootUri();
         $book = $this->calibre()->title($id);
         if (is_null($book)) {
             $this->log()->debug("cover: book not found: " . $id);
@@ -356,7 +357,7 @@ class MainActions extends DefaultActions
     /**
      * Return the cover for the book with ID. Calibre generates only JPEGs, so we always return a JPEG.
      * If there is no cover, return 404.
-     * Route: /titles/:id/thumbnail
+     * Route: /titles/{id}/thumbnail/
      */
     public function thumbnail($id)
     {
@@ -371,7 +372,7 @@ class MainActions extends DefaultActions
 
         $this->log()->debug('thumbnail: ' . $id);
         $has_cover = false;
-        $rot = $this->request()->getRootUri();
+        $rot = $this->getRootUri();
         $book = $this->calibre()->title($id);
         if (is_null($book)) {
             $this->log()->error("thumbnail: book not found: " . $id);
@@ -394,7 +395,7 @@ class MainActions extends DefaultActions
 
     /**
      * Return the selected file for the book with ID.
-     * Route: /titles/:id/file/:file
+     * Route: /titles/{id}/file/{file}
      */
     public function book($id, $file)
     {
@@ -471,7 +472,7 @@ class MainActions extends DefaultActions
 
     /**
      * Send the selected file to a Kindle e-mail address
-     * Route: /titles/:id/kindle/:file
+     * Route: /titles/{id}/kindle/{file}
      */
     public function kindle($id, $file)
     {
@@ -512,7 +513,8 @@ class MainActions extends DefaultActions
             $this->mkError(400);
             return;
         } else {
-            $this->app()->deleteCookie(KINDLE_COOKIE);
+            $util = new \BicBucStriim\Utilities\ResponseUtil($this->response());
+            $this->response = $util->deleteCookie(KINDLE_COOKIE);
             $bookpath = $this->calibre()->titleFile($id, $file);
             $this->log()->debug("kindle: requested file " . $bookpath);
             if ($globalSettings[MAILER] == Mailer::SMTP) {
@@ -547,7 +549,8 @@ class MainActions extends DefaultActions
                 $this->log()->warning('kindle: Mail dump ' . $mailer->getDump());
             }
             # Store e-mail address in cookie so user needs to enter it only once
-            $this->app()->setCookie(KINDLE_COOKIE, $to_email);
+            $util = new \BicBucStriim\Utilities\ResponseUtil($this->response());
+            $this->response = $util->setCookie(KINDLE_COOKIE, $to_email);
             if ($send_success > 0) {
                 $answer = $this->getMessageString('send_success');
                 $this->mkResponse($answer, 'text/plain', 200);
@@ -560,7 +563,7 @@ class MainActions extends DefaultActions
 
 
     /**
-     *  A list of authors at $page -> /authorslist/:page
+     *  A list of authors at $page -> /authorslist/{page}
      * @param int $page author list page index
      */
     public function authorsSlice($page = 0)
@@ -597,7 +600,7 @@ class MainActions extends DefaultActions
     }
 
     /**
-     * Details for a single author -> /authors/:id
+     * Details for a single author -> /authors/{id}
      * @param int $id author id
      * @deprecated since 0.9.3
      */
@@ -616,7 +619,7 @@ class MainActions extends DefaultActions
     }
 
     /**
-     * Details for a single author -> /authors/:id/:page/
+     * Details for a single author -> /authors/{id}/{page}/
      * Shows the detail data for the author plus a paginated list of books
      *
      * @param  integer $id author id
@@ -675,7 +678,7 @@ class MainActions extends DefaultActions
 
 
     /**
-     * Notes for a single author -> /authors/:id/notes/
+     * Notes for a single author -> /authors/{id}/notes/
      *
      * @param  int $id author id
      */
@@ -748,7 +751,7 @@ class MainActions extends DefaultActions
     }
 
     /**
-     * Return a HTML page with details of series $id, /series/:id
+     * Return a HTML page with details of series $id, /series/{id}
      * @param  int $id series id
      * @deprecated since 0.9.3
      */
@@ -767,7 +770,7 @@ class MainActions extends DefaultActions
     }
 
     /**
-     * Details for a single series -> /series/:id/:page/
+     * Details for a single series -> /series/{id}/{page}/
      * Shows the detail data for the series plus a paginated list of books
      *
      * @param  int $id series id
@@ -803,7 +806,7 @@ class MainActions extends DefaultActions
 
 
     /**
-     * A list of tags at $page -> /tagslist/:page
+     * A list of tags at $page -> /tagslist/{page}
      * @param int $page
      */
     public function tagsSlice($page = 0)
@@ -833,7 +836,7 @@ class MainActions extends DefaultActions
     }
 
     /**
-     * Details for a single tag -> /tags/:id/:page
+     * Details for a single tag -> /tags/{id}/{page}
      * @deprecated since 0.9.3
      */
     public function tag($id)
@@ -851,7 +854,7 @@ class MainActions extends DefaultActions
     }
 
     /**
-     * Details for a single tag -> /tags/:id/:page/
+     * Details for a single tag -> /tags/{id}/{page}/
      * Shows the detail data for the tag plus a paginated list of books
      *
      * @param  integer $id series id

@@ -10,9 +10,10 @@
 
 namespace BicBucStriim;
 
-require_once __DIR__ . '/deprecated.php';
-
-class App extends \Slim\Slim
+/*********************************************************************
+ * BicBucStriim App (documentation only) - use AppFactory in bootstrap
+ ********************************************************************/
+class App extends \Slim\App
 {
     /** @var \Aura\Auth\Auth */
     public $auth;
@@ -26,13 +27,14 @@ class App extends \Slim\Slim
     public $logout_service;
     /** @var bool */
     public $must_login;
-    ///** @var \BicBucStriim\TwigView set in container as singleton by Slim\Slim constructor */
-    //public $view;
+    /** @var \BicBucStriim\Utilities\Logger */
+    public $logger;
+    /** @var \Twig\Environment */
+    public $twig;
+    ///** @var \Psr\Container\ContainerInterface|null */
+    //public $container;
 
-    /**
-     * @return \Slim\Helper\Set
-     */
-    public function getContainer()
+    public function getContainer(): ?\Psr\Container\ContainerInterface
     {
         return $this->container;
     }

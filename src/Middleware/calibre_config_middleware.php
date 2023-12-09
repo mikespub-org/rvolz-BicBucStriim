@@ -10,6 +10,10 @@
 
 namespace BicBucStriim\Middleware;
 
+use Psr\Http\Message\ResponseInterface as Response;
+use Psr\Http\Message\ServerRequestInterface as Request;
+use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
+
 class CalibreConfigMiddleware extends DefaultMiddleware
 {
     protected $calibreDir;
@@ -17,7 +21,7 @@ class CalibreConfigMiddleware extends DefaultMiddleware
     /**
      * Initialize the configuration
      *
-     * @param \BicBucStriim\App $app
+     * @param \BicBucStriim\App|\Slim\App|object $app The app
      * @param string $calibreDir
      */
     public function __construct($app, $calibreDir)
@@ -30,36 +34,43 @@ class CalibreConfigMiddleware extends DefaultMiddleware
      * Check if the Calibre configuration is valid:
      * - If Calibre dir is undefined -> goto admin page
      * - If Calibre cannot be opened -> goto admin page
+     * @param Request $request The request
+     * @param RequestHandler $handler The handler
+     * @return Response The response
      */
-    public function call()
+    public function process(Request $request, RequestHandler $handler): Response
     {
+        $this->request = $request;
+        //$response = $this->response();
         $globalSettings = $this->settings();
-        $request = $this->request();
 
-        if ($request->getResourceUri() != '/login/') {
+        $resource = $this->getResourceUri();
+        if ($resource != '/login/') {
             # 'After installation' scenario: here is a config DB but no valid connection to Calibre
             if (empty($globalSettings[$this->calibreDir])) {
                 $this->log()->warning('check_config: Calibre library path not configured.');
-                if ($request->getResourceUri() != '/admin/configuration/') {
+                if ($resource != '/admin/configuration/') {
                     // app->redirect not useable in middleware
-                    $this->mkRedirect($request->getRootUri() . '/admin/configuration/', 302, false);
+                    $this->mkRedirect($this->getRootUri() . '/admin/configuration/', 302, false);
+                    return $this->response();
                 } else {
-                    $this->next->call();
+                    return $handler->handle($request);
                 }
             } else {
                 # Setup the connection to the Calibre metadata db
                 $clp = $globalSettings[$this->calibreDir] . '/metadata.db';
                 $this->calibre(new \BicBucStriim\Calibre\Calibre($clp));
-                if (!$this->calibre()->libraryOk() && $request->getResourceUri() != '/admin/configuration/') {
+                if (!$this->calibre()->libraryOk() && $resource != '/admin/configuration/') {
                     $this->log()->error('check_config: Exception while opening metadata db ' . $clp . '. Showing admin page.');
                     // app->redirect not useable in middleware
-                    $this->mkRedirect($request->getRootUri() . '/admin/configuration/', 302, false);
+                    $this->mkRedirect($this->getRootUri() . '/admin/configuration/', 302, false);
+                    return $this->response();
                 } else {
-                    $this->next->call();
+                    return $handler->handle($request);
                 }
             }
         } else {
-            $this->next->call();
+            return $handler->handle($request);
         }
     }
 }

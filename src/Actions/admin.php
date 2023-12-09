@@ -29,9 +29,11 @@ class AdminActions extends DefaultActions
     {
         $self = new self($app);
         // check admin for all actions in this group
-        $app->group($prefix, [$self, 'check_admin'], function () use ($app, $self) {
-            static::mapRoutes($app, $self);
-        });
+        $callable = [$self, 'check_admin'];
+        $wrapper = static::wrapMiddleware($callable);
+        $app->group($prefix, function (\Slim\Routing\RouteCollectorProxy $group) use ($self) {
+            AdminActions::mapRoutes($group, $self);
+        })->add($wrapper);
     }
 
     /**
@@ -47,15 +49,15 @@ class AdminActions extends DefaultActions
             ['GET', '/configuration/', [$self, 'configuration']],
             ['POST', '/configuration/', [$self, 'change_json']],
             ['GET', '/idtemplates/', [$self, 'get_idtemplates']],
-            ['PUT', '/idtemplates/:id/', [$self, 'modify_idtemplate']],
-            ['DELETE', '/idtemplates/:id/', [$self, 'clear_idtemplate']],
+            ['PUT', '/idtemplates/{id}/', [$self, 'modify_idtemplate']],
+            ['DELETE', '/idtemplates/{id}/', [$self, 'clear_idtemplate']],
             ['GET', '/mail/', [$self, 'get_smtp_config']],
             ['PUT', '/mail/', [$self, 'change_smtp_config']],
             ['GET', '/users/', [$self, 'get_users']],
             ['POST', '/users/', [$self, 'add_user']],
-            ['GET', '/users/:id/', [$self, 'get_user']],
-            ['PUT', '/users/:id/', [$self, 'modify_user']],
-            ['DELETE', '/users/:id/', [$self, 'delete_user']],
+            ['GET', '/users/{id}/', [$self, 'get_user']],
+            ['PUT', '/users/{id}/', [$self, 'modify_user']],
+            ['DELETE', '/users/{id}/', [$self, 'delete_user']],
             ['GET', '/version/', [$self, 'check_version']],
         ];
     }
@@ -271,7 +273,7 @@ class AdminActions extends DefaultActions
 
 
     /**
-     * Generate the single user page -> GET /admin/users/:id/
+     * Generate the single user page -> GET /admin/users/{id}/
      */
     public function get_user($id)
     {
@@ -333,7 +335,7 @@ class AdminActions extends DefaultActions
     }
 
     /**
-     * Delete a user -> DELETE /admin/users/:id/ (JSON)
+     * Delete a user -> DELETE /admin/users/{id}/ (JSON)
      */
     public function delete_user($id)
     {
@@ -357,7 +359,7 @@ class AdminActions extends DefaultActions
     }
 
     /**
-     * Modify a user -> PUT /admin/users/:id/ (JSON)
+     * Modify a user -> PUT /admin/users/{id}/ (JSON)
      */
     public function modify_user($id)
     {

@@ -23,8 +23,8 @@ class OpdsActions extends DefaultActions
     public static function addRoutes($app, $prefix = '/opds')
     {
         $self = new self($app);
-        $app->group($prefix, function () use ($app, $self) {
-            static::mapRoutes($app, $self);
+        $app->group($prefix, function (\Slim\Routing\RouteCollectorProxy $group) use ($self) {
+            OpdsActions::mapRoutes($group, $self);
         });
     }
 
@@ -39,23 +39,23 @@ class OpdsActions extends DefaultActions
             // method(s), path, callable(s)
             ['GET', '/', [$self, 'opdsRoot']],
             ['GET', '/newest/', [$self, 'opdsNewest']],
-            ['GET', '/titleslist/:page/', [$self, 'opdsByTitle']],
+            ['GET', '/titleslist/{page}/', [$self, 'opdsByTitle']],
             ['GET', '/authorslist/', [$self, 'opdsByAuthorInitial']],
-            ['GET', '/authorslist/:initial/', [$self, 'opdsByAuthorNamesForInitial']],
-            ['GET', '/authorslist/:initial/:id/:page/', [$self, 'opdsByAuthor']],
+            ['GET', '/authorslist/{initial}/', [$self, 'opdsByAuthorNamesForInitial']],
+            ['GET', '/authorslist/{initial}/{id}/{page}/', [$self, 'opdsByAuthor']],
             ['GET', '/tagslist/', [$self, 'opdsByTagInitial']],
-            ['GET', '/tagslist/:initial/', [$self, 'opdsByTagNamesForInitial']],
-            ['GET', '/tagslist/:initial/:id/:page/', [$self, 'opdsByTag']],
+            ['GET', '/tagslist/{initial}/', [$self, 'opdsByTagNamesForInitial']],
+            ['GET', '/tagslist/{initial}/{id}/{page}/', [$self, 'opdsByTag']],
             ['GET', '/serieslist/', [$self, 'opdsBySeriesInitial']],
-            ['GET', '/serieslist/:initial/', [$self, 'opdsBySeriesNamesForInitial']],
-            ['GET', '/serieslist/:initial/:id/:page/', [$self, 'opdsBySeries']],
+            ['GET', '/serieslist/{initial}/', [$self, 'opdsBySeriesNamesForInitial']],
+            ['GET', '/serieslist/{initial}/{id}/{page}/', [$self, 'opdsBySeries']],
             ['GET', '/opensearch.xml', [$self, 'opdsSearchDescriptor']],
-            ['GET', '/searchlist/:page/', [$self, 'opdsBySearch']],
+            ['GET', '/searchlist/{page}/', [$self, 'opdsBySearch']],
             // @todo either split off titles actions and call here, or adapt partialAcquisitionEntry() in OPDS Generator
-            //['GET', '/titles/:id/', [$self, 'title']],
-            //['GET', '/titles/:id/cover/', [$self, 'cover']],
-            //['GET', '/titles/:id/file/:file', [$self, 'book']],
-            //['GET', '/titles/:id/thumbnail/', [$self, 'thumbnail']],
+            //['GET', '/titles/{id}/', [$self, 'title']],
+            //['GET', '/titles/{id}/cover/', [$self, 'cover']],
+            //['GET', '/titles/{id}/file/{file}', [$self, 'book']],
+            //['GET', '/titles/{id}/thumbnail/', [$self, 'thumbnail']],
             ['GET', '/logout/', [$self, 'opdsLogout']],
         ];
     }

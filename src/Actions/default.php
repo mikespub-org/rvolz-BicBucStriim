@@ -10,7 +10,9 @@
 
 namespace BicBucStriim\Actions;
 
-use Utilities;
+use Psr\Http\Message\ResponseInterface as Response;
+use Psr\Http\Message\ServerRequestInterface as Request;
+use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
 
 /*********************************************************************
  * Default actions
@@ -19,12 +21,12 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
 {
     use \BicBucStriim\Traits\AppTrait;
 
-    /** @var \BicBucStriim\App */
+    /** @var \BicBucStriim\App|\Slim\App|object */
     protected $app;
 
     /**
      * Add routes for default actions
-     * @param \BicBucStriim\App $app
+     * @param \BicBucStriim\App|\Slim\App|object $app
      * @param ?string $prefix
      * @return void
      */
@@ -37,7 +39,7 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
 
     /**
      * Map routes for default actions
-     * @param \BicBucStriim\App $app
+     * @param \BicBucStriim\App|\Slim\App|\Slim\Routing\RouteCollectorProxy|object $app
      * @param self $self
      * @return void
      */
@@ -50,8 +52,47 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
             if (is_string($method) && $method === 'GET') {
                 $method = ['GET', 'HEAD'];
             }
-            $app->map($path, ...$route)->via($method);
+            //$app->map($path, ...$route)->via($method);
+            // See also https://www.slimframework.com/docs/v4/objects/routing.html#route-strategies
+            // For example from RequestResponseArgs.php:
+            //return $callable($request, $response, ...array_values($routeArguments));
+            if (!is_array($method)) {
+                $method = [ $method ];
+            }
+            $callable = array_pop($route);
+            $wrapper = static::wrapCallable($callable);
+            if (count($route) > 0) {
+                $next = $app->map($method, $path, $wrapper);
+                foreach ($route as $middleware) {
+                    $wrapper = static::wrapMiddleware($middleware);
+                    $next = $next->add($wrapper);
+                }
+            } else {
+                $app->map($method, $path, $wrapper);
+            }
         }
+    }
+
+    public static function wrapCallable($callable)
+    {
+        return function (Request $request, Response $response, ...$args) use ($callable) {
+            $callable[0]->request = $request;
+            $callable[0]->response = $response;
+            $callable(...$args);
+            return $callable[0]->response;
+        };
+    }
+
+    public static function wrapMiddleware($callable)
+    {
+        return function (Request $request, RequestHandler $handler) use ($callable) {
+            $callable[0]->request = $request;
+            $callable();
+            if (!empty($callable[0]->response)) {
+                return $callable[0]->response;
+            }
+            return $handler->handle($request);
+        };
     }
 
     /**
@@ -64,16 +105,16 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
         return [
             // method(s), path, callable(s)
             ['GET', '/', [$self, 'hello']],
-            ['GET', '/:name', [$self, 'hello']],
+            ['GET', '/{name}', [$self, 'hello']],
         ];
     }
 
     /**
-     * @param \BicBucStriim\App $app
+     * @param \BicBucStriim\App|\Slim\App|object $app
      */
     public function __construct($app)
     {
-        $this->app = $app;
+        $this->app($app);
     }
 
     /**
@@ -93,7 +134,11 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
      */
     public function get($name = null)
     {
-        return $this->request()->get($name);
+        $params = $this->request()->getQueryParams();
+        if (empty($name)) {
+            return $params;
+        }
+        return $params[$name] ?? null;
     }
 
     /**
@@ -102,7 +147,11 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
      */
     public function post($name = null)
     {
-        return $this->request()->post($name);
+        $params = $this->request->getParsedBody();
+        if (empty($name)) {
+            return $params;
+        }
+        return $params[$name] ?? null;
     }
 
     /**
@@ -169,7 +218,9 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
     public function render($template, $data = [], $status = null)
     {
         // Slim 2 framework will replace data, render template and echo output via slim view display()
-        $this->app()->render($template, $data, $status);
+        //$this->app()->render($template, $data, $status);
+        $content = $this->twig()->render($template, $data);
+        $this->mkResponse($content, 'text/html');
     }
 
     /**
