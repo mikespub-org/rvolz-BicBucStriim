@@ -4,10 +4,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.7.x] - 20xx-xx-xx
+## [3.x.x] - 20xx-xx-xx
+### Changed
+- Replaced abandoned package swiftmailer/swiftmailer with phpmailer/phpmailer
+
+## [3.0.0] - 2023-12-10 Switch to Slim 4 framework
+### Changed
+- Switched to PSR-3/7/11/15/17 + Slim 4 framework
+### Removed
+- Dropped incompatible package slim/logger from composer.json
+- Removed abandoned package slim/views from lib/SlimViews
+
+## [1.7.2] - 2023-12-10 Prepare framework switch
 ### Added
 - Added BicBucStriim\Session and BicBucStriim\Utilities namespaces
 ### Changed
+- Clean up actions and middleware to prepare framework switch
 - Split utilities and move files to BicBucStriim\Utilities namespace
 - Moved lib/BicBucStriim to src directory to clarify source code
 - Moved session files to lib/BicBucStriim/Session
@@ -16,7 +28,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Moved Slim 2 app dependencies to trait and added standard responses
 - Adapted Twig files from abandoned slim/views package in lib/SlimViews for maintenance
 - Updated twig/twig package to version 2.15 and then 3.8 for maintenance
-- Replaced abandoned package swiftmailer/swiftmailer with phpmailer/phpmailer
 ### Removed
 - Dropped abandoned package slim/views from composer.json
 
