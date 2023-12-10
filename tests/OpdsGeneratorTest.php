@@ -318,8 +318,9 @@ class OpdsGeneratorTest extends PHPUnit\Framework\TestCase
         $this->assertTrue($this->opdsValidate($feed, '1.1'));
     }
 
-    public function testSeriesBooksForSeriesCatalogValidation()
+    protected function skipTestSeriesBooksForSeriesCatalogValidation()
     {
+        // @todo replace with opdsBySeries code
         $feed = self::DATA . '/feed.xml';
         $adetails = $this->calibre->seriesDetails(1);
         $books = $this->calibre->titleDetailsFilteredOpds($adetails['books']);

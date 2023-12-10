@@ -496,15 +496,6 @@ class CalibreTest extends PHPUnit\Framework\TestCase
         $this->assertEquals(2, $result1['pages']);
     }
 
-    public function testSeriesDetails()
-    {
-        $result = $this->calibre->seriesDetails(5);
-        $this->assertEquals(0, $this->calibre->last_error);
-        $this->assertNotNull($result);
-        $this->assertEquals('Serie Rilke', $result['series']->name);
-        $this->assertEquals(1, count($result['books']));
-    }
-
     public function testSeriesInitials()
     {
         $result = $this->calibre->seriesInitials();

@@ -95,27 +95,6 @@ class Calibre
      * Execute a query $sql on the Calibre DB and return the result
      * as an array of objects of class $class
      *
-     * @param  mixed $class [description]
-     * @param  string $sql   [description]
-     * @return array        [description]
-     * @deprecated
-     */
-    protected function find($class, $sql)
-    {
-        if (!str_contains($class, __NAMESPACE__ . '\\')) {
-            $class = __NAMESPACE__ . '\\' . $class;
-        }
-        $stmt = $this->calibre->query($sql, PDO::FETCH_CLASS, $class);
-        $this->last_error = $stmt->errorCode();
-        $items = $stmt->fetchAll();
-        $stmt->closeCursor();
-        return $items;
-    }
-
-    /**
-     * Execute a query $sql on the Calibre DB and return the result
-     * as an array of objects of class $class
-     *
      * @param string $class Calibre item class name
      * @param string $sql SQL statement
      * @param array $params array of query parameters
@@ -1175,27 +1154,6 @@ class Calibre
             $format = $formats[0];
         }
         return $format;
-    }
-
-    /**
-     * Find a single series and return the details plus all books.
-     * @param  int $id series id
-     * @return ?array  an array with series details (key 'series') and
-     *                the related books (key 'books')
-     * @deprecated since 0.9.3
-     */
-    public function seriesDetails($id)
-    {
-        $series = $this->findOne('Series', 'SELECT * FROM series WHERE id=:id', ['id' => $id]);
-        if (is_null($series)) {
-            return null;
-        }
-        $books = $this->findPrepared(
-            'Book',
-            'SELECT BSL.book, Books.* FROM books_series_link BSL, books Books WHERE Books.id=BSL.book AND series=:id ORDER BY series_index',
-            ['id' => $id]
-        );
-        return ['series' => $series, 'books' => $books];
     }
 
     /**

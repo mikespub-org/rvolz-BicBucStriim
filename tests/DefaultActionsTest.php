@@ -27,7 +27,7 @@ class DefaultActionsTest extends PHPUnit\Framework\TestCase
 
     public function testGetRoutes()
     {
-        $expected = $this->getExpectedRoutes();
+        $expected = array_values($this->getExpectedRoutes());
         $app = AppFactory::create();
         $self = new DefaultActions($app);
         // replace '$self' in $expected with actual $self

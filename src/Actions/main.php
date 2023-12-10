@@ -590,25 +590,6 @@ class MainActions extends DefaultActions
     }
 
     /**
-     * Details for a single author -> /authors/{id}
-     * @param int $id author id
-     * @deprecated since 0.9.3
-     */
-    public function author($id)
-    {
-        $details = $this->calibre()->authorDetails($id);
-        if (is_null($details)) {
-            $this->log()->debug("no author");
-            $this->myNotFound();
-            return;
-        }
-        $this->render('author_detail.html', [
-            'page' => $this->mkPage('author_details', 3, 2),
-            'author' => $details['author'],
-            'books' => $details['books']]);
-    }
-
-    /**
      * Details for a single author -> /authors/{id}/{page}/
      * Shows the detail data for the author plus a paginated list of books
      *
@@ -741,25 +722,6 @@ class MainActions extends DefaultActions
     }
 
     /**
-     * Return a HTML page with details of series $id, /series/{id}
-     * @param  int $id series id
-     * @deprecated since 0.9.3
-     */
-    public function series($id)
-    {
-        $details = $this->calibre()->seriesDetails($id);
-        if (is_null($details)) {
-            $this->log()->debug('no series ' . $id);
-            $this->myNotFound();
-            return;
-        }
-        $this->render('series_detail.html', [
-            'page' => $this->mkPage('series_details', 5, 3),
-            'series' => $details['series'],
-            'books' => $details['books']]);
-    }
-
-    /**
      * Details for a single series -> /series/{id}/{page}/
      * Shows the detail data for the series plus a paginated list of books
      *
@@ -823,24 +785,6 @@ class MainActions extends DefaultActions
             'curpage' => $tl['page'],
             'pages' => $tl['pages'],
             'search' => $search]);
-    }
-
-    /**
-     * Details for a single tag -> /tags/{id}/{page}
-     * @deprecated since 0.9.3
-     */
-    public function tag($id)
-    {
-        $details = $this->calibre()->tagDetails($id);
-        if (is_null($details)) {
-            $this->log()->debug("no tag");
-            $this->myNotFound();
-            return;
-        }
-        $this->render('tag_detail.html', [
-            'page' => $this->mkPage('tag_details', 4, 3),
-            'tag' => $details['tag'],
-            'books' => $details['books']]);
     }
 
     /**
@@ -933,7 +877,7 @@ class MainActions extends DefaultActions
 
     /**
      * Utility function to serve files
-     * @deprecated 3.0.0 use PSR-7 StreamInterface instead
+     * @deprecated v3.0.0 use PSR-7 StreamInterface instead
      */
     public function readfile_chunked($filename)
     {
