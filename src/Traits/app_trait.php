@@ -320,4 +320,21 @@ trait AppTrait
         $psr17Factory = new \Nyholm\Psr7\Factory\Psr17Factory();
         $this->response = $resp->withBody($psr17Factory->createStreamFromFile($filepath));
     }
+
+    /**
+     * Create and send a file response as attachment
+     * @param string $filepath
+     * @param string $type
+     * @param string $filename
+     * @param int $status
+     * @return void
+     */
+    public function mkSendFileAsAttachment($filepath, $type, $filename, $status = 200)
+    {
+        //header("Content-Description: File Transfer");
+        //header("Content-Transfer-Encoding: binary");
+        $resp = $this->response()->withStatus($status)->withHeader('Content-type', $type)->withHeader('Content-Length', (string) filesize($filepath))->withHeader('Content-Disposition', "attachment; filename=\"" . $filename . "\"");
+        $psr17Factory = new \Nyholm\Psr7\Factory\Psr17Factory();
+        $this->response = $resp->withBody($psr17Factory->createStreamFromFile($filepath));
+    }
 }

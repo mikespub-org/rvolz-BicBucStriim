@@ -16,11 +16,12 @@ use Slim\Handlers\Strategies\RequestResponseArgs;
  */
 class DefaultActionsTest extends PHPUnit\Framework\TestCase
 {
-    protected function getExpectedRoutes()
+    public static function getExpectedRoutes()
     {
         return [
-            ['GET', '/', ['$self', 'hello']],
-            ['GET', '/{name}', ['$self', 'hello']],
+            // 'name' => [method(s), path, ...middleware(s), callable] with '$self' string
+            'hello' => ['GET', '/', ['$self', 'hello']],
+            'hello_name' => ['GET', '/{name}', ['$self', 'hello']],
         ];
     }
 

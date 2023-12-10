@@ -447,14 +447,7 @@ class MainActions extends DefaultActions
             $this->log()->debug("book(e): type " . $contentType);
             $booksize = filesize($bookpath);
             $this->log()->debug("book(e): size " . $booksize);
-            if ($booksize > 0) {
-                header("Content-Length: " . $booksize);
-            }
-            header("Content-Type: " . $contentType);
-            header("Content-Disposition: attachment; filename=\"" . $file . "\"");
-            header("Content-Description: File Transfer");
-            header("Content-Transfer-Encoding: binary");
-            $this->readfile_chunked($bookpath);
+            $this->mkSendFileAsAttachment($bookpath, $contentType, $file);
         } else {
             // Else send the file as is
             $bookpath = $real_bookpath;
@@ -462,12 +455,7 @@ class MainActions extends DefaultActions
             $this->log()->debug("book: type " . $contentType);
             $booksize = filesize($bookpath);
             $this->log()->debug("book: size " . $booksize);
-            header("Content-Length: " . $booksize);
-            header("Content-Type: " . $contentType);
-            header("Content-Disposition: attachment; filename=\"" . $file . "\"");
-            header("Content-Description: File Transfer");
-            header("Content-Transfer-Encoding: binary");
-            $this->readfile_chunked($bookpath);
+            $this->mkSendFileAsAttachment($bookpath, $contentType, $file);
         }
     }
 
@@ -945,6 +933,7 @@ class MainActions extends DefaultActions
 
     /**
      * Utility function to serve files
+     * @deprecated 3.0.0 use PSR-7 StreamInterface instead
      */
     public function readfile_chunked($filename)
     {
