@@ -98,4 +98,25 @@ class ResponseUtil
         $this->response = FigResponseCookies::set($this->response, $setCookie->expire());
         return $this->response;
     }
+
+    /**
+     * Create response from app response factory or Nyholm PSR-17 factory
+     * @param ?\Slim\App $app
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    public static function getResponse($app = null)
+    {
+        // create response from app response factory
+        if (!empty($app)) {
+            $response = $app->getResponseFactory()->createResponse();
+            return $response;
+        }
+        // create response from Nyholm PSR-17 factory
+        $psr17Factory = new \Nyholm\Psr7\Factory\Psr17Factory();
+
+        //$responseBody = $psr17Factory->createStream('Hello world');
+        //$response = $psr17Factory->createResponse(200)->withBody($responseBody);
+        $response = $psr17Factory->createResponse();
+        return $response;
+    }
 }

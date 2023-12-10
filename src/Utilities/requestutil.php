@@ -74,4 +74,32 @@ class RequestUtil
         }
         return $info;
     }
+
+    /**
+     * Create server request from Nyholm PSR-17 factory
+     * @param ?string $method
+     * @param ?string $uri
+     * @return \Psr\Http\Message\ServerRequestInterface
+     */
+    public static function getServerRequest($method = null, $uri = null)
+    {
+        $psr17Factory = new \Nyholm\Psr7\Factory\Psr17Factory();
+
+        $creator = new \Nyholm\Psr7Server\ServerRequestCreator(
+            $psr17Factory, // ServerRequestFactory
+            $psr17Factory, // UriFactory
+            $psr17Factory, // UploadedFileFactory
+            $psr17Factory  // StreamFactory
+        );
+
+        $serverRequest = $creator->fromGlobals();
+        if (!empty($method)) {
+            $serverRequest = $serverRequest->withMethod($method);
+        }
+        if (!empty($uri)) {
+            $uri = new \Nyholm\Psr7\Uri($uri);
+            $serverRequest = $serverRequest->withUri($uri);
+        }
+        return $serverRequest;
+    }
 }

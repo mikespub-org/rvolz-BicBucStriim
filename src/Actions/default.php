@@ -61,6 +61,7 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
     /**
      * Hello function (example)
      * @param ?string $name
+     * @return void
      */
     public function hello($name = null)
     {
@@ -97,9 +98,10 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
 
     /**
      * Check admin rights and redirect if necessary
+     * @param mixed ...$args when called as gatekeeper
      * @return bool true if we have a response ready (= no access), false otherwise
      */
-    public function check_admin()
+    public function check_admin(...$args)
     {
         if (!$this->is_admin()) {
             $this->render('error.html', [
