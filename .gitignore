@@ -23,3 +23,5 @@ vendor
 data/authors/*.png
 data/titles/*.png
 bicbucstriim*.zip
+.phpunit.cache
+tests/coverage/

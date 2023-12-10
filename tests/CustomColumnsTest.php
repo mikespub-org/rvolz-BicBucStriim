@@ -1,12 +1,11 @@
 <?php
 
-set_include_path("tests:vendor");
-require_once('autoload.php');
-require_once('simpletest/simpletest/autorun.php');
-
 use BicBucStriim\Calibre\Calibre;
 
-class CustomColumnsTest extends UnitTestCase
+/**
+ * @covers \BicBucStriim\Calibre\Calibre
+ */
+class CustomColumnsTest extends PHPUnit\Framework\TestCase
 {
     public const CDB1 = './tests/fixtures/metadata_empty.db';
     public const CDB2 = './tests/fixtures/lib2/metadata.db';
@@ -20,12 +19,12 @@ class CustomColumnsTest extends UnitTestCase
     public $bbs;
     public $calibre;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->calibre = new Calibre(self::CDB2);
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         $this->calibre = null;
     }
@@ -35,8 +34,8 @@ class CustomColumnsTest extends UnitTestCase
     {
         $ccs = $this->calibre->customColumns(7);
         #print_r($ccs);
-        $this->assertEqual(9, sizeof($ccs));
-        $this->assertEqual('col2a, col2b', $ccs['Col2']['value']);
+        $this->assertEquals(9, sizeof($ccs));
+        $this->assertEquals('col2a, col2b', $ccs['Col2']['value']);
     }
 
     # Ignore series ccs for now
@@ -44,13 +43,13 @@ class CustomColumnsTest extends UnitTestCase
     {
         $ccs = $this->calibre->customColumns(5);
         #print_r($ccs);
-        $this->assertEqual(0, sizeof($ccs));
+        $this->assertEquals(0, sizeof($ccs));
     }
 
     # Only one cc
     public function testCustomColumnsJustOneCC()
     {
         $ccs = $this->calibre->customColumns(1);
-        $this->assertEqual(1, sizeof($ccs));
+        $this->assertEquals(1, sizeof($ccs));
     }
 }

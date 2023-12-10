@@ -1,28 +1,27 @@
 <?php
 
-set_include_path("tests:vendor");
-require_once('autoload.php');
-require_once('simpletest/simpletest/autorun.php');
-require_once('config/langs.php');
-
 use BicBucStriim\Utilities\L10n;
 
-class L10nTest extends UnitTestCase
+/**
+ * @covers \BicBucStriim\Utilities\L10n
+ */
+class L10nTest extends PHPUnit\Framework\TestCase
 {
-    public function setUp() {}
+    public function setUp(): void {}
 
-    public function tearDown() {}
+    public function tearDown(): void {}
 
     ##
     # Test array functionality
     #
     public function testArrayGet()
     {
-        global $langde;
+        global $langde, $langen;
+        require('config/langs.php');
 
         $l10n = new L10n('de');
-        $this->assertEqual($langde['admin'], $l10n->message('admin'));
-        $this->assertEqual($langde['admin'], $l10n['admin']);
-        $this->assertEqual('Undefined message!', $l10n['bla bla']);
+        $this->assertEquals($langde['admin'], $l10n->message('admin'));
+        $this->assertEquals($langde['admin'], $l10n['admin']);
+        $this->assertEquals('Undefined message!', $l10n['bla bla']);
     }
 }

@@ -4,17 +4,16 @@
  *
  */
 
-set_include_path("tests:vendor");
-require_once('autoload.php');
-require_once('simpletest/simpletest/autorun.php');
-
 use BicBucStriim\Calibre\Calibre;
 use BicBucStriim\Calibre\Author;
 use BicBucStriim\Calibre\Tag;
 use BicBucStriim\Utilities\EPub;
 use BicBucStriim\Utilities\MetadataEpub;
 
-class MetadataEpubTest extends UnitTestCase
+/**
+ * @covers \BicBucStriim\Utilities\MetadataEpub
+ */
+class MetadataEpubTest extends PHPUnit\Framework\TestCase
 {
     public const DATA = './tests/data';
     public const FDIR = './tests/fixtures/';
@@ -23,7 +22,7 @@ class MetadataEpubTest extends UnitTestCase
 
     public $calibre;
 
-    public function setUp()
+    public function setUp(): void
     {
         if (file_exists(self::DATA)) {
             system("rm -rf " . self::DATA);
@@ -33,7 +32,7 @@ class MetadataEpubTest extends UnitTestCase
         $this->calibre = new Calibre(self::CDB2);
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         $this->calibre = null;
         system("rm -rf " . self::DATA);
@@ -64,8 +63,8 @@ class MetadataEpubTest extends UnitTestCase
         $tmpfile = $conv->getUpdatedFile();
         $this->assertTrue(file_exists($tmpfile));
         $parts = pathinfo($tmpfile);
-        $this->assertEqual(sys_get_temp_dir(), $parts['dirname']);
-        $this->assertEqual(filesize($orig), filesize($tmpfile));
+        $this->assertEquals(sys_get_temp_dir(), $parts['dirname']);
+        $this->assertEquals(filesize($orig), filesize($tmpfile));
     }
 
     public function testConstructOtherDir()
@@ -75,8 +74,8 @@ class MetadataEpubTest extends UnitTestCase
         $tmpfile = $conv->getUpdatedFile();
         $this->assertTrue(file_exists($tmpfile));
         $parts = pathinfo($tmpfile);
-        $this->assertEqual(realpath(self::DATA), $parts['dirname']);
-        $this->assertEqual(filesize($orig), filesize($tmpfile));
+        $this->assertEquals(realpath(self::DATA), $parts['dirname']);
+        $this->assertEquals(filesize($orig), filesize($tmpfile));
     }
 
     public function testDestruct()
@@ -100,7 +99,7 @@ class MetadataEpubTest extends UnitTestCase
 
         $tmpfile = $conv->getUpdatedFile();
         $check = new EPub($tmpfile);
-        $this->assertEqual($new_title, $check->Title());
+        $this->assertEquals($new_title, $check->Title());
     }
 
     public function testUpdateMetadataAuthors()
@@ -117,9 +116,9 @@ class MetadataEpubTest extends UnitTestCase
         $tmpfile = $conv->getUpdatedFile();
         $check = new EPub($tmpfile);
         $authors_check = $check->Authors();
-        $this->assertEqual(2, count($authors_check));
-        $this->assertEqual('Firstname Lastname', $authors_check['Lastname, Firstname']);
-        $this->assertEqual('Gotthold Ephraim Lessing', $authors_check['Lessing, Gotthold Ephraim']);
+        $this->assertEquals(2, count($authors_check));
+        $this->assertEquals('Firstname Lastname', $authors_check['Lastname, Firstname']);
+        $this->assertEquals('Gotthold Ephraim Lessing', $authors_check['Lessing, Gotthold Ephraim']);
     }
 
     public function testUpdateMetadataLanguage()
@@ -134,9 +133,9 @@ class MetadataEpubTest extends UnitTestCase
         $tmpfile = $conv->getUpdatedFile();
         $check = new EPub($tmpfile);
         if (extension_loaded('intl')) {
-            $this->assertEqual('en', $check->Language());
+            $this->assertEquals('en', $check->Language());
         } else {
-            $this->assertEqual('de', $check->Language());
+            $this->assertEquals('de', $check->Language());
         }
     }
 
@@ -152,9 +151,9 @@ class MetadataEpubTest extends UnitTestCase
         $tmpfile = $conv->getUpdatedFile();
         $check = new EPub($tmpfile);
         if (extension_loaded('intl')) {
-            $this->assertEqual('en', $check->Language());
+            $this->assertEquals('en', $check->Language());
         } else {
-            $this->assertEqual('de', $check->Language());
+            $this->assertEquals('de', $check->Language());
         }
     }
 
@@ -170,9 +169,9 @@ class MetadataEpubTest extends UnitTestCase
 
         $tmpfile = $conv->getUpdatedFile();
         $check = new EPub($tmpfile);
-        $this->assertEqual('000000', $check->ISBN());
-        $this->assertEqual('111111', $check->Google());
-        $this->assertEqual('222222', $check->Amazon());
+        $this->assertEquals('000000', $check->ISBN());
+        $this->assertEquals('111111', $check->Google());
+        $this->assertEquals('222222', $check->Amazon());
     }
 
     public function testUpdateMetadataTags()
@@ -190,9 +189,9 @@ class MetadataEpubTest extends UnitTestCase
         $tmpfile = $conv->getUpdatedFile();
         $check = new EPub($tmpfile);
         $subjects_check = $check->Subjects();
-        $this->assertEqual(2, count($subjects_check));
-        $this->assertEqual('Subject 1', $subjects_check[0]);
-        $this->assertEqual('Subject 2', $subjects_check[1]);
+        $this->assertEquals(2, count($subjects_check));
+        $this->assertEquals('Subject 1', $subjects_check[0]);
+        $this->assertEquals('Subject 2', $subjects_check[1]);
     }
 
     public function testUpdateMetadataCover()
@@ -219,6 +218,6 @@ class MetadataEpubTest extends UnitTestCase
 
         $tmpfile = $conv->getUpdatedFile();
         $check = new EPub($tmpfile);
-        $this->assertEqual($new_desc, $check->Description());
+        $this->assertEquals($new_desc, $check->Description());
     }
 }

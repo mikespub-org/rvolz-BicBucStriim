@@ -8,27 +8,23 @@
  * Test installation check utilities.
  *
  */
-set_include_path("tests:vendor");
-require_once('autoload.php');
-require_once('simpletest/simpletest/autorun.php');
 require 'src/inst_utils.php';
 
-
-class InstUtilsTest extends UnitTestCase
+/**
+ * @covers ::find_gd_version
+ */
+class InstUtilsTest extends PHPUnit\Framework\TestCase
 {
-    public function setUp() {}
+    public function setUp(): void {}
 
-    public function tearDown() {}
+    public function tearDown(): void {}
 
-    ##
-    # Test
-    #
     public function testFindGdVersion()
     {
-        $this->assertEqual("2.1", find_gd_version("gd version 2.1"));
-        $this->assertEqual("2.1.0", find_gd_version("gd version 2.1.0"));
-        $this->assertEqual("2.1", find_gd_version("gd headers version 2.1"));
-        $this->assertEqual("2.1.0", find_gd_version("gd headers version 2.1.0"));
-        $this->assertEqual("2.1.0-alpha", find_gd_version("GD headers Version 2.1.0-alpha "));
+        $this->assertEquals("2.1", find_gd_version("gd version 2.1"));
+        $this->assertEquals("2.1.0", find_gd_version("gd version 2.1.0"));
+        $this->assertEquals("2.1", find_gd_version("gd headers version 2.1"));
+        $this->assertEquals("2.1.0", find_gd_version("gd headers version 2.1.0"));
+        $this->assertEquals("2.1.0-alpha", find_gd_version("GD headers Version 2.1.0-alpha "));
     }
 }

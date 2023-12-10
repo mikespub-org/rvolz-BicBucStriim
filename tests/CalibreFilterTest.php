@@ -1,16 +1,15 @@
 <?php
 
-set_include_path("tests:vendor");
-require_once('autoload.php');
-require_once('simpletest/simpletest/autorun.php');
-
 use BicBucStriim\Calibre\CalibreFilter;
 
-class CalibreFilterTest extends UnitTestCase
+/**
+ * @covers \BicBucStriim\Calibre\CalibreFilter
+ */
+class CalibreFilterTest extends PHPUnit\Framework\TestCase
 {
-    public function setUp() {}
+    public function setUp(): void {}
 
-    public function tearDown() {}
+    public function tearDown(): void {}
 
     ##
     # No filter values - the raw table name is returned
@@ -18,7 +17,7 @@ class CalibreFilterTest extends UnitTestCase
     public function testNoFilter()
     {
         $filter = new CalibreFilter();
-        $this->assertEqual('books', $filter->getBooksFilter());
+        $this->assertEquals('books', $filter->getBooksFilter());
     }
 
     ##
@@ -27,7 +26,7 @@ class CalibreFilterTest extends UnitTestCase
     public function testLanguageFilter()
     {
         $filter = new CalibreFilter($lang = 1);
-        $this->assertEqual('(select * from books b left join books_languages_link bll on b.id=bll.book where lang_code=:lang)', $filter->getBooksFilter());
+        $this->assertEquals('(select * from books b left join books_languages_link bll on b.id=bll.book where lang_code=:lang)', $filter->getBooksFilter());
     }
 
     ##
@@ -36,7 +35,7 @@ class CalibreFilterTest extends UnitTestCase
     public function testTagFilter()
     {
         $filter = new CalibreFilter($lang = null, $tag = 1);
-        $this->assertEqual('(select * from books b where not exists (select * from books_tags_link btl where b.id=btl.book and tag=:tag))', $filter->getBooksFilter());
+        $this->assertEquals('(select * from books b where not exists (select * from books_tags_link btl where b.id=btl.book and tag=:tag))', $filter->getBooksFilter());
     }
 
     ##
@@ -45,6 +44,6 @@ class CalibreFilterTest extends UnitTestCase
     public function testLanguageAndTagFilter()
     {
         $filter = new CalibreFilter($lang = 1, $tag = 1);
-        $this->assertEqual('(select * from (books b left join books_languages_link bll on b.id=bll.book) where lang_code=:lang and not exists (select * from books_tags_link btl where b.id=btl.book and tag=:tag))', $filter->getBooksFilter());
+        $this->assertEquals('(select * from (books b left join books_languages_link bll on b.id=bll.book) where lang_code=:lang and not exists (select * from books_tags_link btl where b.id=btl.book and tag=:tag))', $filter->getBooksFilter());
     }
 }

@@ -6,10 +6,6 @@
  * - jing (http://code.google.com/p/jing-trang/)
  * - opds_validator (https://github.com/zetaben/opds-validator)
  */
-set_include_path("tests:vendor");
-require_once('autoload.php');
-require_once('simpletest/simpletest/autorun.php');
-require_once('config/langs.php');
 
 use BicBucStriim\AppData\BicBucStriim;
 use BicBucStriim\Calibre\Calibre;
@@ -17,7 +13,10 @@ use BicBucStriim\Calibre\CalibreFilter;
 use BicBucStriim\Utilities\OpdsGenerator;
 use BicBucStriim\Utilities\L10n;
 
-class OpdsGeneratorTest extends UnitTestCase
+/**
+ * @covers \BicBucStriim\Utilities\OpdsGenerator
+ */
+class OpdsGeneratorTest extends PHPUnit\Framework\TestCase
 {
     public const OPDS_RNG = './tests/fixtures/opds_catalog_1_1.rng';
     public const DATA = './tests/data';
@@ -29,9 +28,10 @@ class OpdsGeneratorTest extends UnitTestCase
     public $gen;
     public $calibre;
 
-    public function setUp()
+    public function setUp(): void
     {
         global $langen;
+        require('config/langs.php');
         if (file_exists(self::DATA)) {
             system("rm -rf " . self::DATA);
         }
@@ -50,7 +50,7 @@ class OpdsGeneratorTest extends UnitTestCase
         );
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         $this->calibre = null;
         $this->bbs = null;
@@ -141,7 +141,7 @@ class OpdsGeneratorTest extends UnitTestCase
         $this->gen->partialAcquisitionEntry($book, false);
         $result = $this->gen->closeStream();
         #print_r($result);
-        $this->assertEqual($expected, $result);
+        $this->assertEquals($expected, $result);
     }
 
     public function testPartialAcquisitionEntryWithProtection()
@@ -174,7 +174,7 @@ class OpdsGeneratorTest extends UnitTestCase
         $this->gen->partialAcquisitionEntry($book, true);
         $result = $this->gen->closeStream();
         #print_r($result);
-        $this->assertEqual($expected, $result);
+        $this->assertEquals($expected, $result);
     }
 
     public function testNewestCatalogValidation()
@@ -221,9 +221,9 @@ class OpdsGeneratorTest extends UnitTestCase
             $tl['pages'] - 1
         );
         $feed = new SimpleXMLElement($xml);
-        $this->assertEqual(7, count($feed->link));
+        $this->assertEquals(7, count($feed->link));
         $oslnk = $feed->link[0];
-        $this->assertEqual(OpdsGenerator::OPENSEARCH_MIME, (string)$oslnk['type']);
+        $this->assertEquals(OpdsGenerator::OPENSEARCH_MIME, (string)$oslnk['type']);
         $this->assertTrue(strpos((string)$oslnk['href'], 'opensearch.xml') > 0);
     }
 

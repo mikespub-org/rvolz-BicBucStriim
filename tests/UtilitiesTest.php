@@ -1,12 +1,12 @@
 <?php
 
-set_include_path("tests:vendor");
-require_once('autoload.php');
-require_once('simpletest/simpletest/autorun.php');
-
 use BicBucStriim\Utilities\UrlInfo;
 
-class UtilitiesTest extends UnitTestCase
+/**
+ * @covers \BicBucStriim\Utilities\UrlInfo
+ * @covers \Utilities
+ */
+class UtilitiesTest extends PHPUnit\Framework\TestCase
 {
     public const FIXT = './tests/fixtures';
 
@@ -14,13 +14,13 @@ class UtilitiesTest extends UnitTestCase
     {
         $gen = new UrlInfo('host.org', null);
         $this->assertTrue($gen->is_valid());
-        $this->assertEqual('host.org', $gen->host);
-        $this->assertEqual('http', $gen->protocol);
+        $this->assertEquals('host.org', $gen->host);
+        $this->assertEquals('http', $gen->protocol);
 
         $gen = new UrlInfo('host.org', 'https');
         $this->assertTrue($gen->is_valid());
-        $this->assertEqual('host.org', $gen->host);
-        $this->assertEqual('https', $gen->protocol);
+        $this->assertEquals('host.org', $gen->host);
+        $this->assertEquals('https', $gen->protocol);
     }
 
     public function testConstructUrlInfoForwarded()
@@ -31,22 +31,22 @@ class UtilitiesTest extends UnitTestCase
 
         $gen = new UrlInfo($input1);
         $this->assertTrue($gen->is_valid());
-        $this->assertEqual('203.0.113.43', $gen->host);
-        $this->assertEqual('http', $gen->protocol);
+        $this->assertEquals('203.0.113.43', $gen->host);
+        $this->assertEquals('http', $gen->protocol);
 
         $gen = new UrlInfo($input2);
         $this->assertTrue($gen->is_valid());
-        $this->assertEqual('203.0.113.43', $gen->host);
-        $this->assertEqual('https', $gen->protocol);
+        $this->assertEquals('203.0.113.43', $gen->host);
+        $this->assertEquals('https', $gen->protocol);
 
         $gen = new UrlInfo($input3);
         $this->assertTrue($gen->is_valid());
-        $this->assertEqual('https', $gen->protocol);
+        $this->assertEquals('https', $gen->protocol);
     }
 
     public function testBookPath()
     {
-        $this->assertEqual(
+        $this->assertEquals(
             'tests/fixtures/lib2/Gotthold Ephraim Lessing/Lob der Faulheit (1)/Lob der Faulheit - Gotthold Ephraim Lessing.epub',
             Utilities::bookPath('tests/fixtures/lib2', 'Gotthold Ephraim Lessing/Lob der Faulheit (1)', 'Lob der Faulheit - Gotthold Ephraim Lessing.epub')
         );
@@ -54,13 +54,13 @@ class UtilitiesTest extends UnitTestCase
 
     public function testTitleMimeType()
     {
-        $this->assertEqual('application/epub+zip', Utilities::titleMimeType('x/y/test.epub'));
-        $this->assertEqual('application/x-mobi8-ebook', Utilities::titleMimeType('test.azw3'));
-        $this->assertEqual('application/x-mobipocket-ebook', Utilities::titleMimeType('test.mobi'));
-        $this->assertEqual('application/x-mobipocket-ebook', Utilities::titleMimeType('test.azw'));
-        $this->assertEqual('application/vnd.amazon.ebook', Utilities::titleMimeType('test.azw1'));
-        $this->assertEqual('application/vnd.amazon.ebook', Utilities::titleMimeType('test.azw2'));
-        $this->assertEqual('text/plain', Utilities::titleMimeType(self::FIXT . '/test.unknown-format'));
-        $this->assertEqual('text/xml', Utilities::titleMimeType(self::FIXT . '/atom.rng'));
+        $this->assertEquals('application/epub+zip', Utilities::titleMimeType('x/y/test.epub'));
+        $this->assertEquals('application/x-mobi8-ebook', Utilities::titleMimeType('test.azw3'));
+        $this->assertEquals('application/x-mobipocket-ebook', Utilities::titleMimeType('test.mobi'));
+        $this->assertEquals('application/x-mobipocket-ebook', Utilities::titleMimeType('test.azw'));
+        $this->assertEquals('application/vnd.amazon.ebook', Utilities::titleMimeType('test.azw1'));
+        $this->assertEquals('application/vnd.amazon.ebook', Utilities::titleMimeType('test.azw2'));
+        $this->assertEquals('text/plain', Utilities::titleMimeType(self::FIXT . '/test.unknown-format'));
+        $this->assertEquals('text/xml', Utilities::titleMimeType(self::FIXT . '/atom.rng'));
     }
 }

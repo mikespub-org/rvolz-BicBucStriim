@@ -35,8 +35,8 @@
         "dflydev/fig-cookies": "^3.1"
     },
     "require-dev": {
-        "simpletest/simpletest": "^1.1",
-        "alchemy/zippy": "^1.0"
+        "alchemy/zippy": "^1.0",
+        "phpunit/phpunit": "^10.5"
     },
     "scripts": {
         "genl10n": "yarn genl10n",
