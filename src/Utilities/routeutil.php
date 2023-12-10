@@ -113,8 +113,8 @@ class RouteUtil
                 return $gatekeeper[0]->response();
             }
             // invoke callable and return its response
-            $callable[0]->request($gatekeeper[0]->request);
-            $callable[0]->response($gatekeeper[0]->response);
+            $callable[0]->request($gatekeeper[0]->request());
+            $callable[0]->response($gatekeeper[0]->response());
             $callable(...$args);
             return $callable[0]->response();
         };
