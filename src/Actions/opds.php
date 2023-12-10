@@ -11,6 +11,7 @@
 namespace BicBucStriim\Actions;
 
 use BicBucStriim\Utilities\OpdsGenerator;
+use BicBucStriim\Utilities\RouteUtil;
 
 /*********************************************************************
  * OPDS Catalog actions
@@ -23,20 +24,21 @@ class OpdsActions extends DefaultActions
     public static function addRoutes($app, $prefix = '/opds')
     {
         $self = new self($app);
-        $app->group($prefix, function (\Slim\Routing\RouteCollectorProxy $group) use ($self) {
-            OpdsActions::mapRoutes($group, $self);
+        $routes = static::getRoutes($self);
+        $app->group($prefix, function (\Slim\Routing\RouteCollectorProxy $group) use ($routes) {
+            RouteUtil::mapRoutes($group, $routes);
         });
     }
 
     /**
      * Get routes for OPDS actions
      * @param self $self
-     * @return array<mixed> list of [method(s), path, callable(s)] for each action
+     * @return array<mixed> list of [method(s), path, ...middleware(s), callable] for each action
      */
     public static function getRoutes($self)
     {
         return [
-            // method(s), path, callable(s)
+            // method(s), path, ...middleware(s), callable
             ['GET', '/', [$self, 'opdsRoot']],
             ['GET', '/newest/', [$self, 'opdsNewest']],
             ['GET', '/titleslist/{page}/', [$self, 'opdsByTitle']],

@@ -13,6 +13,7 @@ namespace BicBucStriim\Actions;
 use BicBucStriim\Calibre\Author;
 use BicBucStriim\Utilities\Mailer;
 use BicBucStriim\Utilities\MetadataEpub;
+use BicBucStriim\Utilities\RouteUtil;
 use Michelf\MarkdownExtra;
 use Exception;
 use Twig\TwigFilter;
@@ -30,18 +31,19 @@ class MainActions extends DefaultActions
     {
         $self = new self($app);
         //$app->notFound([$self, 'myNotFound']);
-        static::mapRoutes($app, $self);
+        $routes = static::getRoutes($self);
+        RouteUtil::mapRoutes($app, $routes);
     }
 
     /**
      * Get routes for main actions
      * @param self $self
-     * @return array<mixed> list of [method(s), path, callable(s)] for each action
+     * @return array<mixed> list of [method(s), path, ...middleware(s), callable] for each action
      */
     public static function getRoutes($self)
     {
         return [
-            // method(s), path, callable(s)
+            // method(s), path, ...middleware(s), callable
             ['GET', '/', [$self, 'main']],
             ['GET', '/login/', [$self, 'show_login']],
             ['POST', '/login/', [$self, 'perform_login']],

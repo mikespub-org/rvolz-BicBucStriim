@@ -14,6 +14,7 @@ use BicBucStriim\Calibre\Calibre;
 use BicBucStriim\Calibre\Language;
 use BicBucStriim\Calibre\Tag;
 use BicBucStriim\Utilities\Mailer;
+use BicBucStriim\Utilities\RouteUtil;
 use Exception;
 use Utilities;
 
@@ -28,23 +29,23 @@ class AdminActions extends DefaultActions
     public static function addRoutes($app, $prefix = '/admin')
     {
         $self = new self($app);
+        $routes = static::getRoutes($self);
         // check admin for all actions in this group
-        $callable = [$self, 'check_admin'];
-        $wrapper = static::wrapMiddleware($callable);
-        $app->group($prefix, function (\Slim\Routing\RouteCollectorProxy $group) use ($self) {
-            AdminActions::mapRoutes($group, $self);
-        })->add($wrapper);
+        $gatekeeper = [$self, 'check_admin'];
+        $app->group($prefix, function (\Slim\Routing\RouteCollectorProxy $group) use ($routes, $gatekeeper) {
+            RouteUtil::mapRoutes($group, $routes, $gatekeeper);
+        });
     }
 
     /**
      * Get routes for admin actions
      * @param self $self
-     * @return array<mixed> list of [method(s), path, callable(s)] for each action
+     * @return array<mixed> list of [method(s), path, ...middleware(s), callable] for each action
      */
     public static function getRoutes($self)
     {
         return [
-            // method(s), path, callable(s)
+            // method(s), path, ...middleware(s), callable
             ['GET', '/', [$self, 'admin']],
             ['GET', '/configuration/', [$self, 'configuration']],
             ['POST', '/configuration/', [$self, 'change_json']],

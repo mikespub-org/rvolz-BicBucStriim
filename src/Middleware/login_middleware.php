@@ -46,6 +46,7 @@ class LoginMiddleware extends DefaultMiddleware
         // Slim 3+ framework does not support hooks anymore
         //$this->app()->hook('slim.before.dispatch', [$this, 'authBeforeDispatch']);
         try {
+            // true if we have a response ready (= need to authenticate), false otherwise
             if ($this->authBeforeDispatch()) {
                 return $this->response;
             }
@@ -64,7 +65,7 @@ class LoginMiddleware extends DefaultMiddleware
 
     /**
      * Check if we need to authenticate before dispatching the request further
-     * @return bool true if we need to authenticate (and have a response ready)
+     * @return bool true if we have a response ready (= need to authenticate), false otherwise
      */
     public function authBeforeDispatch()
     {

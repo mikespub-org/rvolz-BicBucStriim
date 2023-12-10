@@ -10,6 +10,7 @@
 
 namespace BicBucStriim\Actions;
 
+use BicBucStriim\Utilities\RouteUtil;
 use Michelf\MarkdownExtra;
 use Exception;
 
@@ -24,23 +25,23 @@ class MetadataActions extends DefaultActions
     public static function addRoutes($app, $prefix = '/metadata')
     {
         $self = new self($app);
+        $routes = static::getRoutes($self);
         // check admin for all actions in this group
-        $callable = [$self, 'check_admin'];
-        $wrapper = static::wrapMiddleware($callable);
-        $app->group($prefix, function (\Slim\Routing\RouteCollectorProxy $group) use ($self) {
-            MetadataActions::mapRoutes($group, $self);
-        })->add($wrapper);
+        $gatekeeper = [$self, 'check_admin'];
+        $app->group($prefix, function (\Slim\Routing\RouteCollectorProxy $group) use ($routes, $gatekeeper) {
+            RouteUtil::mapRoutes($group, $routes, $gatekeeper);
+        });
     }
 
     /**
      * Get routes for metadata actions
      * @param self $self
-     * @return array<mixed> list of [method(s), path, callable(s)] for each action
+     * @return array<mixed> list of [method(s), path, ...middleware(s), callable] for each action
      */
     public static function getRoutes($self)
     {
         return [
-            // method(s), path, callable(s)
+            // method(s), path, ...middleware(s), callable
             ['POST', '/authors/{id}/thumbnail/', [$self, 'edit_author_thm']],
             ['DELETE', '/authors/{id}/thumbnail/', [$self, 'del_author_thm']],
             ['POST', '/authors/{id}/notes/', [$self, 'edit_author_notes']],

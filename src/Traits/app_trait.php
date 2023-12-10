@@ -91,19 +91,27 @@ trait AppTrait
 
     /**
      * Get the Request object
+     * @param ?\Psr\Http\Message\ServerRequestInterface $request
      * @return \Psr\Http\Message\ServerRequestInterface
      */
-    public function request()
+    public function request($request = null)
     {
+        if (!empty($request)) {
+            $this->request = $request;
+        }
         return $this->request;
     }
 
     /**
      * Get the Response object or create one if needed
+     * @param ?\Psr\Http\Message\ResponseInterface $response
      * @return \Psr\Http\Message\ResponseInterface
      */
-    public function response()
+    public function response($response = null)
     {
+        if (!empty($response)) {
+            $this->response = $response;
+        }
         if (empty($this->response)) {
             // Slim\App contains responseFactory as mandatory first param in constructor
             $this->response = $this->app->getResponseFactory()->createResponse();

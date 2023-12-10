@@ -10,9 +10,7 @@
 
 namespace BicBucStriim\Actions;
 
-use Psr\Http\Message\ResponseInterface as Response;
-use Psr\Http\Message\ServerRequestInterface as Request;
-use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
+use BicBucStriim\Utilities\RouteUtil;
 
 /*********************************************************************
  * Default actions
@@ -34,76 +32,19 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
     {
         // Slim 2 framework uses callable - we need $app instance
         $self = new self($app);
-        static::mapRoutes($app, $self);
-    }
-
-    /**
-     * Map routes for default actions
-     * @param \BicBucStriim\App|\Slim\App|\Slim\Routing\RouteCollectorProxy|object $app
-     * @param self $self
-     * @return void
-     */
-    public static function mapRoutes($app, $self)
-    {
         $routes = static::getRoutes($self);
-        foreach ($routes as $route) {
-            $method = array_shift($route);
-            $path = array_shift($route);
-            if (is_string($method) && $method === 'GET') {
-                $method = ['GET', 'HEAD'];
-            }
-            //$app->map($path, ...$route)->via($method);
-            // See also https://www.slimframework.com/docs/v4/objects/routing.html#route-strategies
-            // For example from RequestResponseArgs.php:
-            //return $callable($request, $response, ...array_values($routeArguments));
-            if (!is_array($method)) {
-                $method = [ $method ];
-            }
-            $callable = array_pop($route);
-            $wrapper = static::wrapCallable($callable);
-            if (count($route) > 0) {
-                $next = $app->map($method, $path, $wrapper);
-                foreach ($route as $middleware) {
-                    $wrapper = static::wrapMiddleware($middleware);
-                    $next = $next->add($wrapper);
-                }
-            } else {
-                $app->map($method, $path, $wrapper);
-            }
-        }
-    }
-
-    public static function wrapCallable($callable)
-    {
-        return function (Request $request, Response $response, ...$args) use ($callable) {
-            $callable[0]->request = $request;
-            $callable[0]->response = $response;
-            $callable(...$args);
-            return $callable[0]->response;
-        };
-    }
-
-    public static function wrapMiddleware($callable)
-    {
-        return function (Request $request, RequestHandler $handler) use ($callable) {
-            $callable[0]->request = $request;
-            $callable();
-            if (!empty($callable[0]->response)) {
-                return $callable[0]->response;
-            }
-            return $handler->handle($request);
-        };
+        RouteUtil::mapRoutes($app, $routes);
     }
 
     /**
      * Get routes for default actions
      * @param self $self
-     * @return array<mixed> list of [method(s), path, callable(s)] for each action
+     * @return array<mixed> list of [method(s), path, ...middleware(s), callable] for each action
      */
     public static function getRoutes($self)
     {
         return [
-            // method(s), path, callable(s)
+            // method(s), path, ...middleware(s), callable
             ['GET', '/', [$self, 'hello']],
             ['GET', '/{name}', [$self, 'hello']],
         ];
@@ -156,6 +97,7 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
 
     /**
      * Check admin rights and redirect if necessary
+     * @return bool true if we have a response ready (= no access), false otherwise
      */
     public function check_admin()
     {
@@ -163,7 +105,9 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
             $this->render('error.html', [
                 'page' => $this->mkPage('error', 0, 0),
                 'error' => $this->getMessageString('error_no_access')]);
+            return true;
         }
+        return false;
     }
 
     /**
