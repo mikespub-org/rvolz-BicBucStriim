@@ -14,7 +14,7 @@ require_once('simpletest/simpletest/autorun.php');
 require 'src/inst_utils.php';
 
 
-class TestOfInstUtils extends UnitTestCase
+class InstUtilsTest extends UnitTestCase
 {
     public function setUp() {}
 

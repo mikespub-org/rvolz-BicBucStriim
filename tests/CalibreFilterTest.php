@@ -6,7 +6,7 @@ require_once('simpletest/simpletest/autorun.php');
 
 use BicBucStriim\Calibre\CalibreFilter;
 
-class TestOfCalibreFilter extends UnitTestCase
+class CalibreFilterTest extends UnitTestCase
 {
     public function setUp() {}
 

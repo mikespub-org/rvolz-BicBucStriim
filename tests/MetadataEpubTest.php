@@ -14,7 +14,7 @@ use BicBucStriim\Calibre\Tag;
 use BicBucStriim\Utilities\EPub;
 use BicBucStriim\Utilities\MetadataEpub;
 
-class TestOfMetadataEpub extends UnitTestCase
+class MetadataEpubTest extends UnitTestCase
 {
     public const DATA = './tests/data';
     public const FDIR = './tests/fixtures/';

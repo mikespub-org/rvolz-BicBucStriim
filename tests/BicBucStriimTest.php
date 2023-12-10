@@ -11,7 +11,7 @@ use BicBucStriim\AppData\BicBucStriim;
 use BicBucStriim\AppData\DataConstants;
 use BicBucStriim\AppData\R;
 
-class TestOfBicBucStriim extends UnitTestCase
+class BicBucStriimTest extends UnitTestCase
 {
     public const SCHEMA = './data/schema.sql';
     public const TESTSCHEMA = './tests/data/schema.sql';

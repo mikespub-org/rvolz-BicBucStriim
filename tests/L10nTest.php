@@ -7,7 +7,7 @@ require_once('config/langs.php');
 
 use BicBucStriim\Utilities\L10n;
 
-class TestOfL10N extends UnitTestCase
+class L10nTest extends UnitTestCase
 {
     public function setUp() {}
 

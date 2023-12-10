@@ -6,7 +6,7 @@ require_once('simpletest/simpletest/autorun.php');
 
 use BicBucStriim\Utilities\UrlInfo;
 
-class TestOfUtilities extends UnitTestCase
+class UtilitiesTest extends UnitTestCase
 {
     public const FIXT = './tests/fixtures';
 

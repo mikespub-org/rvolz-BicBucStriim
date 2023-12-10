@@ -17,7 +17,7 @@ use BicBucStriim\Calibre\CalibreFilter;
 use BicBucStriim\Utilities\OpdsGenerator;
 use BicBucStriim\Utilities\L10n;
 
-class TestOfOpdsGenerator extends UnitTestCase
+class OpdsGeneratorTest extends UnitTestCase
 {
     public const OPDS_RNG = './tests/fixtures/opds_catalog_1_1.rng';
     public const DATA = './tests/data';

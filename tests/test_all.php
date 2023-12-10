@@ -12,15 +12,15 @@ class TestsAll extends TestSuite
     public function __construct(string $label = 'All Tests')
     {
         parent::__construct($label);
-        $this->addFile('test_bicbucstriim.php');
-        $this->addFile('test_calibre.php');
-        $this->addFile('test_calibre_filter.php');
-        $this->addFile('test_calibre_icu.php');
-        $this->addFile('test_custom_columns.php');
-        $this->addFile('test_l10n.php');
-        $this->addFile('test_utilities.php');
+        $this->addFile('BicBucStriimTest.php');
+        $this->addFile('CalibreTest.php');
+        $this->addFile('CalibreFilterTest.php');
+        $this->addFile('CalibreIcuTest.php');
+        $this->addFile('CustomColumnsTest.php');
+        $this->addFile('L10nTest.php');
+        $this->addFile('UtilitiesTest.php');
         // TODO reenable OPDS tests
-        //$this->addFile('test_opds_generator.php');
-        $this->addFile('test_inst_utils.php');
+        //$this->addFile('OpdsGeneratorTest.php');
+        $this->addFile('InstUtilsTest.php');
     }
 }

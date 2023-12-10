@@ -9,7 +9,7 @@ require_once('simpletest/simpletest/autorun.php');
 use BicBucStriim\Calibre\Calibre;
 use BicBucStriim\Calibre\CalibreFilter;
 
-class TestOfCalibreIcu extends UnitTestCase
+class CalibreIcuTest extends UnitTestCase
 {
     public const CDB4 = './tests/fixtures/lib4/metadata.db';
 
