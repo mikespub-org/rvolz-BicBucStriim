@@ -437,7 +437,7 @@ class AdminActions extends DefaultActions
         if ($req_configs[KINDLE] == "1") {
             if (empty($req_configs[KINDLE_FROM_EMAIL])) {
                 array_push($errors, 5);
-            } elseif (Utilities::isEMailValid($req_configs[KINDLE_FROM_EMAIL])) {
+            } elseif (!Utilities::isEMailValid($req_configs[KINDLE_FROM_EMAIL])) {
                 array_push($errors, 5);
             }
         }
