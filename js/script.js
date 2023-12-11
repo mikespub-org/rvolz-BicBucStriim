@@ -449,8 +449,8 @@ $(document).on('pageinit', '#ptitle_detail' ,function() {
 	}
 
 	/* If cookie 'kindleEmail' is found, pre-populate form input*/
-	if ($.cookie('kindle_email')) {
-		$("#kindleEmail").attr('value',$.cookie('kindle_email'));
+	if (Cookies.get('kindle_email')) {
+		$("#kindleEmail").attr('value',Cookies.get('kindle_email'));
 	}
 
 });
