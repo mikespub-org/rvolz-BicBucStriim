@@ -5,11 +5,13 @@
     SetEnv HTTP_MOD_REWRITE On
 
     RewriteEngine On
+    #RewriteBase /bbs
     RewriteRule ^index\.php/((img|js|style)/.*)$ $1 [L]
     RewriteRule ^index\.php/(data/(titles|authors)/.*\.png)$ $1 [L]
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteRule ^(.*)$ index.php [QSA,L]
+    #RewriteRule ^(.*)$ index.php [QSA,L]
+    RewriteRule ^ index.php [QSA,L]
     RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
 </IfModule>
 

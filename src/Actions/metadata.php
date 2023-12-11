@@ -10,6 +10,7 @@
 
 namespace BicBucStriim\Actions;
 
+use BicBucStriim\Utilities\RouteUtil;
 use Michelf\MarkdownExtra;
 use Exception;
 
@@ -24,32 +25,34 @@ class MetadataActions extends DefaultActions
     public static function addRoutes($app, $prefix = '/metadata')
     {
         $self = new self($app);
+        $routes = static::getRoutes($self);
         // check admin for all actions in this group
-        $app->group($prefix, [$self, 'check_admin'], function () use ($app, $self) {
-            static::mapRoutes($app, $self);
+        $gatekeeper = [$self, 'check_admin'];
+        $app->group($prefix, function (\Slim\Routing\RouteCollectorProxy $group) use ($routes, $gatekeeper) {
+            RouteUtil::mapRoutes($group, $routes, $gatekeeper);
         });
     }
 
     /**
      * Get routes for metadata actions
      * @param self $self
-     * @return array<mixed> list of [method(s), path, callable(s)] for each action
+     * @return array<mixed> list of [method(s), path, ...middleware(s), callable] for each action
      */
     public static function getRoutes($self)
     {
         return [
-            // method(s), path, callable(s)
-            ['POST', '/authors/:id/thumbnail/', [$self, 'edit_author_thm']],
-            ['DELETE', '/authors/:id/thumbnail/', [$self, 'del_author_thm']],
-            ['POST', '/authors/:id/notes/', [$self, 'edit_author_notes']],
-            ['DELETE', '/authors/:id/notes/', [$self, 'del_author_notes']],
-            ['POST', '/authors/:id/links/', [$self, 'new_author_link']],
-            ['DELETE', '/authors/:id/links/:link/', [$self, 'del_author_link']],
+            // method(s), path, ...middleware(s), callable
+            ['POST', '/authors/{id}/thumbnail/', [$self, 'edit_author_thm']],
+            ['DELETE', '/authors/{id}/thumbnail/', [$self, 'del_author_thm']],
+            ['POST', '/authors/{id}/notes/', [$self, 'edit_author_notes']],
+            ['DELETE', '/authors/{id}/notes/', [$self, 'del_author_notes']],
+            ['POST', '/authors/{id}/links/', [$self, 'new_author_link']],
+            ['DELETE', '/authors/{id}/links/{link}/', [$self, 'del_author_link']],
         ];
     }
 
     /**
-     * Upload an author thumbnail picture -> POST /metadata/authors/:id/thumbnail/
+     * Upload an author thumbnail picture -> POST /metadata/authors/{id}/thumbnail/
      * Works only with JPG/PNG, max. size 3MB
      */
     public function edit_author_thm($id)
@@ -81,26 +84,26 @@ class MetadataActions extends DefaultActions
             if ($_FILES["file"]["error"] > 0) {
                 $this->log()->debug('edit_author_thm: upload error ' . $_FILES["file"]["error"]);
                 $this->flash('error', $this->getMessageString('author_thumbnail_upload_error1') . ': ' . $_FILES["file"]["error"]);
-                $rot = $this->request()->getRootUri();
+                $rot = $this->getRootUri();
                 $this->mkRedirect($rot . '/authors/' . $id . '/0/');
             } else {
                 $this->log()->debug('edit_author_thm: upload ok, converting');
                 $author = $this->calibre()->author($id);
                 $created = $this->bbs()->editAuthorThumbnail($id, $author->name, $globalSettings[THUMB_GEN_CLIPPED], $_FILES["file"]["tmp_name"], $_FILES["file"]["type"]);
                 $this->log()->debug('edit_author_thm: converted, redirecting');
-                $rot = $this->request()->getRootUri();
+                $rot = $this->getRootUri();
                 $this->mkRedirect($rot . '/authors/' . $id . '/0/');
             }
         } else {
             $this->log()->warning('edit_author_thm: Uploaded thumbnail too big or wrong type');
             $this->flash('error', $this->getMessageString('author_thumbnail_upload_error2'));
-            $rot = $this->request()->getRootUri();
+            $rot = $this->getRootUri();
             $this->mkRedirect($rot . '/authors/' . $id . '/0/');
         }
     }
 
     /**
-     * Delete the author's thumbnail -> DELETE /metadata/authors/:id/thumbnail/ JSON
+     * Delete the author's thumbnail -> DELETE /metadata/authors/{id}/thumbnail/ JSON
      */
     public function del_author_thm($id)
     {
@@ -124,7 +127,7 @@ class MetadataActions extends DefaultActions
     }
 
     /**
-     * Edit the notes about the author -> POST /metadata/authors/:id/notes/ JSON
+     * Edit the notes about the author -> POST /metadata/authors/{id}/notes/ JSON
      */
     public function edit_author_notes($id)
     {
@@ -162,7 +165,7 @@ class MetadataActions extends DefaultActions
     }
 
     /**
-     * Delete notes about the author -> DELETE /metadata/authors/:id/notes/ JSON
+     * Delete notes about the author -> DELETE /metadata/authors/{id}/notes/ JSON
      */
     public function del_author_notes($id)
     {
@@ -186,7 +189,7 @@ class MetadataActions extends DefaultActions
     }
 
     /**
-     * Add a new author link -> POST /metadata/authors/:id/links JSON
+     * Add a new author link -> POST /metadata/authors/{id}/links JSON
      */
     public function new_author_link($id)
     {
@@ -215,7 +218,7 @@ class MetadataActions extends DefaultActions
     }
 
     /**
-     * Delete an author link -> DELETE /metadata/authors/:id/links/:link/ JSON
+     * Delete an author link -> DELETE /metadata/authors/{id}/links/{link}/ JSON
      */
     public function del_author_link($id, $link)
     {

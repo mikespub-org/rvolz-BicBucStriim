@@ -14,6 +14,7 @@ use BicBucStriim\Calibre\Calibre;
 use BicBucStriim\Calibre\Language;
 use BicBucStriim\Calibre\Tag;
 use BicBucStriim\Utilities\Mailer;
+use BicBucStriim\Utilities\RouteUtil;
 use Exception;
 use Utilities;
 
@@ -28,34 +29,36 @@ class AdminActions extends DefaultActions
     public static function addRoutes($app, $prefix = '/admin')
     {
         $self = new self($app);
+        $routes = static::getRoutes($self);
         // check admin for all actions in this group
-        $app->group($prefix, [$self, 'check_admin'], function () use ($app, $self) {
-            static::mapRoutes($app, $self);
+        $gatekeeper = [$self, 'check_admin'];
+        $app->group($prefix, function (\Slim\Routing\RouteCollectorProxy $group) use ($routes, $gatekeeper) {
+            RouteUtil::mapRoutes($group, $routes, $gatekeeper);
         });
     }
 
     /**
      * Get routes for admin actions
      * @param self $self
-     * @return array<mixed> list of [method(s), path, callable(s)] for each action
+     * @return array<mixed> list of [method(s), path, ...middleware(s), callable] for each action
      */
     public static function getRoutes($self)
     {
         return [
-            // method(s), path, callable(s)
+            // method(s), path, ...middleware(s), callable
             ['GET', '/', [$self, 'admin']],
             ['GET', '/configuration/', [$self, 'configuration']],
             ['POST', '/configuration/', [$self, 'change_json']],
             ['GET', '/idtemplates/', [$self, 'get_idtemplates']],
-            ['PUT', '/idtemplates/:id/', [$self, 'modify_idtemplate']],
-            ['DELETE', '/idtemplates/:id/', [$self, 'clear_idtemplate']],
+            ['PUT', '/idtemplates/{id}/', [$self, 'modify_idtemplate']],
+            ['DELETE', '/idtemplates/{id}/', [$self, 'clear_idtemplate']],
             ['GET', '/mail/', [$self, 'get_smtp_config']],
             ['PUT', '/mail/', [$self, 'change_smtp_config']],
             ['GET', '/users/', [$self, 'get_users']],
             ['POST', '/users/', [$self, 'add_user']],
-            ['GET', '/users/:id/', [$self, 'get_user']],
-            ['PUT', '/users/:id/', [$self, 'modify_user']],
-            ['DELETE', '/users/:id/', [$self, 'delete_user']],
+            ['GET', '/users/{id}/', [$self, 'get_user']],
+            ['PUT', '/users/{id}/', [$self, 'modify_user']],
+            ['DELETE', '/users/{id}/', [$self, 'delete_user']],
             ['GET', '/version/', [$self, 'check_version']],
         ];
     }
@@ -271,7 +274,7 @@ class AdminActions extends DefaultActions
 
 
     /**
-     * Generate the single user page -> GET /admin/users/:id/
+     * Generate the single user page -> GET /admin/users/{id}/
      */
     public function get_user($id)
     {
@@ -333,7 +336,7 @@ class AdminActions extends DefaultActions
     }
 
     /**
-     * Delete a user -> DELETE /admin/users/:id/ (JSON)
+     * Delete a user -> DELETE /admin/users/{id}/ (JSON)
      */
     public function delete_user($id)
     {
@@ -357,7 +360,7 @@ class AdminActions extends DefaultActions
     }
 
     /**
-     * Modify a user -> PUT /admin/users/:id/ (JSON)
+     * Modify a user -> PUT /admin/users/{id}/ (JSON)
      */
     public function modify_user($id)
     {
@@ -434,7 +437,7 @@ class AdminActions extends DefaultActions
         if ($req_configs[KINDLE] == "1") {
             if (empty($req_configs[KINDLE_FROM_EMAIL])) {
                 array_push($errors, 5);
-            } elseif (Utilities::isEMailValid($req_configs[KINDLE_FROM_EMAIL])) {
+            } elseif (!Utilities::isEMailValid($req_configs[KINDLE_FROM_EMAIL])) {
                 array_push($errors, 5);
             }
         }

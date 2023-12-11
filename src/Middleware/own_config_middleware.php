@@ -12,6 +12,10 @@ namespace BicBucStriim\Middleware;
 
 use BicBucStriim\AppData\BicBucStriim;
 
+use Psr\Http\Message\ResponseInterface as Response;
+use Psr\Http\Message\ServerRequestInterface as Request;
+use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
+
 class OwnConfigMiddleware extends DefaultMiddleware
 {
     protected $knownConfigs;
@@ -19,7 +23,7 @@ class OwnConfigMiddleware extends DefaultMiddleware
     /**
      * Initialize the configuration
      *
-     * @param \BicBucStriim\App $app
+     * @param \BicBucStriim\App|\Slim\App|object $app The app
      * @param array $knownConfigs
      */
     public function __construct($app, $knownConfigs)
@@ -28,18 +32,28 @@ class OwnConfigMiddleware extends DefaultMiddleware
         $this->knownConfigs = $knownConfigs;
     }
 
-    public function call()
+    /**
+     * Check if own configuration is valid
+     * @param Request $request The request
+     * @param RequestHandler $handler The handler
+     * @return Response The response
+     */
+    public function process(Request $request, RequestHandler $handler): Response
     {
+        $this->request = $request;
+        //$response = $this->response();
         $config_status = $this->check_config_db();
         if ($config_status == 0) {
             $this->mkError(500, 'No or bad configuration database. Please use <a href="' .
-                $this->request()->getRootUri() .
+                $this->getRootUri() .
                 '/installcheck.php">installcheck.php</a> to check for errors.');
+            return $this->response();
         } elseif ($config_status == 2) {
             // TODO Redirect to an update script in the future
             $this->mkError(500, 'Old configuration database detected. Please refer to the <a href="http://projekte.textmulch.de/bicbucstriim/#upgrading">upgrade documentation</a> for more information.');
+            return $this->response();
         } else {
-            $this->next->call();
+            return $handler->handle($request);
         }
     }
 

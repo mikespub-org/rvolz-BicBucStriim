@@ -11,6 +11,7 @@
 namespace BicBucStriim\Actions;
 
 use BicBucStriim\Utilities\OpdsGenerator;
+use BicBucStriim\Utilities\RouteUtil;
 
 /*********************************************************************
  * OPDS Catalog actions
@@ -23,39 +24,40 @@ class OpdsActions extends DefaultActions
     public static function addRoutes($app, $prefix = '/opds')
     {
         $self = new self($app);
-        $app->group($prefix, function () use ($app, $self) {
-            static::mapRoutes($app, $self);
+        $routes = static::getRoutes($self);
+        $app->group($prefix, function (\Slim\Routing\RouteCollectorProxy $group) use ($routes) {
+            RouteUtil::mapRoutes($group, $routes);
         });
     }
 
     /**
      * Get routes for OPDS actions
      * @param self $self
-     * @return array<mixed> list of [method(s), path, callable(s)] for each action
+     * @return array<mixed> list of [method(s), path, ...middleware(s), callable] for each action
      */
     public static function getRoutes($self)
     {
         return [
-            // method(s), path, callable(s)
+            // method(s), path, ...middleware(s), callable
             ['GET', '/', [$self, 'opdsRoot']],
             ['GET', '/newest/', [$self, 'opdsNewest']],
-            ['GET', '/titleslist/:page/', [$self, 'opdsByTitle']],
+            ['GET', '/titleslist/{page}/', [$self, 'opdsByTitle']],
             ['GET', '/authorslist/', [$self, 'opdsByAuthorInitial']],
-            ['GET', '/authorslist/:initial/', [$self, 'opdsByAuthorNamesForInitial']],
-            ['GET', '/authorslist/:initial/:id/:page/', [$self, 'opdsByAuthor']],
+            ['GET', '/authorslist/{initial}/', [$self, 'opdsByAuthorNamesForInitial']],
+            ['GET', '/authorslist/{initial}/{id}/{page}/', [$self, 'opdsByAuthor']],
             ['GET', '/tagslist/', [$self, 'opdsByTagInitial']],
-            ['GET', '/tagslist/:initial/', [$self, 'opdsByTagNamesForInitial']],
-            ['GET', '/tagslist/:initial/:id/:page/', [$self, 'opdsByTag']],
+            ['GET', '/tagslist/{initial}/', [$self, 'opdsByTagNamesForInitial']],
+            ['GET', '/tagslist/{initial}/{id}/{page}/', [$self, 'opdsByTag']],
             ['GET', '/serieslist/', [$self, 'opdsBySeriesInitial']],
-            ['GET', '/serieslist/:initial/', [$self, 'opdsBySeriesNamesForInitial']],
-            ['GET', '/serieslist/:initial/:id/:page/', [$self, 'opdsBySeries']],
+            ['GET', '/serieslist/{initial}/', [$self, 'opdsBySeriesNamesForInitial']],
+            ['GET', '/serieslist/{initial}/{id}/{page}/', [$self, 'opdsBySeries']],
             ['GET', '/opensearch.xml', [$self, 'opdsSearchDescriptor']],
-            ['GET', '/searchlist/:page/', [$self, 'opdsBySearch']],
+            ['GET', '/searchlist/{page}/', [$self, 'opdsBySearch']],
             // @todo either split off titles actions and call here, or adapt partialAcquisitionEntry() in OPDS Generator
-            //['GET', '/titles/:id/', [$self, 'title']],
-            //['GET', '/titles/:id/cover/', [$self, 'cover']],
-            //['GET', '/titles/:id/file/:file', [$self, 'book']],
-            //['GET', '/titles/:id/thumbnail/', [$self, 'thumbnail']],
+            //['GET', '/titles/{id}/', [$self, 'title']],
+            //['GET', '/titles/{id}/cover/', [$self, 'cover']],
+            //['GET', '/titles/{id}/file/{file}', [$self, 'book']],
+            //['GET', '/titles/{id}/thumbnail/', [$self, 'thumbnail']],
             ['GET', '/logout/', [$self, 'opdsLogout']],
         ];
     }

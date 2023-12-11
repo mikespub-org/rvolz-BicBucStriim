@@ -18,3 +18,4 @@ docker-compose-dev.yaml
 data/authors/*.png
 data/titles/*.png
 bicbucstriim*.zip
+.phpunit.cache

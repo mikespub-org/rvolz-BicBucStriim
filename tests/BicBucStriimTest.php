@@ -3,15 +3,16 @@
 if (!defined('REDBEAN_MODEL_PREFIX')) {
     define('REDBEAN_MODEL_PREFIX', '\\BicBucStriim\\AppData\\Model_');
 }
-set_include_path("tests:vendor");
-require_once('autoload.php');
-require_once('simpletest/simpletest/autorun.php');
 
 use BicBucStriim\AppData\BicBucStriim;
 use BicBucStriim\AppData\DataConstants;
 use BicBucStriim\AppData\R;
 
-class TestOfBicBucStriim extends UnitTestCase
+/**
+ * @covers \BicBucStriim\AppData\BicBucStriim
+ * @covers \BicBucStriim\AppData\Model_Calibrething
+ */
+class BicBucStriimTest extends PHPUnit\Framework\TestCase
 {
     public const SCHEMA = './data/schema.sql';
     public const TESTSCHEMA = './tests/data/schema.sql';
@@ -22,7 +23,7 @@ class TestOfBicBucStriim extends UnitTestCase
 
     public $bbs;
 
-    public function setUp()
+    public function setUp(): void
     {
         if (file_exists(self::DATA)) {
             system("rm -rf " . self::DATA);
@@ -34,7 +35,7 @@ class TestOfBicBucStriim extends UnitTestCase
         $this->bbs = new BicBucStriim(self::DATADB, false);
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         // Must use nuke() to clear caches etc.
         R::nuke();
@@ -63,37 +64,37 @@ class TestOfBicBucStriim extends UnitTestCase
     public function testConfigs()
     {
         $configs = $this->bbs->configs();
-        $this->assertEqual(1, count($configs));
+        $this->assertEquals(1, count($configs));
 
         $configA = ['propa' => 'vala', 'propb' => 1];
         $this->bbs->saveConfigs($configA);
         $configs = $this->bbs->configs();
-        $this->assertEqual(3, count($configs));
-        $this->assertEqual('propa', $configs[2]->name);
-        $this->assertEqual('vala', $configs[2]->val);
-        $this->assertEqual('propb', $configs[3]->name);
-        $this->assertEqual(1, $configs[3]->val);
+        $this->assertEquals(3, count($configs));
+        $this->assertEquals('propa', $configs[2]->name);
+        $this->assertEquals('vala', $configs[2]->val);
+        $this->assertEquals('propb', $configs[3]->name);
+        $this->assertEquals(1, $configs[3]->val);
 
         $configB = ['propa' => 'vala', 'propb' => 2];
         $this->bbs->saveConfigs($configB);
         $configs = $this->bbs->configs();
-        $this->assertEqual(3, count($configs));
-        $this->assertEqual('propa', $configs[2]->name);
-        $this->assertEqual('vala', $configs[2]->val);
-        $this->assertEqual('propb', $configs[3]->name);
-        $this->assertEqual(2, $configs[3]->val);
+        $this->assertEquals(3, count($configs));
+        $this->assertEquals('propa', $configs[2]->name);
+        $this->assertEquals('vala', $configs[2]->val);
+        $this->assertEquals('propb', $configs[3]->name);
+        $this->assertEquals(2, $configs[3]->val);
     }
 
     public function testAddUser()
     {
-        $this->assertEqual(1, count($this->bbs->users()));
+        $this->assertEquals(1, count($this->bbs->users()));
         $user = $this->bbs->addUser('testuser', 'testuser');
         $this->assertNotNull($user);
-        $this->assertEqual('testuser', $user->username);
-        $this->assertNotEqual('testuser', $user->password);
+        $this->assertEquals('testuser', $user->username);
+        $this->assertNotEquals('testuser', $user->password);
         $this->assertNull($user->tags);
         $this->assertNull($user->languages);
-        $this->assertEqual(0, $user->role);
+        $this->assertEquals(0, $user->role);
     }
 
     public function testAddUserEmptyUser()
@@ -118,21 +119,21 @@ class TestOfBicBucStriim extends UnitTestCase
     {
         $this->bbs->addUser('testuser', 'testuser');
         $this->bbs->addUser('testuser2', 'testuser2');
-        $this->assertEqual(3, count($this->bbs->users()));
+        $this->assertEquals(3, count($this->bbs->users()));
         $user = $this->bbs->user(3);
         $this->assertNotNull($user);
-        $this->assertEqual('testuser2', $user->username);
-        $this->assertNotEqual('testuser2', $user->password);
+        $this->assertEquals('testuser2', $user->username);
+        $this->assertNotEquals('testuser2', $user->password);
         $this->assertNull($user->tags);
         $this->assertNull($user->languages);
-        $this->assertEqual(0, $user->role);
+        $this->assertEquals(0, $user->role);
     }
 
     public function testDeleteUser()
     {
         $this->bbs->addUser('testuser', 'testuser');
         $this->bbs->addUser('testuser2', 'testuser2');
-        $this->assertEqual(3, count($this->bbs->users()));
+        $this->assertEquals(3, count($this->bbs->users()));
 
         $deleted = $this->bbs->deleteUser(1);
         $this->assertFalse($deleted);
@@ -142,10 +143,10 @@ class TestOfBicBucStriim extends UnitTestCase
 
         $deleted = $this->bbs->deleteUser(3);
         $this->assertTrue($deleted);
-        $this->assertEqual(2, count($this->bbs->users()));
+        $this->assertEquals(2, count($this->bbs->users()));
         $user = $this->bbs->user(2);
         $this->assertNotNull($user);
-        $this->assertEqual('testuser', $user->username);
+        $this->assertEquals('testuser', $user->username);
     }
 
     public function testChangeUser()
@@ -156,14 +157,14 @@ class TestOfBicBucStriim extends UnitTestCase
         $password2 = $users[3]->password;
 
         $changed = $this->bbs->changeUser(3, $password2, 'deu', 'poetry', 'user');
-        $this->assertEqual($password2, $changed->password);
-        $this->assertEqual('deu', $changed->languages);
-        $this->assertEqual('poetry', $changed->tags);
+        $this->assertEquals($password2, $changed->password);
+        $this->assertEquals('deu', $changed->languages);
+        $this->assertEquals('poetry', $changed->tags);
 
         $changed = $this->bbs->changeUser(3, 'new password', 'deu', 'poetry', 'user');
-        $this->assertNotEqual($password2, $changed->password);
-        $this->assertEqual('deu', $changed->languages);
-        $this->assertEqual('poetry', $changed->tags);
+        $this->assertNotEquals($password2, $changed->password);
+        $this->assertEquals('deu', $changed->languages);
+        $this->assertEquals('poetry', $changed->tags);
 
         $changed = $this->bbs->changeUser(3, '', 'deu', 'poetry', 'user');
         $this->assertNull($changed);
@@ -176,51 +177,51 @@ class TestOfBicBucStriim extends UnitTestCase
         $users = $this->bbs->users();
         $password2 = $users[3]->password;
 
-        $this->assertEqual('0', $users[3]->role);
+        $this->assertEquals('0', $users[3]->role);
         $changed = $this->bbs->changeUser(3, $password2, 'deu', 'poetry', 'admin');
-        $this->assertEqual('1', $changed->role);
+        $this->assertEquals('1', $changed->role);
         $changed = $this->bbs->changeUser(3, '', 'deu', 'poetry', 'admin');
         $this->assertNull($changed);
     }
 
     public function testIdTemplates()
     {
-        $this->assertEqual(0, count($this->bbs->idTemplates()));
+        $this->assertEquals(0, count($this->bbs->idTemplates()));
         $this->bbs->addIdTemplate('google', 'http://google.com/%id%', 'Google search');
         $this->bbs->addIdTemplate('amazon', 'http://amazon.com/%id%', 'Amazon search');
-        $this->assertEqual(2, count($this->bbs->idTemplates()));
+        $this->assertEquals(2, count($this->bbs->idTemplates()));
         $template = $this->bbs->idTemplate('amazon');
-        $this->assertEqual('amazon', $template->name);
-        $this->assertEqual('http://amazon.com/%id%', $template->val);
-        $this->assertEqual('Amazon search', $template->label);
+        $this->assertEquals('amazon', $template->name);
+        $this->assertEquals('http://amazon.com/%id%', $template->val);
+        $this->assertEquals('Amazon search', $template->label);
     }
 
     public function testDeleteIdTemplates()
     {
-        $this->assertEqual(0, count($this->bbs->idTemplates()));
+        $this->assertEquals(0, count($this->bbs->idTemplates()));
         $this->bbs->addIdTemplate('google', 'http://google.com/%id%', 'Google search');
         $this->bbs->addIdTemplate('amazon', 'http://amazon.com/%id%', 'Amazon search');
-        $this->assertEqual(2, count($this->bbs->idTemplates()));
+        $this->assertEquals(2, count($this->bbs->idTemplates()));
         $this->bbs->deleteIdTemplate('amazon123');
-        $this->assertEqual(2, count($this->bbs->idTemplates()));
+        $this->assertEquals(2, count($this->bbs->idTemplates()));
         $this->bbs->deleteIdTemplate('amazon');
-        $this->assertEqual(1, count($this->bbs->idTemplates()));
+        $this->assertEquals(1, count($this->bbs->idTemplates()));
     }
 
     public function testChangeIdTemplate()
     {
-        $this->assertEqual(0, count($this->bbs->idTemplates()));
+        $this->assertEquals(0, count($this->bbs->idTemplates()));
         $this->bbs->addIdTemplate('google', 'http://google.com/%id%', 'Google search');
         $this->bbs->addIdTemplate('amazon', 'http://amazon.com/%id%', 'Amazon search');
-        $this->assertEqual(2, count($this->bbs->idTemplates()));
+        $this->assertEquals(2, count($this->bbs->idTemplates()));
         $template = $this->bbs->idTemplate('amazon');
-        $this->assertEqual('amazon', $template->name);
-        $this->assertEqual('http://amazon.com/%id%', $template->val);
-        $this->assertEqual('Amazon search', $template->label);
+        $this->assertEquals('amazon', $template->name);
+        $this->assertEquals('http://amazon.com/%id%', $template->val);
+        $this->assertEquals('Amazon search', $template->label);
         $template = $this->bbs->changeIdTemplate('amazon', 'http://amazon.de/%id%', 'Amazon DE search');
-        $this->assertEqual('amazon', $template->name);
-        $this->assertEqual('http://amazon.de/%id%', $template->val);
-        $this->assertEqual('Amazon DE search', $template->label);
+        $this->assertEquals('amazon', $template->name);
+        $this->assertEquals('http://amazon.de/%id%', $template->val);
+        $this->assertEquals('Amazon DE search', $template->label);
     }
 
     public function testCalibreThing()
@@ -228,11 +229,11 @@ class TestOfBicBucStriim extends UnitTestCase
         $this->assertNull($this->bbs->getCalibreThing(DataConstants::CALIBRE_AUTHOR_TYPE, 1));
         $result = $this->bbs->addCalibreThing(DataConstants::CALIBRE_AUTHOR_TYPE, 1, 'Author 1');
         $this->assertNotNull($result);
-        $this->assertEqual('Author 1', $result->cname);
-        $this->assertEqual(0, $result->refctr);
+        $this->assertEquals('Author 1', $result->cname);
+        $this->assertEquals(0, $result->refctr);
         $result2 = $this->bbs->getCalibreThing(DataConstants::CALIBRE_AUTHOR_TYPE, 1);
-        $this->assertEqual('Author 1', $result2->cname);
-        $this->assertEqual(0, $result2->refctr);
+        $this->assertEquals('Author 1', $result2->cname);
+        $this->assertEquals(0, $result2->refctr);
     }
 
     public function testEditAuthorThumbnail()
@@ -240,14 +241,14 @@ class TestOfBicBucStriim extends UnitTestCase
         $this->assertTrue($this->bbs->editAuthorThumbnail(1, 'Author Name', true, 'tests/fixtures/author1.jpg', 'image/jpeg'));
         $this->assertTrue(file_exists(self::DATA . '/authors/author_1_thm.png'));
         $result2 = $this->bbs->getCalibreThing(DataConstants::CALIBRE_AUTHOR_TYPE, 1);
-        $this->assertEqual('Author Name', $result2->cname);
-        $this->assertEqual(1, $result2->refctr);
+        $this->assertEquals('Author Name', $result2->cname);
+        $this->assertEquals(1, $result2->refctr);
         $artefacts = $result2->ownArtefactList;
-        $this->assertEqual(1, count($artefacts));
+        $this->assertEquals(1, count($artefacts));
         $result = $artefacts[1];
         $this->assertNotNull($result);
-        $this->assertEqual(DataConstants::AUTHOR_THUMBNAIL_ARTEFACT, $result->atype);
-        $this->assertEqual(self::DATA . '/authors/author_1_thm.png', $result->url);
+        $this->assertEquals(DataConstants::AUTHOR_THUMBNAIL_ARTEFACT, $result->atype);
+        $this->assertEquals(self::DATA . '/authors/author_1_thm.png', $result->url);
     }
 
     public function testGetAuthorThumbnail()
@@ -256,8 +257,8 @@ class TestOfBicBucStriim extends UnitTestCase
         $this->assertTrue($this->bbs->editAuthorThumbnail(2, 'Author Name', true, 'tests/fixtures/author1.jpg', 'image/jpeg'));
         $result = $this->bbs->getAuthorThumbnail(1);
         $this->assertNotNull($result);
-        $this->assertEqual(DataConstants::AUTHOR_THUMBNAIL_ARTEFACT, $result->atype);
-        $this->assertEqual(self::DATA . '/authors/author_1_thm.png', $result->url);
+        $this->assertEquals(DataConstants::AUTHOR_THUMBNAIL_ARTEFACT, $result->atype);
+        $this->assertEquals(self::DATA . '/authors/author_1_thm.png', $result->url);
         $result = $this->bbs->getAuthorThumbnail(2);
         $this->assertNotNull($result);
     }
@@ -269,25 +270,25 @@ class TestOfBicBucStriim extends UnitTestCase
         $this->assertTrue($this->bbs->deleteAuthorThumbnail(1));
         $this->assertFalse(file_exists(self::DATA . '/authors/author_1_thm.png'));
         $this->assertNull($this->bbs->getAuthorThumbnail(1));
-        $this->assertEqual(0, R::count('artefact'));
-        $this->assertEqual(0, R::count('calibrething'));
+        $this->assertEquals(0, R::count('artefact'));
+        $this->assertEquals(0, R::count('calibrething'));
     }
 
     public function testAuthorLinks()
     {
-        $this->assertEqual(0, count($this->bbs->authorLinks(1)));
+        $this->assertEquals(0, count($this->bbs->authorLinks(1)));
         $this->bbs->addAuthorLink(2, 'Author 1', 'google', 'http://google.com/1');
         $this->bbs->addAuthorLink(1, 'Author 2', 'amazon', 'http://amazon.com/2');
         $links = $this->bbs->authorLinks(1);
-        $this->assertEqual(2, R::count('link'));
-        $this->assertEqual(1, count($links));
-        $this->assertEqual(DataConstants::AUTHOR_LINK, $links[0]->ltype);
-        $this->assertEqual('amazon', $links[0]->label);
-        $this->assertEqual('http://amazon.com/2', $links[0]->url);
-        $this->assertEqual(2, $links[0]->id);
+        $this->assertEquals(2, R::count('link'));
+        $this->assertEquals(1, count($links));
+        $this->assertEquals(DataConstants::AUTHOR_LINK, $links[0]->ltype);
+        $this->assertEquals('amazon', $links[0]->label);
+        $this->assertEquals('http://amazon.com/2', $links[0]->url);
+        $this->assertEquals(2, $links[0]->id);
         $this->assertTrue($this->bbs->deleteAuthorLink(1, 2));
-        $this->assertEqual(0, count($this->bbs->authorLinks(1)));
-        $this->assertEqual(1, R::count('link'));
+        $this->assertEquals(0, count($this->bbs->authorLinks(1)));
+        $this->assertEquals(1, R::count('link'));
     }
 
     public function testAuthorNote()
@@ -295,18 +296,18 @@ class TestOfBicBucStriim extends UnitTestCase
         $this->assertNull($this->bbs->authorNote(1));
         $this->bbs->editAuthorNote(2, 'Author 1', 'text/plain', 'Goodbye, goodbye!');
         $this->bbs->editAuthorNote(1, 'Author 2', 'text/plain', 'Hello again!');
-        $this->assertEqual(2, R::count('note'));
+        $this->assertEquals(2, R::count('note'));
         $note = $this->bbs->authorNote(1);
         $this->assertNotNull($note);
-        $this->assertEqual(DataConstants::AUTHOR_NOTE, $note->ntype);
-        $this->assertEqual('text/plain', $note->mime);
-        $this->assertEqual('Hello again!', $note->ntext);
-        $this->assertEqual(2, $note->id);
+        $this->assertEquals(DataConstants::AUTHOR_NOTE, $note->ntype);
+        $this->assertEquals('text/plain', $note->mime);
+        $this->assertEquals('Hello again!', $note->ntext);
+        $this->assertEquals(2, $note->id);
         $note = $this->bbs->editAuthorNote(1, 'Author 2', 'text/markdown', '*Hello again!*');
-        $this->assertEqual('text/markdown', $note->mime);
-        $this->assertEqual('*Hello again!*', $note->ntext);
+        $this->assertEquals('text/markdown', $note->mime);
+        $this->assertEquals('*Hello again!*', $note->ntext);
         $this->assertTrue($this->bbs->deleteAuthorNote(1));
-        $this->assertEqual(1, R::count('note'));
+        $this->assertEquals(1, R::count('note'));
     }
 
     public function testIsTitleThumbnailAvailable()

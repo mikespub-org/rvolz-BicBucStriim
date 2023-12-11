@@ -10,7 +10,7 @@
 
 namespace BicBucStriim\Actions;
 
-use Utilities;
+use BicBucStriim\Utilities\RouteUtil;
 
 /*********************************************************************
  * Default actions
@@ -19,12 +19,12 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
 {
     use \BicBucStriim\Traits\AppTrait;
 
-    /** @var \BicBucStriim\App */
+    /** @var \BicBucStriim\App|\Slim\App|object */
     protected $app;
 
     /**
      * Add routes for default actions
-     * @param \BicBucStriim\App $app
+     * @param \BicBucStriim\App|\Slim\App|object $app
      * @param ?string $prefix
      * @return void
      */
@@ -32,53 +32,36 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
     {
         // Slim 2 framework uses callable - we need $app instance
         $self = new self($app);
-        static::mapRoutes($app, $self);
-    }
-
-    /**
-     * Map routes for default actions
-     * @param \BicBucStriim\App $app
-     * @param self $self
-     * @return void
-     */
-    public static function mapRoutes($app, $self)
-    {
         $routes = static::getRoutes($self);
-        foreach ($routes as $route) {
-            $method = array_shift($route);
-            $path = array_shift($route);
-            if (is_string($method) && $method === 'GET') {
-                $method = ['GET', 'HEAD'];
-            }
-            $app->map($path, ...$route)->via($method);
-        }
+        RouteUtil::mapRoutes($app, $routes);
     }
 
     /**
      * Get routes for default actions
      * @param self $self
-     * @return array<mixed> list of [method(s), path, callable(s)] for each action
+     * @return array<mixed> list of [method(s), path, ...middleware(s), callable] for each action
      */
     public static function getRoutes($self)
     {
         return [
-            // method(s), path, callable(s)
+            // method(s), path, ...middleware(s), callable
             ['GET', '/', [$self, 'hello']],
-            ['GET', '/:name', [$self, 'hello']],
+            ['GET', '/{name}', [$self, 'hello']],
         ];
     }
 
     /**
-     * @param \BicBucStriim\App $app
+     * @param \BicBucStriim\App|\Slim\App|object $app
      */
     public function __construct($app)
     {
-        $this->app = $app;
+        $this->app($app);
     }
 
     /**
      * Hello function (example)
      * @param ?string $name
+     * @return void
      */
     public function hello($name = null)
     {
@@ -93,7 +76,11 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
      */
     public function get($name = null)
     {
-        return $this->request()->get($name);
+        $params = $this->request()->getQueryParams();
+        if (empty($name)) {
+            return $params;
+        }
+        return $params[$name] ?? null;
     }
 
     /**
@@ -102,19 +89,27 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
      */
     public function post($name = null)
     {
-        return $this->request()->post($name);
+        $params = $this->request->getParsedBody();
+        if (empty($name)) {
+            return $params;
+        }
+        return $params[$name] ?? null;
     }
 
     /**
      * Check admin rights and redirect if necessary
+     * @param mixed ...$args when called as gatekeeper
+     * @return bool true if we have a response ready (= no access), false otherwise
      */
-    public function check_admin()
+    public function check_admin(...$args)
     {
         if (!$this->is_admin()) {
             $this->render('error.html', [
                 'page' => $this->mkPage('error', 0, 0),
                 'error' => $this->getMessageString('error_no_access')]);
+            return true;
         }
+        return false;
     }
 
     /**
@@ -169,7 +164,9 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
     public function render($template, $data = [], $status = null)
     {
         // Slim 2 framework will replace data, render template and echo output via slim view display()
-        $this->app()->render($template, $data, $status);
+        //$this->app()->render($template, $data, $status);
+        $content = $this->twig()->render($template, $data);
+        $this->mkResponse($content, 'text/html');
     }
 
     /**

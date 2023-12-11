@@ -10,6 +10,10 @@
 
 namespace BicBucStriim\Middleware;
 
+use Psr\Http\Message\ResponseInterface as Response;
+use Psr\Http\Message\ServerRequestInterface as Request;
+use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
+
 class LoginMiddleware extends DefaultMiddleware
 {
     protected $realm;
@@ -19,7 +23,7 @@ class LoginMiddleware extends DefaultMiddleware
      * Initialize the PDO connection and merge user
      * config with defaults.
      *
-     * @param \BicBucStriim\App $app
+     * @param \BicBucStriim\App|\Slim\App|object $app The app
      * @param string $realm
      * @param array $statics
      */
@@ -30,47 +34,70 @@ class LoginMiddleware extends DefaultMiddleware
         $this->static_resource_paths = $statics;
     }
 
-
-    public function call()
+    /**
+     * @param Request $request The request
+     * @param RequestHandler $handler The handler
+     * @return Response The response
+     */
+    public function process(Request $request, RequestHandler $handler): Response
     {
+        $this->request = $request;
+        //$response = $this->response();
         // Slim 3+ framework does not support hooks anymore
-        $this->app()->hook('slim.before.dispatch', [$this, 'authBeforeDispatch']);
-        /**
+        //$this->app()->hook('slim.before.dispatch', [$this, 'authBeforeDispatch']);
         try {
-            $this->authBeforeDispatch();
-        } catch (\Slim\Exception\Stop $e) {
-            $this->response()->write(ob_get_clean());
-            return;
+            // true if we have a response ready (= need to authenticate), false otherwise
+            if ($this->authBeforeDispatch()) {
+                return $this->response;
+            }
+        } catch (\Exception $e) {
+            if (!empty($this->response)) {
+                return $this->response;
+            }
+            //$response = $this->response();
+            //$this->response()->write(ob_get_clean());
+            echo ob_get_clean();
+            echo "Done: " . $e->getMessage();
+            exit;
         }
-         */
-        $this->next->call();
+        return $handler->handle($request);
     }
 
+    /**
+     * Check if we need to authenticate before dispatching the request further
+     * @return bool true if we have a response ready (= need to authenticate), false otherwise
+     */
     public function authBeforeDispatch()
     {
         $globalSettings = $this->settings();
         $request = $this->request();
-        $resource = $request->getResourceUri();
-        $accept = $request->headers('ACCEPT');
+        $resource = $this->getResourceUri();
+        $accept = $request->getHeaderLine('ACCEPT');
         $this->log()->debug('login resource: ' . $resource);
         if ($globalSettings[LOGIN_REQUIRED] == 1) {
             if (!$this->is_static_resource($resource) && !$this->is_authorized()) {
                 if ($resource === '/login/') {
                     // special case login page
                     $this->log()->debug('login: login page authorized');
-                    return;
+                    return false;
                 } elseif (stripos($resource, '/opds') === 0) {
                     $this->log()->debug('login: unauthorized OPDS request');
                     $this->mkAuthenticate($this->realm);
-                } elseif ($request->getMethod() != 'GET' && ($request->isXhr() || $request->isAjax())) {
-                    $this->log()->debug('login: unauthorized JSON request');
-                    $this->mkAuthenticate($this->realm);
+                    return true;
                 } else {
-                    $this->log()->debug('login: redirecting to login');
-                    // now we can also use the native app->redirect method!
-                    $this->mkRedirect($this->getRootUrl() . '/login/');
-                    // app->redirect not useable in middleware
-                    //$this->mkRedirect($this->getRootUrl() . '/login/', 302, false);
+                    $util = new \BicBucStriim\Utilities\RequestUtil($request);
+                    if ($request->getMethod() != 'GET' && ($util->isXhr() || $util->isAjax())) {
+                        $this->log()->debug('login: unauthorized JSON request');
+                        $this->mkAuthenticate($this->realm);
+                        return true;
+                    } else {
+                        $this->log()->debug('login: redirecting to login');
+                        // now we can also use the native app->redirect method!
+                        $this->mkRedirect($this->getRootUrl() . '/login/');
+                        // app->redirect not useable in middleware
+                        //$this->mkRedirect($this->getRootUrl() . '/login/', 302, false);
+                        return true;
+                    }
                 }
             }
         } else {
@@ -78,17 +105,20 @@ class LoginMiddleware extends DefaultMiddleware
                 $this->is_authorized();
                 // special case login page
                 $this->log()->debug('login: login page authorized');
-                return;
+                return false;
             } elseif (stripos($resource, '/admin') === 0 && !$this->is_static_resource($resource) && !$this->is_authorized()) {
                 $this->log()->debug('login: redirecting to login');
                 $this->mkRedirect($this->getRootUrl() . '/login/');
+                return true;
             }
         }
+        return false;
     }
 
     /**
-     * Static resources must not be protected. Return true id the requested resource
+     * Static resources must not be protected. Return true if the requested resource
      * belongs to a static resource path, else false.
+     * @return bool
      */
     protected function is_static_resource($resource)
     {
@@ -120,7 +150,7 @@ class LoginMiddleware extends DefaultMiddleware
         $request = $this->request();
         $session_factory = new \BicBucStriim\Session\SessionFactory();
         $session = $session_factory->newInstance($_COOKIE);
-        $session->setCookieParams(['path' => $request->getRootUri() . '/']);
+        $session->setCookieParams(['path' => $this->getRootUri() . '/']);
         $auth_factory = new \Aura\Auth\AuthFactory($_COOKIE, $session);
         $this->auth($auth_factory->newInstance());
         $hash = new \Aura\Auth\Verifier\PasswordVerifier(PASSWORD_BCRYPT);
@@ -178,8 +208,8 @@ class LoginMiddleware extends DefaultMiddleware
      */
     protected function checkPhpAuth($request)
     {
-        $authUser = $request->headers('PHP_AUTH_USER');
-        $authPass = $request->headers('PHP_AUTH_PW');
+        $authUser = $request->getHeaderLine('PHP_AUTH_USER');
+        $authPass = $request->getHeaderLine('PHP_AUTH_PW');
         if (!empty($authUser) && !empty($authPass)) {
             return [$authUser, $authPass];
         } else {
@@ -194,7 +224,7 @@ class LoginMiddleware extends DefaultMiddleware
      */
     protected function checkHttpAuth($request)
     {
-        $b64auth = $request->headers('Authorization');
+        $b64auth = $request->getHeaderLine('Authorization');
         if (!empty($b64auth)) {
             $auth_array1 = preg_split('/ /', $b64auth);
             if (empty($auth_array1) || strcasecmp('Basic', $auth_array1[0]) != 0) {
