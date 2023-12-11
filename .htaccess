@@ -8,6 +8,7 @@
     #RewriteBase /bbs
     RewriteRule ^index\.php/((img|js|style)/.*)$ $1 [L]
     RewriteRule ^index\.php/(data/(titles|authors)/.*\.png)$ $1 [L]
+    RewriteRule ^templates/.+\.html$ - [F]
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
     #RewriteRule ^(.*)$ index.php [QSA,L]

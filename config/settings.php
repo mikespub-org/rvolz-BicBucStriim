@@ -24,6 +24,9 @@ $appname = 'BicBucStriim';
 $appversion = '1.7.2';
 # Base path - null means undefined, empty '' or '/bbs' etc. mean predefined
 $basepath = null;
+# Custom template directories that override the default BicBucStriim
+$customTemplateDirs = null;
+//$customTemplateDirs = ['templates/custom'];
 
 # Init app globals
 $globalSettings = [];
@@ -68,4 +71,5 @@ return [
     'basepath' => $basepath,
     'globalSettings' => $globalSettings,
     'knownConfigs' => $knownConfigs,
+    'customTemplateDirs' => $customTemplateDirs,
 ];

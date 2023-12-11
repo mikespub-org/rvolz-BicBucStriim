@@ -1,0 +1,19 @@
+{% extends 'main.html' %}
+
+{% block pid %}id="padmin_version"{%endblock%}
+{% block content %}
+
+<h1>{{ page.glob.l10n.admin_check_version }}</h1>
+{% include "flash_messages.html" %}
+
+<p {% if versionClass != '' %}class="{{versionClass}}"{% endif %}>
+	{{versionAnswer|raw}}.
+</p>
+
+<p>
+	<strong>
+		Note: this is an example of a <em>custom template</em> that overrides the default, when you configure BicBucStriim with 'customTemplateDirs' in config/settings.php
+	</strong>
+</p>
+
+{% endblock %}
