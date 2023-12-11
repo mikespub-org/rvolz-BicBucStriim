@@ -10,6 +10,13 @@ Forked Branches for PHP 8.x
 | [master](https://github.com/mikespub-org/rvolz-BicBucStriim/tree/master) | [master](https://github.com/mikespub-org/rvolz-BicBucStriim/tree/master) | [updated](https://github.com/mikespub-org/rvolz-BicBucStriim/tree/updated) | New | - | Unused | - |
 | [BicBucStriim-352](https://github.com/mikespub-org/rvolz-BicBucStriim/tree/BicBucStriim-352) | [BicBucStriim-352](https://github.com/mikespub-org/rvolz-BicBucStriim/tree/BicBucStriim-352) | [frontend](https://github.com/mikespub-org/rvolz-BicBucStriim/tree/frontend) | New | New | Unfinished | - |
 
+Updated Framework since v3.0.x
+------------------------------
+
+BicBucStriim is now running on the Slim 4 framework with Nikic FastRoute, PSR-15 middleware, PHP-DI container and Nyholm PSR-7 packages.
+
+Note: the jump from v1.x to v3.x is to avoid overlap with 2.x tags from the other branches above, which are all suspended unless someone has an interest in working on them further...
+
 New Code Structure since v1.7.x
 -------------------------------
 
