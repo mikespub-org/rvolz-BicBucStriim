@@ -1,0 +1,28 @@
+{
+	"name": "{{ author.name }}",
+	{% if author.thumbnail %}
+	"thumbnail": "{{page.rot}}/{{author.thumbnail.url}}",
+	{% endif %}
+	{% if author.links %}
+	"links": [
+	{% for link in author.links %}
+		{ "name": "{{link.label}}", "href": "{{link.url}}" }
+		{% if loop.last %}{% else %},{% endif %}
+	{% endfor %}
+	],
+	{% endif %}
+	{% if series != NULL %}
+	"series": [
+	{% for this_series in series %}
+		{ "id": "{{link.id}}", "name": "{{ this_series.name }}", "href": "{{page.rot}}/series/{{this_series.id}}/0/" }
+		{% if loop.last %}{% else %},{% endif %}
+	{% endfor %}
+	],
+	{% endif %}
+	"books": [
+	{% for book in books %}
+		{% include "title_entry.json.twig" %}
+		{% if loop.last %}{% else %},{% endif %}
+	{% endfor %}
+	]
+}
