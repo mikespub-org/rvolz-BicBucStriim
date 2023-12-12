@@ -1,10 +1,10 @@
-{% extends 'main.html' %}
+{% extends 'main.twig' %}
 
 {% block pid %}id="pauthor_detail"{%endblock%}
 
 
 {% block content %}
-{% include "flash_messages.html" %}
+{% include "flash_messages.twig" %}
 <section class="author-detail-row">
 	<header>
 
@@ -75,7 +75,7 @@
 	<section id="author-books">
 		<ul data-role="listview">
 			{% for book in books %}
-				{% include "title_entry.html" %}		
+				{% include "title_entry.twig" %}		
 			{% endfor %}	
 		</ul>
 	</section>

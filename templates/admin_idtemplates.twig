@@ -1,4 +1,4 @@
-{% extends 'main.html' %}
+{% extends 'main.twig' %}
 
 {% block pid %}id="padmin_idtemplates" data-ajax="false"{%endblock%}
 {% block content %}
@@ -6,7 +6,7 @@
 <header>
 	<h1>{{ page.glob.l10n.admin_idtemplates }}</h1>
 </header>
-{% include "flash_messages.html" %}
+{% include "flash_messages.twig" %}
 
 <p>{{page.glob.l10n.admin_idtemplates_legend|raw}}</p>
 <ul id="idtemplates" data-role="listview" data-split-icon="delete" data-inset="true">

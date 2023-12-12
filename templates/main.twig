@@ -84,14 +84,14 @@
         </div>
 
         {% if page.dialog==false %}
-        {% include "navbar.html" %}
+        {% include "navbar.twig" %}
         {% endif %}
     </div>
     <div data-role="content">
         {% block content %}{% endblock %}
     </div>
     <div data-role="footer" class="footer">
-        {% include "footer.html" %}
+        {% include "footer.twig" %}
     </div>
     {% block rightpanel %}{% endblock %}
 </div>

@@ -71,7 +71,7 @@ class MainActions extends DefaultActions
     */
     public function myNotFound()
     {
-        $this->render('error.html', [
+        $this->render('error.twig', [
             'page' => $this->mkPage('not_found1'),
             'title' => $this->getMessageString('not_found1'),
             'error' => $this->getMessageString('not_found2')]);
@@ -83,7 +83,7 @@ class MainActions extends DefaultActions
             $this->log()->info('user is already logged in : ' . $this->auth()->getUserName());
             $this->mkRedirect($this->getRootUri() . '/');
         } else {
-            $this->render('login.html', [
+            $this->render('login.twig', [
                 'page' => $this->mkPage('login')]);
         }
     }
@@ -96,7 +96,7 @@ class MainActions extends DefaultActions
             $uname = $login_data['username'];
             $upw = $login_data['password'];
             if (empty($uname) || empty($upw)) {
-                $this->render('login.html', [
+                $this->render('login.twig', [
                     'page' => $this->mkPage('login')]);
             } else {
                 try {
@@ -112,11 +112,11 @@ class MainActions extends DefaultActions
                     $this->log()->error('error logging in user : ' . $e->getMessage());
                 }
                 $this->log()->error('error logging in user : ' . $login_data['username']);
-                $this->render('login.html', [
+                $this->render('login.twig', [
                     'page' => $this->mkPage('login')]);
             }
         } else {
-            $this->render('login.html', [
+            $this->render('login.twig', [
                 'page' => $this->mkPage('login')]);
         }
     }
@@ -133,7 +133,7 @@ class MainActions extends DefaultActions
                 $this->log()->info("logged out user: " . $username);
             }
         }
-        $this->render('logout.html', [
+        $this->render('logout.twig', [
             'page' => $this->mkPage('logout')]);
     }
 
@@ -152,7 +152,7 @@ class MainActions extends DefaultActions
         $books1 = $this->calibre()->last30Books($globalSettings['lang'], $globalSettings[PAGE_SIZE], $filter);
         $books = array_map([$this, 'checkThumbnail'], $books1);
         $stats = $this->calibre()->libraryStats($filter);
-        $this->render('index_last30.html', [
+        $this->render('index_last30.twig', [
             'page' => $this->mkPage('dl30', 1, 1),
             'books' => $books,
             'stats' => $stats]);
@@ -178,7 +178,7 @@ class MainActions extends DefaultActions
         $tlt_books = array_map([$this, 'checkThumbnail'], $tlt['entries']);
         $tls = $this->calibre()->seriesSlice(0, $globalSettings[PAGE_SIZE], trim($search));
         $tls_books = array_map([$this, 'checkThumbnail'], $tls['entries']);
-        $this->render('global_search.html', [
+        $this->render('global_search.twig', [
             'page' => $this->mkPage('pagination_search', 0),
             'books' => $tlb_books,
             'books_total' => $tlb['total'] == -1 ? 0 : $tlb['total'],
@@ -237,7 +237,7 @@ class MainActions extends DefaultActions
         }
 
         $books = array_map([$this, 'checkThumbnail'], $tl['entries']);
-        $this->render('titles.html', [
+        $this->render('titles.twig', [
             'page' => $this->mkPage('titles', 2, 1),
             'url' => 'titleslist',
             'books' => $books,
@@ -303,7 +303,7 @@ class MainActions extends DefaultActions
         $kindle_format = ($globalSettings[KINDLE] == 1) ? $this->calibre()->titleGetKindleFormat($id) : null;
         $this->log()->debug('titleDetails custom columns: ' . count($details['custom']));
         $this->render(
-            'title_detail.html',
+            'title_detail.twig',
             ['page' => $this->mkPage('book_details', 2, 2),
                 'book' => $details['book'],
                 'authors' => $details['authors'],
@@ -580,7 +580,7 @@ class MainActions extends DefaultActions
                 $this->log()->debug('authorsSlice thumbnail ' . var_export($author->thumbnail->url, true));
             }
         }
-        $this->render('authors.html', [
+        $this->render('authors.twig', [
             'page' => $this->mkPage('authors', 3, 1),
             'url' => 'authorslist',
             'authors' => $tl['entries'],
@@ -636,7 +636,7 @@ class MainActions extends DefaultActions
         }
 
         $author->links = $this->bbs()->authorLinks($id);
-        $this->render('author_detail.html', [
+        $this->render('author_detail.twig', [
             'page' => $this->mkPage('author_details', 3, 2),
             'url' => 'authors/' . $id,
             'author' => $author,
@@ -681,7 +681,7 @@ class MainActions extends DefaultActions
         } else {
             $author->notes = null;
         }
-        $this->render('author_notes.html', [
+        $this->render('author_notes.twig', [
             'page' => $this->mkPage('author_notes', 3, 2),
             'url' => 'authors/' . $id,
             'author' => $author,
@@ -711,7 +711,7 @@ class MainActions extends DefaultActions
         } else {
             $tl = $this->calibre()->seriesSlice($page, $globalSettings[PAGE_SIZE]);
         }
-        $this->render('series.html', [
+        $this->render('series.twig', [
             'page' => $this->mkPage('series', 5, 1),
             'url' => 'serieslist',
             'series' => $tl['entries'],
@@ -747,7 +747,7 @@ class MainActions extends DefaultActions
             return;
         }
         $books = array_map([$this, 'checkThumbnail'], $tl['entries']);
-        $this->render('series_detail.html', [
+        $this->render('series_detail.twig', [
             'page' => $this->mkPage('series_details', 5, 2),
             'url' => 'series/' . $id,
             'series' => $tl['series'],
@@ -778,7 +778,7 @@ class MainActions extends DefaultActions
         } else {
             $tl = $this->calibre()->tagsSlice($page, $globalSettings[PAGE_SIZE]);
         }
-        $this->render('tags.html', [
+        $this->render('tags.twig', [
             'page' => $this->mkPage('tags', 4, 1),
             'url' => 'tagslist',
             'tags' => $tl['entries'],
@@ -814,7 +814,7 @@ class MainActions extends DefaultActions
             return;
         }
         $books = array_map([$this, 'checkThumbnail'], $tl['entries']);
-        $this->render('tag_detail.html', [
+        $this->render('tag_detail.twig', [
             'page' => $this->mkPage('tag_details', 4, 2),
             'url' => 'tags/' . $id,
             'tag' => $tl['tag'],

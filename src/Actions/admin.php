@@ -68,7 +68,7 @@ class AdminActions extends DefaultActions
      */
     public function admin()
     {
-        $this->render('admin.html', [
+        $this->render('admin.twig', [
             'page' => $this->mkPage('admin', 0, 1),
             'isadmin' => $this->is_admin()]);
     }
@@ -107,7 +107,7 @@ class AdminActions extends DefaultActions
      */
     public function configuration()
     {
-        $this->render('admin_configuration.html', [
+        $this->render('admin_configuration.twig', [
             'page' => $this->mkPage('admin', 0, 2),
             'mailers' => $this->mkMailers(),
             'ttss' => $this->mkTitleTimeSortOptions(),
@@ -146,7 +146,7 @@ class AdminActions extends DefaultActions
             array_push($idtemplates, $ni);
         }
         $this->log()->debug('admin_get_idtemplates ' . json_encode($idtemplates));
-        $this->render('admin_idtemplates.html', [
+        $this->render('admin_idtemplates.twig', [
             'page' => $this->mkPage('admin_idtemplates', 0, 2),
             'templates' => $idtemplates,
             'isadmin' => $this->is_admin()]);
@@ -218,7 +218,7 @@ class AdminActions extends DefaultActions
             'smtpserver' => $globalSettings[SMTP_SERVER],
             'smtpport' => $globalSettings[SMTP_PORT],
             'smtpenc' => $globalSettings[SMTP_ENCRYPTION]];
-        $this->render('admin_mail.html', [
+        $this->render('admin_mail.twig', [
             'page' => $this->mkPage('admin_mail', 0, 2),
             'mail' => $mail,
             'encryptions' => $this->mkEncryptions(),
@@ -252,7 +252,7 @@ class AdminActions extends DefaultActions
             SMTP_PORT => $mail_data['smtpport'],
             SMTP_ENCRYPTION => $mail_data['smtpenc']];
         $this->bbs()->saveConfigs($mail_config);
-        $this->render('admin_mail.html', [
+        $this->render('admin_mail.twig', [
             'page' => $this->mkPage('admin_smtp', 0, 2),
             'mail' => $mail_data,
             'encryptions' => $this->mkEncryptions(),
@@ -266,7 +266,7 @@ class AdminActions extends DefaultActions
     public function get_users()
     {
         $users = $this->bbs()->users();
-        $this->render('admin_users.html', [
+        $this->render('admin_users.twig', [
             'page' => $this->mkPage('admin_users', 0, 2),
             'users' => $users,
             'isadmin' => $this->is_admin()]);
@@ -303,7 +303,7 @@ class AdminActions extends DefaultActions
         $nt->key = '';
         array_unshift($tags, $nt);
         $this->log()->debug('admin_get_user: ' . json_encode($user));
-        $this->render('admin_user.html', [
+        $this->render('admin_user.twig', [
             'page' => $this->mkPage('admin_users', 0, 3),
             'user' => $user,
             'languages' => $languages,
@@ -402,7 +402,7 @@ class AdminActions extends DefaultActions
         # Check access permission
         if (!$this->is_admin()) {
             $this->log()->warning('admin_change: no admin permission');
-            $this->render('admin_configuration.html', [
+            $this->render('admin_configuration.twig', [
                 'page' => $this->mkPage('admin'),
                 'messages' => [$this->getMessageString('invalid_password')],
                 'isadmin' => false]);
@@ -464,7 +464,7 @@ class AdminActions extends DefaultActions
         # Don't save just return the error status
         if (count($errors) > 0) {
             $this->log()->error('admin_change: ended with error ' . var_export($errors, true));
-            $this->render('admin_configuration.html', [
+            $this->render('admin_configuration.twig', [
                 'page' => $this->mkPage('admin'),
                 'isadmin' => true,
                 'errors' => $errors]);
@@ -484,7 +484,7 @@ class AdminActions extends DefaultActions
                 $this->settings($globalSettings);
             }
             $this->log()->debug('admin_change: ended');
-            $this->render('admin_configuration.html', [
+            $this->render('admin_configuration.twig', [
                 'page' => $this->mkPage('admin', 0, 2),
                 'messages' => [$this->getMessageString('changes_saved')],
                 'mailers' => $this->mkMailers(),
@@ -524,7 +524,7 @@ class AdminActions extends DefaultActions
                 $versionAnswer = sprintf($this->getMessageString('admin_no_new_version'), $globalSettings['version']);
             }
         }
-        $this->render('admin_version.html', [
+        $this->render('admin_version.twig', [
             'page' => $this->mkPage('admin_check_version', 0, 2),
             'versionClass' => $versionClass,
             'versionAnswer' => $versionAnswer,

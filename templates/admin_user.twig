@@ -1,10 +1,10 @@
-{% extends 'main.html' %}
+{% extends 'main.twig' %}
 
 {% block pid %}id="padmin_user" data-ajax="false"{%endblock%}
 {% block content %}
 
 <h1>{{ page.glob.langa.admin_users }}</h1>
-{% include "flash_messages.html" %}
+{% include "flash_messages.twig" %}
 
 <p>{{page.glob.langa.admin_users_legend2}}</p>
 <form action="{{page.rot}}/admin/users/{{user.id}}/" method="put" id="userform" 

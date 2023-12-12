@@ -104,7 +104,7 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
     public function check_admin(...$args)
     {
         if (!$this->is_admin()) {
-            $this->render('error.html', [
+            $this->render('error.twig', [
                 'page' => $this->mkPage('error', 0, 0),
                 'error' => $this->getMessageString('error_no_access')]);
             return true;

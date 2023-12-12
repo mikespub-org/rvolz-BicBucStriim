@@ -1,7 +1,7 @@
-{% extends 'main.html' %}
+{% extends 'main.twig' %}
 
 {% block headerlinks %}
-  <!--
+<!--
   ~  BicBucStriim
   ~
   ~  Copyright (c) 2012-2015 Rainer Volz
@@ -10,38 +10,31 @@
   -->
 
 <link rel="related" href="{{page.rot}}/opds/"
-  	type="application/atom+xml;profile=opds-catalog" title="OPDS index">
-  <link rel="alternate" href="{{page.rot}}/opds/authorlist/" 
-  	type="application/atom+xml;profile=opds-catalog" title="OPDS catalog: by authors">
+	type="application/atom+xml;profile=opds-catalog" title="OPDS index">
+<link rel="alternate" href="{{page.rot}}/opds/serieslist/" 
+	type="application/atom+xml;profile=opds-catalog" title="OPDS catalog: by series">
 {% endblock %}
 
-{% block pid %}id="pauthors"{%endblock%}
+{% block pid %}id="pseries"{%endblock%}
 
 {% block content %}
 <ul data-role="listview" data-filter="false">	
-	{% for author in authors %}
-		{% if author.initial != "" %}
-			<li data-role="list-divider"> {{ author.initial }}</li>
+	{% for this_series in series %}
+		{% if series.initial != "" %}
+			<li data-role="list-divider"> {{ this_series.initial }}</li>
 		{% else %}
 			<li>
-				<a href="{{page.rot}}/authors/{{ author.id }}/0/">
-					{% if author.thumbnail %}
-					<img src="{{page.rot}}/{{author.thumbnail.url}}"/>
-					{% else %}
-					<img src="{{page.rot}}/img/writer.png"/>
-					{% endif %}
-					<h3>{{ author.sort }}</h3>
-					<span class="ui-li-count">{{author.anzahl}}</span>
-				</a>
+				<a href="{{page.rot}}/series/{{ this_series.id }}/0/">{{ this_series.name }}
+				<span class="ui-li-count">{{ this_series.anzahl }}</span></a>
 			</li>
 		{% endif %}
-  {% endfor %}
+  	{% endfor %}
 </ul>
 {% endblock %}
 
 
 {% block leftpanel %}
-<section data-role="panel" data-display="overlay" data-position="left" id="authors_options_panel">
+<section data-role="panel" data-display="overlay" data-position="left" id="series_options_panel">
     <h2>{{page.glob.l10n.pagination_search}}</h2>
 
     <form action="{{page.rot}}/search/"

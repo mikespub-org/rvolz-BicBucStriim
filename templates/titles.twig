@@ -1,4 +1,4 @@
-{% extends 'main.html' %}
+{% extends 'main.twig' %}
 
 {% block headerlinks %}
 <!--
@@ -23,7 +23,7 @@
 		{% if book.initial != "" %}
 			<li data-role="list-divider"> {{ book.initial }}</li>
 		{% else %}
-			{% include "title_entry.html" %}
+			{% include "title_entry.twig" %}
 		{% endif %}
   {% endfor %}
 </ul>

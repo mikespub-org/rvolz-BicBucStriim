@@ -125,7 +125,7 @@ if ($gdv >= 2) {
 }
 
 
-$template = $twig->load('installcheck.html');
+$template = $twig->load('installcheck.twig');
 echo $template->render([
     'page' => [
         'rot' => '',

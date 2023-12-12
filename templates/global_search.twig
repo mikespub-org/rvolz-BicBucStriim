@@ -1,4 +1,4 @@
-{% extends 'main.html' %}
+{% extends 'main.twig' %}
 
 {% block headerlinks %}
 {% endblock %}
@@ -19,7 +19,7 @@
 		<h3>{{page.glob.l10n.titles}}: {{books_total}}</h3>
 		<ul data-role="listview" data-filter="false">	
 			{% for book in books %}
-				{% include "title_entry.html" %}
+				{% include "title_entry.twig" %}
 		  	{% endfor %}
 		  	{% if more_books %}
 		  		<li data-theme="a">

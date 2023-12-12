@@ -1,4 +1,4 @@
-{% extends 'main.html' %}
+{% extends 'main.twig' %}
 
 {% block headerlinks %}
 <link rel="related" href="{{page.rot}}/opds/" 
@@ -21,7 +21,7 @@
 <h2>{{page.glob.l10n.dl30}}</h2>
 <ul data-role="listview">
 	{% for book in books %}
-  	{% include "title_entry.html" %}
+  	{% include "title_entry.twig" %}
   {% endfor %}
 </ul>
 {% endblock %}

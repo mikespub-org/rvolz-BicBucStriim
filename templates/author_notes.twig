@@ -1,10 +1,10 @@
-{% extends 'main.html' %}
+{% extends 'main.twig' %}
 
 {% block pid %}id="pauthor_notes"{%endblock%}
 
 
 {% block content %}
-{% include "flash_messages.html" %}
+{% include "flash_messages.twig" %}
 <section  id="author-mdnotes-panel" >
 	<header>
 		<h2>{{page.glob.l10n.author_notes}}</h2>

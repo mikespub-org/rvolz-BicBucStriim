@@ -1,10 +1,10 @@
-{% extends 'main.html' %}
+{% extends 'main.twig' %}
 
 {% block pid %}id="padmin_mail" data-ajax="false"{%endblock%}
 {% block content %}
 
 <h1>{{ page.glob.l10n.admin_mail }}</h1>
-{% include "flash_messages.html" %}
+{% include "flash_messages.twig" %}
 
 <p>{{page.glob.l10n.admin_mail_legend}}</p>
 <form action="{{page.rot}}/admin/mail/" method="put" id="mailform" data-proot="{{page.rot}}">

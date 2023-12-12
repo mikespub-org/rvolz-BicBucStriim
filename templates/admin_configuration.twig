@@ -1,10 +1,10 @@
-{% extends 'main.html' %}
+{% extends 'main.twig' %}
 
 {% block pid %}id="padmin" data-ajax="false"{%endblock%}
 {% block content %}
 
 <h1>{{ page.glob.l10n.admin }}</h1>
-{% include "flash_messages.html" %}
+{% include "flash_messages.twig" %}
 
 <form action="{{page.rot}}/admin/configuration/" method="post" id="adminform">
 	<fieldset data-role="fieldcontain">
