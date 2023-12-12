@@ -4,11 +4,11 @@ BicBucStriim
 Forked Branches for PHP 8.x
 ---------------------------
 
-| Upstream | PHP 8.x PR | Updated | Back-end | Front-end | Status | Release |
-|----------|------------|---------|----------|-----------|--------|---------|
-| [v1](https://github.com/mikespub-org/rvolz-BicBucStriim/tree/v1) | [v1](https://github.com/mikespub-org/rvolz-BicBucStriim/tree/v1) | [main](https://github.com/mikespub-org/rvolz-BicBucStriim/tree/main) | - | - | Production | [v1.7.2](https://github.com/mikespub-org/rvolz-BicBucStriim/releases/tag/v1.7.2) |
-| [master](https://github.com/mikespub-org/rvolz-BicBucStriim/tree/master) | [master](https://github.com/mikespub-org/rvolz-BicBucStriim/tree/master) | [updated](https://github.com/mikespub-org/rvolz-BicBucStriim/tree/updated) | New | - | Unused | - |
-| [BicBucStriim-352](https://github.com/mikespub-org/rvolz-BicBucStriim/tree/BicBucStriim-352) | [BicBucStriim-352](https://github.com/mikespub-org/rvolz-BicBucStriim/tree/BicBucStriim-352) | [frontend](https://github.com/mikespub-org/rvolz-BicBucStriim/tree/frontend) | New | New | Unfinished | - |
+| Upstream (archived)  | Updated | Back-end | Front-end | Status | Release |
+|----------------------|---------|----------|-----------|--------|---------|
+| [v1](https://github.com/rvolz/BicBucStriim/tree/v1) | [main](https://github.com/mikespub-org/rvolz-BicBucStriim/tree/main) | v3.x | - | Production | [v1.7.2](https://github.com/mikespub-org/rvolz-BicBucStriim/releases/tag/v1.7.2) |
+| [master](https://github.com/rvolz/BicBucStriim/tree/master) | [backend](https://github.com/mikespub-org/rvolz-BicBucStriim/tree/backend) | v2.x | - | Unused | - |
+| [BicBucStriim-352](https://github.com/rvolz/BicBucStriim/tree/BicBucStriim-352) | [frontend](https://github.com/mikespub-org/rvolz-BicBucStriim/tree/frontend) | v2.x | v2.x | Unfinished | - |
 
 Updated Framework since v3.0.x
 ------------------------------
