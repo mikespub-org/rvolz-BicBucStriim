@@ -3,7 +3,7 @@
     "description": "BicBucStriim streams books, digital books. It fills a gap in the functionality of current NAS devices that provide access to music, videos and photos -- but not books. BicBucStriim fills this gap and provides web-based access to your e-book collection. ",
     "license": "MIT",
     "require": {
-        "php": ">=7.4.0",
+        "php": ">=8.1.0",
         "ext-dom": "*",
         "ext-json": "*",
         "ext-gd": "*",
@@ -15,9 +15,9 @@
         "ext-xml": "*",
         "ext-xmlwriter": "*",
         "ext-zip": "*",
-        "slim/slim": "^4.6",
+        "slim/slim": "^4.12",
         "php-di/php-di": "^6.4",
-        "slim/twig-view": "^3.0",
+        "slim/twig-view": "^3.3",
         "swiftmailer/swiftmailer": "^6.3",
         "gabordemooij/redbean": "^v5.7",
         "monolog/monolog": "^2.9",
@@ -25,14 +25,14 @@
         "ircmaxell/password-compat": "^v1.0",
         "aura/accept": "^4.0",
         "akrabat/proxy-detection-middleware": "^1.0",
-        "slim/http-cache": "^1.0",
-        "guzzlehttp/psr7": "^2.4",
-        "http-interop/http-factory-guzzle": "^1.0",
+        "slim/http-cache": "^1.1",
+        "guzzlehttp/psr7": "^2.6",
+        "http-interop/http-factory-guzzle": "^1.2",
         "middlewares/trailing-slash": "^2.0",
         "anyascii/anyascii": "^0.3",
-        "vlucas/phpdotenv": "^5.2",
-        "dflydev/fig-cookies": "^3.0",
-        "firebase/php-jwt": "^6.4",
+        "vlucas/phpdotenv": "^5.6",
+        "dflydev/fig-cookies": "^3.1",
+        "firebase/php-jwt": "^6.10",
         "league/fractal": "^0.20"
     },
     "require-dev": {
@@ -40,9 +40,9 @@
         "simpletest/simpletest": "dev-main",
         "phpunit/phpunit": "^9.6",
         "nategood/httpful": "^0.3",
-        "phpstan/phpstan": "^1.8",
+        "phpstan/phpstan": "^1.10",
         "slim/psr7": "^1.6",
-        "phpspec/prophecy": "^1.17"
+        "phpspec/prophecy": "^1.18"
     },
     "scripts": {
         "genl10n": "yarn genl10n",

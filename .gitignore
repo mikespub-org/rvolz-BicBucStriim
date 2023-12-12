@@ -12,3 +12,9 @@ public/.env
 .vscode/
 .yarn/
 .yarnrc.yml
+.php-cs-fixer.cache
+data/authors/*.png
+data/titles/*.png
+bicbucstriim*.zip
+.phpunit.cache
+tests/coverage/
