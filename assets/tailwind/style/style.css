@@ -1,0 +1,144 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+
+    [x-cloak] { display: none; }
+
+    /* flash messages */
+    .success { @apply bg-orchid-600 text-white}
+    .error { @apply bg-blush-600 text-white }
+    .note { @apply bg-steel-300 }
+
+
+    /* border around main area */
+    .main-border {
+        @apply border-4 border-dashed border-gray-200 rounded-lg
+    }
+
+    .top-link {
+        @apply flex-grow bg-btn2 dark:bg-btn2d p-1 mx-1 rounded text-htxtl hover:text-hover1 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-ring1
+    }
+
+    .top-link-disabled {
+        @apply flex-grow bg-btn2 dark:bg-btn2d p-1 mx-1 rounded text-htxtl opacity-50 hover:text-hover1 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-ring1
+    }
+
+    /* buttons */
+    button.btn-submit {
+        @apply bg-btn1 dark:bg-btn1d py-2 px-4 text-white border border-transparent shadow-sm text-sm font-medium rounded-md hover:bg-hover1 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-1
+    }
+    button.btn-cancel {
+        @apply bg-btn2 dark:bg-btn2d py-2 px-4 text-gray-700 border border-gray-300 shadow-sm text-sm font-medium rounded-md hover:bg-hover1 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-ring1
+    }
+
+
+
+    /** move up */
+
+    .other-link {
+        @apply bg-manatee-300 px-1 mx-1 rounded text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white
+    }
+
+    .input {
+        @apply h-6 text-sm px-2 py-2 disabled:opacity-50
+    }
+
+    .top-select {
+        min-width: 5rem;
+        width: auto;
+    }
+
+
+    .menu-link {
+        @apply flex-grow text-center bg-manatee-300 px-1 mx-1 rounded text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-steel-400 focus:ring-steel-300
+    }
+
+    .active {
+        @apply border-2 border-blush-400
+    }
+
+    .menu-link > svg {
+        @apply w-6 h-6 inline-flex
+    }
+
+    .menu-link > span {
+        @apply hidden md:inline-flex
+    }
+
+    .menu-link-disabled {
+        @apply flex-grow text-center bg-manatee-300 px-1 mx-1 rounded text-black opacity-50
+    }
+
+    .nav-link {
+        @apply relative inline-flex items-center px-2 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-blush-500 focus:border-blush-500
+    }
+
+    .config-fieldset {
+        @apply grid grid-flow-row grid-rows-2 grid-cols-2 md:grid-rows-1 md:grid-cols-4 m-1 p-1 gap-1
+    }
+
+    .config-fieldset-small {
+        @apply grid grid-flow-row grid-cols-2 m-1 p-1 gap-1
+    }
+
+    .config-fieldset > label {
+        @apply text-left
+    }
+
+    .config-fieldset > select, input {
+        @apply h-12
+    }
+
+    .config-fieldset > p {
+        @apply text-sm col-span-2
+    }
+
+    .btn-config {
+        @apply w-full bg-steel-500 text-center text-white font-bold p-4 rounded-b
+    }
+
+    .btn-app {
+        @apply bg-steel-500 text-center text-white font-bold p-2 rounded-b
+    }
+
+    .li-config {
+        @apply bg-manatee-200 rounded border m-2 p-2 flex items-center justify-between
+    }
+
+    /* front page library stats */
+    .stats-cell {
+        @apply py-4 px-4 bg-manatee-200 border rounded border-chocolate-400
+    }
+    .stats-header {
+        @apply text-blush-400 text-xl
+    }
+    .stats-value {
+        @apply text-blush-600 text-4xl font-bold text-center
+    }
+
+    /* list view title counts */
+    .count-cell {
+        @apply bg-manatee-200 ring-chocolate-400 ring-2
+    }
+    .count-value {
+        @apply p-1 bg-manatee-200 rounded ring-chocolate-400 ring-2 text-blush-600 text-xl font-bold text-center
+    }
+
+    div.listview-titles {
+        @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3
+    }
+
+    div.listview {
+        @apply grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6
+    }
+
+    div.collapsible {
+        @apply bg-steel-200 border-2 border-r-2
+    }
+
+    div.collapsed {
+    }
+
+}

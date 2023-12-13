@@ -1,0 +1,51 @@
+{
+    "scripts": {
+        "prep-work": [
+            "rm -rf ./dist",
+            "rm -rf ./work",
+            "yarn run development",
+            "mkdir -p ./work/www/public/img",
+            "mkdir -p ./work/www/public/js",
+            "mkdir -p ./work/www/public/style",
+            "mkdir -p ./work/www/templates",
+            "cp -r app work/www",
+            "cp -r data work/www",
+            "cp  -r public work/www",
+            "cp -r assets/tailwind/img work/www/public",
+            "cp -r assets/tailwind/js work/www/public",
+            "cp -r ./dist/style ./work/www/public",
+            "cp -r ./templates ./work/www",
+            "cp -r src work/www",
+            "cp -r vendor work/www",
+            "mkdir ./work/lib",
+            "cp -r tests/fixtures/lib2/ ./work/lib",
+            "mkdir -p ./work/www/var/logs",
+            "mkdir -p ./work/www/var/cache"
+        ],
+        "clean-work": [
+            "rm -rf ./work",
+            "rm -rf ./dist"
+        ],
+        "copy-src": [
+            "cp -r app work/www",
+            "cp -r src work/www",
+            "cp -r public work/www"
+        ],
+        "copy-res": [
+            "yarn run development",
+            "cp -r ./dist/style ./work/www/public",
+            "cp -r ./assets/tailwind/img ./work/www/public",
+            "cp -r ./assets/tailwind/js ./work/www/public",
+            "cp -r ./templates ./work/www",
+            "rm -rf ./work/www/var/cache/*"
+        ],
+        "start": [
+            "@prep-work",
+            "docker-compose start"
+        ],
+        "stop": [
+            "docker-compose stop",
+            "@clean-work"
+        ]
+    }
+}
