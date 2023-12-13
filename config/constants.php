@@ -53,3 +53,5 @@ const TITLE_TIME_SORT_PUBDATE = 'pubdate';
 const TITLE_TIME_SORT_LASTMODIFIED = 'lastmodified';
 # if true then relative urls will be generated
 const RELATIVE_URLS = 'relative_urls';
+# custom templates directory that overrides the default
+const TEMPLATES_DIR = 'templates_dir';

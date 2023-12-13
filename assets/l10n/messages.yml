@@ -443,6 +443,16 @@ admin_smtpuserpw_expl:
   gl: ! 'Contrasinal para o servidor SMTP '
   es: ! 'Contraseña del servidor SMTP '
   pl: ! 'Hasło dla serwera SMTP '
+admin_templates_dir:
+  hu: Egyéni sablonok könyvtára
+  de: Verzeichnis für benutzerdefinierte Vorlagen
+  en: Custom templates directory
+  fr: Répertoire de modèles personnalisés
+  nl: Aangepaste sjablonenmap
+  it: Directory dei modelli personalizzati
+  gl: Directorio de modelos personalizados
+  es: Directorio de plantillas personalizadas
+  pl: Katalog szablonów niestandardowych
 admin_tts:
   hu: Cím szerinti rendezés időrendben
   de: Titel-Sortierung nach Datum

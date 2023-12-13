@@ -87,6 +87,22 @@ class AdminActions extends DefaultActions
         return [$e0, $e1, $e2];
     }
 
+    public function mkTemplatesDirs()
+    {
+        $e = new ConfigTemplatesDir();
+        $e->key = '';
+        $e->text = 'templates (default)';
+        $options = [$e];
+        $templatesDir = realpath('templates');
+        $subDirs = glob($templatesDir . '/*' , GLOB_ONLYDIR);
+        foreach ($subDirs as $subDir) {
+            $e = new ConfigTemplatesDir();
+            $e->key = str_replace($templatesDir, 'templates', $subDir);
+            $e->text = str_replace($templatesDir, 'templates', $subDir);
+            $options[] = $e;
+        }
+        return $options;
+    }
 
     public function mkTitleTimeSortOptions()
     {
@@ -111,6 +127,7 @@ class AdminActions extends DefaultActions
             'page' => $this->mkPage('admin', 0, 2),
             'mailers' => $this->mkMailers(),
             'ttss' => $this->mkTitleTimeSortOptions(),
+            'templates_dirs' => $this->mkTemplatesDirs(),
             'isadmin' => $this->is_admin()]);
     }
 
@@ -489,6 +506,7 @@ class AdminActions extends DefaultActions
                 'messages' => [$this->getMessageString('changes_saved')],
                 'mailers' => $this->mkMailers(),
                 'ttss' => $this->mkTitleTimeSortOptions(),
+                'templates_dirs' => $this->mkTemplatesDirs(),
                 'isadmin' => true,
             ]);
         }

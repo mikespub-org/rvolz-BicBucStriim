@@ -119,6 +119,17 @@
 		</select>
 		<p>{{page.glob.l10n.relative_urls_expl}}</p>
 	</fieldset>
+	<fieldset data-role="fieldcontain">
+		<label for="templates_dir">{{page.glob.l10n.admin_templates_dir}}</label>
+		<select name="templates_dir" id="templates_dir" value="{{page.glob.templates_dir}}">
+			{% for templates_dir in templates_dirs %}
+				<option value="{{templates_dir.key}}" {%if page.glob.templates_dir == templates_dir.key %}selected="true"{% endif %}>
+					{{templates_dir.text}}
+				</option>
+			{% endfor %}
+		</select>
+		<p></p>
+	</fieldset>
 
 	<button type="submit">{{page.glob.l10n.save}}</button>	
 </form>

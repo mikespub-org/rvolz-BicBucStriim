@@ -24,9 +24,6 @@ $appname = 'BicBucStriim';
 $appversion = '1.7.2';
 # Base path - null means undefined, empty '' or '/bbs' etc. mean predefined
 $basepath = null;
-# Custom template directories that override the default BicBucStriim
-$customTemplateDirs = null;
-//$customTemplateDirs = ['templates/custom'];
 
 # Init app globals
 $globalSettings = [];
@@ -59,17 +56,17 @@ $globalSettings[METADATA_UPDATE] = 0;
 $globalSettings[LOGIN_REQUIRED] = 1;
 $globalSettings[TITLE_TIME_SORT] = TITLE_TIME_SORT_TIMESTAMP;
 $globalSettings[RELATIVE_URLS] = 1;
+$globalSettings[TEMPLATES_DIR] = '';
 
 $knownConfigs = [CALIBRE_DIR, DB_VERSION, KINDLE, KINDLE_FROM_EMAIL,
     THUMB_GEN_CLIPPED, PAGE_SIZE, DISPLAY_APP_NAME, MAILER, SMTP_SERVER,
     SMTP_PORT, SMTP_USER, SMTP_PASSWORD, SMTP_ENCRYPTION, METADATA_UPDATE,
-    LOGIN_REQUIRED, TITLE_TIME_SORT, RELATIVE_URLS];
+    LOGIN_REQUIRED, TITLE_TIME_SORT, RELATIVE_URLS, TEMPLATES_DIR];
 
 return [
     'appname' => $appname,
     'appversion' => $appversion,
     'basepath' => $basepath,
     'globalSettings' => $globalSettings,
-    'knownConfigs' => $knownConfigs,
-    'customTemplateDirs' => $customTemplateDirs,
+    'knownConfigs' => $knownConfigs
 ];

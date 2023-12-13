@@ -21,6 +21,8 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
 
     /** @var \BicBucStriim\App|\Slim\App|object */
     protected $app;
+    /** @var string|null */
+    protected $templatesDir = null;
 
     /**
      * Add routes for default actions
@@ -165,8 +167,29 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
     {
         // Slim 2 framework will replace data, render template and echo output via slim view display()
         //$this->app()->render($template, $data, $status);
+        $this->setTemplatesDir();
         $content = $this->twig()->render($template, $data);
         $this->mkResponse($content, 'text/html');
+    }
+
+    /**
+     * Set custom templates directory (once)
+     * @return void
+     */
+    public function setTemplatesDir()
+    {
+        if (is_null($this->templatesDir)) {
+            $this->templatesDir = '';
+            $globalSettings = $this->settings();
+            // convert to real path here
+            if (!empty($globalSettings[TEMPLATES_DIR])) {
+                $this->templatesDir = realpath($globalSettings[TEMPLATES_DIR]);
+            }
+            // override default templates if available
+            if (!empty($this->templatesDir)) {
+                $this->twig()->getLoader()->prependPath($this->templatesDir);
+            }
+        }
     }
 
     /**

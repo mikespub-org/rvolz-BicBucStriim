@@ -19,6 +19,11 @@ class ConfigMailer extends Item
     public $key;
     public $text;
 }
+class ConfigTemplatesDir extends Item
+{
+    public $key;
+    public $text;
+}
 class ConfigTtsOption extends Item
 {
     public $key;
