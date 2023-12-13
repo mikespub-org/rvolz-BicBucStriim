@@ -63,6 +63,13 @@ class MainActions extends DefaultActions
             ['POST', '/titles/{id}/kindle/{file}', [$self, 'kindle']],
             ['GET', '/titles/{id}/thumbnail/', [$self, 'thumbnail']],
             ['GET', '/titleslist/{page}/', [$self, 'titlesSlice']],
+            // temporary routes for the tailwind templates (= based on the v2.x frontend)
+            ['GET', '/authors/', [$self, 'authorsSlice']],
+            ['GET', '/series/', [$self, 'seriesSlice']],
+            ['GET', '/tags/', [$self, 'tagsSlice']],
+            ['GET', '/titles/', [$self, 'titlesSlice']],
+            ['GET', '/static/covers/{id}/', [$self, 'cover']],
+            ['GET', '/static/titlethumbs/{id}/', [$self, 'thumbnail']],
         ];
     }
 

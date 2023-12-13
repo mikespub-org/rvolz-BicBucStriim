@@ -1,0 +1,15 @@
+{% extends 'layout-default.twig' %}
+
+{% block headerlinks %}
+	<link rel="related" href="{{page.rot}}/opds/" type="application/atom+xml;profile=opds-catalog" title="OPDS index">
+	<link rel="alternate" href="{{page.rot}}/opds/series/" type="application/atom+xml;profile=opds-catalog" title="OPDS catalog: by series">
+{% endblock %}
+
+{% block navbar %}
+	{% include "navbar_list.twig" %}
+{% endblock %}
+
+{% block content %}
+	{% include "flash_messages.twig" %}
+	{% include "series_listview.twig" %}
+{% endblock %}

@@ -1,0 +1,8 @@
+<div id="flash" class="my-1">
+	{% if flash.info %}
+		<p class="success p-0.5">{{ flash.info }}</p>
+	{% endif %}
+	{% if flash.error %}
+		<p class="error p-0.5">{{ flash.error }}</p>
+	{% endif %}
+</div>	

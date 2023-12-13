@@ -1,0 +1,96 @@
+{% extends 'layout-default.twig' %}
+
+{% block headerlinks %}
+{% endblock %}
+
+{% block content %}
+	{% include "flash_messages.twig" %}
+	{% include "search_form.twig" %}
+	<section>
+		<div class="collapsible" x-data="{ open: false }">
+			<h3>
+				{% if books_total > 0 %}
+				<button @click="open = true" class="top-link">
+					<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+				</button>
+				{% endif %}
+				{{page.glob.l10n.titles}}: {{books_total}}
+				{% if more_books %}
+					<div class="ml-4 inline-block top-link">
+						<a class="top-link" href="{{page.rot}}/titles/?search={{search}}&options={{ options }}">
+							<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+						</a>
+					</div>
+				{% endif %}
+			</h3>
+			<div  x-show="open"
+				  @click.away="open = false">
+				{% include "titles_listview.twig" %}
+			</div>
+			{# TODO include an extra card for "more books/authors..." instead of the link #}
+		</div>
+		<div class="collapsible" x-data="{ open: false }">
+			<h3>
+				{% if authors_total > 0 %}
+					<button @click="open = true" class="top-link">
+						<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+					</button>
+				{% endif %}
+				{{page.glob.l10n.authors}}: {{authors_total}}
+				{% if more_authors %}
+					<div class="ml-4 inline-block top-link">
+						<a href="{{page.rot}}/authors/?search={{search}}&options={{ options }}">
+							<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+						</a>
+					</div>
+				{% endif %}
+			</h3>
+			<div x-show="open"
+				 @click.away="open = false">
+				{% include "authors_listview.twig" %}
+			</div>
+		</div>
+		<div class="collapsible"  x-data="{ open: false }">
+			<h3>
+				{% if tags_total > 0 %}
+					<button @click="open = true" class="top-link">
+						<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+					</button>
+				{% endif %}
+				{{page.glob.l10n.tags}}:  {{tags_total}}
+				{% if more_tags %}
+					<div class="ml-4 inline-block top-link">
+						<a  href="{{page.rot}}/tags/?search={{search}}&options={{ options }}">
+							<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+						</a>
+					</div>
+				{% endif %}
+			</h3>
+			<div x-show="open"
+				 @click.away="open = false">
+				{% include "tags_listview.twig" %}
+			</div>
+		</div>
+		<div class="collapsible"  x-data="{ open: false }">
+			<h3>
+				{% if series_total > 0 %}
+					<button @click="open = true" class="top-link">
+						<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+					</button>
+				{% endif %}
+				{{page.glob.l10n.series}}:  {{series_total}}
+				{% if more_series %}
+					<div class="ml-4 inline-block top-link">
+						<a  href="{{page.rot}}/series/?search={{search}}&options={{ options }}">
+							<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+						</a>
+					</div>
+				{% endif %}
+			</h3>
+			<div x-show="open"
+				 @click.away="open = false">
+				{% include "series_listview.twig" %}
+			</div>
+		</div>
+	</section>
+{% endblock %}

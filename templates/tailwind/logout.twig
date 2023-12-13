@@ -1,0 +1,20 @@
+{% extends 'layout-blank.twig' %}
+
+{% block headerlinks %}{% endblock %}
+
+{% block content %}
+	{% include "flash_messages.twig" %}
+	<h2 class="text-2xl flex items-center justify-center py-4 px-4 sm:px-6 lg:px-8"
+		{# Clear the internal page cache when leaving #}
+		x-on:turbolinks:render="Turbolinks.clearCache"
+	>
+		{{page.glob.l10n.logout}}
+	</h2>
+	<div class="flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+		<div class="max-w-md w-full space-y-8">
+			<p>
+			{{page.glob.l10n.logout_expl}}:  <a class="menu-link" href="{{page.rot}}/login/">{{page.glob.l10n.login}}</a>
+			</p>
+		</div>
+	</div>
+{% endblock %}

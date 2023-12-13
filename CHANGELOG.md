@@ -8,6 +8,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Replaced abandoned package swiftmailer/swiftmailer with phpmailer/phpmailer
 
+## [3.1.0] - 2023-12-13 Custom template directories like tailwind
+### Added
+- Added tailwind css templates from v2.x frontend
+- Added support for custom template directories
+### Changed
+- Aligned template extension with v2.x frontend (.twig)
+- Updated javascript library versions a little bit (limited by jQuery Mobile)
+- Fixed e-mail validation check - see #2
+### Removed
+- Dropped unused epiceditor js and related themes
+
 ## [3.0.0] - 2023-12-10 Switch to Slim 4 framework
 ### Changed
 - Switched to PSR-3/7/11/15/17 + Slim 4 framework

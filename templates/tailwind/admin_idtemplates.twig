@@ -1,0 +1,50 @@
+{% extends 'layout-default.twig' %}
+
+{% block content %}
+
+{% include "flash_messages_admin.twig" %}
+
+<p>{{page.glob.l10n.admin_idtemplates_legend|raw}}</p>
+<ul id="idtemplates" class="w-full">
+{% for template in templates %}
+	<li class="li-config">
+		<a class="template">
+			<h2>
+				<span class="template-name">{{template.name}}</span>
+				<span> </span>
+				<span class="template-label">{{template.label}}</span>
+			</h2>
+			<p class="template-uri">{{template.val|raw}}</p>
+		</a>
+		<div class="ml-4 flex items-end">
+			<a class="top-link" href="#" title="{{page.glob.l10n.admin_idtemplate_clear}}">
+				<span class="sr-only">{{page.glob.l10n.admin_idtemplate_clear}}</span>
+				<svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+				</svg>
+			</a>
+		</div>
+	</li>
+{% endfor %}
+</ul>
+<div id="edit" data-role="popup" data-theme="a" class="ui-corner-all ui-content">
+	<form id="templateform" data-proot="{{page.rot}}">
+		<h3>{{page.glob.l10n.admin_idtemplate}}</h3>
+		<label for="name" class="ui-hidden-accessible">
+			{{page.glob.l10n.admin_idtemplate_name}}
+		</label>
+		<input name="name" id="name" value="" type="text" disabled="true" />
+		<label for="label" class="ui-hidden-accessible">
+			{{page.glob.l10n.admin_idtemplate_label}}
+		</label>
+		<input name="label" id="label" value="" placeholder="{{page.glob.l10n.admin_idtemplate_label}}" type="text"/>
+		<label for="template" class="ui-hidden-accessible">
+			{{page.glob.l10n.admin_idtemplate_template}}
+		</label>
+		<input name="template" id="template" value="" placeholder="{{page.glob.l10n.admin_idtemplate_template}}" type="url"/>
+		<button type="submit">
+			{{page.glob.l10n.save}}
+		</button>
+	</form>
+</div>
+{% endblock %}

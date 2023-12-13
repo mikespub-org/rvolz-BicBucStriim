@@ -205,6 +205,10 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
         } else {
             $title = $globalSettings[DISPLAY_APP_NAME] . $globalSettings['sep'] . $subtitle;
         }
+        $templatesDirName = '';
+        if (!empty($globalSettings[TEMPLATES_DIR])) {
+            $templatesDirName = basename($globalSettings[TEMPLATES_DIR]);
+        }
         $rot = $this->getRootUrl();
         $auth = $this->is_authenticated();
         if ($globalSettings[LOGIN_REQUIRED]) {
@@ -216,6 +220,7 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
             'rot' => $rot,
             'h1' => $subtitle,
             'version' => $globalSettings['version'],
+            'custom' => $templatesDirName,
             'glob' => $globalSettings,
             'menu' => $menu,
             'level' => $level,

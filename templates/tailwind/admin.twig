@@ -1,0 +1,33 @@
+{% extends "layout-default.twig" %}
+
+{% block content %}
+	{% include "flash_messages_admin.twig" %}
+	<h2 class="font-semibold">{{ page.glob.l10n.admin_short }}</h2>
+	<ul class="w-full">
+		<li class="bg-btn2 dark:bg-btn2d rounded border-1 m-2 p-2">
+			<a href="{{page.rot}}/admin/configuration/" class="w-full">
+				<h2>{{page.glob.l10n.admin}}</h2>
+			</a>
+		</li>
+		<li class="bg-btn2 dark:bg-btn2d rounded border-1 m-2 p-2">
+			<a href="{{page.rot}}/admin/users/" class="w-full">
+				<h2>{{page.glob.l10n.admin_users}}</h2>
+			</a>
+		</li>
+		<li class="bg-btn2 dark:bg-btn2d rounded border-1 m-2 p-2">
+			<a href="{{page.rot}}/admin/idtemplates/" class="w-full">
+				<h2>{{page.glob.l10n.admin_idtemplates}}</h2>
+			</a>
+		</li>
+		<li class="bg-btn2 dark:bg-btn2d rounded border-1 m-2 p-2">
+			<a href="{{page.rot}}/admin/mail/" class="w-full">
+				<h2>{{page.glob.l10n.admin_mail}}</h2>
+			</a>
+		</li>
+		<li class="bg-btn2 dark:bg-btn2d rounded border-1 m-2 p-2">
+			<a href="{{page.rot}}/admin/version/" class="w-full">
+				<h2>{{page.glob.l10n.admin_check_version}}</h2>
+			</a>
+		</li>
+	</ul>
+{% endblock %}
