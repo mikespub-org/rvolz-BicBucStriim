@@ -14,9 +14,9 @@ class MailerTest extends PHPUnit\Framework\TestCase
     {
         return [
             // type, method, expected, result
-            ['mail', 'getMailerMail', 1, ''],
-            ['sendmail', 'getMailerSendmail', 0, 'Expected response code 220 but got an empty response'],
-            ['smtp', 'getMailerSmtp', 0, 'Connection could not be established with host'],
+            ['mail', 'getMailerMail', 0, ''],
+            ['sendmail', 'getMailerSendmail', 0, 'Could not execute: /usr/sbin/sendmail -t -i'],
+            ['smtp', 'getMailerSmtp', 0, 'SMTP connect() failed.'],
         ];
     }
 
@@ -32,28 +32,30 @@ class MailerTest extends PHPUnit\Framework\TestCase
         $recipient = 'kindle@example.org';
         $sender = 'bicbucstriim@example.org';
         $filename = 'Serie Lessing [1] Lob der Faulheit - Gotthold Ephraim Lessing.epub';
-        $message = $mailer->createBookMessage($bookpath, $subject, $recipient, $sender, $filename);
-        //$message->clearSigners();
-        $content = $message->toString();
-        $pattern = [
-            '/Message-ID: <\w+@swift\.generated>/',
-            '/Date: .+/',
-            '/ boundary="_=_swift_\w+_=_"/',
-            '/--_=_swift_\w+_=_/m',
-        ];
-        $replacement = [
-            'Message-ID: <generated@swift.generated>',
-            'Date: generated',
-            ' boundary="_=_swift_generated_=_"',
-            '--_=_swift_generated_=_',
-        ];
-        $content = preg_replace($pattern, $replacement, $content);
-        $template = file_get_contents(self::FIXT . '/test-mailer.message.txt');
-        $this->assertEquals($template, $content);
-        $send_success = $mailer->sendMessage($message);
+        $message_success = $mailer->createBookMessage($bookpath, $subject, $recipient, $sender, $filename);
+        $this->assertEquals(1, $message_success);
+
+        $send_success = $mailer->sendMessage();
         $this->assertEquals($expected, $send_success);
         $dump = $mailer->getDump();
         $this->assertStringContainsString($result, $dump);
+
+        $content = $mailer->getMessage();
+        $pattern = [
+            '/Message-ID: <.+>/',
+            '/Date: .+/',
+            '/ boundary="b1=_\w+"/',
+            '/--b1=_\w+/',
+        ];
+        $replacement = [
+            'Message-ID: <generated>',
+            'Date: generated',
+            ' boundary="b1=_generated"',
+            '--b1=_generated',
+        ];
+        $content = preg_replace($pattern, $replacement, $content);
+        $template = file_get_contents(self::FIXT . '/test-mailer-' . $type . '.message.txt');
+        $this->assertEquals($template, $content);
     }
 
     public function getMailerSmtp()

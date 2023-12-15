@@ -2,6 +2,8 @@
 
 namespace BicBucStriim\Utilities;
 
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\SMTP;
 use Exception;
 
 class Mailer
@@ -16,7 +18,7 @@ class Mailer
     public const SSL = 'ssl';
     public const TLS = 'tls';
 
-    protected $transport;
+    protected $mailer;
     protected $dump;
 
     /**
@@ -32,18 +34,100 @@ class Mailer
     public function __construct($transportType = Mailer::MAIL, $config = [])
     {
         if ($transportType == Mailer::SMTP) {
-            // Create the Transport
-            if (isset($config['smtp-encryption'])) {
-                $this->transport = new \Swift_SmtpTransport($config['smtp-server'], $config['smtp-port'], $config['smtp-encryption']);
-            } else {
-                $this->transport = new \Swift_SmtpTransport($config['smtp-server'], $config['smtp-port']);
-            }
-            $this->transport->setUsername($config['username'])
-                            ->setPassword($config['password']);
+            $this->setSmtpConfig($config);
         } elseif ($transportType == Mailer::SENDMAIL) {
-            $this->transport = new \Swift_SendmailTransport('/usr/sbin/sendmail -bs');
+            $this->setSendmailConfig($config);
         } else {
-            $this->transport = new \Swift_NullTransport();
+            $this->setMailConfig($config);
+        }
+    }
+
+    /**
+     * See https://github.com/PHPMailer/PHPMailer/blob/master/examples/mail.phps
+     * @param array<string, mixed> $config
+     * @return void
+     */
+    public function setMailConfig($config)
+    {
+        //Create a new PHPMailer instance
+        $this->mailer = new PHPMailer();
+        $this->mailer->CharSet = PHPMailer::CHARSET_UTF8;
+    }
+
+    /**
+     * See https://github.com/PHPMailer/PHPMailer/blob/master/examples/sendmail.phps
+     * @param array<string, mixed> $config
+     * @return void
+     */
+    public function setSendmailConfig($config)
+    {
+        //Create a new PHPMailer instance
+        $this->mailer = new PHPMailer();
+        $this->mailer->CharSet = PHPMailer::CHARSET_UTF8;
+        //Set PHPMailer to use the sendmail transport
+        $this->mailer->isSendmail();
+    }
+
+    /**
+     * See https://github.com/PHPMailer/PHPMailer/blob/master/examples/smtp.phps
+     * @param array<string, mixed> $config
+     * @return void
+     */
+    public function setSmtpConfig($config)
+    {
+        //Create a new PHPMailer instance
+        $this->mailer = new PHPMailer();
+        $this->mailer->CharSet = PHPMailer::CHARSET_UTF8;
+        //Tell PHPMailer to use SMTP
+        $this->mailer->isSMTP();
+        //Enable SMTP debugging
+        $this->mailer->SMTPDebug = SMTP::DEBUG_OFF;
+        //$this->mailer->SMTPDebug = SMTP::DEBUG_CLIENT;
+        //$this->mailer->SMTPDebug = SMTP::DEBUG_SERVER;
+        //Set the hostname of the mail server
+        $this->mailer->Host = $config['smtp-server'];
+        //Set the SMTP port number - likely to be 25, 465 or 587
+        $this->mailer->Port = $config['smtp-port'];
+        //Whether to use SMTP authentication
+        $this->mailer->SMTPAuth = true;
+        //Username to use for SMTP authentication
+        $this->mailer->Username = $config['username'];
+        //Password to use for SMTP authentication
+        $this->mailer->Password = $config['password'];
+        if (isset($config['smtp-encryption'])) {
+            $this->setSmtpEncryption($config);
+        }
+    }
+
+    /**
+     * See https://github.com/PHPMailer/PHPMailer/blob/master/examples/ssl_options.phps
+     * @param array<string, mixed> $config
+     * @return void
+     */
+    public function setSmtpEncryption($config)
+    {
+        if ($config['smtp-encryption'] == static::TLS) {
+            //Set the SMTP port number:
+            // - 587 for SMTP+STARTTLS
+            //$this->mailer->Port = 587;
+            //Set the encryption mechanism to use:
+            // - STARTTLS (explicit TLS on port 587)
+            $this->mailer->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+        //Custom connection options
+        //Note that these settings are INSECURE
+        //$this->mailer->SMTPOptions = [];
+        } elseif ($config['smtp-encryption'] == static::SSL) {
+            //Set the SMTP port number:
+            // - 465 for SMTP with implicit TLS, a.k.a. RFC8314 SMTPS or
+            //$this->mailer->Port = 465;
+            //Set the encryption mechanism to use:
+            // - SMTPS (implicit TLS on port 465) or
+            $this->mailer->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+        //Custom connection options
+        //Note that these settings are INSECURE
+        //$this->mailer->SMTPOptions = [];
+        } else {
+            throw new Exception('Invalid SMTP encryption option');
         }
     }
 
@@ -54,23 +138,22 @@ class Mailer
      * @param string 	$recipient 	mail address of recipient
      * @param string 	$sender 	mail address of sender
      * @param string 	$filename 	new filename
-     * @return \Swift_Message		email
+     * @return bool		true if successfully created with attachment, false otherwise
      */
     public function createBookMessage($bookpath, $subject, $recipient, $sender, $filename)
     {
-        // Create the message
-        $message = new \Swift_Message();
-        // Give the message a subject
-        $message->setSubject($subject)
-            // Set the From address with an associative array
-            ->setFrom([$sender])
-            // Set the To addresses with an associative array
-            ->setTo([$recipient])
-            // Optionally add any attachments
-            ->attach(\Swift_Attachment::fromPath($bookpath)->setFilename($filename))
-            // Give it a body
-            ->setBody('This book was sent to you by BicBucStriim.');
-        return $message;
+        $contentType = \Utilities::titleMimeType($bookpath);
+        // See https://github.com/PHPMailer/PHPMailer/blob/master/examples/send_file_upload.phps
+        $this->mailer->setFrom($sender);
+        $this->mailer->addAddress($recipient);
+        $this->mailer->Subject = $subject;
+        $this->mailer->Body = 'This book was sent to you by BicBucStriim.';
+        //Attach the uploaded file
+        if (!$this->mailer->addAttachment($bookpath, $filename, PHPMailer::ENCODING_BASE64, $contentType)) {
+            $this->dump = 'Failed to attach file ' . $filename;
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -83,20 +166,33 @@ class Mailer
 
     /**
      * Send an email via the transport.
-     * @param \Swift_Message	$message 	email
-     * @return 	int						number of messages sent
+     * @return 	int	number of messages sent
      */
-    public function sendMessage($message)
+    public function sendMessage()
     {
-        $mailer = new \Swift_Mailer($this->transport);
-        $this->dump = '';
-        $logger = new \Swift_Plugins_Loggers_ArrayLogger();
-        $mailer->registerPlugin(new \Swift_Plugins_LoggerPlugin($logger));
+        // See also https://github.com/PHPMailer/PHPMailer/blob/master/examples/exceptions.phps
         try {
-            return $mailer->send($message);
+            //send the message, check for errors
+            if (!$this->mailer->send()) {
+                $this->dump = $this->mailer->ErrorInfo;
+                return 0;
+            } else {
+                return 1;
+            }
+            //Note that we don't need check the response from this because it will throw an exception if it has trouble
+            //$this->mailer->send();
         } catch (Exception $e) {
-            $this->dump = $e->getMessage() . ' -- ' . $logger->dump();
+            $this->dump = $e->getMessage();
             return 0;
         }
+    }
+
+    /**
+     * Get the message after sending it
+     * @return string
+     */
+    public function getMessage()
+    {
+        return $this->mailer->getSentMIMEMessage();
     }
 }

@@ -1,26 +1,25 @@
-Message-ID: <generated@swift.generated>
 Date: generated
-Subject: BicBucStriim
 From: bicbucstriim@example.org
-To: kindle@example.org
+Message-ID: <generated>
+X-Mailer: PHPMailer 6.9.1 (https://github.com/PHPMailer/PHPMailer)
 MIME-Version: 1.0
 Content-Type: multipart/mixed;
- boundary="_=_swift_generated_=_"
+ boundary="b1=_generated"
+Content-Transfer-Encoding: 8bit
+To: kindle@example.org
+Subject: BicBucStriim
 
-
---_=_swift_generated_=_
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+--b1=_generated
+Content-Type: text/plain; charset=us-ascii
 
 This book was sent to you by BicBucStriim.
 
---_=_swift_generated_=_
-Content-Type: application/epub+zip;
- name="Serie Lessing [1] Lob der Faulheit - Gotthold Ephraim Lessing.epub"
+--b1=_generated
+Content-Type: application/epub+zip; name="=?us-ascii?Q?Serie_Lessing_[1]_Lob_der_Faulheit_-_Gotthold_E?=
+ =?us-ascii?Q?phraim_Lessing.epub?="
 Content-Transfer-Encoding: base64
-Content-Disposition: attachment;
- filename*0*=utf-8''Serie%20Lessing%20%5B1%5D%20Lob%20der%20Faulheit%20-%20Gotthol;
- filename*1*=d%20Ephraim%20Lessing.epub
+Content-Disposition: attachment; filename="=?us-ascii?Q?Serie_Lessing_[1]_Lob_der_Faulheit_-_Gotthold_E?=
+ =?us-ascii?Q?phraim_Lessing.epub?="
 
 UEsDBBQAAAAAAEOKx0BvYassFAAAABQAAAAIAAAAbWltZXR5cGVhcHBsaWNhdGlvbi9lcHViK3pp
 cFBLAwQUAAAACABDisdAATRdIWoEAABrEAAAEwAUAE9QUy9jaGFwdGVyLTEueGh0bWwBABAAAAAA
@@ -79,4 +78,4 @@ AE9QUy9jc3MvYm9vay5jc3NQSwECPgAUAAAACABDisdANwoOl4QBAADFAgAACwAAAAAAAAAAAAAA
 AAD6BgAAT1BTL2VwYi5uY3hQSwECPgAUAAAACABDisdAe3I/6O0BAAC5AwAACwAAAAAAAAAAAAAA
 AAC7CAAAT1BTL2VwYi5vcGZQSwUGAAAAAAYABgBrAQAA5QoAAAAA
 
---_=_swift_generated_=_--
+--b1=_generated--

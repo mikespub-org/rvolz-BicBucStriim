@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [3.x.x] - 20xx-xx-xx
 ### Changed
+- ...
+
+## [3.2.0] - 2023-12-15
+### Changed
 - Replaced abandoned package swiftmailer/swiftmailer with phpmailer/phpmailer
 
 ## [3.1.0] - 2023-12-13 Custom template directories like tailwind

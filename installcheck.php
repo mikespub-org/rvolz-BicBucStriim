@@ -129,7 +129,7 @@ $template = $twig->load('installcheck.twig');
 echo $template->render([
     'page' => [
         'rot' => '',
-        'version' => '3.1.0',
+        'version' => '3.2.0',
     ],
     'is_a' => $is_a,
     'srv' => $srv,

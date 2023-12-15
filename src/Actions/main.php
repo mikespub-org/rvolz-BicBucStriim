@@ -536,8 +536,14 @@ class MainActions extends DefaultActions
             }
             $send_success = 0;
             try {
-                $message = $mailer->createBookMessage($bookpath, $globalSettings[DISPLAY_APP_NAME], $to_email, $globalSettings[KINDLE_FROM_EMAIL], $filename);
-                $send_success = $mailer->sendMessage($message);
+                $message_success = $mailer->createBookMessage($bookpath, $globalSettings[DISPLAY_APP_NAME], $to_email, $globalSettings[KINDLE_FROM_EMAIL], $filename);
+                if (!$message_success) {
+                    $this->log()->warning('kindle: book message to ' . $to_email . ' failed, dump: ' . $mailer->getDump());
+                    $answer = $this->getMessageString('error_kindle_send');
+                    $this->mkResponse($answer, 'text/plain', 503);
+                    return;
+                }
+                $send_success = $mailer->sendMessage();
                 if ($send_success == 0) {
                     $this->log()->warning('kindle: book delivery to ' . $to_email . ' failed, dump: ' . $mailer->getDump());
                 } else {

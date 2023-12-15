@@ -21,7 +21,7 @@ $fallbackLang = 'en';
 # Application Name
 $appname = 'BicBucStriim';
 # App version
-$appversion = '3.1.0';
+$appversion = '3.2.0';
 # Base path - null means undefined, empty '' or '/bbs' etc. mean predefined
 $basepath = null;
 
