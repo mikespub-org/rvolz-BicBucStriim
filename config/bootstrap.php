@@ -16,7 +16,7 @@ define('REDBEAN_MODEL_PREFIX', '\\BicBucStriim\\AppData\\Model_');
 
 # The session gc lifetime needs to be at least as high as the Aura.Auth idle ttl, which defaults to 3600
 ini_set('session.gc_maxlifetime', 3600);
-# Running slim/slim 2.x on PHP 8.2 needs php error_reporting set to E_ALL & ~E_DEPRECATED & ~E_STRICT (= production default)
+# Set php error_reporting to production default in config.php
 //error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT);
 
 # Get app settings

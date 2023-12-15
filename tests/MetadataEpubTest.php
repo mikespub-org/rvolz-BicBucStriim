@@ -12,6 +12,9 @@ use BicBucStriim\Utilities\MetadataEpub;
 
 /**
  * @covers \BicBucStriim\Utilities\MetadataEpub
+ * @covers \BicBucStriim\Utilities\EPub
+ * @covers \BicBucStriim\Utilities\EPubDOMXPath
+ * @covers \BicBucStriim\Utilities\EPubDOMElement
  */
 class MetadataEpubTest extends PHPUnit\Framework\TestCase
 {
