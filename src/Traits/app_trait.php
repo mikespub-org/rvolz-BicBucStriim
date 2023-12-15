@@ -10,6 +10,11 @@
 
 namespace BicBucStriim\Traits;
 
+use Aura\Auth\Auth;
+use BicBucStriim\AppData\BicBucStriim;
+use BicBucStriim\Calibre\Calibre;
+use Psr\Log\LoggerInterface;
+
 /*********************************************************************
  * App utility trait
  ********************************************************************/
@@ -38,32 +43,32 @@ trait AppTrait
 
     /**
      * Get authentication tracker
-     * @param ?\Aura\Auth\Auth $auth
-     * @return \Aura\Auth\Auth
+     * @param ?Auth $auth
+     * @return Auth
      */
     public function auth($auth = null)
     {
-        return $this->container('auth', $auth);
+        return $this->container(Auth::class, $auth);
     }
 
     /**
      * Get BicBucStriim app data
-     * @param ?\BicBucStriim\AppData\BicBucStriim $bbs
-     * @return \BicBucStriim\AppData\BicBucStriim
+     * @param ?BicBucStriim $bbs
+     * @return BicBucStriim
      */
     public function bbs($bbs = null)
     {
-        return $this->container('bbs', $bbs);
+        return $this->container(BicBucStriim::class, $bbs);
     }
 
     /**
      * Get Calibre data
-     * @param ?\BicBucStriim\Calibre\Calibre $calibre
-     * @return \BicBucStriim\Calibre\Calibre
+     * @param ?Calibre $calibre
+     * @return Calibre
      */
     public function calibre($calibre = null)
     {
-        return $this->container('calibre', $calibre);
+        return $this->container(Calibre::class, $calibre);
     }
 
     /**
@@ -86,7 +91,7 @@ trait AppTrait
      */
     public function log($logger = null)
     {
-        return $this->container('logger', $logger);
+        return $this->container(LoggerInterface::class, $logger);
     }
 
     /**
@@ -137,7 +142,7 @@ trait AppTrait
      */
     public function twig($twig = null)
     {
-        return $this->container('twig', $twig);
+        return $this->container(\Twig\Environment::class, $twig);
     }
 
     /**
@@ -316,7 +321,8 @@ trait AppTrait
      */
     public function mkSendFile($filepath, $type, $status = 200)
     {
-        $resp = $this->response()->withStatus($status)->withHeader('Content-type', $type)->withHeader('Content-Length', (string) filesize($filepath));
+        $etag = '"' . md5((string) filemtime($filepath) . '-' . $filepath) . '"';
+        $resp = $this->response()->withStatus($status)->withHeader('Content-type', $type)->withHeader('Content-Length', (string) filesize($filepath))->withHeader('ETag', $etag);
         $psr17Factory = new \Nyholm\Psr7\Factory\Psr17Factory();
         $this->response = $resp->withBody($psr17Factory->createStreamFromFile($filepath));
     }

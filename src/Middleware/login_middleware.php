@@ -146,12 +146,11 @@ class LoginMiddleware extends DefaultMiddleware
      */
     protected function is_authorized()
     {
-        // @todo replace $_COOKIE with $request->cookies() once fixed?
         $request = $this->request();
         $session_factory = new \BicBucStriim\Session\SessionFactory();
-        $session = $session_factory->newInstance($_COOKIE);
+        $session = $session_factory->newInstance($request->getCookieParams());
         $session->setCookieParams(['path' => $this->getRootUri() . '/']);
-        $auth_factory = new \Aura\Auth\AuthFactory($_COOKIE, $session);
+        $auth_factory = new \Aura\Auth\AuthFactory($request->getCookieParams(), $session);
         $this->auth($auth_factory->newInstance());
         $hash = new \Aura\Auth\Verifier\PasswordVerifier(PASSWORD_BCRYPT);
         $cols = ['username', 'password', 'id', 'email', 'role', 'languages', 'tags'];

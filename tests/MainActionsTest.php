@@ -92,6 +92,43 @@ class MainActionsTest extends PHPUnit\Framework\TestCase
                 ['page' => 0], '<title>BicBucStriim :: Books</title>',
                 'GET', '/titleslist/{page}/', ['$self', 'titlesSlice']
             ],
+            // temporary routes for the tailwind templates (= based on the v2.x frontend)
+            'authorsSlice2' => [
+                [], '<title>BicBucStriim :: Authors</title>',
+                'GET', '/authors/', ['$self', 'authorsSlice'],
+            ],
+            'authorDetailsSlice2' => [
+                ['id' => 5], '<title>BicBucStriim :: Author Details</title>',
+                'GET', '/authors/{id}/', ['$self', 'authorDetailsSlice'],
+            ],
+            'seriesSlice2' => [
+                [], '<title>BicBucStriim :: Series</title>',
+                'GET', '/series/', ['$self', 'seriesSlice'],
+            ],
+            'seriesDetailsSlice2' => [
+                ['id' => 1], '<title>BicBucStriim :: Series Details</title>',
+                'GET', '/series/{id}/', ['$self', 'seriesDetailsSlice'],
+            ],
+            'tagsSlice2' => [
+                [], '<title>BicBucStriim :: Tags</title>',
+                'GET', '/tags/', ['$self', 'tagsSlice'],
+            ],
+            'tagDetailsSlice2' => [
+                ['id' => 3], '<title>BicBucStriim :: Tag Details</title>',
+                'GET', '/tags/{id}/', ['$self', 'tagDetailsSlice'],
+            ],
+            'titlesSlice2' => [
+                [], '<title>BicBucStriim :: Books</title>',
+                'GET', '/titles/', ['$self', 'titlesSlice'],
+            ],
+            'cover2' => [
+                ['id' => 7], 168310,
+                'GET', '/static/covers/{id}/', ['$self', 'cover'],
+            ],
+            'thumbnail2' => [
+                ['id' => 7], 51232,
+                'GET', '/static/titlethumbs/{id}/', ['$self', 'thumbnail'],
+            ],
         ];
     }
 

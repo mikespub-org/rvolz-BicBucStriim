@@ -65,8 +65,11 @@ class MainActions extends DefaultActions
             ['GET', '/titleslist/{page}/', [$self, 'titlesSlice']],
             // temporary routes for the tailwind templates (= based on the v2.x frontend)
             ['GET', '/authors/', [$self, 'authorsSlice']],
+            ['GET', '/authors/{id}/', [$self, 'authorDetailsSlice']],
             ['GET', '/series/', [$self, 'seriesSlice']],
+            ['GET', '/series/{id}/', [$self, 'seriesDetailsSlice']],
             ['GET', '/tags/', [$self, 'tagsSlice']],
+            ['GET', '/tags/{id}/', [$self, 'tagDetailsSlice']],
             ['GET', '/titles/', [$self, 'titlesSlice']],
             ['GET', '/static/covers/{id}/', [$self, 'cover']],
             ['GET', '/static/titlethumbs/{id}/', [$self, 'thumbnail']],

@@ -10,12 +10,18 @@
 
 namespace BicBucStriim\Middleware;
 
+use Psr\Cache\CacheItemPoolInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
+use Middlewares\Cache as CacheMiddleware;
 
-class CachingMiddleware extends DefaultMiddleware
+class CachingMiddleware extends CacheMiddleware
 {
+    use \BicBucStriim\Traits\AppTrait;
+
+    /** @var \BicBucStriim\App|\Slim\App|object */
+    protected $app;
     protected $resources;
 
     /**
@@ -23,11 +29,13 @@ class CachingMiddleware extends DefaultMiddleware
      *
      * @param \BicBucStriim\App|\Slim\App|object $app The app
      * @param array $config an array of resource strings
+     * @param CacheItemPoolInterface $cachePool the cache item pool for the cache middleware
      */
-    public function __construct($app, $config)
+    public function __construct($app, $config, $cachePool)
     {
-        parent::__construct($app);
+        $this->app = $app;
         $this->resources = $config;
+        parent::__construct($cachePool, $app->getResponseFactory());
     }
 
     /**
@@ -51,6 +59,6 @@ class CachingMiddleware extends DefaultMiddleware
                 break;
             }
         }
-        return $handler->handle($request);
+        return parent::process($request, $handler);
     }
 }

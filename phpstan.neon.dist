@@ -9,3 +9,4 @@ parameters:
         - phpstan-bootstrap.php
     excludePaths:
         - vendor/*
+        - work/*

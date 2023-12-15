@@ -8,6 +8,7 @@
  *
  */
 
+use Psr\Cache\CacheItemPoolInterface;
 use Slim\Factory\AppFactory;
 use Slim\Handlers\Strategies\RequestResponseArgs;
 
@@ -33,9 +34,6 @@ if (!empty($settings['basepath'])) {
     $app->setBasePath($settings['basepath']);
 }
 
-# Add null logger - see https://github.com/8ctopus/apix-log
-$app->getContainer()->set('logger', new \BicBucStriim\Utilities\Logger());
-
 # Configure app for mode
 if ($app->getContainer()->has('mode')) {
     $settings['mode'] = $app->getContainer()->get('mode');
@@ -46,9 +44,6 @@ $config($app, $settings);
 # Store $globalSettings in app config
 $app->getContainer()->set('globalSettings', $settings['globalSettings']);
 
-# Freeze (true) DB schema before release! Set to false for DB development.
-$app->getContainer()->set('bbs', new \BicBucStriim\AppData\BicBucStriim('data/data.db', true));
-
 /**
  * See https://www.slimframework.com/docs/v4/objects/routing.html#route-strategies
  * Changing the default invocation strategy on the RouteCollector component
@@ -57,14 +52,16 @@ $app->getContainer()->set('bbs', new \BicBucStriim\AppData\BicBucStriim('data/da
 $routeCollector = $app->getRouteCollector();
 $routeCollector->setDefaultInvocationStrategy(new RequestResponseArgs());
 
-$app->addBodyParsingMiddleware();
-$app->addRoutingMiddleware();
-
 # Init middleware
 $middleware = require(__DIR__ . '/middleware.php');
 $middleware($app, $settings);
 
 # Last in first out
+$app->addBodyParsingMiddleware();
+$app->addRoutingMiddleware();
+# We don't really care if someone hits the cache after being logged out
+$cachePool = $app->getContainer()->get(CacheItemPoolInterface::class);
+$app->add(new \BicBucStriim\Middleware\CachingMiddleware($app, ['/admin', '/login'], $cachePool));
 if (!isset($settings['basepath'])) {
     $app->add(new \BicBucStriim\Middleware\BasePathMiddleware($app));
 }

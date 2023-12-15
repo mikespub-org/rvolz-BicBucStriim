@@ -8,6 +8,8 @@
  *
  */
 
+use Psr\Log\LoggerInterface;
+
 /**
  * Configure app for production
  */
@@ -23,7 +25,7 @@ function confprod($app, $appname, $appversion)
         $app->getContainer()->set($name, $value);
     }
     /** @var \BicBucStriim\Utilities\Logger $logger */
-    $logger = $app->getContainer()->get('logger');
+    $logger = $app->getContainer()->get(LoggerInterface::class);
     $logger->setEnabled(true);
     $logger->setMinLevel(\Psr\Log\LogLevel::WARNING, false);
     $logger->info($appname . ' ' . $appversion . ': Running in production mode.');
@@ -46,7 +48,7 @@ function confdev($app, $appname, $appversion)
         $app->getContainer()->set($name, $value);
     }
     /** @var \BicBucStriim\Utilities\Logger $logger */
-    $logger = $app->getContainer()->get('logger');
+    $logger = $app->getContainer()->get(LoggerInterface::class);
     $logger->setEnabled(true);
     $logger->setMinLevel(\Psr\Log\LogLevel::DEBUG, false);
     $logger->info($appname . ' ' . $appversion . ': Running in development mode.');
@@ -67,7 +69,7 @@ function confdebug($app, $appname, $appversion)
         $app->getContainer()->set($name, $value);
     }
     /** @var \BicBucStriim\Utilities\Logger $logger */
-    $logger = $app->getContainer()->get('logger');
+    $logger = $app->getContainer()->get(LoggerInterface::class);
     $logger->setEnabled(true);
     $logger->setMinLevel(\Psr\Log\LogLevel::DEBUG);
     // replacement for DateTimeFileWriter that supports Psr\Log
