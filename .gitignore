@@ -18,7 +18,10 @@ vendor
 .env
 .vscode/
 .yarn/
+#!.yarn/releases
+#!.yarn/plugins
 .yarnrc.yml
+.pnp.*
 .php-cs-fixer.cache
 data/authors/*.png
 data/titles/*.png
