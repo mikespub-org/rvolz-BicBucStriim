@@ -2,15 +2,15 @@
 # Manual changes might be lost - proceed with caution!
 
 __metadata:
-  version: 6
-  cacheKey: 8
+  version: 8
+  cacheKey: 10
 
 "argparse@npm:^1.0.7":
   version: 1.0.10
   resolution: "argparse@npm:1.0.10"
   dependencies:
-    sprintf-js: ~1.0.2
-  checksum: 7ca6e45583a28de7258e39e13d81e925cfa25d7d4aacbf806a382d3c02fcb13403a07fb8aeef949f10a7cfe4a62da0e2e807b348a5980554cc28ee573ef95945
+    sprintf-js: "npm:~1.0.2"
+  checksum: 10/c6a621343a553ff3779390bb5ee9c2263d6643ebcd7843227bdde6cc7adbed796eb5540ca98db19e3fd7b4714e1faa51551f8849b268bb62df27ddb15cbcd91e
   languageName: node
   linkType: hard
 
@@ -20,7 +20,7 @@ __metadata:
   bin:
     esparse: ./bin/esparse.js
     esvalidate: ./bin/esvalidate.js
-  checksum: b45bc805a613dbea2835278c306b91aff6173c8d034223fa81498c77dcbce3b2931bf6006db816f62eacd9fd4ea975dfd85a5b7f3c6402cfd050d4ca3c13a628
+  checksum: 10/f1d3c622ad992421362294f7acf866aa9409fbad4eb2e8fa230bd33944ce371d32279667b242d8b8907ec2b6ad7353a717f3c0e60e748873a34a7905174bc0eb
   languageName: node
   linkType: hard
 
@@ -28,15 +28,15 @@ __metadata:
   version: 2.0.1
   resolution: "extend-shallow@npm:2.0.1"
   dependencies:
-    is-extendable: ^0.1.0
-  checksum: 8fb58d9d7a511f4baf78d383e637bd7d2e80843bd9cd0853649108ea835208fb614da502a553acc30208e1325240bb7cc4a68473021612496bb89725483656d8
+    is-extendable: "npm:^0.1.0"
+  checksum: 10/8fb58d9d7a511f4baf78d383e637bd7d2e80843bd9cd0853649108ea835208fb614da502a553acc30208e1325240bb7cc4a68473021612496bb89725483656d8
   languageName: node
   linkType: hard
 
 "is-extendable@npm:^0.1.0":
   version: 0.1.1
   resolution: "is-extendable@npm:0.1.1"
-  checksum: 3875571d20a7563772ecc7a5f36cb03167e9be31ad259041b4a8f73f33f885441f778cee1f1fe0085eb4bc71679b9d8c923690003a36a6a5fdf8023e6e3f0672
+  checksum: 10/3875571d20a7563772ecc7a5f36cb03167e9be31ad259041b4a8f73f33f885441f778cee1f1fe0085eb4bc71679b9d8c923690003a36a6a5fdf8023e6e3f0672
   languageName: node
   linkType: hard
 
@@ -44,11 +44,11 @@ __metadata:
   version: 3.14.0
   resolution: "js-yaml@npm:3.14.0"
   dependencies:
-    argparse: ^1.0.7
-    esprima: ^4.0.0
+    argparse: "npm:^1.0.7"
+    esprima: "npm:^4.0.0"
   bin:
     js-yaml: bin/js-yaml.js
-  checksum: a1a47c912ba20956f96cb0998dea2e74c7f7129d831fe33d3c5a16f3f83712ce405172a8dd1c26bf2b3ad74b54016d432ff727928670ae5a50a57a677c387949
+  checksum: 10/88c96664ed27db929fa046f4e6d1f1cbcab4372379c77af68e8d56ada9ff59566528c053f83260c4e23bd348fc430814ed3637e4b809e1d32b795c74b5d15638
   languageName: node
   linkType: hard
 
@@ -56,9 +56,9 @@ __metadata:
   version: 1.1.0
   resolution: "read-yaml@npm:1.1.0"
   dependencies:
-    extend-shallow: ^2.0.1
-    js-yaml: ^3.8.2
-  checksum: f6feba909ba2bb79a1b70bb12f655faef5a9ce96f4e3bd9a82681213a81a1f1f04e7fa9c15815fe73129ff37d73ffec4007a1422d50fb10a69e8bafc9c521a9f
+    extend-shallow: "npm:^2.0.1"
+    js-yaml: "npm:^3.8.2"
+  checksum: 10/f6feba909ba2bb79a1b70bb12f655faef5a9ce96f4e3bd9a82681213a81a1f1f04e7fa9c15815fe73129ff37d73ffec4007a1422d50fb10a69e8bafc9c521a9f
   languageName: node
   linkType: hard
 
@@ -66,13 +66,13 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "root-workspace-0b6124@workspace:."
   dependencies:
-    read-yaml: ^1.1.0
+    read-yaml: "npm:^1.1.0"
   languageName: unknown
   linkType: soft
 
 "sprintf-js@npm:~1.0.2":
   version: 1.0.3
   resolution: "sprintf-js@npm:1.0.3"
-  checksum: 19d79aec211f09b99ec3099b5b2ae2f6e9cdefe50bc91ac4c69144b6d3928a640bb6ae5b3def70c2e85a2c3d9f5ec2719921e3a59d3ca3ef4b2fd1a4656a0df3
+  checksum: 10/c34828732ab8509c2741e5fd1af6b767c3daf2c642f267788f933a65b1614943c282e74c4284f4fa749c264b18ee016a0d37a3e5b73aee446da46277d3a85daa
   languageName: node
   linkType: hard
