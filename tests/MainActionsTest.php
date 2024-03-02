@@ -18,23 +18,23 @@ class MainActionsTest extends PHPUnit\Framework\TestCase
             //],
             'main' => [
                 [], '<h2>Most recent</h2>',
-                'GET', '/', ['$self', 'main']
+                'GET', '/', ['$self', 'main'],
             ],
             'show_login' => [
                 [], '<title>BicBucStriim :: Login</title>',
-                'GET', '/login/', ['$self', 'show_login']
+                'GET', '/login/', ['$self', 'show_login'],
             ],
             'perform_login' => [
                 [], 'hello',
-                'POST', '/login/', ['$self', 'perform_login']
+                'POST', '/login/', ['$self', 'perform_login'],
             ],
             'logout' => [
                 [], '<title>BicBucStriim :: Logout</title>',
-                'GET', '/logout/', ['$self', 'logout']
+                'GET', '/logout/', ['$self', 'logout'],
             ],
             'authorNotes' => [
                 ['id' => 5], 'You don&#039;t have sufficient access rights.',
-                'GET', '/authors/{id}/notes/', ['$self', 'check_admin'], ['$self', 'authorNotes']
+                'GET', '/authors/{id}/notes/', ['$self', 'check_admin'], ['$self', 'authorNotes'],
             ],
             //'authorNotesEdit' => [
             //    ['id' => 5], 'hello',
@@ -42,55 +42,55 @@ class MainActionsTest extends PHPUnit\Framework\TestCase
             //],
             'authorDetailsSlice' => [
                 ['id' => 5, 'page' => 0], '<title>BicBucStriim :: Author Details</title>',
-                'GET', '/authors/{id}/{page}/', ['$self', 'authorDetailsSlice']
+                'GET', '/authors/{id}/{page}/', ['$self', 'authorDetailsSlice'],
             ],
             'authorsSlice' => [
                 ['page' => 0], '<title>BicBucStriim :: Authors</title>',
-                'GET', '/authorslist/{page}/', ['$self', 'authorsSlice']
+                'GET', '/authorslist/{page}/', ['$self', 'authorsSlice'],
             ],
             'globalSearch' => [
                 [], '<title>BicBucStriim :: Search</title>',
-                'GET', '/search/', ['$self', 'globalSearch']
+                'GET', '/search/', ['$self', 'globalSearch'],
             ],
             'seriesDetailsSlice' => [
                 ['id' => 1, 'page' => 0], '<title>BicBucStriim :: Series Details</title>',
-                'GET', '/series/{id}/{page}/', ['$self', 'seriesDetailsSlice']
+                'GET', '/series/{id}/{page}/', ['$self', 'seriesDetailsSlice'],
             ],
             'seriesSlice' => [
                 ['page' => 0], '<title>BicBucStriim :: Series</title>',
-                'GET', '/serieslist/{page}/', ['$self', 'seriesSlice']
+                'GET', '/serieslist/{page}/', ['$self', 'seriesSlice'],
             ],
             'tagDetailsSlice' => [
                 ['id' => 3, 'page' => 0], '<title>BicBucStriim :: Tag Details</title>',
-                'GET', '/tags/{id}/{page}/', ['$self', 'tagDetailsSlice']
+                'GET', '/tags/{id}/{page}/', ['$self', 'tagDetailsSlice'],
             ],
             'tagsSlice' => [
                 ['page' => 0], '<title>BicBucStriim :: Tags</title>',
-                'GET', '/tagslist/{page}/', ['$self', 'tagsSlice']
+                'GET', '/tagslist/{page}/', ['$self', 'tagsSlice'],
             ],
             'title' => [
                 ['id' => 7], '<title>BicBucStriim :: Book Details</title>',
-                'GET', '/titles/{id}/', ['$self', 'title']
+                'GET', '/titles/{id}/', ['$self', 'title'],
             ],
             'cover' => [
                 ['id' => 7], 168310,
-                'GET', '/titles/{id}/cover/', ['$self', 'cover']
+                'GET', '/titles/{id}/cover/', ['$self', 'cover'],
             ],
             'book' => [
                 ['id' => 7, 'file' => 'The%20Stones%20of%20Venice%2C%20Volume%20II%20-%20John%20Ruskin.epub'], 10198,
-                'GET', '/titles/{id}/file/{file}', ['$self', 'book']
+                'GET', '/titles/{id}/file/{file}', ['$self', 'book'],
             ],
             'kindle' => [
                 ['id' => 7, 'file' => 'The%20Stones%20of%20Venice%2C%20Volume%20II%20-%20John%20Ruskin.epub'], 'hello',
-                'POST', '/titles/{id}/kindle/{file}', ['$self', 'kindle']
+                'POST', '/titles/{id}/kindle/{file}', ['$self', 'kindle'],
             ],
             'thumbnail' => [
                 ['id' => 7], 51232,
-                'GET', '/titles/{id}/thumbnail/', ['$self', 'thumbnail']
+                'GET', '/titles/{id}/thumbnail/', ['$self', 'thumbnail'],
             ],
             'titlesSlice' => [
                 ['page' => 0], '<title>BicBucStriim :: Books</title>',
-                'GET', '/titleslist/{page}/', ['$self', 'titlesSlice']
+                'GET', '/titleslist/{page}/', ['$self', 'titlesSlice'],
             ],
             // temporary routes for the tailwind templates (= based on the v2.x frontend)
             'authorsSlice2' => [

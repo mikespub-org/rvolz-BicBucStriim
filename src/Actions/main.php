@@ -179,7 +179,7 @@ class MainActions extends DefaultActions
         // TODO check search paramater?
 
         $filter = $this->getFilter();
-        $search = $this->get('search');
+        $search = $this->get('search') ?? '';
         $tlb = $this->calibre()->titlesSlice($globalSettings['lang'], 0, $globalSettings[PAGE_SIZE], $filter, trim($search));
         $tlb_books = array_map([$this, 'checkThumbnail'], $tlb['entries']);
         $tla = $this->calibre()->authorsSlice(0, $globalSettings[PAGE_SIZE], trim($search));

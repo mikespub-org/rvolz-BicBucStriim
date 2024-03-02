@@ -68,5 +68,5 @@ return [
     'appversion' => $appversion,
     'basepath' => $basepath,
     'globalSettings' => $globalSettings,
-    'knownConfigs' => $knownConfigs
+    'knownConfigs' => $knownConfigs,
 ];

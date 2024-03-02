@@ -22,35 +22,35 @@ class MiddlewareTest extends PHPUnit\Framework\TestCase
             //],
             'show_login' => [
                 [], '<title>BicBucStriim :: Login</title>',
-                'GET', '/login/', ['$self', 'show_login']
+                'GET', '/login/', ['$self', 'show_login'],
             ],
             'perform_login' => [
                 [], 'hello',
-                'POST', '/login/', ['$self', 'perform_login']
+                'POST', '/login/', ['$self', 'perform_login'],
             ],
             'logout' => [
                 [], '<title>BicBucStriim :: Logout</title>',
-                'GET', '/logout/', ['$self', 'logout']
+                'GET', '/logout/', ['$self', 'logout'],
             ],
             'title' => [
                 ['id' => 7], '<title>BicBucStriim :: Book Details</title>',
-                'GET', '/titles/{id}/', ['$self', 'title']
+                'GET', '/titles/{id}/', ['$self', 'title'],
             ],
             'cover' => [
                 ['id' => 7], 168310,
-                'GET', '/titles/{id}/cover/', ['$self', 'cover']
+                'GET', '/titles/{id}/cover/', ['$self', 'cover'],
             ],
             'book' => [
                 ['id' => 7, 'file' => 'The%20Stones%20of%20Venice%2C%20Volume%20II%20-%20John%20Ruskin.epub'], 10198,
-                'GET', '/titles/{id}/file/{file}', ['$self', 'book']
+                'GET', '/titles/{id}/file/{file}', ['$self', 'book'],
             ],
             'kindle' => [
                 ['id' => 7, 'file' => 'The%20Stones%20of%20Venice%2C%20Volume%20II%20-%20John%20Ruskin.epub'], 'hello',
-                'POST', '/titles/{id}/kindle/{file}', ['$self', 'kindle']
+                'POST', '/titles/{id}/kindle/{file}', ['$self', 'kindle'],
             ],
             'thumbnail' => [
                 ['id' => 7], 51232,
-                'GET', '/titles/{id}/thumbnail/', ['$self', 'thumbnail']
+                'GET', '/titles/{id}/thumbnail/', ['$self', 'thumbnail'],
             ],
             // temporary routes for the tailwind templates (= based on the v2.x frontend)
             'thumbnail2' => [

@@ -94,7 +94,7 @@ class AdminActions extends DefaultActions
         $e->text = 'templates (default)';
         $options = [$e];
         $templatesDir = realpath('templates');
-        $subDirs = glob($templatesDir . '/*' , GLOB_ONLYDIR);
+        $subDirs = glob($templatesDir . '/*', GLOB_ONLYDIR);
         foreach ($subDirs as $subDir) {
             $e = new ConfigTemplatesDir();
             $e->key = str_replace($templatesDir, 'templates', $subDir);

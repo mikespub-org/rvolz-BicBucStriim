@@ -278,7 +278,7 @@ class Calibre
         $query = $query . ' limit :length offset :offset';
         $no_entries = $this->count($count, $countParams);
         if ($no_entries > 0) {
-            $no_pages = (int)($no_entries / $length);
+            $no_pages = (int) ($no_entries / $length);
             if ($no_entries % $length > 0) {
                 $no_pages += 1;
             }
@@ -385,7 +385,7 @@ class Calibre
         if ($result == null || $result == false) {
             return 0;
         } else {
-            return (int)$result;
+            return (int) $result;
         }
     }
 
@@ -445,7 +445,7 @@ class Calibre
      */
     protected function addBookDetails($lang, $books)
     {
-        foreach ((array)$books as $book) {
+        foreach ((array) $books as $book) {
             $fmts = $this->titleGetFormats($book->id);
             $fmtnames = [];
             foreach ($fmts as $format) {
@@ -465,7 +465,7 @@ class Calibre
             }
         }
         /** @var Book $book */
-        foreach ((array)$books as $book) {
+        foreach ((array) $books as $book) {
             if (empty($book->formats) && !isset($book->language)) {
                 $book->addInfo = '';
             } elseif (empty($book->formats) && isset($book->language)) {

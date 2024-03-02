@@ -223,8 +223,8 @@ class OpdsGeneratorTest extends PHPUnit\Framework\TestCase
         $feed = new SimpleXMLElement($xml);
         $this->assertEquals(7, count($feed->link));
         $oslnk = $feed->link[0];
-        $this->assertEquals(OpdsGenerator::OPENSEARCH_MIME, (string)$oslnk['type']);
-        $this->assertTrue(strpos((string)$oslnk['href'], 'opensearch.xml') > 0);
+        $this->assertEquals(OpdsGenerator::OPENSEARCH_MIME, (string) $oslnk['type']);
+        $this->assertTrue(strpos((string) $oslnk['href'], 'opensearch.xml') > 0);
     }
 
 

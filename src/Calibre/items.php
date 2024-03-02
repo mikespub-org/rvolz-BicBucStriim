@@ -6,6 +6,7 @@
 namespace BicBucStriim\Calibre;
 
 # A database item class
+#[\AllowDynamicProperties]
 class Item {}
 
 # Utiliy classes for Calibre DB items

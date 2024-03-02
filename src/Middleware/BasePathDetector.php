@@ -56,7 +56,7 @@ class BasePathDetector
      */
     private function getBasePathByScriptName(array $server): string
     {
-        $scriptName = (string)$server['SCRIPT_NAME'];
+        $scriptName = (string) $server['SCRIPT_NAME'];
         $basePath = str_replace('\\', '/', dirname($scriptName));
 
         if (strlen($basePath) > 1) {
@@ -81,7 +81,7 @@ class BasePathDetector
 
         $scriptName = $server['SCRIPT_NAME'];
 
-        $basePath = (string)parse_url($server['REQUEST_URI'], PHP_URL_PATH);
+        $basePath = (string) parse_url($server['REQUEST_URI'], PHP_URL_PATH);
         //$scriptName = str_replace('\\', '/', dirname($scriptName, 2));
         $scriptName = str_replace('\\', '/', dirname($scriptName));
 
