@@ -157,7 +157,29 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
     }
 
     /**
-     * Render a template
+     * Create json response for template data (if hasapi with Accept header)
+     * @param  array  $data     Associative array of data made available to the view
+     * @param  ?int    $status   The HTTP response status code to use (optional)
+     * @return void
+     */
+    public function renderJson($data = [], $status = null)
+    {
+        if (array_key_exists('page', $data) && is_array($data['page'])) {
+            unset($data['page']['glob']);
+            unset($data['page']['admin']);
+        }
+        if (array_key_exists('users', $data) && is_array($data['users'])) {
+            foreach (array_keys($data['users']) as $id) {
+                unset($data['users'][$id]['email']);
+                unset($data['users'][$id]['password']);
+            }
+        }
+        $this->mkJsonResponse($data);
+        return;
+    }
+
+    /**
+     * Render a template (or json response if hasapi with Accept header)
      * @param  string $template The name of the template passed into the view's render() method
      * @param  array  $data     Associative array of data made available to the view
      * @param  ?int    $status   The HTTP response status code to use (optional)
@@ -165,6 +187,11 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
      */
     public function render($template, $data = [], $status = null)
     {
+        $globalSettings = $this->settings();
+        if (!empty($globalSettings['hasapi']) && $this->request()->hasHeader('Accept') && in_array('application/json', $this->request()->getHeader('Accept'))) {
+            $this->renderJson($data, $status);
+            return;
+        }
         // Slim 2 framework will replace data, render template and echo output via slim view display()
         //$this->app()->render($template, $data, $status);
         $this->setTemplatesDir();

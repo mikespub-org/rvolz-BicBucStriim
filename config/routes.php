@@ -27,4 +27,8 @@ return function ($app, $settings) {
     foreach ($actions as [$class, $prefix]) {
         $class::addRoutes($app, $prefix);
     }
+    if (!empty($settings['globalSettings']['hasapi'])) {
+        $class = Actions\ApiActions::class;
+        $class::addRoutes($app, '/api');
+    }
 };

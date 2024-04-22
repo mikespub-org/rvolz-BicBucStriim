@@ -31,6 +31,8 @@ $globalSettings['appname'] = $appname;
 $globalSettings['version'] = $appversion;
 $globalSettings['basepath'] = $basepath;
 $globalSettings['sep'] = ' :: ';
+// provide basic json api interface
+$globalSettings['hasapi'] = false;
 // @todo move this later in the request handling when we have $request available
 # Find the user language, either one of the allowed languages or
 # English as a fallback.

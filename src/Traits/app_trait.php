@@ -313,6 +313,19 @@ trait AppTrait
     }
 
     /**
+     * Create and send a JSON response
+     * @param mixed $data array or object
+     * @param string $type (optional)
+     * @param int $status (optional)
+     * @return void
+     */
+    public function mkJsonResponse($data, $type = 'application/json', $status = 200)
+    {
+        $content = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PARTIAL_OUTPUT_ON_ERROR);
+        $this->mkResponse($content, $type, $status);
+    }
+
+    /**
      * Create and send a file response
      * @param string $filepath
      * @param string $type
