@@ -67,11 +67,11 @@ class RouteUtil
             $gatekeeper = array_shift($middlewareList);
         }
         if ($gatekeeper) {
-            $wrapper = static::wrapGuardedRouteHandler($callable, $gatekeeper);
+            $wrapper = static::wrapRequestMiddleware($gatekeeper);
+            $route = $group->map($method, $path, $callable)->add($wrapper);
         } else {
-            $wrapper = static::wrapRouteHandler($callable);
+            $route = $group->map($method, $path, $callable);
         }
-        $route = $group->map($method, $path, $wrapper);
         if (empty($middlewareList)) {
             return;
         }
@@ -84,6 +84,7 @@ class RouteUtil
     /**
      * Use callable of format [$self, 'method'] as route handler (with RequestResponseArgs strategy)
      * @param callable|array $callable
+     * @deprecated 3.3.0 replaced by using ActionsWrapperStrategy instead
      * @return callable
      */
     public static function wrapRouteHandler($callable)
@@ -100,6 +101,7 @@ class RouteUtil
      * Use callable of format [$self, 'method'] as route handler (with RequestResponseArgs strategy)
      * @param callable|array $callable
      * @param mixed $gatekeeper of format [$self, 'method'] to call before each route (e.g. check_admin)
+     * @deprecated 3.3.0 replaced by using ActionsWrapperStrategy instead
      * @return callable
      */
     public static function wrapGuardedRouteHandler($callable, $gatekeeper)

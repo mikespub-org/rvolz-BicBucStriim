@@ -5,7 +5,7 @@ use BicBucStriim\Utilities\RequestUtil;
 use BicBucStriim\Utilities\ResponseUtil;
 use BicBucStriim\Utilities\RouteUtil;
 use Slim\Factory\AppFactory;
-use Slim\Handlers\Strategies\RequestResponseArgs;
+use BicBucStriim\Utilities\ActionsWrapperStrategy;
 
 /**
  * @covers \BicBucStriim\Actions\DefaultActions
@@ -110,7 +110,7 @@ class DefaultActionsTest extends PHPUnit\Framework\TestCase
          * will change it for every route being defined after this change being applied
          */
         $routeCollector = $app->getRouteCollector();
-        $routeCollector->setDefaultInvocationStrategy(new RequestResponseArgs());
+        $routeCollector->setDefaultInvocationStrategy(new ActionsWrapperStrategy());
         DefaultActions::addRoutes($app);
 
         $expected = 'Hello, world!';

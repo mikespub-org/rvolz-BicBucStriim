@@ -11,6 +11,7 @@ composer.phar
 .kobalt
 node_modules
 *.log
+dist
 work
 worklib
 /.phpunit.result.cache

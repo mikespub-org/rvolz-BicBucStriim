@@ -362,7 +362,7 @@ class BicBucStriim
             [
                 ':type' => $calibreType,
                 'id' => $calibreId,
-                ]
+            ]
         );
         if (!is_null($calibreThing)) {
             $calibreThing = Model_Calibrething::cast($calibreThing);

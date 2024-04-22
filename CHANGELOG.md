@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [3.x.x] - 20xx-xx-xx
 ### Changed
+- ...
+
+## [3.3.0] - 2024-04-22
+### Changed
+- Invoke callable actions via ActionsWrapperStrategy instead of using wrapper for each action in routes
+- Updated dependencies + switched to phpunit 10.5
 - Updated middlewares/cache package to new release 4.0
 
 ## [3.2.0] - 2023-12-15

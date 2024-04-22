@@ -129,7 +129,7 @@ $template = $twig->load('installcheck.twig');
 echo $template->render([
     'page' => [
         'rot' => '',
-        'version' => '3.2.0',
+        'version' => '3.3.0',
     ],
     'is_a' => $is_a,
     'srv' => $srv,
@@ -147,6 +147,6 @@ echo $template->render([
     'opd' => ini_get('open_basedir'),
     'php' => check_php(),
     'phpv' => phpversion(),
-    ]);
+]);
 
 #echo phpinfo();

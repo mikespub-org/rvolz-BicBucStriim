@@ -32,9 +32,10 @@ class AdminActions extends DefaultActions
         $routes = static::getRoutes($self);
         // check admin for all actions in this group
         $gatekeeper = [$self, 'check_admin'];
-        $app->group($prefix, function (\Slim\Routing\RouteCollectorProxy $group) use ($routes, $gatekeeper) {
-            RouteUtil::mapRoutes($group, $routes, $gatekeeper);
-        });
+        $wrapper = RouteUtil::wrapRequestMiddleware($gatekeeper);
+        $app->group($prefix, function (\Slim\Routing\RouteCollectorProxy $group) use ($routes) {
+            RouteUtil::mapRoutes($group, $routes);
+        })->add($wrapper);
     }
 
     /**

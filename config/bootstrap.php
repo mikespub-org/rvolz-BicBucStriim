@@ -10,7 +10,7 @@
 
 use Psr\Cache\CacheItemPoolInterface;
 use Slim\Factory\AppFactory;
-use Slim\Handlers\Strategies\RequestResponseArgs;
+use BicBucStriim\Utilities\ActionsWrapperStrategy;
 
 define('REDBEAN_MODEL_PREFIX', '\\BicBucStriim\\AppData\\Model_');
 
@@ -50,7 +50,7 @@ $app->getContainer()->set('globalSettings', $settings['globalSettings']);
  * will change it for every route being defined after this change being applied
  */
 $routeCollector = $app->getRouteCollector();
-$routeCollector->setDefaultInvocationStrategy(new RequestResponseArgs());
+$routeCollector->setDefaultInvocationStrategy(new ActionsWrapperStrategy());
 
 # Init middleware
 $middleware = require(__DIR__ . '/middleware.php');
