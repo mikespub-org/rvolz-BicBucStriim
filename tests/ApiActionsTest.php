@@ -16,7 +16,7 @@ class ApiActionsTest extends PHPUnit\Framework\TestCase
         global $langen;
         require('config/langs.php');
         // we need to set this before bootstrap to get api routes
-        $_ENV['BICBUCSTRIIM_HAS_API'] = $hasapi;
+        $_ENV['BBS_HAS_API'] = $hasapi;
         $app = require(dirname(__DIR__) . '/config/bootstrap.php');
         $globalSettings = $app->getContainer()->get('globalSettings');
         $globalSettings[LOGIN_REQUIRED] = 0;
