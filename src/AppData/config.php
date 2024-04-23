@@ -16,4 +16,4 @@ namespace BicBucStriim\AppData;
  * @property mixed $name
  * @property mixed $val
  */
-class Model_Config extends \RedBeanPHP\TypedModel {}
+class Model_Config extends Model_Type {}

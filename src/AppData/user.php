@@ -19,8 +19,10 @@ namespace BicBucStriim\AppData;
  * @property mixed $languages
  * @property mixed $role
  */
-class Model_User extends \RedBeanPHP\TypedModel
+class Model_User extends Model_Type
 {
+    protected $_filterProps = ['email', 'password'];
+
     public function to_json()
     {
         $props = $this->unbox()->getProperties();

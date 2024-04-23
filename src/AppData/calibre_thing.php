@@ -22,7 +22,7 @@ namespace BicBucStriim\AppData;
  * @property mixed $cname
  * @property mixed $refctr
  */
-class Model_Calibrething extends \RedBeanPHP\TypedModel
+class Model_Calibrething extends Model_Type
 {
     /**
      * Return author links releated to this Calibre entitiy.

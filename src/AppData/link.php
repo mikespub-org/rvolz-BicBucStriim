@@ -17,4 +17,4 @@ namespace BicBucStriim\AppData;
  * @property mixed $label
  * @property mixed $url
  */
-class Model_Link extends \RedBeanPHP\TypedModel {}
+class Model_Link extends Model_Type {}

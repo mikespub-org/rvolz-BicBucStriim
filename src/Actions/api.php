@@ -181,7 +181,7 @@ class ApiActions extends DefaultActions
                 if (str_starts_with($path, '/admin/') || str_starts_with($path, '/metadata/')) {
                     $result["paths"][$path][$method]["summary"] .= " - with cookie api key";
                     $result["paths"][$path][$method]["security"] = [
-                        ["CookieAuth" => []],
+                        ["cookieAuth" => []],
                     ];
                 }
             }

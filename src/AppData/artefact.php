@@ -16,4 +16,4 @@ namespace BicBucStriim\AppData;
  * @property mixed $atype
  * @property mixed $url
  */
-class Model_Artefact extends \RedBeanPHP\TypedModel {}
+class Model_Artefact extends Model_Type {}

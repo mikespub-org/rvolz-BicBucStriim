@@ -17,4 +17,4 @@ namespace BicBucStriim\AppData;
  * @property mixed $mime
  * @property mixed $ntext
  */
-class Model_Note extends \RedBeanPHP\TypedModel {}
+class Model_Note extends Model_Type {}
