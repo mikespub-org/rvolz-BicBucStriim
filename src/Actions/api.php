@@ -146,7 +146,7 @@ class ApiActions extends DefaultActions
                     if (str_contains($param, ':')) {
                         [$param, $pattern] = explode(':', $param);
                         $schema["pattern"] = '^' . $pattern . '$';
-                        $route = str_replace(':' . $pattern, '', $route);
+                        $path = str_replace(':' . $pattern, '', $path);
                     }
                     array_push($params, [
                         "name" => $param,
