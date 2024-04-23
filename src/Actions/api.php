@@ -69,6 +69,7 @@ class ApiActions extends DefaultActions
         $title = $globalSettings[DISPLAY_APP_NAME];
         $rot = $this->getRootUrl();
         $routes = $this->app()->getRouteCollector()->getRoutes();
+        $patterns = [];
         foreach ($routes as $route) {
             $link = $rot . $route->getPattern();
             $patterns[$link] ??= [];
