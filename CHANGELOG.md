@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [3.x.x] - 20xx-xx-xx
 ### Changed
-- ...
+- Make $globalSettings['hasapi'] configurable via environment variable 'BICBUCSTRIIM_HAS_API'
 
 ## [3.3.0] - 2024-04-22
 ### Changed
