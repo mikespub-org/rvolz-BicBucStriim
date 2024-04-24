@@ -5,6 +5,7 @@ use Slim\Factory\AppFactory;
 
 /**
  * @covers \BicBucStriim\Actions\ApiActions
+ * @covers \BicBucStriim\Actions\DefaultActions
  */
 class ApiActionsTest extends PHPUnit\Framework\TestCase
 {

@@ -4,7 +4,6 @@ use BicBucStriim\Utilities\Mailer;
 
 /**
  * @covers \BicBucStriim\Utilities\Mailer
- * @covers \Utilities
  */
 class MailerTest extends PHPUnit\Framework\TestCase
 {

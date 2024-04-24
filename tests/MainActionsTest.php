@@ -6,6 +6,7 @@ use Slim\Factory\AppFactory;
 
 /**
  * @covers \BicBucStriim\Actions\MainActions
+ * @covers \BicBucStriim\Actions\DefaultActions
  */
 class MainActionsTest extends PHPUnit\Framework\TestCase
 {

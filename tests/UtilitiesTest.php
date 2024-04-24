@@ -1,11 +1,13 @@
 <?php
 
+use BicBucStriim\Utilities\InputUtil;
 use BicBucStriim\Utilities\UrlInfo;
 use BicBucStriim\Utilities\CalibreUtil;
 
 /**
  * @covers \BicBucStriim\Utilities\UrlInfo
  * @covers \BicBucStriim\Utilities\CalibreUtil
+ * @covers \BicBucStriim\Utilities\InputUtil
  */
 class UtilitiesTest extends PHPUnit\Framework\TestCase
 {
@@ -63,5 +65,44 @@ class UtilitiesTest extends PHPUnit\Framework\TestCase
         $this->assertEquals('application/vnd.amazon.ebook', CalibreUtil::titleMimeType('test.azw2'));
         $this->assertEquals('text/plain', CalibreUtil::titleMimeType(self::FIXT . '/test.unknown-format'));
         $this->assertEquals('text/xml', CalibreUtil::titleMimeType(self::FIXT . '/atom.rng'));
+    }
+
+    public function testGetUserLang()
+    {
+        # Allowed languages, i.e. languages with translations
+        $allowedLangs = ['de', 'en', 'es', 'fr', 'gl', 'hu', 'it', 'nl', 'pl'];
+        # Fallback language if the browser prefers another than the allowed languages
+        $fallbackLang = 'en';
+
+        $expected = 'pl';
+        $_GET['lang'] = $expected;
+        $this->assertEquals($expected, InputUtil::getUserLang($allowedLangs, $fallbackLang));
+        unset($_GET['lang']);
+
+        $expected = 'es';
+        $_SESSION['lang'] = $expected;
+        $this->assertEquals($expected, InputUtil::getUserLang($allowedLangs, $fallbackLang));
+        unset($_SESSION['lang']);
+
+        $expected = 'fr';
+        $_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'fr-CH, fr;q=0.9, en;q=0.8, de;q=0.7, *;q=0.5';
+        $this->assertEquals($expected, InputUtil::getUserLang($allowedLangs, $fallbackLang));
+        unset($_SERVER['HTTP_ACCEPT_LANGUAGE']);
+
+        $expected = $fallbackLang;
+        $this->assertEquals($expected, InputUtil::getUserLang($allowedLangs, $fallbackLang));
+
+        $expected = 'na';
+        $this->assertEquals($expected, InputUtil::getUserLang($allowedLangs, 'na'));
+    }
+
+    public function testIsEMailValid()
+    {
+        $this->assertFalse(InputUtil::isEMailValid('a'));
+        $this->assertFalse(InputUtil::isEMailValid('@b'));
+        $this->assertFalse(InputUtil::isEMailValid('a@b'));
+        $this->assertTrue(InputUtil::isEMailValid('a@b.c'));
+        $this->assertFalse(InputUtil::isEMailValid('a.b@c'));
+        $this->assertTrue(InputUtil::isEMailValid('a.b@c.d'));
     }
 }

@@ -10,6 +10,7 @@ use BicBucStriim\Utilities\ActionsWrapperStrategy;
 /**
  * @covers \BicBucStriim\Actions\DefaultActions
  * @covers \BicBucStriim\Traits\AppTrait
+ * @covers \BicBucStriim\Utilities\ActionsWrapperStrategy
  * @covers \BicBucStriim\Utilities\RequestUtil
  * @covers \BicBucStriim\Utilities\ResponseUtil
  * @covers \BicBucStriim\Utilities\RouteUtil
