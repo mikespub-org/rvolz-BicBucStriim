@@ -26,7 +26,7 @@ $builder = new \DI\ContainerBuilder();
 $builder->addDefinitions([
     // Application settings
     'settings' => fn() => require(__DIR__ . '/settings.php'),
-    'mode' => !empty($_ENV['BBS_DEBUG_MODE']) ? 'debug' : 'production',
+    'mode' => !empty(getenv('BBS_DEBUG_MODE')) ? 'debug' : 'production',
     #'mode' => 'debug',
     #'mode' => 'development',
     LoggerInterface::class => function (ContainerInterface $c) {

@@ -19,11 +19,11 @@ $allowedLangs = ['de', 'en', 'es', 'fr', 'gl', 'hu', 'it', 'nl', 'pl'];
 # Fallback language if the browser prefers another than the allowed languages
 $fallbackLang = 'en';
 # Application Name
-$appname = $_ENV['BBS_APP_NAME'] ?? 'BicBucStriim';
+$appname = getenv('BBS_APP_NAME') ?: 'BicBucStriim';
 # App version
 $appversion = '3.3.0';
 # Base path - null means undefined, empty '' or '/bbs' etc. mean predefined
-$basepath = $_ENV['BBS_BASE_PATH'] ?? null;
+$basepath = getenv('BBS_BASE_PATH') ?: null;
 
 # Init app globals
 $settings = new Settings();
@@ -32,7 +32,7 @@ $settings['version'] = $appversion;
 $settings['basepath'] = $basepath;
 $settings['sep'] = ' :: ';
 // provide basic json api interface - make configurable via environment variable
-$settings['hasapi'] = $_ENV['BBS_HAS_API'] ?? false;
+$settings['hasapi'] = getenv('BBS_HAS_API') ?: false;
 // @todo move this later in the request handling when we have $request available
 # Find the user language, either one of the allowed languages or
 # English as a fallback.
