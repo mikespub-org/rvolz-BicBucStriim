@@ -642,8 +642,8 @@ class OpdsGenerator
         foreach ($entry['formats'] as $format) {
             $fname = $format->name;
             $ext = strtolower($format->format);
-            $bp = \Utilities::bookPath($this->calibre_dir, $entry['book']->path, $fname . '.' . $ext);
-            $mt = \Utilities::titleMimeType($bp);
+            $bp = CalibreUtil::bookPath($this->calibre_dir, $entry['book']->path, $fname . '.' . $ext);
+            $mt = CalibreUtil::titleMimeType($bp);
             if ($protected) {
                 $this->indirectDownloadLink($titleLink . '/showaccess/', $mt);
             } else {

@@ -13,10 +13,10 @@ namespace BicBucStriim\Actions;
 use BicBucStriim\Calibre\Calibre;
 use BicBucStriim\Calibre\Language;
 use BicBucStriim\Calibre\Tag;
+use BicBucStriim\Utilities\InputUtil;
 use BicBucStriim\Utilities\Mailer;
 use BicBucStriim\Utilities\RouteUtil;
 use Exception;
-use Utilities;
 
 /*********************************************************************
  * Admin actions
@@ -455,7 +455,7 @@ class AdminActions extends DefaultActions
         if ($req_configs[KINDLE] == "1") {
             if (empty($req_configs[KINDLE_FROM_EMAIL])) {
                 array_push($errors, 5);
-            } elseif (!Utilities::isEMailValid($req_configs[KINDLE_FROM_EMAIL])) {
+            } elseif (!InputUtil::isEMailValid($req_configs[KINDLE_FROM_EMAIL])) {
                 array_push($errors, 5);
             }
         }

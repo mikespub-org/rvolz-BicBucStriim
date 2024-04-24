@@ -9,6 +9,7 @@
 
 namespace BicBucStriim\Calibre;
 
+use BicBucStriim\Utilities\CalibreUtil;
 use PDO;
 use Locale;
 use Exception;
@@ -817,7 +818,7 @@ class Calibre
         if (is_null($book)) {
             return null;
         } else {
-            return \Utilities::bookPath($this->calibre_dir, $book->path, 'cover.jpg');
+            return CalibreUtil::bookPath($this->calibre_dir, $book->path, 'cover.jpg');
         }
     }
 
@@ -1115,7 +1116,7 @@ class Calibre
         if (is_null($book)) {
             return null;
         } else {
-            return \Utilities::bookPath($this->calibre_dir, $book->path, $file);
+            return CalibreUtil::bookPath($this->calibre_dir, $book->path, $file);
         }
     }
 

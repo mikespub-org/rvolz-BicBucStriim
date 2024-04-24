@@ -142,7 +142,7 @@ class Mailer
      */
     public function createBookMessage($bookpath, $subject, $recipient, $sender, $filename)
     {
-        $contentType = \Utilities::titleMimeType($bookpath);
+        $contentType = CalibreUtil::titleMimeType($bookpath);
         // See https://github.com/PHPMailer/PHPMailer/blob/master/examples/send_file_upload.phps
         $this->mailer->setFrom($sender);
         $this->mailer->addAddress($recipient);

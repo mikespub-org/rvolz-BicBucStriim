@@ -8,8 +8,9 @@
  *
  */
 
-require 'src/inst_utils.php';
 require_once 'vendor/autoload.php';
+
+use BicBucStriim\Utilities\InstallUtil;
 
 $loader = new \Twig\Loader\FilesystemLoader('templates');
 $twig = new \Twig\Environment($loader, []);
@@ -59,7 +60,7 @@ function get_gd_version()
     phpinfo(8);
     $module_info = ob_get_contents();
     ob_end_clean();
-    return find_gd_version($module_info);
+    return InstallUtil::find_gd_version($module_info);
 }
 
 function check_calibre($dir)

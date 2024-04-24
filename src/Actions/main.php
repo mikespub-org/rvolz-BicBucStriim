@@ -11,13 +11,15 @@
 namespace BicBucStriim\Actions;
 
 use BicBucStriim\Calibre\Author;
+use BicBucStriim\Utilities\CalibreUtil;
+use BicBucStriim\Utilities\InputUtil;
 use BicBucStriim\Utilities\Mailer;
 use BicBucStriim\Utilities\MetadataEpub;
+use BicBucStriim\Utilities\ResponseUtil;
 use BicBucStriim\Utilities\RouteUtil;
 use Michelf\MarkdownExtra;
 use Exception;
 use Twig\TwigFilter;
-use Utilities;
 
 /*********************************************************************
  * Main actions
@@ -435,7 +437,7 @@ class MainActions extends DefaultActions
         }
 
         $real_bookpath = $this->calibre()->titleFile($id, $file);
-        $contentType = Utilities::titleMimeType($real_bookpath);
+        $contentType = CalibreUtil::titleMimeType($real_bookpath);
         if ($this->is_authenticated()) {
             $this->log()->info("book download by " . $this->auth()->getUserName() . " for " . $real_bookpath .
                 " with metadata update = " . $globalSettings[METADATA_UPDATE]);
@@ -443,7 +445,7 @@ class MainActions extends DefaultActions
             $this->log()->info("book download for " . $real_bookpath .
                 " with metadata update = " . $globalSettings[METADATA_UPDATE]);
         }
-        if ($contentType == Utilities::MIME_EPUB && $globalSettings[METADATA_UPDATE]) {
+        if ($contentType == CalibreUtil::MIME_EPUB && $globalSettings[METADATA_UPDATE]) {
             if ($details['book']->has_cover == 1) {
                 $cover = $this->calibre()->titleCover($id);
             } else {
@@ -508,12 +510,12 @@ class MainActions extends DefaultActions
         $filename .= ".epub";
         # Validate request e-mail format
         $to_email = $this->post('email');
-        if (!Utilities::isEMailValid($to_email)) {
+        if (!InputUtil::isEMailValid($to_email)) {
             $this->log()->debug("kindle: invalid email, " . $to_email);
             $this->mkError(400);
             return;
         } else {
-            $util = new \BicBucStriim\Utilities\ResponseUtil($this->response());
+            $util = new ResponseUtil($this->response());
             $this->response = $util->deleteCookie(KINDLE_COOKIE);
             $bookpath = $this->calibre()->titleFile($id, $file);
             $this->log()->debug("kindle: requested file " . $bookpath);
@@ -555,7 +557,7 @@ class MainActions extends DefaultActions
                 $this->log()->warning('kindle: Mail dump ' . $mailer->getDump());
             }
             # Store e-mail address in cookie so user needs to enter it only once
-            $util = new \BicBucStriim\Utilities\ResponseUtil($this->response());
+            $util = new ResponseUtil($this->response());
             $this->response = $util->setCookie(KINDLE_COOKIE, $to_email);
             if ($send_success > 0) {
                 $answer = $this->getMessageString('send_success');

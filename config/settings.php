@@ -11,6 +11,7 @@
 require_once __DIR__ . '/langs.php';
 require_once __DIR__ . '/constants.php';
 
+use BicBucStriim\Utilities\InputUtil;
 use BicBucStriim\Utilities\L10n;
 use BicBucStriim\Utilities\Mailer;
 
@@ -36,7 +37,7 @@ $globalSettings['hasapi'] = $_ENV['BBS_HAS_API'] ?? false;
 // @todo move this later in the request handling when we have $request available
 # Find the user language, either one of the allowed languages or
 # English as a fallback.
-$globalSettings['lang'] = Utilities::getUserLang($allowedLangs, $fallbackLang);
+$globalSettings['lang'] = InputUtil::getUserLang($allowedLangs, $fallbackLang);
 $globalSettings['l10n'] = new L10n($globalSettings['lang']);
 $globalSettings['langa'] = $globalSettings['l10n']->langa;
 $globalSettings['langb'] = $globalSettings['l10n']->langb;
