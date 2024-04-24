@@ -1,5 +1,5 @@
 # baseline re-generated with level 3 to keep some issues visible on higher levels
-# at the time this file was updated there are 17 errors reported for levels 3 to 5
+# at the time this file was updated there are 14 errors reported for levels 3 to 5
 includes:
     - phpstan-baseline.neon
 
@@ -12,3 +12,6 @@ parameters:
     excludePaths:
         - vendor/*
         - work/*
+    universalObjectCratesClasses:
+        - RedBeanPHP\OODBBean
+        - BicBucStriim\AppData\Settings

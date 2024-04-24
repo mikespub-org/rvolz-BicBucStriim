@@ -12,6 +12,7 @@ namespace BicBucStriim\Traits;
 
 use Aura\Auth\Auth;
 use BicBucStriim\AppData\BicBucStriim;
+use BicBucStriim\AppData\Settings;
 use BicBucStriim\Calibre\Calibre;
 use Psr\Log\LoggerInterface;
 
@@ -127,11 +128,14 @@ trait AppTrait
 
     /**
      * Get global app settings
-     * @param ?array<string, mixed> $settings
-     * @return array<string, mixed>
+     * @param array<string, mixed>|Settings|null $settings
+     * @return Settings
      */
     public function settings($settings = null)
     {
+        if (is_array($settings)) {
+            $settings = new Settings($settings);
+        }
         return $this->container('globalSettings', $settings);
     }
 
@@ -171,9 +175,9 @@ trait AppTrait
      */
     public function getRootUrl()
     {
-        $globalSettings = $this->settings();
+        $settings = $this->settings();
 
-        if ($globalSettings[RELATIVE_URLS] == '1') {
+        if ($settings->relative_urls == '1') {
             $root = rtrim($this->getRootUri(), "/");
         } else {
             // Get forwarding information, if available

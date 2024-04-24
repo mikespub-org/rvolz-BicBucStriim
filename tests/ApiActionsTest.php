@@ -1,7 +1,6 @@
 <?php
 
 use BicBucStriim\Utilities\RequestUtil;
-use Slim\Factory\AppFactory;
 
 /**
  * @covers \BicBucStriim\Actions\ApiActions
@@ -19,14 +18,15 @@ class ApiActionsTest extends PHPUnit\Framework\TestCase
         // we need to set this before bootstrap to get api routes
         $_ENV['BBS_HAS_API'] = $hasapi;
         $app = require(dirname(__DIR__) . '/config/bootstrap.php');
-        $globalSettings = $app->getContainer()->get('globalSettings');
-        $globalSettings[LOGIN_REQUIRED] = 0;
-        $app->getContainer()->set('globalSettings', $globalSettings);
+        $settings = $app->getContainer()->get('globalSettings');
+        $settings->must_login = 0;
+        $app->getContainer()->set('globalSettings', $settings);
         return $app;
     }
 
     /**
      * @runInSeparateProcess
+     * @preserveGlobalState disabled
      */
     public function testApiHomeRequest()
     {
@@ -41,6 +41,7 @@ class ApiActionsTest extends PHPUnit\Framework\TestCase
 
     /**
      * @runInSeparateProcess
+     * @preserveGlobalState disabled
      */
     public function testApiRoutesRequest()
     {
@@ -59,6 +60,7 @@ class ApiActionsTest extends PHPUnit\Framework\TestCase
 
     /**
      * @runInSeparateProcess
+     * @preserveGlobalState disabled
      */
     public function testOpenApiRequest()
     {
@@ -80,6 +82,7 @@ class ApiActionsTest extends PHPUnit\Framework\TestCase
      * should return the template variables as json object instead
      * of the actual templated page output
      * @runInSeparateProcess
+     * @preserveGlobalState disabled
      */
     public function testMainRequestWithHeader()
     {
@@ -97,6 +100,7 @@ class ApiActionsTest extends PHPUnit\Framework\TestCase
      * Requesting main page with header 'Accept: application/json'
      * but without hasapi should return normal templated page output
      * @runInSeparateProcess
+     * @preserveGlobalState disabled
      */
     public function testMainRequestWithoutHasApi()
     {

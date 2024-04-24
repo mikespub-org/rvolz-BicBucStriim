@@ -16,18 +16,14 @@ use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
 
 class CalibreConfigMiddleware extends DefaultMiddleware
 {
-    protected $calibreDir;
-
     /**
      * Initialize the configuration
      *
      * @param \BicBucStriim\App|\Slim\App|object $app The app
-     * @param string $calibreDir
      */
-    public function __construct($app, $calibreDir)
+    public function __construct($app)
     {
         parent::__construct($app);
-        $this->calibreDir = $calibreDir;
     }
 
     /**
@@ -42,12 +38,12 @@ class CalibreConfigMiddleware extends DefaultMiddleware
     {
         $this->request = $request;
         //$response = $this->response();
-        $globalSettings = $this->settings();
+        $settings = $this->settings();
 
         $resource = $this->getResourceUri();
         if ($resource != '/login/') {
             # 'After installation' scenario: here is a config DB but no valid connection to Calibre
-            if (empty($globalSettings[$this->calibreDir])) {
+            if (empty($settings->calibre_dir)) {
                 $this->log()->warning('check_config: Calibre library path not configured.');
                 if ($resource != '/admin/configuration/') {
                     // app->redirect not useable in middleware
@@ -58,7 +54,7 @@ class CalibreConfigMiddleware extends DefaultMiddleware
                 }
             } else {
                 # Setup the connection to the Calibre metadata db
-                $clp = $globalSettings[$this->calibreDir] . '/metadata.db';
+                $clp = $settings->calibre_dir . '/metadata.db';
                 $this->calibre(new \BicBucStriim\Calibre\Calibre($clp));
                 if (!$this->calibre()->libraryOk() && $resource != '/admin/configuration/') {
                     $this->log()->error('check_config: Exception while opening metadata db ' . $clp . '. Showing admin page.');

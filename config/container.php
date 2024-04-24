@@ -43,8 +43,8 @@ $builder->addDefinitions([
     },
     Calibre::class => function (ContainerInterface $c) {
         # Setup the connection to the Calibre metadata db
-        $globalSettings = $c->get('globalSettings');
-        $clp = $globalSettings[CALIBRE_DIR] . '/metadata.db';
+        $settings = $c->get('globalSettings');
+        $clp = $settings->calibre_dir . '/metadata.db';
         return new Calibre($clp);
     },
     \Twig\Environment::class => function (ContainerInterface $c) {

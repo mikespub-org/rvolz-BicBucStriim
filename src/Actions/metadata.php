@@ -58,7 +58,7 @@ class MetadataActions extends DefaultActions
      */
     public function edit_author_thm($id)
     {
-        $globalSettings = $this->settings();
+        $settings = $this->settings();
 
         // parameter checking
         if (!is_numeric($id)) {
@@ -90,7 +90,7 @@ class MetadataActions extends DefaultActions
             } else {
                 $this->log()->debug('edit_author_thm: upload ok, converting');
                 $author = $this->calibre()->author($id);
-                $created = $this->bbs()->editAuthorThumbnail($id, $author->name, $globalSettings[THUMB_GEN_CLIPPED], $_FILES["file"]["tmp_name"], $_FILES["file"]["type"]);
+                $created = $this->bbs()->editAuthorThumbnail($id, $author->name, $settings->thumb_gen_clipped, $_FILES["file"]["tmp_name"], $_FILES["file"]["type"]);
                 $this->log()->debug('edit_author_thm: converted, redirecting');
                 $rot = $this->getRootUri();
                 $this->mkRedirect($rot . '/authors/' . $id . '/0/');

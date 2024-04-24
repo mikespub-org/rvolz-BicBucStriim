@@ -50,8 +50,8 @@ class ApiActions extends DefaultActions
      */
     public function home()
     {
-        $globalSettings = $this->settings();
-        $title = $globalSettings[DISPLAY_APP_NAME];
+        $settings = $this->settings();
+        $title = $settings->display_app_name;
         $rot = $this->getRootUrl();
         $link = $rot . '/api/openapi.json';
         $this->render('api_home.twig', [
@@ -65,8 +65,8 @@ class ApiActions extends DefaultActions
      */
     public function routes()
     {
-        $globalSettings = $this->settings();
-        $title = $globalSettings[DISPLAY_APP_NAME];
+        $settings = $this->settings();
+        $title = $settings->display_app_name;
         $rot = $this->getRootUrl();
         $routes = $this->app()->getRouteCollector()->getRoutes();
         $patterns = [];
@@ -101,16 +101,16 @@ class ApiActions extends DefaultActions
     public function getOpenApi()
     {
         $root = $this->getRootUrl();
-        $globalSettings = $this->settings();
+        $settings = $this->settings();
         $result = [
             "openapi" => "3.0.3",
             "info" => [
-                "title" => $globalSettings['appname'] . " API",
-                "version" => $globalSettings['version'],
+                "title" => $settings['appname'] . " API",
+                "version" => $settings['version'],
             ],
         ];
         $result["servers"] = [
-            ["url" => $root, "description" => $globalSettings['appname'] . " API Endpoint"],
+            ["url" => $root, "description" => $settings['appname'] . " API Endpoint"],
         ];
         $result["components"] = [
             "securitySchemes" => [

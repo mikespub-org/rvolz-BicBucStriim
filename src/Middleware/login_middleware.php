@@ -69,12 +69,12 @@ class LoginMiddleware extends DefaultMiddleware
      */
     public function authBeforeDispatch()
     {
-        $globalSettings = $this->settings();
+        $settings = $this->settings();
         $request = $this->request();
         $resource = $this->getResourceUri();
         $accept = $request->getHeaderLine('ACCEPT');
         $this->log()->debug('login resource: ' . $resource);
-        if ($globalSettings[LOGIN_REQUIRED] == 1) {
+        if ($settings->must_login == 1) {
             if (!$this->is_static_resource($resource) && !$this->is_authorized()) {
                 if ($resource === '/login/') {
                     // special case login page

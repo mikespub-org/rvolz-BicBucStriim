@@ -187,8 +187,8 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
      */
     public function render($template, $data = [], $status = null)
     {
-        $globalSettings = $this->settings();
-        if (!empty($globalSettings['hasapi']) && $this->request()->hasHeader('Accept') && in_array('application/json', $this->request()->getHeader('Accept'))) {
+        $settings = $this->settings();
+        if (!empty($settings['hasapi']) && $this->request()->hasHeader('Accept') && in_array('application/json', $this->request()->getHeader('Accept'))) {
             $this->renderJson($data, $status);
             return;
         }
@@ -207,10 +207,10 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
     {
         if (is_null($this->templatesDir)) {
             $this->templatesDir = '';
-            $globalSettings = $this->settings();
+            $settings = $this->settings();
             // convert to real path here
-            if (!empty($globalSettings[TEMPLATES_DIR])) {
-                $this->templatesDir = realpath($globalSettings[TEMPLATES_DIR]);
+            if (!empty($settings->templates_dir)) {
+                $this->templatesDir = realpath($settings->templates_dir);
             }
             // override default templates if available
             if (!empty($this->templatesDir)) {
@@ -224,21 +224,21 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
      */
     public function mkPage($messageId = '', $menu = 0, $level = 0)
     {
-        $globalSettings = $this->settings();
+        $settings = $this->settings();
 
         $subtitle = $this->getMessageString($messageId);
         if ($subtitle == '') {
-            $title = $globalSettings[DISPLAY_APP_NAME];
+            $title = $settings->display_app_name;
         } else {
-            $title = $globalSettings[DISPLAY_APP_NAME] . $globalSettings['sep'] . $subtitle;
+            $title = $settings->display_app_name . $settings['sep'] . $subtitle;
         }
         $templatesDirName = '';
-        if (!empty($globalSettings[TEMPLATES_DIR])) {
-            $templatesDirName = basename($globalSettings[TEMPLATES_DIR]);
+        if (!empty($settings->templates_dir)) {
+            $templatesDirName = basename($settings->templates_dir);
         }
         $rot = $this->getRootUrl();
         $auth = $this->is_authenticated();
-        if ($globalSettings[LOGIN_REQUIRED]) {
+        if ($settings->must_login) {
             $adm = $this->is_admin();
         } else {
             $adm = true;
@@ -246,9 +246,9 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
         $page = ['title' => $title,
             'rot' => $rot,
             'h1' => $subtitle,
-            'version' => $globalSettings['version'],
+            'version' => $settings['version'],
             'custom' => $templatesDirName,
-            'glob' => $globalSettings,
+            'glob' => $settings,
             'menu' => $menu,
             'level' => $level,
             'auth' => $auth,
@@ -268,8 +268,8 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
      */
     public function getMessageString($id)
     {
-        $globalSettings = $this->settings();
-        $msg = $globalSettings['l10n']->message($id);
+        $settings = $this->settings();
+        $msg = $settings['l10n']->message($id);
         return $msg;
     }
 }

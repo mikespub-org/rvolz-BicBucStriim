@@ -429,7 +429,7 @@ class BicBucStriim
      *
      * @param int 		$authorId 	Calibre ID of the author
      * @param string 	$authorName Calibre name of the author
-     * @param boolean 	$clipped 	true = image should be clipped, else stuffed
+     * @param bool|int 	$clipped 	true = image should be clipped, else stuffed
      * @param string 	$file 		File name of the input image
      * @param string 	$mime 		Mime type of the image
      * @return 			bool file name of the thumbnail image, or null
@@ -512,7 +512,7 @@ class BicBucStriim
      *
      * @param  int 		$id 		book id
      * @param  ?string 	$cover 	    path to cover image
-     * @param  bool  	$clipped	true = clip the thumbnail, else stuff it
+     * @param  bool|int $clipped	true = clip the thumbnail, else stuff it
      * @return string thumbnail path or NULL
      */
     public function titleThumbnail($id, $cover, $clipped)

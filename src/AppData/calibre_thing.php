@@ -39,7 +39,6 @@ class Model_Calibrething extends Model_Type
 
     public function addLink($link)
     {
-        /** @phpstan-ignore-next-line */
         $this->bean->ownLinkList[] = $link;
     }
 
@@ -68,7 +67,6 @@ class Model_Calibrething extends Model_Type
 
     public function addNote($note)
     {
-        /** @phpstan-ignore-next-line */
         $this->bean->ownNoteList[] = $note;
     }
 
@@ -97,7 +95,6 @@ class Model_Calibrething extends Model_Type
 
     public function addArtefact($artefact)
     {
-        /** @phpstan-ignore-next-line */
         $this->bean->ownArtefactList[] = $artefact;
     }
 

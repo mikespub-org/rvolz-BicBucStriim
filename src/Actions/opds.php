@@ -81,10 +81,10 @@ class OpdsActions extends DefaultActions
      */
     public function opdsNewest()
     {
-        $globalSettings = $this->settings();
+        $settings = $this->settings();
 
         $filter = $this->getFilter();
-        $just_books = $this->calibre()->last30Books($globalSettings['lang'], $globalSettings[PAGE_SIZE], $filter);
+        $just_books = $this->calibre()->last30Books($settings['lang'], $settings->page_size, $filter);
         $books1 = [];
         foreach ($just_books as $book) {
             $record = $this->calibre()->titleDetailsOpds($book);
@@ -108,7 +108,7 @@ class OpdsActions extends DefaultActions
      */
     public function opdsByTitle($page = 0)
     {
-        $globalSettings = $this->settings();
+        $settings = $this->settings();
 
         // parameter checking
         if (!is_numeric($page)) {
@@ -120,9 +120,9 @@ class OpdsActions extends DefaultActions
         $filter = $this->getFilter();
         $search = $this->get('search');
         if (isset($search)) {
-            $tl = $this->calibre()->titlesSlice($globalSettings['lang'], $page, $globalSettings[PAGE_SIZE], $filter, $search);
+            $tl = $this->calibre()->titlesSlice($settings['lang'], $page, $settings->page_size, $filter, $search);
         } else {
-            $tl = $this->calibre()->titlesSlice($globalSettings['lang'], $page, $globalSettings[PAGE_SIZE], $filter);
+            $tl = $this->calibre()->titlesSlice($settings['lang'], $page, $settings->page_size, $filter);
         }
         $books1 = $this->calibre()->titleDetailsFilteredOpds($tl['entries']);
         $books = array_map([$this, 'checkThumbnailOpds'], $books1);
@@ -176,7 +176,7 @@ class OpdsActions extends DefaultActions
      */
     public function opdsByAuthor($initial, $id, $page)
     {
-        $globalSettings = $this->settings();
+        $settings = $this->settings();
 
         // parameter checking
         if (!is_numeric($id) || !is_numeric($page)) {
@@ -186,7 +186,7 @@ class OpdsActions extends DefaultActions
         }
 
         $filter = $this->getFilter();
-        $tl = $this->calibre()->authorDetailsSlice($globalSettings['lang'], $id, $page, $globalSettings[PAGE_SIZE], $filter);
+        $tl = $this->calibre()->authorDetailsSlice($settings['lang'], $id, $page, $settings->page_size, $filter);
         $this->log()->debug('opdsByAuthor 1 ' . var_export($tl, true));
         $books1 = $this->calibre()->titleDetailsFilteredOpds($tl['entries']);
         $books = array_map([$this, 'checkThumbnailOpds'], $books1);
@@ -243,7 +243,7 @@ class OpdsActions extends DefaultActions
      */
     public function opdsByTag($initial, $id, $page)
     {
-        $globalSettings = $this->settings();
+        $settings = $this->settings();
 
         // parameter checking
         if (!is_numeric($id) || !is_numeric($page)) {
@@ -253,7 +253,7 @@ class OpdsActions extends DefaultActions
         }
 
         $filter = $this->getFilter();
-        $tl = $this->calibre()->tagDetailsSlice($globalSettings['lang'], $id, $page, $globalSettings[PAGE_SIZE], $filter);
+        $tl = $this->calibre()->tagDetailsSlice($settings['lang'], $id, $page, $settings->page_size, $filter);
         $books1 = $this->calibre()->titleDetailsFilteredOpds($tl['entries']);
         $books = array_map([$this, 'checkThumbnailOpds'], $books1);
         $gen = $this->mkOpdsGenerator();
@@ -308,7 +308,7 @@ class OpdsActions extends DefaultActions
      */
     public function opdsBySeries($initial, $id, $page)
     {
-        $globalSettings = $this->settings();
+        $settings = $this->settings();
 
         // parameter checking
         if (!is_numeric($id) || !is_numeric($page)) {
@@ -318,7 +318,7 @@ class OpdsActions extends DefaultActions
         }
 
         $filter = $this->getFilter();
-        $tl = $this->calibre()->seriesDetailsSlice($globalSettings['lang'], $id, $page, $globalSettings[PAGE_SIZE], $filter);
+        $tl = $this->calibre()->seriesDetailsSlice($settings['lang'], $id, $page, $settings->page_size, $filter);
         $books1 = $this->calibre()->titleDetailsFilteredOpds($tl['entries']);
         $books = array_map([$this, 'checkThumbnailOpds'], $books1);
         $gen = $this->mkOpdsGenerator();
@@ -353,7 +353,7 @@ class OpdsActions extends DefaultActions
      */
     public function opdsBySearch($page = 0)
     {
-        $globalSettings = $this->settings();
+        $settings = $this->settings();
 
         // parameter checking
         if (!is_numeric($page)) {
@@ -370,7 +370,7 @@ class OpdsActions extends DefaultActions
             return;
         }
         $filter = $this->getFilter();
-        $tl = $this->calibre()->titlesSlice($globalSettings['lang'], $page, $globalSettings[PAGE_SIZE], $filter, $search);
+        $tl = $this->calibre()->titlesSlice($settings['lang'], $page, $settings->page_size, $filter, $search);
         $books1 = $this->calibre()->titleDetailsFilteredOpds($tl['entries']);
         $books = array_map([$this, 'checkThumbnailOpds'], $books1);
         $gen = $this->mkOpdsGenerator();
@@ -383,7 +383,7 @@ class OpdsActions extends DefaultActions
             $this->getLastSearchPage($tl),
             $search,
             $tl['total'],
-            $globalSettings[PAGE_SIZE]
+            $settings->page_size
         );
         $this->mkOpdsResponse($cat, OpdsGenerator::OPDS_MIME_ACQ);
     }
@@ -393,7 +393,7 @@ class OpdsActions extends DefaultActions
      */
     public function opdsLogout()
     {
-        $globalSettings = $this->settings();
+        $settings = $this->settings();
 
         $this->log()->debug('opdsLogout: OPDS logout request');
         if ($this->is_authenticated()) {
@@ -406,7 +406,7 @@ class OpdsActions extends DefaultActions
                 $this->log()->info("logged out user: " . $username);
             }
         }
-        $this->mkAuthenticate($globalSettings['appname']);
+        $this->mkAuthenticate($settings['appname']);
     }
 
     /*********************************************************************
@@ -424,15 +424,15 @@ class OpdsActions extends DefaultActions
      */
     public function mkOpdsGenerator()
     {
-        $globalSettings = $this->settings();
+        $settings = $this->settings();
 
         $root = $this->getRootUrl();
         $gen = new OpdsGenerator(
             $root,
-            $globalSettings['version'],
+            $settings['version'],
             $this->calibre()->calibre_dir,
             date(DATE_ATOM, $this->calibre()->calibre_last_modified),
-            $globalSettings['l10n']
+            $settings['l10n']
         );
         return $gen;
     }

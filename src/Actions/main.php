@@ -10,6 +10,7 @@
 
 namespace BicBucStriim\Actions;
 
+use BicBucStriim\AppData\Settings;
 use BicBucStriim\Calibre\Author;
 use BicBucStriim\Utilities\CalibreUtil;
 use BicBucStriim\Utilities\InputUtil;
@@ -158,10 +159,10 @@ class MainActions extends DefaultActions
      */
     public function main()
     {
-        $globalSettings = $this->settings();
+        $settings = $this->settings();
 
         $filter = $this->getFilter();
-        $books1 = $this->calibre()->last30Books($globalSettings['lang'], $globalSettings[PAGE_SIZE], $filter);
+        $books1 = $this->calibre()->last30Books($settings['lang'], $settings->page_size, $filter);
         $books = array_map([$this, 'checkThumbnail'], $books1);
         $stats = $this->calibre()->libraryStats($filter);
         $this->render('index_last30.twig', [
@@ -176,34 +177,34 @@ class MainActions extends DefaultActions
      */
     public function globalSearch()
     {
-        $globalSettings = $this->settings();
+        $settings = $this->settings();
 
         // TODO check search paramater?
 
         $filter = $this->getFilter();
         $search = $this->get('search') ?? '';
-        $tlb = $this->calibre()->titlesSlice($globalSettings['lang'], 0, $globalSettings[PAGE_SIZE], $filter, trim($search));
+        $tlb = $this->calibre()->titlesSlice($settings['lang'], 0, $settings->page_size, $filter, trim($search));
         $tlb_books = array_map([$this, 'checkThumbnail'], $tlb['entries']);
-        $tla = $this->calibre()->authorsSlice(0, $globalSettings[PAGE_SIZE], trim($search));
+        $tla = $this->calibre()->authorsSlice(0, $settings->page_size, trim($search));
         $tla_books = array_map([$this, 'checkThumbnail'], $tla['entries']);
-        $tlt = $this->calibre()->tagsSlice(0, $globalSettings[PAGE_SIZE], trim($search));
+        $tlt = $this->calibre()->tagsSlice(0, $settings->page_size, trim($search));
         $tlt_books = array_map([$this, 'checkThumbnail'], $tlt['entries']);
-        $tls = $this->calibre()->seriesSlice(0, $globalSettings[PAGE_SIZE], trim($search));
+        $tls = $this->calibre()->seriesSlice(0, $settings->page_size, trim($search));
         $tls_books = array_map([$this, 'checkThumbnail'], $tls['entries']);
         $this->render('global_search.twig', [
             'page' => $this->mkPage('pagination_search', 0),
             'books' => $tlb_books,
             'books_total' => $tlb['total'] == -1 ? 0 : $tlb['total'],
-            'more_books' => ($tlb['total'] > $globalSettings[PAGE_SIZE]),
+            'more_books' => ($tlb['total'] > $settings->page_size),
             'authors' => $tla_books,
             'authors_total' => $tla['total'] == -1 ? 0 : $tla['total'],
-            'more_authors' => ($tla['total'] > $globalSettings[PAGE_SIZE]),
+            'more_authors' => ($tla['total'] > $settings->page_size),
             'tags' => $tlt_books,
             'tags_total' => $tlt['total'] == -1 ? 0 : $tlt['total'],
-            'more_tags' => ($tlt['total'] > $globalSettings[PAGE_SIZE]),
+            'more_tags' => ($tlt['total'] > $settings->page_size),
             'series' => $tls_books,
             'series_total' => $tls['total'] == -1 ? 0 : $tls['total'],
-            'more_series' => ($tls['total'] > $globalSettings[PAGE_SIZE]),
+            'more_series' => ($tls['total'] > $settings->page_size),
             'search' => $search]);
     }
 
@@ -212,7 +213,7 @@ class MainActions extends DefaultActions
      */
     public function titlesSlice($page = 0)
     {
-        $globalSettings = $this->settings();
+        $settings = $this->settings();
 
         // parameter checking
         if (!is_numeric($page)) {
@@ -229,23 +230,23 @@ class MainActions extends DefaultActions
         $sort = $this->get('sort');
 
         if (isset($sort) && $sort == 'byReverseDate') {
-            switch ($globalSettings[TITLE_TIME_SORT]) {
-                case TITLE_TIME_SORT_TIMESTAMP:
-                    $tl = $this->calibre()->timestampOrderedTitlesSlice($globalSettings['lang'], $page, $globalSettings[PAGE_SIZE], $filter, $search);
+            switch ($settings->title_time_sort) {
+                case Settings::TITLE_TIME_SORT_TIMESTAMP:
+                    $tl = $this->calibre()->timestampOrderedTitlesSlice($settings['lang'], $page, $settings->page_size, $filter, $search);
                     break;
-                case TITLE_TIME_SORT_PUBDATE:
-                    $tl = $this->calibre()->pubdateOrderedTitlesSlice($globalSettings['lang'], $page, $globalSettings[PAGE_SIZE], $filter, $search);
+                case Settings::TITLE_TIME_SORT_PUBDATE:
+                    $tl = $this->calibre()->pubdateOrderedTitlesSlice($settings['lang'], $page, $settings->page_size, $filter, $search);
                     break;
-                case TITLE_TIME_SORT_LASTMODIFIED:
-                    $tl = $this->calibre()->lastmodifiedOrderedTitlesSlice($globalSettings['lang'], $page, $globalSettings[PAGE_SIZE], $filter, $search);
+                case Settings::TITLE_TIME_SORT_LASTMODIFIED:
+                    $tl = $this->calibre()->lastmodifiedOrderedTitlesSlice($settings['lang'], $page, $settings->page_size, $filter, $search);
                     break;
                 default:
-                    $this->log()->error('titlesSlice: invalid sort order ' . $globalSettings[TITLE_TIME_SORT]);
-                    $tl = $this->calibre()->timestampOrderedTitlesSlice($globalSettings['lang'], $page, $globalSettings[PAGE_SIZE], $filter, $search);
+                    $this->log()->error('titlesSlice: invalid sort order ' . $settings->title_time_sort);
+                    $tl = $this->calibre()->timestampOrderedTitlesSlice($settings['lang'], $page, $settings->page_size, $filter, $search);
                     break;
             }
         } else {
-            $tl = $this->calibre()->titlesSlice($globalSettings['lang'], $page, $globalSettings[PAGE_SIZE], $filter, $search);
+            $tl = $this->calibre()->titlesSlice($settings['lang'], $page, $settings->page_size, $filter, $search);
         }
 
         $books = array_map([$this, 'checkThumbnail'], $tl['entries']);
@@ -274,7 +275,7 @@ class MainActions extends DefaultActions
      */
     public function title($id)
     {
-        $globalSettings = $this->settings();
+        $settings = $this->settings();
 
         // Add filter for human readable filesize
         $filter = new TwigFilter('hfsize', function ($string) {
@@ -289,7 +290,7 @@ class MainActions extends DefaultActions
             return;
         }
 
-        $details = $this->calibre()->titleDetails($globalSettings['lang'], $id);
+        $details = $this->calibre()->titleDetails($settings['lang'], $id);
         if (is_null($details)) {
             $this->log()->warning("title: book not found: " . $id);
             $this->myNotFound();
@@ -312,7 +313,7 @@ class MainActions extends DefaultActions
         } else {
             $show_idlinks = false;
         }
-        $kindle_format = ($globalSettings[KINDLE] == 1) ? $this->calibre()->titleGetKindleFormat($id) : null;
+        $kindle_format = ($settings->kindle == 1) ? $this->calibre()->titleGetKindleFormat($id) : null;
         $this->log()->debug('titleDetails custom columns: ' . count($details['custom']));
         $this->render(
             'title_detail.twig',
@@ -329,7 +330,7 @@ class MainActions extends DefaultActions
                 'ids' => $details['ids'],
                 'id_templates' => $id_tmpls,
                 'kindle_format' => $kindle_format,
-                'kindle_from_email' => $globalSettings[KINDLE_FROM_EMAIL],
+                'kindle_from_email' => $settings->kindle_from_email,
                 'protect_dl' => false]
         );
     }
@@ -375,7 +376,7 @@ class MainActions extends DefaultActions
      */
     public function thumbnail($id)
     {
-        $globalSettings = $this->settings();
+        $settings = $this->settings();
 
         // parameter checking
         if (!is_numeric($id)) {
@@ -396,7 +397,7 @@ class MainActions extends DefaultActions
 
         if ($book->has_cover) {
             $cover = $this->calibre()->titleCover($id);
-            $thumb = $this->bbs()->titleThumbnail($id, $cover, $globalSettings[THUMB_GEN_CLIPPED]);
+            $thumb = $this->bbs()->titleThumbnail($id, $cover, $settings->thumb_gen_clipped);
             $this->log()->debug('thumbnail: thumb found ' . $thumb);
             $has_cover = true;
         }
@@ -413,7 +414,7 @@ class MainActions extends DefaultActions
      */
     public function book($id, $file)
     {
-        $globalSettings = $this->settings();
+        $settings = $this->settings();
 
         // parameter checking
         if (!is_numeric($id)) {
@@ -423,7 +424,7 @@ class MainActions extends DefaultActions
         }
         // TODO check file parameter?
 
-        $details = $this->calibre()->titleDetails($globalSettings['lang'], $id);
+        $details = $this->calibre()->titleDetails($settings['lang'], $id);
         if (is_null($details)) {
             $this->log()->warning("book: no book found for " . $id);
             $this->myNotFound();
@@ -440,12 +441,12 @@ class MainActions extends DefaultActions
         $contentType = CalibreUtil::titleMimeType($real_bookpath);
         if ($this->is_authenticated()) {
             $this->log()->info("book download by " . $this->auth()->getUserName() . " for " . $real_bookpath .
-                " with metadata update = " . $globalSettings[METADATA_UPDATE]);
+                " with metadata update = " . $settings->metadata_update);
         } else {
             $this->log()->info("book download for " . $real_bookpath .
-                " with metadata update = " . $globalSettings[METADATA_UPDATE]);
+                " with metadata update = " . $settings->metadata_update);
         }
-        if ($contentType == CalibreUtil::MIME_EPUB && $globalSettings[METADATA_UPDATE]) {
+        if ($contentType == CalibreUtil::MIME_EPUB && $settings->metadata_update) {
             if ($details['book']->has_cover == 1) {
                 $cover = $this->calibre()->titleCover($id);
             } else {
@@ -478,7 +479,7 @@ class MainActions extends DefaultActions
      */
     public function kindle($id, $file)
     {
-        $globalSettings = $this->settings();
+        $settings = $this->settings();
 
         // parameter checking
         if (!is_numeric($id)) {
@@ -496,7 +497,7 @@ class MainActions extends DefaultActions
             return;
         }
 
-        $details = $this->calibre()->titleDetails($globalSettings['lang'], $id);
+        $details = $this->calibre()->titleDetails($settings['lang'], $id);
         $filename = "";
         if ($details['series'] != null) {
             $filename .= $details['series'][0]->name;
@@ -516,29 +517,31 @@ class MainActions extends DefaultActions
             return;
         } else {
             $util = new ResponseUtil($this->response());
-            $this->response = $util->deleteCookie(KINDLE_COOKIE);
+            $this->response = $util->deleteCookie(Settings::KINDLE_COOKIE);
             $bookpath = $this->calibre()->titleFile($id, $file);
             $this->log()->debug("kindle: requested file " . $bookpath);
-            if ($globalSettings[MAILER] == Mailer::SMTP) {
-                $mail = ['username' => $globalSettings[SMTP_USER],
-                    'password' => $globalSettings[SMTP_PASSWORD],
-                    'smtp-server' => $globalSettings[SMTP_SERVER],
-                    'smtp-port' => $globalSettings[SMTP_PORT]];
-                if ($globalSettings[SMTP_ENCRYPTION] == 1) {
+            if ($settings->mailer == Mailer::SMTP) {
+                $mail = [
+                    'username' => $settings[Settings::SMTP_USER],
+                    'password' => $settings[Settings::SMTP_PASSWORD],
+                    'smtp-server' => $settings[Settings::SMTP_SERVER],
+                    'smtp-port' => $settings[Settings::SMTP_PORT],
+                ];
+                if ($settings[Settings::SMTP_ENCRYPTION] == 1) {
                     $mail['smtp-encryption'] = Mailer::SSL;
-                } elseif ($globalSettings[SMTP_ENCRYPTION] == 2) {
+                } elseif ($settings[Settings::SMTP_ENCRYPTION] == 2) {
                     $mail['smtp-encryption'] = Mailer::TLS;
                 }
                 $this->log()->debug('kindle mail config: ' . var_export($mail, true));
                 $mailer = new Mailer(Mailer::SMTP, $mail);
-            } elseif ($globalSettings[MAILER] == Mailer::SENDMAIL) {
+            } elseif ($settings->mailer == Mailer::SENDMAIL) {
                 $mailer = new Mailer(Mailer::SENDMAIL);
             } else {
                 $mailer = new Mailer(Mailer::MAIL);
             }
             $send_success = 0;
             try {
-                $message_success = $mailer->createBookMessage($bookpath, $globalSettings[DISPLAY_APP_NAME], $to_email, $globalSettings[KINDLE_FROM_EMAIL], $filename);
+                $message_success = $mailer->createBookMessage($bookpath, $settings->display_app_name, $to_email, $settings->kindle_from_email, $filename);
                 if (!$message_success) {
                     $this->log()->warning('kindle: book message to ' . $to_email . ' failed, dump: ' . $mailer->getDump());
                     $answer = $this->getMessageString('error_kindle_send');
@@ -558,7 +561,7 @@ class MainActions extends DefaultActions
             }
             # Store e-mail address in cookie so user needs to enter it only once
             $util = new ResponseUtil($this->response());
-            $this->response = $util->setCookie(KINDLE_COOKIE, $to_email);
+            $this->response = $util->setCookie(Settings::KINDLE_COOKIE, $to_email);
             if ($send_success > 0) {
                 $answer = $this->getMessageString('send_success');
                 $this->mkResponse($answer, 'text/plain', 200);
@@ -576,7 +579,7 @@ class MainActions extends DefaultActions
      */
     public function authorsSlice($page = 0)
     {
-        $globalSettings = $this->settings();
+        $settings = $this->settings();
 
         // parameter checking
         if (!is_numeric($page)) {
@@ -587,9 +590,9 @@ class MainActions extends DefaultActions
 
         $search = $this->get('search');
         if (isset($search)) {
-            $tl = $this->calibre()->authorsSlice($page, $globalSettings[PAGE_SIZE], trim($search));
+            $tl = $this->calibre()->authorsSlice($page, $settings->page_size, trim($search));
         } else {
-            $tl = $this->calibre()->authorsSlice($page, $globalSettings[PAGE_SIZE]);
+            $tl = $this->calibre()->authorsSlice($page, $settings->page_size);
         }
 
         foreach ($tl['entries'] as $author) {
@@ -617,7 +620,7 @@ class MainActions extends DefaultActions
      */
     public function authorDetailsSlice($id, $page = 0)
     {
-        $globalSettings = $this->settings();
+        $settings = $this->settings();
 
         // parameter checking
         if (!is_numeric($id) || !is_numeric($page)) {
@@ -627,7 +630,7 @@ class MainActions extends DefaultActions
         }
 
         $filter = $this->getFilter();
-        $tl = $this->calibre()->authorDetailsSlice($globalSettings['lang'], $id, $page, $globalSettings[PAGE_SIZE], $filter);
+        $tl = $this->calibre()->authorDetailsSlice($settings['lang'], $id, $page, $settings->page_size, $filter);
         if (is_null($tl)) {
             $this->log()->debug('no author ' . $id);
             $this->myNotFound();
@@ -713,7 +716,7 @@ class MainActions extends DefaultActions
      */
     public function seriesSlice($page = 0)
     {
-        $globalSettings = $this->settings();
+        $settings = $this->settings();
 
         // parameter checking
         if (!is_numeric($page)) {
@@ -725,9 +728,9 @@ class MainActions extends DefaultActions
         $search = $this->get('search');
         if (isset($search)) {
             $this->log()->debug('seriesSlice: search ' . $search);
-            $tl = $this->calibre()->seriesSlice($page, $globalSettings[PAGE_SIZE], trim($search));
+            $tl = $this->calibre()->seriesSlice($page, $settings->page_size, trim($search));
         } else {
-            $tl = $this->calibre()->seriesSlice($page, $globalSettings[PAGE_SIZE]);
+            $tl = $this->calibre()->seriesSlice($page, $settings->page_size);
         }
         $this->render('series.twig', [
             'page' => $this->mkPage('series', 5, 1),
@@ -748,7 +751,7 @@ class MainActions extends DefaultActions
      */
     public function seriesDetailsSlice($id, $page = 0)
     {
-        $globalSettings = $this->settings();
+        $settings = $this->settings();
 
         // parameter checking
         if (!is_numeric($id) || !is_numeric($page)) {
@@ -758,7 +761,7 @@ class MainActions extends DefaultActions
         }
 
         $filter = $this->getFilter();
-        $tl = $this->calibre()->seriesDetailsSlice($globalSettings['lang'], $id, $page, $globalSettings[PAGE_SIZE], $filter);
+        $tl = $this->calibre()->seriesDetailsSlice($settings['lang'], $id, $page, $settings->page_size, $filter);
         if (is_null($tl)) {
             $this->log()->debug('seriesDetailsSlice: no series ' . $id);
             $this->myNotFound();
@@ -781,7 +784,7 @@ class MainActions extends DefaultActions
      */
     public function tagsSlice($page = 0)
     {
-        $globalSettings = $this->settings();
+        $settings = $this->settings();
 
         // parameter checking
         if (!is_numeric($page)) {
@@ -792,9 +795,9 @@ class MainActions extends DefaultActions
 
         $search = $this->get('search');
         if (isset($search)) {
-            $tl = $this->calibre()->tagsSlice($page, $globalSettings[PAGE_SIZE], trim($search));
+            $tl = $this->calibre()->tagsSlice($page, $settings->page_size, trim($search));
         } else {
-            $tl = $this->calibre()->tagsSlice($page, $globalSettings[PAGE_SIZE]);
+            $tl = $this->calibre()->tagsSlice($page, $settings->page_size);
         }
         $this->render('tags.twig', [
             'page' => $this->mkPage('tags', 4, 1),
@@ -815,7 +818,7 @@ class MainActions extends DefaultActions
      */
     public function tagDetailsSlice($id, $page = 0)
     {
-        $globalSettings = $this->settings();
+        $settings = $this->settings();
 
         // parameter checking
         if (!is_numeric($id) || !is_numeric($page)) {
@@ -825,7 +828,7 @@ class MainActions extends DefaultActions
         }
 
         $filter = $this->getFilter();
-        $tl = $this->calibre()->tagDetailsSlice($globalSettings['lang'], $id, $page, $globalSettings[PAGE_SIZE], $filter);
+        $tl = $this->calibre()->tagDetailsSlice($settings['lang'], $id, $page, $settings->page_size, $filter);
         if (is_null($tl)) {
             $this->log()->debug('no tag ' . $id);
             $this->myNotFound();

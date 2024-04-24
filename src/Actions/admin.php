@@ -10,6 +10,7 @@
 
 namespace BicBucStriim\Actions;
 
+use BicBucStriim\AppData\Settings;
 use BicBucStriim\Calibre\Calibre;
 use BicBucStriim\Calibre\Language;
 use BicBucStriim\Calibre\Tag;
@@ -108,13 +109,13 @@ class AdminActions extends DefaultActions
     public function mkTitleTimeSortOptions()
     {
         $e0 = new ConfigTtsOption();
-        $e0->key = TITLE_TIME_SORT_TIMESTAMP;
+        $e0->key = Settings::TITLE_TIME_SORT_TIMESTAMP;
         $e0->text = $this->getMessageString('admin_tts_by_timestamp');
         $e1 = new ConfigTtsOption();
-        $e1->key = TITLE_TIME_SORT_PUBDATE;
+        $e1->key = Settings::TITLE_TIME_SORT_PUBDATE;
         $e1->text = $this->getMessageString('admin_tts_by_pubdate');
         $e2 = new ConfigTtsOption();
-        $e2->key = TITLE_TIME_SORT_LASTMODIFIED;
+        $e2->key = Settings::TITLE_TIME_SORT_LASTMODIFIED;
         $e2->text = $this->getMessageString('admin_tts_by_lastmodified');
         return [$e0, $e1, $e2];
     }
@@ -230,12 +231,14 @@ class AdminActions extends DefaultActions
      */
     public function get_smtp_config()
     {
-        $globalSettings = $this->settings();
-        $mail = ['username' => $globalSettings[SMTP_USER],
-            'password' => $globalSettings[SMTP_PASSWORD],
-            'smtpserver' => $globalSettings[SMTP_SERVER],
-            'smtpport' => $globalSettings[SMTP_PORT],
-            'smtpenc' => $globalSettings[SMTP_ENCRYPTION]];
+        $settings = $this->settings();
+        $mail = [
+            'username' => $settings[Settings::SMTP_USER],
+            'password' => $settings[Settings::SMTP_PASSWORD],
+            'smtpserver' => $settings[Settings::SMTP_SERVER],
+            'smtpport' => $settings[Settings::SMTP_PORT],
+            'smtpenc' => $settings[Settings::SMTP_ENCRYPTION],
+        ];
         $this->render('admin_mail.twig', [
             'page' => $this->mkPage('admin_mail', 0, 2),
             'mail' => $mail,
@@ -264,11 +267,13 @@ class AdminActions extends DefaultActions
     {
         $mail_data = $this->post();
         $this->log()->debug('admin_change_smtp_configuration: ' . var_export($mail_data, true));
-        $mail_config = [SMTP_USER => $mail_data['username'],
-            SMTP_PASSWORD => $mail_data['password'],
-            SMTP_SERVER => $mail_data['smtpserver'],
-            SMTP_PORT => $mail_data['smtpport'],
-            SMTP_ENCRYPTION => $mail_data['smtpenc']];
+        $mail_config = [
+            Settings::SMTP_USER => $mail_data['username'],
+            Settings::SMTP_PASSWORD => $mail_data['password'],
+            Settings::SMTP_SERVER => $mail_data['smtpserver'],
+            Settings::SMTP_PORT => $mail_data['smtpport'],
+            Settings::SMTP_ENCRYPTION => $mail_data['smtpenc'],
+        ];
         $this->bbs()->saveConfigs($mail_config);
         $this->render('admin_mail.twig', [
             'page' => $this->mkPage('admin_smtp', 0, 2),
@@ -415,7 +420,7 @@ class AdminActions extends DefaultActions
      */
     public function change_json()
     {
-        $globalSettings = $this->settings();
+        $settings = $this->settings();
         $this->log()->debug('admin_change: started');
         # Check access permission
         if (!$this->is_admin()) {
@@ -434,13 +439,13 @@ class AdminActions extends DefaultActions
 
         ## Check for consistency - calibre directory
         # Calibre dir is still empty and no change in sight --> error
-        if (!$this->has_valid_calibre_dir() && empty($req_configs[CALIBRE_DIR])) {
+        if (!$this->has_valid_calibre_dir() && empty($req_configs[Settings::CALIBRE_DIR])) {
             array_push($errors, 1);
         }
         # Calibre dir changed, check it for existence, delete thumbnails of old calibre library
-        elseif (array_key_exists(CALIBRE_DIR, $req_configs)) {
-            $req_calibre_dir = $req_configs[CALIBRE_DIR];
-            if ($req_calibre_dir != $globalSettings[CALIBRE_DIR]) {
+        elseif (array_key_exists(Settings::CALIBRE_DIR, $req_configs)) {
+            $req_calibre_dir = $req_configs[Settings::CALIBRE_DIR];
+            if ($req_calibre_dir != $settings->calibre_dir) {
                 if (!Calibre::checkForCalibre($req_calibre_dir)) {
                     array_push($errors, 1);
                 } elseif ($this->bbs()->clearThumbnails()) {
@@ -452,16 +457,16 @@ class AdminActions extends DefaultActions
         }
         ## More consistency checks - kindle feature
         # Switch off Kindle feature, if no valid email address supplied
-        if ($req_configs[KINDLE] == "1") {
-            if (empty($req_configs[KINDLE_FROM_EMAIL])) {
+        if ($req_configs[Settings::KINDLE] == "1") {
+            if (empty($req_configs[Settings::KINDLE_FROM_EMAIL])) {
                 array_push($errors, 5);
-            } elseif (!InputUtil::isEMailValid($req_configs[KINDLE_FROM_EMAIL])) {
+            } elseif (!InputUtil::isEMailValid($req_configs[Settings::KINDLE_FROM_EMAIL])) {
                 array_push($errors, 5);
             }
         }
 
         ## Check for a change in the thumbnail generation method
-        if ($req_configs[THUMB_GEN_CLIPPED] != $globalSettings[THUMB_GEN_CLIPPED]) {
+        if ($req_configs[Settings::THUMB_GEN_CLIPPED] != $settings->thumb_gen_clipped) {
             $this->log()->info('admin_change: Thumbnail generation method changed. Existing Thumbnails will be deleted.');
             # Delete old thumbnails if necessary
             if ($this->bbs()->clearThumbnails()) {
@@ -472,9 +477,9 @@ class AdminActions extends DefaultActions
         }
 
         ## Check for a change in page size, min 1, max 100
-        if ($req_configs[PAGE_SIZE] != $globalSettings[PAGE_SIZE]) {
-            if ($req_configs[PAGE_SIZE] < 1 || $req_configs[PAGE_SIZE] > 100) {
-                $this->log()->warning('admin_change: Invalid page size requested: ' . $req_configs[PAGE_SIZE]);
+        if ($req_configs[Settings::PAGE_SIZE] != $settings->page_size) {
+            if ($req_configs[Settings::PAGE_SIZE] < 1 || $req_configs[Settings::PAGE_SIZE] > 100) {
+                $this->log()->warning('admin_change: Invalid page size requested: ' . $req_configs[Settings::PAGE_SIZE]);
                 array_push($errors, 4);
             }
         }
@@ -489,9 +494,9 @@ class AdminActions extends DefaultActions
         } else {
             ## Apply changes
             foreach ($req_configs as $key => $value) {
-                if (!isset($globalSettings[$key]) || $value != $globalSettings[$key]) {
+                if (!isset($settings[$key]) || $value != $settings[$key]) {
                     $nconfigs[$key] = $value;
-                    $globalSettings[$key] = $value;
+                    $settings[$key] = $value;
                     $this->log()->debug('admin_change: ' . $key . ' changed: ' . $value);
                 }
             }
@@ -499,7 +504,7 @@ class AdminActions extends DefaultActions
             if (count($nconfigs) > 0) {
                 $this->bbs()->saveConfigs($nconfigs);
                 $this->log()->debug('admin_change: changes saved');
-                $this->settings($globalSettings);
+                $this->settings($settings);
             }
             $this->log()->debug('admin_change: ended');
             $this->render('admin_configuration.twig', [
@@ -518,29 +523,29 @@ class AdminActions extends DefaultActions
      */
     public function check_version()
     {
-        $globalSettings = $this->settings();
+        $settings = $this->settings();
         $versionAnswer = [];
-        $contents = file_get_contents(VERSION_URL);
+        $contents = file_get_contents(Settings::VERSION_URL);
         if ($contents == false) {
             $versionClass = 'error';
-            $versionAnswer = sprintf($this->getMessageString('admin_new_version_error'), $globalSettings['version']);
+            $versionAnswer = sprintf($this->getMessageString('admin_new_version_error'), $settings['version']);
         } else {
             $versionInfo = json_decode($contents);
-            $version = $globalSettings['version'];
-            if (strpos($globalSettings['version'], '-') === false) {
-                $v = preg_split('/-/', $globalSettings['version']);
+            $version = $settings['version'];
+            if (strpos($settings['version'], '-') === false) {
+                $v = preg_split('/-/', $settings['version']);
                 $version = $v[0];
             }
             $result = version_compare($version, $versionInfo->{'version'});
             if ($result === -1) {
                 $versionClass = 'success';
-                $msg1 = sprintf($this->getMessageString('admin_new_version'), $versionInfo->{'version'}, $globalSettings['version']);
+                $msg1 = sprintf($this->getMessageString('admin_new_version'), $versionInfo->{'version'}, $settings['version']);
                 $msg2 = sprintf("<a href=\"%s\">%s</a>", $versionInfo->{'url'}, $versionInfo->{'url'});
                 $msg3 = sprintf($this->getMessageString('admin_check_url'), $msg2);
                 $versionAnswer = $msg1 . '. ' . $msg3;
             } else {
                 $versionClass = '';
-                $versionAnswer = sprintf($this->getMessageString('admin_no_new_version'), $globalSettings['version']);
+                $versionAnswer = sprintf($this->getMessageString('admin_no_new_version'), $settings['version']);
             }
         }
         $this->render('admin_version.twig', [
@@ -561,8 +566,8 @@ class AdminActions extends DefaultActions
      */
     public function has_valid_calibre_dir()
     {
-        $globalSettings = $this->settings();
-        return (!empty($globalSettings[CALIBRE_DIR]) &&
-            Calibre::checkForCalibre($globalSettings[CALIBRE_DIR]));
+        $settings = $this->settings();
+        return (!empty($settings->calibre_dir) &&
+            Calibre::checkForCalibre($settings->calibre_dir));
     }
 }

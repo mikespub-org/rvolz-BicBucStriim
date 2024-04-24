@@ -60,13 +60,13 @@ class OwnConfigMiddleware extends DefaultMiddleware
     protected function check_config_db()
     {
         $we_have_config = 0;
-        $globalSettings = $this->settings();
+        $settings = $this->settings();
         if ($this->bbs()->dbOk()) {
             $we_have_config = 1;
             $css = $this->bbs()->configs();
             foreach ($css as $config) {
                 if (in_array($config->name, $this->knownConfigs)) {
-                    $globalSettings[$config->name] = $config->val;
+                    $settings[$config->name] = $config->val;
                 } else {
                     $this->log()->warning(join(
                         'own_config_middleware: ',
@@ -74,14 +74,14 @@ class OwnConfigMiddleware extends DefaultMiddleware
                     ));
                 }
             }
-            $this->settings($globalSettings);
+            $this->settings($settings);
 
-            if ($globalSettings[DB_VERSION] != DB_SCHEMA_VERSION) {
+            if ($settings->db_version != $settings::DB_SCHEMA_VERSION) {
                 $this->log()->warning('own_config_middleware: old db schema detected. please run update');
                 return 2;
             }
 
-            if ($globalSettings[LOGIN_REQUIRED] == 1) {
+            if ($settings->must_login == 1) {
                 $this->container('must_login', true);
                 $this->log()->info('multi user mode: login required');
             } else {

@@ -65,9 +65,9 @@ class MiddlewareTest extends PHPUnit\Framework\TestCase
         global $langen;
         require('config/langs.php');
         $app = require(dirname(__DIR__) . '/config/bootstrap.php');
-        $globalSettings = $app->getContainer()->get('globalSettings');
-        $globalSettings[LOGIN_REQUIRED] = $login;
-        $app->getContainer()->set('globalSettings', $globalSettings);
+        $settings = $app->getContainer()->get('globalSettings');
+        $settings->must_login = $login;
+        $app->getContainer()->set('globalSettings', $settings);
         return $app;
     }
 

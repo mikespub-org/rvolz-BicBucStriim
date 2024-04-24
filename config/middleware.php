@@ -13,7 +13,7 @@ namespace BicBucStriim;
 function getMiddlewareInstances($app, $settings)
 {
     return [
-        new Middleware\CalibreConfigMiddleware($app, CALIBRE_DIR),
+        new Middleware\CalibreConfigMiddleware($app),
         new Middleware\LoginMiddleware($app, $settings['appname'], ['js', 'img', 'style', 'static']),
         new Middleware\OwnConfigMiddleware($app, $settings['knownConfigs']),
     ];

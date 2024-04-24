@@ -10,6 +10,8 @@
 
 namespace BicBucStriim\Traits;
 
+use BicBucStriim\AppData\Settings;
+
 /*********************************************************************
  * App utility interface (documentation only) - use AppTrait in class
  ********************************************************************/
@@ -71,8 +73,8 @@ interface AppInterface
 
     /**
      * Get global app settings
-     * @param ?array<string, mixed> $settings
-     * @return array<string, mixed>
+     * @param array<string, mixed>|Settings|null $settings
+     * @return Settings
      */
     public function settings($settings = null);
 
