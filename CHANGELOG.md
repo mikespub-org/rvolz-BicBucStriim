@@ -6,8 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [3.x.x] - 20xx-xx-xx
 ### Changed
+- Split config/config.php file based on configuration mode
+- Make app name configurable via environment variable 'BBS_APP_NAME'
+- Make base path configurable via environment variable 'BBS_BASE_PATH'
+- Make debug mode configurable via environment variable 'BBS_DEBUG_MODE'
 - Move default settings to Settings class + use properties to access
 - Make $settings['hasapi'] configurable via environment variable 'BBS_HAS_API'
+- Enable basic json api interface by configuring $settings['hasapi'] = true;
 
 ## [3.3.0] - 2024-04-22
 ### Changed

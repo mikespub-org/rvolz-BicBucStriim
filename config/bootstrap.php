@@ -30,6 +30,7 @@ AppFactory::setContainer($container);
 
 # Init app
 $app = AppFactory::create();
+# Base path - null means undefined, empty '' or '/bbs' etc. mean predefined
 if (!empty($settings['basepath'])) {
     $app->setBasePath($settings['basepath']);
 }
@@ -62,6 +63,7 @@ $app->addRoutingMiddleware();
 # We don't really care if someone hits the cache after being logged out
 $cachePool = $app->getContainer()->get(CacheItemPoolInterface::class);
 $app->add(new \BicBucStriim\Middleware\CachingMiddleware($app, ['/admin', '/login'], $cachePool));
+# Base path - null means undefined, empty '' or '/bbs' etc. mean predefined
 if (!isset($settings['basepath'])) {
     $app->add(new \BicBucStriim\Middleware\BasePathMiddleware($app));
 }

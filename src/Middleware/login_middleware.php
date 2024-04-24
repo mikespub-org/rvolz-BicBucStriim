@@ -102,9 +102,16 @@ class LoginMiddleware extends DefaultMiddleware
             }
         } else {
             if ($resource === '/login/') {
+                // we need to initialize $this->auth() if we want to login in MainActions
                 $this->is_authorized();
                 // special case login page
                 $this->log()->debug('login: login page authorized');
+                return false;
+            } elseif ($resource === '/logout/') {
+                // we need to initialize $this->auth() if we want to logout in MainActions
+                $this->is_authorized();
+                // special case logout page
+                $this->log()->debug('login: logout page authorized');
                 return false;
             } elseif (stripos($resource, '/admin') === 0 && !$this->is_static_resource($resource) && !$this->is_authorized()) {
                 $this->log()->debug('login: redirecting to login');
@@ -155,8 +162,8 @@ class LoginMiddleware extends DefaultMiddleware
         $hash = new \Aura\Auth\Verifier\PasswordVerifier(PASSWORD_BCRYPT);
         $cols = ['username', 'password', 'id', 'email', 'role', 'languages', 'tags'];
         $pdo_adapter = $auth_factory->newPdoAdapter($this->bbs()->mydb, $hash, $cols, 'user');
-        $this->container('login_service', $auth_factory->newLoginService($pdo_adapter));
-        $this->container('logout_service', $auth_factory->newLogoutService($pdo_adapter));
+        $this->container('login_service', fn() => $auth_factory->newLoginService($pdo_adapter));
+        $this->container('logout_service', fn() => $auth_factory->newLogoutService($pdo_adapter));
         $resume_service = $auth_factory->newResumeService($pdo_adapter);
         try {
             $resume_service->resume($this->auth());
