@@ -8,4 +8,4 @@ parameters:
 		-
 			message: "#^Call to an undefined method Twig\\\\Loader\\\\LoaderInterface\\:\\:prependPath\\(\\)\\.$#"
 			count: 1
-			path: src/Actions/default.php
+			path: src/Actions/DefaultActions.php

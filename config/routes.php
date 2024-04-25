@@ -8,16 +8,16 @@
  *
  */
 
-namespace BicBucStriim;
+namespace BicBucStriim\Actions;
 
 function getActions($settings)
 {
     return [
         // classname, prefix
-        [Actions\MainActions::class, null],
-        [Actions\AdminActions::class, '/admin'],
-        [Actions\MetadataActions::class, '/metadata'],
-        [Actions\OpdsActions::class, '/opds'],
+        [MainActions::class, null],
+        [AdminActions::class, '/admin'],
+        [MetadataActions::class, '/metadata'],
+        [OpdsActions::class, '/opds'],
     ];
 }
 
@@ -28,7 +28,7 @@ return function ($app, $settings) {
         $class::addRoutes($app, $prefix);
     }
     if (!empty($settings['globalSettings']['hasapi'])) {
-        $class = Actions\ApiActions::class;
+        $class = ApiActions::class;
         $class::addRoutes($app, '/api');
     }
 };
