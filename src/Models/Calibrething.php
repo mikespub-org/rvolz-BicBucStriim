@@ -8,7 +8,9 @@
  *
  */
 
-namespace BicBucStriim\AppData;
+namespace BicBucStriim\Models;
+
+use BicBucStriim\AppData\DataConstants;
 
 /**
  * RedBeanPHP FUSE model for 'calibrething' bean with one-to-many relation of author with link, note and artefact
@@ -22,11 +24,11 @@ namespace BicBucStriim\AppData;
  * @property mixed $cname
  * @property mixed $refctr
  */
-class Model_Calibrething extends Model_Type
+class Calibrething extends Model
 {
     /**
      * Return author links releated to this Calibre entitiy.
-     * @return array<Model_Link> all available author links
+     * @return array<Link> all available author links
      */
     public function getAuthorLinks()
     {
@@ -49,7 +51,7 @@ class Model_Calibrething extends Model_Type
 
     /**
      * Return the author note text related to this Calibre entitiy.
-     * @return ?Model_Note 	text or null
+     * @return ?Note 	text or null
      */
     public function getAuthorNote()
     {
@@ -61,7 +63,7 @@ class Model_Calibrething extends Model_Type
         if (empty($notes)) {
             return null;
         } else {
-            return Model_Note::cast($notes[0]);
+            return Note::cast($notes[0]);
         }
     }
 
@@ -77,7 +79,7 @@ class Model_Calibrething extends Model_Type
 
     /**
      * Return the author thumbnail file related to this Calibre entitiy.
-     * @return ?Model_Artefact 	Path to thumbnail file or null
+     * @return ?Artefact 	Path to thumbnail file or null
      */
     public function getAuthorThumbnail()
     {
@@ -89,7 +91,7 @@ class Model_Calibrething extends Model_Type
         if (empty($artefacts)) {
             return null;
         } else {
-            return Model_Artefact::cast($artefacts[0]);
+            return Artefact::cast($artefacts[0]);
         }
     }
 

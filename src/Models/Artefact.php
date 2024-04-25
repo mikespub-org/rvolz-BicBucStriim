@@ -8,7 +8,7 @@
  *
  */
 
-namespace BicBucStriim\AppData;
+namespace BicBucStriim\Models;
 
 /**
  * RedBeanPHP FUSE model for 'artefact' bean
@@ -16,4 +16,4 @@ namespace BicBucStriim\AppData;
  * @property mixed $atype
  * @property mixed $url
  */
-class Model_Artefact extends Model_Type {}
+class Artefact extends Model {}

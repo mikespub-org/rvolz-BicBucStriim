@@ -12,7 +12,7 @@ use Psr\Cache\CacheItemPoolInterface;
 use Slim\Factory\AppFactory;
 use BicBucStriim\Utilities\ActionsWrapperStrategy;
 
-define('REDBEAN_MODEL_PREFIX', '\\BicBucStriim\\AppData\\Model_');
+define('REDBEAN_MODEL_PREFIX', '\\BicBucStriim\\Models\\');
 
 # The session gc lifetime needs to be at least as high as the Aura.Auth idle ttl, which defaults to 3600
 ini_set('session.gc_maxlifetime', 3600);

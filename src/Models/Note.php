@@ -8,7 +8,7 @@
  *
  */
 
-namespace BicBucStriim\AppData;
+namespace BicBucStriim\Models;
 
 /**
  * RedBeanPHP FUSE model for 'note' bean
@@ -17,4 +17,4 @@ namespace BicBucStriim\AppData;
  * @property mixed $mime
  * @property mixed $ntext
  */
-class Model_Note extends Model_Type {}
+class Note extends Model {}

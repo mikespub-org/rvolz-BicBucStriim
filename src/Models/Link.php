@@ -8,7 +8,7 @@
  *
  */
 
-namespace BicBucStriim\AppData;
+namespace BicBucStriim\Models;
 
 /**
  * RedBeanPHP FUSE model for 'link' bean
@@ -17,4 +17,4 @@ namespace BicBucStriim\AppData;
  * @property mixed $label
  * @property mixed $url
  */
-class Model_Link extends Model_Type {}
+class Link extends Model {}

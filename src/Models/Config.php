@@ -8,7 +8,7 @@
  *
  */
 
-namespace BicBucStriim\AppData;
+namespace BicBucStriim\Models;
 
 /**
  * RedBeanPHP FUSE model for 'config' bean
@@ -16,4 +16,4 @@ namespace BicBucStriim\AppData;
  * @property mixed $name
  * @property mixed $val
  */
-class Model_Config extends Model_Type {}
+class Config extends Model {}

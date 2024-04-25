@@ -1,7 +1,7 @@
 <?php
 
 if (!defined('REDBEAN_MODEL_PREFIX')) {
-    define('REDBEAN_MODEL_PREFIX', '\\BicBucStriim\\AppData\\Model_');
+    define('REDBEAN_MODEL_PREFIX', '\\BicBucStriim\\Models\\');
 }
 
 use BicBucStriim\AppData\BicBucStriim;
@@ -10,7 +10,7 @@ use BicBucStriim\AppData\R;
 
 /**
  * @covers \BicBucStriim\AppData\BicBucStriim
- * @covers \BicBucStriim\AppData\Model_Calibrething
+ * @covers \BicBucStriim\Models\Calibrething
  */
 class BicBucStriimTest extends PHPUnit\Framework\TestCase
 {

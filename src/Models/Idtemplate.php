@@ -8,7 +8,7 @@
  *
  */
 
-namespace BicBucStriim\AppData;
+namespace BicBucStriim\Models;
 
 /**
  * RedBeanPHP FUSE model for 'idtemplate' bean
@@ -17,4 +17,4 @@ namespace BicBucStriim\AppData;
  * @property mixed $val
  * @property mixed $label
  */
-class Model_Idtemplate extends Model_Type {}
+class Idtemplate extends Model {}

@@ -8,12 +8,12 @@
  *
  */
 
-namespace BicBucStriim\AppData;
+namespace BicBucStriim\Models;
 
 /**
  * RedBeanPHP FUSE model for beans
  */
-class Model_Type extends \RedBeanPHP\TypedModel implements \JsonSerializable
+class Model extends \RedBeanPHP\TypedModel implements \JsonSerializable
 {
     /** @var string[] */
     protected $_filterProps = [];

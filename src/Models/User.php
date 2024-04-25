@@ -8,7 +8,7 @@
  *
  */
 
-namespace BicBucStriim\AppData;
+namespace BicBucStriim\Models;
 
 /**
  * RedBeanPHP FUSE model for 'user' bean
@@ -19,7 +19,7 @@ namespace BicBucStriim\AppData;
  * @property mixed $languages
  * @property mixed $role
  */
-class Model_User extends Model_Type
+class User extends Model
 {
     protected $_filterProps = ['email', 'password'];
 
