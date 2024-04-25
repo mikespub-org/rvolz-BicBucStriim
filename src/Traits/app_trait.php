@@ -236,6 +236,10 @@ trait AppTrait
         if (!empty($basepath) && str_starts_with($resource, $basepath . '/')) {
             $resource = substr($resource, strlen($basepath));
         }
+        // with trafex/php-nginx, request target becomes "/login/?q=/login/&" for "/login/"
+        if (str_contains($resource, '?')) {
+            $resource = explode('?', $resource)[0];
+        }
         return $resource;
         /**
         $pathinfo = $this->request->getServerParams()['PATH_INFO'] ?? null;
