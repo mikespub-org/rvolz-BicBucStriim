@@ -16,8 +16,7 @@ class L10nTest extends PHPUnit\Framework\TestCase
     #
     public function testArrayGet()
     {
-        global $langde, $langen;
-        require('config/langs.php');
+        $langde = L10n::loadMessages('de');
 
         $l10n = new L10n('de');
         $this->assertEquals($langde['admin'], $l10n->message('admin'));

@@ -11,7 +11,7 @@ class InputUtil
      * 3. HTTP_ACCEPT_LANGUAGE
      * 4. Fallback language
      *
-     * @todo move this later in the request handling when we have $request available
+     * @todo adapt InputUtil::getUserLang() to use $request and possibly $session from Login middleware
      * @param array $allowedLangs list of existing languages
      * @param string $fallbackLang id of the fallback language if nothing helps
      * @return string the user language, like 'de' or 'en'

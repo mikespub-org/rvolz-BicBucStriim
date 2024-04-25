@@ -9,6 +9,11 @@ use ArrayObject;
 
 class L10n extends ArrayObject
 {
+    # Allowed languages, i.e. languages with translations
+    public static $allowedLangs = ['de', 'en', 'es', 'fr', 'gl', 'hu', 'it', 'nl', 'pl'];
+    # Fallback language if the browser prefers another than the allowed languages
+    public static $fallbackLang = 'en';
+
     /**
      * User language
      * @var string
@@ -34,30 +39,23 @@ class L10n extends ArrayObject
      */
     public function __construct($lang)
     {
-        global $langde, $langen, $langes, $langfr, $langgl, $langhu, $langit, $langnl, $langpl;
-        if ($lang == 'de') {
-            $this->langa = $langde;
-        } elseif ($lang == 'es') {
-            $this->langa = $langes;
-        } elseif ($lang == 'fr') {
-            $this->langa = $langfr;
-        } elseif ($lang == 'gl') {
-            $this->langa = $langgl;
-        } elseif ($lang == 'hu') {
-            $this->langa = $langhu;
-        } elseif ($lang == 'it') {
-            $this->langa = $langit;
-        } elseif ($lang == 'nl') {
-            $this->langa = $langnl;
-        } elseif ($lang == 'pl') {
-            $this->langa = $langpl;
-        } else {
-            $this->langa = $langen;
+        if (!in_array($lang, static::$allowedLangs)) {
+            $lang = static::$fallbackLang;
         }
-        $this->langb = $langen;
+        $this->langa = static::loadMessages($lang);
+        if ($lang == static::$fallbackLang) {
+            $this->langb = $this->langa;
+        } else {
+            $this->langb = static::loadMessages(static::$fallbackLang);
+        }
         $this->user_lang = $lang;
     }
 
+    public static function loadMessages($lang)
+    {
+        $messages = require dirname(__DIR__, 2) . "/lang/messages.{$lang}.php";
+        return $messages;
+    }
 
     /**
      * Implement this part of the Array interface for easier

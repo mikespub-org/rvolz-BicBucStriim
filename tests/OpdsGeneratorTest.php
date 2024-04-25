@@ -30,8 +30,6 @@ class OpdsGeneratorTest extends PHPUnit\Framework\TestCase
 
     public function setUp(): void
     {
-        global $langen;
-        require('config/langs.php');
         if (file_exists(self::DATA)) {
             system("rm -rf " . self::DATA);
         }

@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [3.x.x] - 20xx-xx-xx
 ### Changed
+- Split config/langs.php file into lang/messages.{lang}.php files for L10n
+- Move identification of current language + loading L10n to login middleware
 - Split config/config.php file based on configuration mode
 - Make app name configurable via environment variable 'BBS_APP_NAME'
 - Make base path configurable via environment variable 'BBS_BASE_PATH'

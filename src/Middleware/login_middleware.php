@@ -10,6 +10,8 @@
 
 namespace BicBucStriim\Middleware;
 
+use BicBucStriim\Utilities\InputUtil;
+use BicBucStriim\Utilities\L10n;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
@@ -60,6 +62,7 @@ class LoginMiddleware extends DefaultMiddleware
             echo "Done: " . $e->getMessage();
             exit;
         }
+        $this->setCurrentLanguage($request);
         return $handler->handle($request);
     }
 
@@ -244,5 +247,22 @@ class LoginMiddleware extends DefaultMiddleware
         } else {
             return null;
         }
+    }
+
+    /**
+     * Set current language and load L10n messages
+     * @todo adapt InputUtil::getUserLang() to use $request and possibly $session from Login middleware
+     * @return void
+     */
+    protected function setCurrentLanguage($request)
+    {
+        $settings = $this->settings();
+        # Find the user language, either one of the allowed languages or
+        # English as a fallback.
+        $settings['lang'] = InputUtil::getUserLang(L10n::$allowedLangs, L10n::$fallbackLang);
+        $settings['l10n'] = new L10n($settings['lang']);
+        $settings['langa'] = $settings['l10n']->langa;
+        $settings['langb'] = $settings['l10n']->langb;
+        $this->settings($settings);
     }
 }

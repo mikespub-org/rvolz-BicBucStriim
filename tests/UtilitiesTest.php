@@ -1,6 +1,7 @@
 <?php
 
 use BicBucStriim\Utilities\InputUtil;
+use BicBucStriim\Utilities\L10n;
 use BicBucStriim\Utilities\UrlInfo;
 use BicBucStriim\Utilities\CalibreUtil;
 
@@ -70,9 +71,9 @@ class UtilitiesTest extends PHPUnit\Framework\TestCase
     public function testGetUserLang()
     {
         # Allowed languages, i.e. languages with translations
-        $allowedLangs = ['de', 'en', 'es', 'fr', 'gl', 'hu', 'it', 'nl', 'pl'];
+        $allowedLangs = L10n::$allowedLangs;
         # Fallback language if the browser prefers another than the allowed languages
-        $fallbackLang = 'en';
+        $fallbackLang = L10n::$fallbackLang;
 
         $expected = 'pl';
         $_GET['lang'] = $expected;

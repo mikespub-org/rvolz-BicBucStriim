@@ -162,8 +162,6 @@ class MainActionsTest extends PHPUnit\Framework\TestCase
 
     public function getApp()
     {
-        global $langen;
-        require('config/langs.php');
         $app = require(dirname(__DIR__) . '/config/bootstrap.php');
         $settings = $app->getContainer()->get('globalSettings');
         $settings->must_login = 0;

@@ -13,8 +13,6 @@ class ApiActionsTest extends PHPUnit\Framework\TestCase
      */
     public function getApp($hasapi = true)
     {
-        global $langen;
-        require('config/langs.php');
         // we need to set this before bootstrap to get api routes
         putenv("BBS_HAS_API=$hasapi");
         $app = require(dirname(__DIR__) . '/config/bootstrap.php');

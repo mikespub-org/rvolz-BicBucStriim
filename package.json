@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "genl10n": "node scripts/genl10n.js assets/l10n/messages.yml config",
+    "genl10n": "node scripts/genl10n.js assets/l10n/messages.yml lang",
     "package": "node scripts/package.js"
   },
   "devDependencies": {

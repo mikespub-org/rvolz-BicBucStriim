@@ -13,6 +13,7 @@ $archive = $zippy->create('bicbucstriim.zip', [
     'style/style.css' => 'style/style.css',
     'style/jquery' => 'style/jquery',
     'config' => 'config',
+    'lang' => 'lang',
     'src' => 'src',
     'vendor' => 'vendor',
     'templates' => 'templates',
