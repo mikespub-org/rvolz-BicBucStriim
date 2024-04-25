@@ -3,10 +3,15 @@ services:
     image: mikespub/rvolz-bicbucstriim:dev
     build:
       context: . 
-      dockerfile: docker/Dockerfile.php82
+      dockerfile: docker/Dockerfile.php8
       target: dev-envs
     ports:
       - '8080:80'
+    environment:
+      - BBS_APP_NAME=BicBucStriim-Dev
+      - BBS_BASE_PATH=
+      - BBS_DEBUG_MODE=1
+      - BBS_HAS_API=1
     volumes:
       - ./data:/app/data
       - ./config:/app/config

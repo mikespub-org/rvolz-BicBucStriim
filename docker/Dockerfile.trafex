@@ -1,0 +1,21 @@
+FROM trafex/php-nginx:latest AS build
+
+USER root
+
+# Install packages missing from https://github.com/TrafeX/docker-php-nginx/blob/master/Dockerfile
+RUN apk add --no-cache \
+    php83-apcu \
+    php83-pdo_sqlite \
+    php83-sqlite3 \
+    php83-sodium
+
+# Install composer from the official image
+COPY --from=composer /usr/bin/composer /usr/bin/composer
+
+USER nobody
+
+# Add application
+COPY --chown=nobody ./ /var/www/html/
+
+# Run composer install to install the dependencies
+RUN composer install --optimize-autoloader --no-interaction --no-progress

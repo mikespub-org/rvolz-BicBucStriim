@@ -20,5 +20,8 @@ data/titles/*.png
 bicbucstriim*.zip
 .phpunit.cache
 .php-cs-fixer.cache
+*.log
 dist/
 work/
+public/
+rector.php

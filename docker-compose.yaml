@@ -3,7 +3,15 @@ services:
     image: mikespub/rvolz-bicbucstriim:web
     build:
       context: . 
-      dockerfile: docker/Dockerfile.php82
+      dockerfile: docker/Dockerfile.trafex
       target: build
     ports:
-      - '8080:80'
+      - '8080:8080'
+    environment:
+      - BBS_APP_NAME=BicBucStriim
+      - BBS_BASE_PATH=
+      - BBS_DEBUG_MODE=0
+      - BBS_HAS_API=1
+    volumes:
+      - ./data:/app/data
+      - ./config:/app/config

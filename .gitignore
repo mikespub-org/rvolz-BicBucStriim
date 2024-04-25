@@ -13,6 +13,7 @@ node_modules
 *.log
 dist
 work
+public
 worklib
 /.phpunit.result.cache
 vendor
@@ -29,3 +30,4 @@ data/titles/*.png
 bicbucstriim*.zip
 .phpunit.cache
 tests/coverage/
+rector.php
