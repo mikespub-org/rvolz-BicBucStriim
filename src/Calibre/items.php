@@ -1,6 +1,6 @@
 <?php
 /**
- * Utility items
+ * Calibre DB items using PDO::FETCH_CLASS
  */
 
 namespace BicBucStriim\Calibre;
@@ -8,7 +8,10 @@ namespace BicBucStriim\Calibre;
 # A database item class
 #[\AllowDynamicProperties]
 class Item {}
-
+class ItemCount extends Item
+{
+    public $ctr;
+}
 # Utiliy classes for Calibre DB items
 class Author extends Item
 {

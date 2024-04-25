@@ -1,11 +1,11 @@
 <?php
 /**
- * Utility items
+ * Configuration items for AdminActions
  */
 
 namespace BicBucStriim\Actions;
 
-# A database item class
+# A configuration item class
 class Item {}
 
 # Configuration utilities for BBS
