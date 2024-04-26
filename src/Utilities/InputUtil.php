@@ -2,46 +2,60 @@
 
 namespace BicBucStriim\Utilities;
 
+use BicBucStriim\Session\Session;
+use Psr\Http\Message\ServerRequestInterface as Request;
+
 class InputUtil
 {
     /**
      * Returns the user language, priority:
      * 1. Language in $_GET['lang']
-     * 2. Language in $_SESSION['lang']
+     * 2. Language in $_COOKIE['lang'] - not $_SESSION['lang] or Auth::getUserData()
      * 3. HTTP_ACCEPT_LANGUAGE
      * 4. Fallback language
      *
-     * @todo adapt InputUtil::getUserLang() to use $request and possibly $session from Login middleware
-     * @param array $allowedLangs list of existing languages
-     * @param string $fallbackLang id of the fallback language if nothing helps
+     * @param Request $request The request
      * @return string the user language, like 'de' or 'en'
      */
-    public static function getUserLang($allowedLangs, $fallbackLang)
+    public static function getUserLang($request)
     {
         // reset user_lang array
         $userLangs = [];
-        // 2nd highest priority: GET parameter 'lang'
-        if (isset($_GET['lang']) && is_string($_GET['lang'])) {
-            $userLangs[] = $_GET['lang'];
+        // 1st highest priority: GET parameter 'lang'
+        $query = $request->getQueryParams();
+        if (isset($query['lang']) && is_string($query['lang'])) {
+            $userLangs[] = $query['lang'];
         }
-        // 3rd highest priority: SESSION parameter 'lang'
-        if (isset($_SESSION['lang']) && is_string($_SESSION['lang'])) {
-            $userLangs[] = $_SESSION['lang'];
+        // 2nd highest priority: SESSION parameter 'lang' - from COOKIE, not SESSION or Auth::getUserData()
+        $session = $request->getAttribute('session');
+        if (isset($session)) {
+            /** @var Session $session */
+            $sessionLanguage = $session->getCookie('lang');
+            if (isset($sessionLanguage) && is_string($sessionLanguage)) {
+                $userLangs[] = $sessionLanguage;
+            }
+        } else {
+            // or COOKIE parameter 'lang' in case we don't have a session
+            $cookie = $request->getCookieParams();
+            if (isset($cookie['lang']) && is_string($cookie['lang'])) {
+                $userLangs[] = $cookie['lang'];
+            }
         }
-        // 4th highest priority: HTTP_ACCEPT_LANGUAGE
-        if (isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
-            foreach (explode(',', $_SERVER['HTTP_ACCEPT_LANGUAGE']) as $part) {
+        // 3rd highest priority: HTTP_ACCEPT_LANGUAGE
+        $acceptLanguage = $request->getHeaderLine('Accept-Language');
+        if (!empty($acceptLanguage)) {
+            foreach (explode(',', $acceptLanguage) as $part) {
                 $userLangs[] = strtolower(substr($part, 0, 2));
             }
         }
         // Lowest priority: fallback
-        $userLangs[] = $fallbackLang;
-        foreach ($allowedLangs as $al) {
+        $userLangs[] = L10n::$fallbackLang;
+        foreach (L10n::$allowedLangs as $al) {
             if ($userLangs[0] == $al) {
                 return $al;
             }
         }
-        return $fallbackLang;
+        return L10n::$fallbackLang;
     }
 
     /**

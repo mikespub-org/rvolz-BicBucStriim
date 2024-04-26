@@ -17,6 +17,7 @@ class ApiActionsTest extends PHPUnit\Framework\TestCase
         putenv("BBS_HAS_API=$hasapi");
         $app = require(dirname(__DIR__) . '/config/bootstrap.php');
         $settings = $app->getContainer()->get('globalSettings');
+        $settings['hasapi'] = $hasapi;
         $settings->must_login = 0;
         $app->getContainer()->set('globalSettings', $settings);
         return $app;

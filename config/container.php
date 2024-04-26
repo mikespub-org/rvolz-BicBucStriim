@@ -11,6 +11,7 @@
 use Aura\Auth\Auth;
 use BicBucStriim\AppData\BicBucStriim;
 use BicBucStriim\Calibre\Calibre;
+use BicBucStriim\Session\Session;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
@@ -26,9 +27,6 @@ $builder = new \DI\ContainerBuilder();
 $builder->addDefinitions([
     // Application settings
     'settings' => fn() => require(__DIR__ . '/settings.php'),
-    'mode' => !empty(getenv('BBS_DEBUG_MODE')) ? 'debug' : 'production',
-    #'mode' => 'debug',
-    #'mode' => 'development',
     LoggerInterface::class => function (ContainerInterface $c) {
         # Add null logger - see https://github.com/8ctopus/apix-log
         return new \BicBucStriim\Utilities\Logger();
@@ -36,7 +34,8 @@ $builder->addDefinitions([
     CacheItemPoolInterface::class => function (ContainerInterface $c) {
         return new ApcuAdapter('BicBucStriim', 3600);
     },
-    Auth::class => 'see login middleware',
+    Session::class => 'depends on request - see login middleware',
+    Auth::class => 'depends on request - see login middleware',
     BicBucStriim::class => function (ContainerInterface $c) {
         # Freeze (true) DB schema before release! Set to false for DB development.
         return new BicBucStriim('data/data.db', true);

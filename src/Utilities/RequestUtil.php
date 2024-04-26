@@ -61,18 +61,7 @@ class RequestUtil
     public function getForwardingInfo()
     {
         $headers = $this->request->getHeaders();
-        $info = null;
-        $forwarded = $headers['Forwarded'] ?? null;
-        if (!is_null($forwarded)) {
-            $info = new UrlInfo($forwarded);
-        } else {
-            $fhost = $headers['X-Forwarded-Host'] ?? null;
-            $fproto = $headers['X-Forwarded-Proto'] ?? null;
-            if (!is_null($fhost)) {
-                $info = new UrlInfo($fhost, $fproto);
-            }
-        }
-        return $info;
+        return UrlInfo::getForwardingInfo($headers);
     }
 
     /**

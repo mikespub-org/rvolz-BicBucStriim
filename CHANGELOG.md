@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [3.x.x] - 20xx-xx-xx
 ### Changed
+- Move identification of run mode to settings instead of container definition
+- Pass auth and session as request attribute instead of using container
 
 ## [3.4.0] - 2024-04-26 Basic json API + environment vars + clean-up
 ### Added

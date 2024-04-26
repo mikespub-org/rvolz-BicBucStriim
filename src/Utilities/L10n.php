@@ -89,7 +89,7 @@ class L10n extends ArrayObject
      *
      * If $id is NULL or '' the empty string will be returned.
      *
-     * @param  string $id message id
+     * @param  ?string $id message id
      * @return string     localized message string
      */
     public function message($id)

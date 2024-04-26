@@ -16,18 +16,10 @@ namespace BicBucStriim\Models;
  * @property mixed $username
  * @property mixed $password
  * @property mixed $tags
- * @property mixed $languages
+ * @property mixed $languages - to filter books, not user lang
  * @property mixed $role
  */
 class User extends Model
 {
     protected $_filterProps = ['email', 'password'];
-
-    public function to_json()
-    {
-        $props = $this->unbox()->getProperties();
-        print "to_json";
-        print_r($props);
-        return json_encode($props);
-    }
 }

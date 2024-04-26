@@ -36,9 +36,6 @@ if (!empty($settings['basepath'])) {
 }
 
 # Configure app for mode
-if ($app->getContainer()->has('mode')) {
-    $settings['mode'] = $app->getContainer()->get('mode');
-}
 $config = require(__DIR__ . '/config.php');
 $config($app, $settings);
 
@@ -62,7 +59,7 @@ $app->addBodyParsingMiddleware();
 $app->addRoutingMiddleware();
 # We don't really care if someone hits the cache after being logged out
 $cachePool = $app->getContainer()->get(CacheItemPoolInterface::class);
-$app->add(new \BicBucStriim\Middleware\CachingMiddleware($app, ['/admin', '/login'], $cachePool));
+$app->add(new \BicBucStriim\Middleware\CachingMiddleware($app, ['/admin', '/login', '/api'], $cachePool));
 # Base path - null means undefined, empty '' or '/bbs' etc. mean predefined
 if (!isset($settings['basepath'])) {
     $app->add(new \BicBucStriim\Middleware\BasePathMiddleware($app));

@@ -62,8 +62,8 @@ class LoginMiddleware extends DefaultMiddleware
             echo "Done: " . $e->getMessage();
             exit;
         }
-        $this->setCurrentLanguage($request);
-        return $handler->handle($request);
+        $this->setCurrentLanguage($this->request);
+        return $handler->handle($this->request);
     }
 
     /**
@@ -75,7 +75,6 @@ class LoginMiddleware extends DefaultMiddleware
         $settings = $this->settings();
         $request = $this->request();
         $resource = $this->getResourceUri();
-        $accept = $request->getHeaderLine('ACCEPT');
         $this->log()->debug('login resource: ' . $resource);
         if ($settings->must_login == 1) {
             if (!$this->is_static_resource($resource) && !$this->is_authorized()) {
@@ -170,6 +169,7 @@ class LoginMiddleware extends DefaultMiddleware
         $resume_service = $auth_factory->newResumeService($pdo_adapter);
         try {
             $resume_service->resume($this->auth());
+            $this->session($session);
         } catch(\ErrorException $e) {
             $this->log()->warning('login error: bad cookie data ' . var_export(get_class($e), true));
         }
@@ -180,34 +180,31 @@ class LoginMiddleware extends DefaultMiddleware
             if (is_array($ud) && array_key_exists('role', $ud) && array_key_exists('id', $ud)) {
                 // contents seems ok
                 return true;
-            } else {
-                $this->log()->warning("bad cookie contents: killing session");
-                // bad cookie contents, kill it
-                $session->destroy();
-                return false;
             }
-        } else {
-            // not logged in - check for login info
-            $auth = $this->checkPhpAuth($request);
-            if (is_null($auth)) {
-                $auth = $this->checkHttpAuth($request);
-            }
-            $this->log()->debug('login auth: ' . var_export($auth, true));
-            // if auth info found check the database
-            if (is_null($auth)) {
-                return false;
-            } else {
-                try {
-                    $this->container('login_service')->login($this->auth(), [
-                        'username' => $auth[0],
-                        'password' => $auth[1]]);
-                    $this->log()->debug('login status: ' . var_export($this->auth()->getStatus(), true));
-                } catch (\Aura\Auth\Exception $e) {
-                    $this->log()->debug('login error: ' . var_export(get_class($e), true));
-                }
-                return $this->auth()->isValid();
-            }
+            $this->log()->warning("bad cookie contents: killing session");
+            // bad cookie contents, kill it
+            $session->destroy();
+            return false;
         }
+        // not logged in - check for login info
+        $auth = $this->checkPhpAuth($request);
+        if (is_null($auth)) {
+            $auth = $this->checkHttpAuth($request);
+        }
+        $this->log()->debug('login auth: ' . var_export($auth, true));
+        // if auth info found check the database
+        if (is_null($auth)) {
+            return false;
+        }
+        try {
+            $this->container('login_service')->login($this->auth(), [
+                'username' => $auth[0],
+                'password' => $auth[1]]);
+            $this->log()->debug('login status: ' . var_export($this->auth()->getStatus(), true));
+        } catch (\Aura\Auth\Exception $e) {
+            $this->log()->debug('login error: ' . var_export(get_class($e), true));
+        }
+        return $this->auth()->isValid();
     }
 
     /**
@@ -251,7 +248,7 @@ class LoginMiddleware extends DefaultMiddleware
 
     /**
      * Set current language and load L10n messages
-     * @todo adapt InputUtil::getUserLang() to use $request and possibly $session from Login middleware
+     * @param $request HTTP request
      * @return void
      */
     protected function setCurrentLanguage($request)
@@ -259,7 +256,7 @@ class LoginMiddleware extends DefaultMiddleware
         $settings = $this->settings();
         # Find the user language, either one of the allowed languages or
         # English as a fallback.
-        $settings['lang'] = InputUtil::getUserLang(L10n::$allowedLangs, L10n::$fallbackLang);
+        $settings['lang'] = InputUtil::getUserLang($request);
         $settings['l10n'] = new L10n($settings['lang']);
         $settings['langa'] = $settings['l10n']->langa;
         $settings['langb'] = $settings['l10n']->langb;

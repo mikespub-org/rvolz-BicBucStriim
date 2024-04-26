@@ -14,6 +14,7 @@ use Aura\Auth\Auth;
 use BicBucStriim\AppData\BicBucStriim;
 use BicBucStriim\AppData\Settings;
 use BicBucStriim\Calibre\Calibre;
+use BicBucStriim\Session\Session;
 use Psr\Log\LoggerInterface;
 
 /*********************************************************************
@@ -43,13 +44,29 @@ trait AppTrait
     }
 
     /**
-     * Get authentication tracker
+     * Get session - depends on request
+     * @param ?Session $session
+     * @return Session|null
+     */
+    public function session($session = null)
+    {
+        if (!empty($session)) {
+            $this->request = $this->request->withAttribute('session', $session);
+        }
+        return $this->request?->getAttribute('session');
+    }
+
+    /**
+     * Get authentication tracker - depends on request
      * @param ?Auth $auth
-     * @return Auth
+     * @return Auth|null
      */
     public function auth($auth = null)
     {
-        return $this->container(Auth::class, $auth);
+        if (!empty($auth)) {
+            $this->request = $this->request->withAttribute('auth', $auth);
+        }
+        return $this->request?->getAttribute('auth');
     }
 
     /**

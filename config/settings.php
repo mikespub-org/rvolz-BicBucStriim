@@ -16,6 +16,10 @@ $appname = getenv('BBS_APP_NAME') ?: Settings::APP_NAME;
 $appversion = Settings::APP_VERSION;
 # Base path - null means undefined, empty '' or '/bbs' etc. mean predefined
 $basepath = getenv('BBS_BASE_PATH') ?: null;
+# Run mode
+$mode = !empty(getenv('BBS_DEBUG_MODE')) ? 'debug' : 'production';
+#$mode = 'debug';
+#$mode = 'development';
 
 # Init app globals
 $settings = new Settings();
@@ -24,7 +28,7 @@ $settings['version'] = $appversion;
 $settings['basepath'] = $basepath;
 $settings['sep'] = ' :: ';
 # Provide basic json api interface - configurable via environment variable
-$settings['hasapi'] = getenv('BBS_HAS_API') ?: false;
+$settings['hasapi'] = getenv('BBS_HAS_API') ?: true;
 
 $knownConfigs = Settings::getKnownConfigs();
 $settings->display_app_name = $appname;
@@ -35,4 +39,5 @@ return [
     'basepath' => $basepath,
     'globalSettings' => $settings,
     'knownConfigs' => $knownConfigs,
+    'mode' => $mode,
 ];

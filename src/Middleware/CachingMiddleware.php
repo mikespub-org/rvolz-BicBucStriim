@@ -15,6 +15,7 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
 use Middlewares\Cache as CacheMiddleware;
+use Middlewares\CachePrevention;
 
 class CachingMiddleware extends CacheMiddleware
 {
@@ -59,6 +60,11 @@ class CachingMiddleware extends CacheMiddleware
                 break;
             }
         }
+        // @todo prevent caching for all json API calls?
+        //if ($request->hasHeader('Accept') && in_array('application/json', $request->getHeader('Accept'))) {
+        //    $prevention = new CachePrevention();
+        //    return $prevention->process($request, $handler);
+        //}
         return parent::process($request, $handler);
     }
 }

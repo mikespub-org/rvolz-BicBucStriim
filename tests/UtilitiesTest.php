@@ -4,6 +4,8 @@ use BicBucStriim\Utilities\InputUtil;
 use BicBucStriim\Utilities\L10n;
 use BicBucStriim\Utilities\UrlInfo;
 use BicBucStriim\Utilities\CalibreUtil;
+use BicBucStriim\Utilities\RequestUtil;
+use BicBucStriim\Session\SessionFactory;
 
 /**
  * @covers \BicBucStriim\Utilities\UrlInfo
@@ -48,6 +50,23 @@ class UtilitiesTest extends PHPUnit\Framework\TestCase
         $this->assertEquals('https', $gen->protocol);
     }
 
+    public function testUrlInfoGetForwardingInfo()
+    {
+        $headers = [];
+        $gen = UrlInfo::getForwardingInfo($headers);
+        $this->assertEquals(null, $gen);
+
+        $headers = ['Forwarded' => 'for=192.0.2.60;proto=https;by=203.0.113.43'];
+        $gen = UrlInfo::getForwardingInfo($headers);
+        $this->assertEquals('203.0.113.43', $gen->host);
+        $this->assertEquals('https', $gen->protocol);
+
+        $headers = ['X-Forwarded-Host' => '203.0.113.43', 'X-Forwarded-Proto' => 'https'];
+        $gen = UrlInfo::getForwardingInfo($headers);
+        $this->assertEquals('203.0.113.43', $gen->host);
+        $this->assertEquals('https', $gen->protocol);
+    }
+
     public function testBookPath()
     {
         $this->assertEquals(
@@ -70,31 +89,44 @@ class UtilitiesTest extends PHPUnit\Framework\TestCase
 
     public function testGetUserLang()
     {
-        # Allowed languages, i.e. languages with translations
-        $allowedLangs = L10n::$allowedLangs;
-        # Fallback language if the browser prefers another than the allowed languages
-        $fallbackLang = L10n::$fallbackLang;
-
         $expected = 'pl';
         $_GET['lang'] = $expected;
-        $this->assertEquals($expected, InputUtil::getUserLang($allowedLangs, $fallbackLang));
+        $request = RequestUtil::getServerRequest();
+        $this->assertEquals($expected, InputUtil::getUserLang($request));
         unset($_GET['lang']);
 
         $expected = 'es';
-        $_SESSION['lang'] = $expected;
-        $this->assertEquals($expected, InputUtil::getUserLang($allowedLangs, $fallbackLang));
-        unset($_SESSION['lang']);
+        $_COOKIE['lang'] = $expected;
+        $request = RequestUtil::getServerRequest();
+        // @see LoginMiddleware::is_authorized()
+        $session_factory = new SessionFactory();
+        $session = $session_factory->newInstance($request->getCookieParams());
+        $request = $request->withAttribute('session', $session);
+        $this->assertEquals($expected, InputUtil::getUserLang($request));
+        unset($_COOKIE['lang']);
+
+        $expected = 'it';
+        $_COOKIE['lang'] = $expected;
+        $request = RequestUtil::getServerRequest();
+        $this->assertEquals($expected, InputUtil::getUserLang($request));
+        unset($_COOKIE['lang']);
 
         $expected = 'fr';
         $_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'fr-CH, fr;q=0.9, en;q=0.8, de;q=0.7, *;q=0.5';
-        $this->assertEquals($expected, InputUtil::getUserLang($allowedLangs, $fallbackLang));
+        $request = RequestUtil::getServerRequest();
+        $this->assertEquals($expected, InputUtil::getUserLang($request));
         unset($_SERVER['HTTP_ACCEPT_LANGUAGE']);
 
-        $expected = $fallbackLang;
-        $this->assertEquals($expected, InputUtil::getUserLang($allowedLangs, $fallbackLang));
+        # Fallback language if the browser prefers another than the allowed languages
+        $expected = L10n::$fallbackLang;
+        $_GET['lang'] = 'na';
+        $request = RequestUtil::getServerRequest();
+        $this->assertEquals($expected, InputUtil::getUserLang($request));
+        unset($_GET['lang']);
 
-        $expected = 'na';
-        $this->assertEquals($expected, InputUtil::getUserLang($allowedLangs, 'na'));
+        $expected = L10n::$fallbackLang;
+        $request = RequestUtil::getServerRequest();
+        $this->assertEquals($expected, InputUtil::getUserLang($request));
     }
 
     public function testIsEMailValid()
