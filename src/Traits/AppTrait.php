@@ -44,32 +44,6 @@ trait AppTrait
     }
 
     /**
-     * Get session - depends on request
-     * @param ?Session $session
-     * @return Session|null
-     */
-    public function session($session = null)
-    {
-        if (!empty($session)) {
-            $this->request = $this->request->withAttribute('session', $session);
-        }
-        return $this->request?->getAttribute('session');
-    }
-
-    /**
-     * Get authentication tracker - depends on request
-     * @param ?Auth $auth
-     * @return Auth|null
-     */
-    public function auth($auth = null)
-    {
-        if (!empty($auth)) {
-            $this->request = $this->request->withAttribute('auth', $auth);
-        }
-        return $this->request?->getAttribute('auth');
-    }
-
-    /**
      * Get BicBucStriim app data
      * @param ?BicBucStriim $bbs
      * @return BicBucStriim
@@ -90,19 +64,6 @@ trait AppTrait
     }
 
     /**
-     * Set flash message for subsequent request
-     * @param  string   $key
-     * @param  mixed    $value
-     * @return void
-     */
-    public function flash($key, $value)
-    {
-        if ($this->app->getContainer()->has('flash')) {
-            $this->app->getContainer()->get('flash')->set($key, $value);
-        }
-    }
-
-    /**
      * Get application log
      * @param ?\Psr\Log\LoggerInterface $logger
      * @return \Psr\Log\LoggerInterface
@@ -110,37 +71,6 @@ trait AppTrait
     public function log($logger = null)
     {
         return $this->container(LoggerInterface::class, $logger);
-    }
-
-    /**
-     * Get the Request object
-     * @param ?\Psr\Http\Message\ServerRequestInterface $request
-     * @return \Psr\Http\Message\ServerRequestInterface
-     */
-    public function request($request = null)
-    {
-        if (!empty($request)) {
-            $this->request = $request;
-        }
-        return $this->request;
-    }
-
-    /**
-     * Get the Response object or create one if needed
-     * @param ?\Psr\Http\Message\ResponseInterface $response
-     * @return \Psr\Http\Message\ResponseInterface
-     */
-    public function response($response = null)
-    {
-        if (!empty($response)) {
-            $this->response = $response;
-        }
-        if (empty($this->response)) {
-            // Slim\App contains responseFactory as mandatory first param in constructor
-            $this->response = $this->app->getResponseFactory()->createResponse();
-            //$this->response = new \Slim\Psr7\Response();
-        }
-        return $this->response;
     }
 
     /**
@@ -184,6 +114,82 @@ trait AppTrait
             return $this->app->getContainer()->get($key);
         }
         return null;
+    }
+
+    /**
+     * Get the Request object
+     * @param ?\Psr\Http\Message\ServerRequestInterface $request
+     * @return \Psr\Http\Message\ServerRequestInterface
+     */
+    public function request($request = null)
+    {
+        if (!empty($request)) {
+            $this->request = $request;
+        }
+        return $this->request;
+    }
+
+    /**
+     * Get the Response object or create one if needed
+     * @param ?\Psr\Http\Message\ResponseInterface $response
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    public function response($response = null)
+    {
+        if (!empty($response)) {
+            $this->response = $response;
+        }
+        if (empty($this->response)) {
+            // Slim\App contains responseFactory as mandatory first param in constructor
+            $this->response = $this->app->getResponseFactory()->createResponse();
+            //$this->response = new \Slim\Psr7\Response();
+        }
+        return $this->response;
+    }
+
+    /**
+     * Get session - depends on request
+     * @param ?Session $session
+     * @return Session|null
+     */
+    public function session($session = null)
+    {
+        if (!empty($session)) {
+            $this->request = $this->request->withAttribute('session', $session);
+        }
+        return $this->request?->getAttribute('session');
+    }
+
+    /**
+     * Get authentication tracker - depends on request
+     * @param ?Auth $auth
+     * @return Auth|null
+     */
+    public function auth($auth = null)
+    {
+        if (!empty($auth)) {
+            $this->request = $this->request->withAttribute('auth', $auth);
+        }
+        return $this->request?->getAttribute('auth');
+    }
+
+    /**
+     * Set flash message for next request or get flash from previous request
+     * @param  string   $key
+     * @param  mixed    $value
+     * @return void|mixed
+     */
+    public function flash($key, $value = null)
+    {
+        $session = $this->session();
+        if (empty($session)) {
+            return;
+        }
+        if (isset($value)) {
+            $session->getLocalSegment()->setFlash($key, $value);
+            return;
+        }
+        return $session->getLocalSegment()->getFlash($key);
     }
 
     /**

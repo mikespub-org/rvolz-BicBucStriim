@@ -35,6 +35,14 @@ class Session extends AuraSession implements SessionInterface
     }
 
     /**
+     * Get local session segment
+     */
+    public function getLocalSegment()
+    {
+        return $this->getSegment(__CLASS__);
+    }
+
+    /**
      * Get the session segment used by Aura\Auth
      * @see \Aura\Auth\AuthFactory
      * @see \Aura\Auth\Session\Segment

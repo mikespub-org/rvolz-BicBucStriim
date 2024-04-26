@@ -25,13 +25,6 @@ interface AppInterface
     public function app($app = null);
 
     /**
-     * Get authentication tracker
-     * @param ?\Aura\Auth\Auth $auth
-     * @return \Aura\Auth\Auth
-     */
-    public function auth($auth = null);
-
-    /**
      * Get BicBucStriim app data
      * @param ?\BicBucStriim\AppData\BicBucStriim $bbs
      * @return \BicBucStriim\AppData\BicBucStriim
@@ -46,30 +39,11 @@ interface AppInterface
     public function calibre($calibre = null);
 
     /**
-     * Set flash message for subsequent request
-     * @param  string   $key
-     * @param  mixed    $value
-     */
-    public function flash($key, $value);
-
-    /**
      * Get application log
      * @param ?\Psr\Log\LoggerInterface $logger
      * @return \Psr\Log\LoggerInterface
      */
     public function log($logger = null);
-
-    /**
-     * Get the Request object
-     * @return \Psr\Http\Message\ServerRequestInterface
-     */
-    public function request();
-
-    /**
-     * Get the Response object
-     * @return \Psr\Http\Message\ResponseInterface
-     */
-    public function response();
 
     /**
      * Get global app settings
@@ -92,6 +66,39 @@ interface AppInterface
      * @return mixed
      */
     public function container($key = null, $value = null);
+
+    /**
+     * Get the Request object
+     * @return \Psr\Http\Message\ServerRequestInterface
+     */
+    public function request();
+
+    /**
+     * Get the Response object
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    public function response();
+
+    /**
+     * Get session - depends on request
+     * @param ?\Aura\Session\Session $session
+     * @return \Aura\Session\Session|null
+     */
+    public function session($session = null);
+
+    /**
+     * Get authentication tracker - depends on request
+     * @param ?\Aura\Auth\Auth $auth
+     * @return \Aura\Auth\Auth|null
+     */
+    public function auth($auth = null);
+
+    /**
+     * Set flash message for subsequent request
+     * @param  string   $key
+     * @param  mixed    $value
+     */
+    public function flash($key, $value);
 
     /**
      * Get root url
@@ -138,6 +145,15 @@ interface AppInterface
     public function mkRedirect($url, $status = 302, $halt = true);
 
     /**
+     * Create and send a JSON response
+     * @param mixed $data array or object
+     * @param string $type (optional)
+     * @param int $status (optional)
+     * @return void
+     */
+    public function mkJsonResponse($data, $type = 'application/json', $status = 200);
+
+    /**
      * Create and send a normal response
      * @param string $content
      * @param string $type
@@ -154,4 +170,14 @@ interface AppInterface
      * @return void
      */
     public function mkSendFile($filepath, $type, $status = 200);
+
+    /**
+     * Create and send a file response as attachment
+     * @param string $filepath
+     * @param string $type
+     * @param string $filename
+     * @param int $status
+     * @return void
+     */
+    public function mkSendFileAsAttachment($filepath, $type, $filename, $status = 200);
 }
