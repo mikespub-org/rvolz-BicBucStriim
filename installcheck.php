@@ -3,13 +3,15 @@
 /**
  * BicBucStriim installation check
  *
- * Copyight 2012-2016 Rainer Volz
+ * Copyright 2012-2023 Rainer Volz
+ * Copyright 2023-     mikespub
  * Licensed under MIT License, see LICENSE
  *
  */
 
 require_once 'vendor/autoload.php';
 
+use BicBucStriim\AppData\Settings;
 use BicBucStriim\Utilities\InstallUtil;
 
 $loader = new \Twig\Loader\FilesystemLoader('templates');
@@ -130,7 +132,7 @@ $template = $twig->load('installcheck.twig');
 echo $template->render([
     'page' => [
         'rot' => '',
-        'version' => '3.3.0',
+        'version' => Settings::APP_VERSION,
     ],
     'is_a' => $is_a,
     'srv' => $srv,

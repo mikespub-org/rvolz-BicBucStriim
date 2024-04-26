@@ -33,6 +33,9 @@ class Settings extends ArrayObject
     # Application Name
     public const APP_NAME = 'BicBucStriim';
 
+    # Application version
+    public const APP_VERSION = '3.4.0';
+
     # Current DB schema version
     public const DB_SCHEMA_VERSION = 3;
 

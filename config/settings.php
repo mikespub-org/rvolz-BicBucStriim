@@ -10,10 +10,10 @@
 
 use BicBucStriim\AppData\Settings;
 
-# Application Name
-$appname = getenv('BBS_APP_NAME') ?: 'BicBucStriim';
+# Initial Application Name - display name can be changed in configuration
+$appname = getenv('BBS_APP_NAME') ?: Settings::APP_NAME;
 # App version
-$appversion = '3.3.0';
+$appversion = Settings::APP_VERSION;
 # Base path - null means undefined, empty '' or '/bbs' etc. mean predefined
 $basepath = getenv('BBS_BASE_PATH') ?: null;
 
@@ -23,7 +23,7 @@ $settings['appname'] = $appname;
 $settings['version'] = $appversion;
 $settings['basepath'] = $basepath;
 $settings['sep'] = ' :: ';
-// provide basic json api interface - make configurable via environment variable
+# Provide basic json api interface - configurable via environment variable
 $settings['hasapi'] = getenv('BBS_HAS_API') ?: false;
 
 $knownConfigs = Settings::getKnownConfigs();

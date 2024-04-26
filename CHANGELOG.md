@@ -6,23 +6,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [3.x.x] - 20xx-xx-xx
 ### Changed
-- Split config/langs.php file into lang/messages.{lang}.php files for L10n
-- Move identification of current language + loading L10n to login middleware
-- Split config/config.php file based on configuration mode
-- Make app name configurable via environment variable 'BBS_APP_NAME'
+
+## [3.4.0] - 2024-04-26 Basic json API + environment vars + clean-up
+### Added
+- Enable basic json api interface by configuring $settings['hasapi'] = true;
+- Make $settings['hasapi'] configurable via environment variable 'BBS_HAS_API'
+- Make initial app name configurable via environment variable 'BBS_APP_NAME'
 - Make base path configurable via environment variable 'BBS_BASE_PATH'
 - Make debug mode configurable via environment variable 'BBS_DEBUG_MODE'
+### Changed
 - Move default settings to Settings class + use properties to access
-- Make $settings['hasapi'] configurable via environment variable 'BBS_HAS_API'
-- Enable basic json api interface by configuring $settings['hasapi'] = true;
+- Split config/config.php file based on configuration mode
+- Move identification of current language + loading L10n to login middleware
+- Split config/langs.php file into lang/messages.{lang}.php files for L10n
+- Rename most source class files + adapt RedBeanPHP models in line with PSR-4
 
-## [3.3.0] - 2024-04-22
+## [3.3.0] - 2024-04-22 Use ActionsWrapperStrategy + update dependencies
 ### Changed
 - Invoke callable actions via ActionsWrapperStrategy instead of using wrapper for each action in routes
 - Updated dependencies + switched to phpunit 10.5
 - Updated middlewares/cache package to new release 4.0
 
-## [3.2.0] - 2023-12-15
+## [3.2.0] - 2023-12-15 Replace mailer package
 ### Changed
 - Replaced abandoned package swiftmailer/swiftmailer with phpmailer/phpmailer
 
