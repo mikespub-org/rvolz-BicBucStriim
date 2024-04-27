@@ -4,12 +4,14 @@ use BicBucStriim\Actions\DefaultActions;
 use BicBucStriim\Utilities\RequestUtil;
 use BicBucStriim\Utilities\ResponseUtil;
 use BicBucStriim\Utilities\RouteUtil;
+use BicBucStriim\Utilities\ActionsCallableResolver;
 use BicBucStriim\Utilities\ActionsWrapperStrategy;
 use Slim\Factory\AppFactory;
 
 /**
  * @covers \BicBucStriim\Actions\DefaultActions
  * @covers \BicBucStriim\Traits\AppTrait
+ * @covers \BicBucStriim\Utilities\ActionsCallableResolver
  * @covers \BicBucStriim\Utilities\ActionsWrapperStrategy
  * @covers \BicBucStriim\Utilities\RequestUtil
  * @covers \BicBucStriim\Utilities\ResponseUtil
@@ -26,11 +28,24 @@ class DefaultActionsTest extends PHPUnit\Framework\TestCase
         ];
     }
 
-    public function testGetRoutes()
+    public function testGetRoutesWithSelf()
     {
         $expected = array_values($this->getExpectedRoutes());
         $app = AppFactory::create();
         $self = new DefaultActions($app);
+        // replace '$self' in $expected with actual $self
+        array_walk($expected, function (&$value) use ($self) {
+            $value[2][0] = $self;
+        });
+        $routes = DefaultActions::getRoutes($self);
+        $this->assertEquals($expected, $routes);
+    }
+
+    public function testGetRoutesWithStatic()
+    {
+        $expected = array_values($this->getExpectedRoutes());
+        //$app = AppFactory::create();
+        $self = DefaultActions::class;
         // replace '$self' in $expected with actual $self
         array_walk($expected, function (&$value) use ($self) {
             $value[2][0] = $self;
@@ -104,7 +119,13 @@ class DefaultActionsTest extends PHPUnit\Framework\TestCase
 
     public function testHelloViaAppRequest()
     {
+        $container = require dirname(__DIR__) . '/config/container.php';
+        AppFactory::setContainer($container);
+        // Slim 4 framework uses its own CallableResolver if this is a class string, *before* invocation strategy 
+        $callableResolver = new ActionsCallableResolver($container);
+        AppFactory::setCallableResolver($callableResolver);
         $app = AppFactory::create();
+        $callableResolver->setApp($app);
         /**
          * See https://www.slimframework.com/docs/v4/objects/routing.html#route-strategies
          * Changing the default invocation strategy on the RouteCollector component

@@ -30,7 +30,9 @@ class AdminActions extends DefaultActions
     public static function addRoutes($app, $prefix = '/admin', $gatekeeper = null)
     {
         $self = new self($app);
+        //$self = static::class;
         $routes = static::getRoutes($self, $gatekeeper);
+        // use $gatekeeper for all actions in this group
         $app->group($prefix, function (\Slim\Routing\RouteCollectorProxy $group) use ($routes) {
             RouteUtil::mapRoutes($group, $routes);
         })->add($gatekeeper);
@@ -38,7 +40,7 @@ class AdminActions extends DefaultActions
 
     /**
      * Get routes for admin actions
-     * @param self $self
+     * @param self|string $self
      * @param ?object $gatekeeper (optional)
      * @return array<mixed> list of [method(s), path, ...middleware(s), callable] for each action
      */

@@ -33,6 +33,7 @@ class MainActions extends DefaultActions
     public static function addRoutes($app, $prefix = null, $gatekeeper = null)
     {
         $self = new self($app);
+        //$self = static::class;
         //$app->notFound([$self, 'myNotFound']);
         $routes = static::getRoutes($self, $gatekeeper);
         RouteUtil::mapRoutes($app, $routes);
@@ -40,7 +41,7 @@ class MainActions extends DefaultActions
 
     /**
      * Get routes for main actions
-     * @param self $self
+     * @param self|string $self
      * @param ?object $gatekeeper (optional)
      * @return array<mixed> list of [method(s), path, ...middleware(s), callable] for each action
      */

@@ -10,6 +10,7 @@
 
 use Psr\Cache\CacheItemPoolInterface;
 use Slim\Factory\AppFactory;
+use BicBucStriim\Utilities\ActionsCallableResolver;
 use BicBucStriim\Utilities\ActionsWrapperStrategy;
 
 define('REDBEAN_MODEL_PREFIX', '\\BicBucStriim\\Models\\');
@@ -28,12 +29,18 @@ $container = require(__DIR__ . '/container.php');
 // Set container to create App with on AppFactory
 AppFactory::setContainer($container);
 
+// Override default callable resolver for actions
+$callableResolver = new ActionsCallableResolver($container);
+AppFactory::setCallableResolver($callableResolver);
+
 # Init app
 $app = AppFactory::create();
 # Base path - null means undefined, empty '' or '/bbs' etc. mean predefined
 if (!empty($settings['basepath'])) {
     $app->setBasePath($settings['basepath']);
 }
+// Set app in callable resolver to instantiate string actions
+$callableResolver->setApp($app);
 
 # Configure app for mode
 $config = require(__DIR__ . '/config.php');
@@ -49,6 +56,7 @@ $app->getContainer()->set('globalSettings', $settings['globalSettings']);
  */
 $routeCollector = $app->getRouteCollector();
 $routeCollector->setDefaultInvocationStrategy(new ActionsWrapperStrategy($app));
+$callableResolver = $app->getCallableResolver();
 
 # Init middleware
 $middleware = require(__DIR__ . '/middleware.php');
