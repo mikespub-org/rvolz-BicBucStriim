@@ -15,7 +15,7 @@ class RouteUtil
      * Map routes for action handlers (generic)
      * @param object $group
      * @param array<mixed> $routes list of [method(s), path, ...middleware(s), callable] for each action
-     * @param mixed $gatekeeper of format [$self, 'method'] to call before each route (e.g. check_admin)
+     * @param mixed $gatekeeper middleware to call before each route (e.g. GatekeeperMiddleware)
      * @return void
      */
     public static function mapRoutes($group, $routes, $gatekeeper = null)
@@ -27,7 +27,7 @@ class RouteUtil
      * Map routes for action handlers (Slim 4 syntax)
      * @param \BicBucStriim\App|\Slim\App|\Slim\Routing\RouteCollectorProxy|object $group
      * @param array<mixed> $routes list of [method(s), path, ...middleware(s), callable] for each action
-     * @param mixed $gatekeeper of format [$self, 'method'] to call before each route (e.g. check_admin)
+     * @param mixed $gatekeeper middleware to call before each route (e.g. GatekeeperMiddleware)
      * @return void
      */
     public static function mapSlim4Routes($group, $routes, $gatekeeper = null)
@@ -46,8 +46,8 @@ class RouteUtil
      * @param array<string>|string $method
      * @param string $path
      * @param callable $callable of format [$self, 'method']
-     * @param array<mixed> $middlewareList list of callables of format [$self, 'method']
-     * @param mixed $gatekeeper of format [$self, 'method'] to call before each route (e.g. check_admin)
+     * @param array<mixed> $middlewareList list of middleware(s) (*not* callable of format [$self, 'method'])
+     * @param mixed $gatekeeper middleware to call before each route (e.g. GatekeeperMiddleware)
      */
     public static function addSlim4Route($group, $method, $path, $callable, $middlewareList = [], $gatekeeper = null)
     {
@@ -61,14 +61,14 @@ class RouteUtil
         // See also https://www.slimframework.com/docs/v4/objects/routing.html#route-strategies
         // For example from RequestResponseArgs.php:
         //return $callable($request, $response, ...array_values($routeArguments));
-        // @todo if we only have one middleware in the list for this route, it will act as gatekeeper too!?
-        // See ['GET', '/authors/{id}/notes/', [$self, 'check_admin'], [$self, 'authorNotes']] in MainActions
+        // Note: if we only have one middleware in the list for this route, it will act as gatekeeper too
+        // See ['GET', '/authors/{id}/notes/', $gatekeeper, [$self, 'authorNotes']] in MainActions
         if (empty($gatekeeper) && !empty($middlewareList) && count($middlewareList) == 1) {
             $gatekeeper = array_shift($middlewareList);
         }
         if ($gatekeeper) {
-            $wrapper = static::wrapRequestMiddleware($gatekeeper);
-            $route = $group->map($method, $path, $callable)->add($wrapper);
+            //$wrapper = static::wrapRequestMiddleware($gatekeeper);
+            $route = $group->map($method, $path, $callable)->add($gatekeeper);
         } else {
             $route = $group->map($method, $path, $callable);
         }
@@ -76,8 +76,8 @@ class RouteUtil
             return;
         }
         foreach ($middlewareList as $middleware) {
-            $wrapper = static::wrapRequestMiddleware($middleware);
-            $route = $route->add($wrapper);
+            //$wrapper = static::wrapRequestMiddleware($middleware);
+            $route = $route->add($middleware);
         }
     }
 
@@ -126,6 +126,7 @@ class RouteUtil
      * Use callable of format [$self, 'method'] in "request" middleware (= callable first, then handler)
      * Note: the callable must return true if we have a response ready, false otherwise
      * @param callable|array $callable
+     * @deprecated 3.4.0 replaced by using GatekeeperMiddleware instead
      * @return callable
      */
     public static function wrapRequestMiddleware($callable)
@@ -145,6 +146,7 @@ class RouteUtil
     /**
      * Use callable of format [$self, 'method'] in "response" middleware (= handler first, then callable)
      * @param callable|array $callable
+     * @deprecated 3.4.0 replaced by using actual middleware instead
      * @return callable
      */
     public static function wrapResponseMiddleware($callable)

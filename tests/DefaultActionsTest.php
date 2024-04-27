@@ -4,8 +4,8 @@ use BicBucStriim\Actions\DefaultActions;
 use BicBucStriim\Utilities\RequestUtil;
 use BicBucStriim\Utilities\ResponseUtil;
 use BicBucStriim\Utilities\RouteUtil;
-use Slim\Factory\AppFactory;
 use BicBucStriim\Utilities\ActionsWrapperStrategy;
+use Slim\Factory\AppFactory;
 
 /**
  * @covers \BicBucStriim\Actions\DefaultActions
@@ -111,7 +111,7 @@ class DefaultActionsTest extends PHPUnit\Framework\TestCase
          * will change it for every route being defined after this change being applied
          */
         $routeCollector = $app->getRouteCollector();
-        $routeCollector->setDefaultInvocationStrategy(new ActionsWrapperStrategy());
+        $routeCollector->setDefaultInvocationStrategy(new ActionsWrapperStrategy($app));
         DefaultActions::addRoutes($app);
 
         $expected = 'Hello, world!';
@@ -123,18 +123,5 @@ class DefaultActionsTest extends PHPUnit\Framework\TestCase
         $request = RequestUtil::getServerRequest('GET', '/name');
         $response = $app->handle($request);
         $this->assertEquals($expected, (string) $response->getBody());
-    }
-
-    public function testCheckAdmin()
-    {
-        // @todo add container and auth to app to check admin
-        $this->expectExceptionMessage('Call to a member function has() on null');
-        $expected = true;
-        $app = AppFactory::create();
-        $self = new DefaultActions($app);
-        $callable = [$self, 'check_admin'];
-        $callable();
-        $this->assertEquals(\Nyholm\Psr7\Response::class, get_class($self->response()));
-        $this->assertEquals($expected, (string) $self->response()->getBody());
     }
 }

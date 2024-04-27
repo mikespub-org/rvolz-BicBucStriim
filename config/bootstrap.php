@@ -48,7 +48,7 @@ $app->getContainer()->set('globalSettings', $settings['globalSettings']);
  * will change it for every route being defined after this change being applied
  */
 $routeCollector = $app->getRouteCollector();
-$routeCollector->setDefaultInvocationStrategy(new ActionsWrapperStrategy());
+$routeCollector->setDefaultInvocationStrategy(new ActionsWrapperStrategy($app));
 
 # Init middleware
 $middleware = require(__DIR__ . '/middleware.php');
@@ -68,8 +68,11 @@ if (!isset($settings['basepath'])) {
 //$app->add(ExceptionMiddleware::class);
 $app->addErrorMiddleware(true, true, true);
 
+# Use gatekeeper middleware in routes
+$gatekeeper = new \BicBucStriim\Middleware\GatekeeperMiddleware($app);
+
 # Init routes
 $routes = require(__DIR__ . '/routes.php');
-$routes($app, $settings);
+$routes($app, $settings, $gatekeeper);
 
 return $app;

@@ -22,13 +22,13 @@ function getActions($settings)
 }
 
 ###### Init routes for production
-return function ($app, $settings) {
+return function ($app, $settings, $gatekeeper) {
     $actions = getActions($settings);
     foreach ($actions as [$class, $prefix]) {
-        $class::addRoutes($app, $prefix);
+        $class::addRoutes($app, $prefix, $gatekeeper);
     }
     if (!empty($settings['globalSettings']['hasapi'])) {
         $class = ApiActions::class;
-        $class::addRoutes($app, '/api');
+        $class::addRoutes($app, '/api', $gatekeeper);
     }
 };

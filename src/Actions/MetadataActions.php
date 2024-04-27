@@ -21,25 +21,23 @@ class MetadataActions extends DefaultActions
 {
     /**
      * Add routes for metadata actions
-    */
-    public static function addRoutes($app, $prefix = '/metadata')
+     */
+    public static function addRoutes($app, $prefix = '/metadata', $gatekeeper = null)
     {
         $self = new self($app);
-        $routes = static::getRoutes($self);
-        // check admin for all actions in this group
-        $gatekeeper = [$self, 'check_admin'];
-        $wrapper = RouteUtil::wrapRequestMiddleware($gatekeeper);
+        $routes = static::getRoutes($self, $gatekeeper);
         $app->group($prefix, function (\Slim\Routing\RouteCollectorProxy $group) use ($routes) {
             RouteUtil::mapRoutes($group, $routes);
-        })->add($wrapper);
+        })->add($gatekeeper);
     }
 
     /**
      * Get routes for metadata actions
      * @param self $self
+     * @param ?object $gatekeeper (optional)
      * @return array<mixed> list of [method(s), path, ...middleware(s), callable] for each action
      */
-    public static function getRoutes($self)
+    public static function getRoutes($self, $gatekeeper = null)
     {
         return [
             // method(s), path, ...middleware(s), callable

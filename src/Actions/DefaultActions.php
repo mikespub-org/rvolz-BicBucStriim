@@ -28,22 +28,24 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
      * Add routes for default actions
      * @param \BicBucStriim\App|\Slim\App|object $app
      * @param ?string $prefix
+     * @param ?object $gatekeeper (optional)
      * @return void
      */
-    public static function addRoutes($app, $prefix = null)
+    public static function addRoutes($app, $prefix = null, $gatekeeper = null)
     {
         // Slim 2 framework uses callable - we need $app instance
         $self = new self($app);
-        $routes = static::getRoutes($self);
+        $routes = static::getRoutes($self, $gatekeeper);
         RouteUtil::mapRoutes($app, $routes);
     }
 
     /**
      * Get routes for default actions
      * @param self $self
+     * @param ?object $gatekeeper (optional)
      * @return array<mixed> list of [method(s), path, ...middleware(s), callable] for each action
      */
-    public static function getRoutes($self)
+    public static function getRoutes($self, $gatekeeper = null)
     {
         return [
             // method(s), path, ...middleware(s), callable
@@ -100,10 +102,10 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
 
     /**
      * Check admin rights and redirect if necessary
-     * @param mixed ...$args when called as gatekeeper
+     * @see \BicBucStriim\Middleware\GatekeeperMiddleware
      * @return bool true if we have a response ready (= no access), false otherwise
      */
-    public function check_admin(...$args)
+    public function check_admin()
     {
         if (!$this->is_admin()) {
             $this->render('error.twig', [

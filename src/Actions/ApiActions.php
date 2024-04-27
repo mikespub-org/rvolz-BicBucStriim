@@ -18,12 +18,11 @@ class ApiActions extends DefaultActions
 {
     /**
      * Add routes for API actions
-     * @return void
      */
-    public static function addRoutes($app, $prefix = '/api')
+    public static function addRoutes($app, $prefix = '/api', $gatekeeper = null)
     {
         $self = new self($app);
-        $routes = static::getRoutes($self);
+        $routes = static::getRoutes($self, $gatekeeper);
         $app->group($prefix, function (\Slim\Routing\RouteCollectorProxy $group) use ($routes) {
             RouteUtil::mapRoutes($group, $routes);
         });
@@ -32,9 +31,10 @@ class ApiActions extends DefaultActions
     /**
      * Get routes for API actions
      * @param self $self
+     * @param ?object $gatekeeper (optional)
      * @return array<mixed> list of [method(s), path, ...middleware(s), callable] for each action
      */
-    public static function getRoutes($self)
+    public static function getRoutes($self, $gatekeeper = null)
     {
         return [
             // method(s), path, ...middleware(s), callable

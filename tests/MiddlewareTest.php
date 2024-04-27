@@ -8,6 +8,7 @@ use BicBucStriim\Utilities\RequestUtil;
  * @covers \BicBucStriim\Middleware\BasePathMiddleware
  * @covers \BicBucStriim\Middleware\CachingMiddleware
  * @covers \BicBucStriim\Middleware\CalibreConfigMiddleware
+ * @covers \BicBucStriim\Middleware\DefaultMiddleware
  * @covers \BicBucStriim\Middleware\LoginMiddleware
  * @covers \BicBucStriim\Middleware\OwnConfigMiddleware
  */

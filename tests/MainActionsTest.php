@@ -35,11 +35,11 @@ class MainActionsTest extends PHPUnit\Framework\TestCase
             ],
             'authorNotes' => [
                 ['id' => 5], 'You don&#039;t have sufficient access rights.',
-                'GET', '/authors/{id}/notes/', ['$self', 'check_admin'], ['$self', 'authorNotes'],
+                'GET', '/authors/{id}/notes/', '$gatekeeper', ['$self', 'authorNotes'],
             ],
             //'authorNotesEdit' => [
             //    ['id' => 5], 'hello',
-            //    'POST', '/authors/{id}/notes/', ['$self', 'check_admin'], ['$self', 'authorNotesEdit']
+            //    'POST', '/authors/{id}/notes/', '$gatekeeper', ['$self', 'authorNotesEdit']
             //],
             'authorDetailsSlice' => [
                 ['id' => 5, 'page' => 0], '<title>BicBucStriim :: Author Details</title>',

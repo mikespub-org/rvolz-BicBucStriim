@@ -21,10 +21,10 @@ class OpdsActions extends DefaultActions
     /**
      * Add routes for OPDS actions
      */
-    public static function addRoutes($app, $prefix = '/opds')
+    public static function addRoutes($app, $prefix = '/opds', $gatekeeper = null)
     {
         $self = new self($app);
-        $routes = static::getRoutes($self);
+        $routes = static::getRoutes($self, $gatekeeper);
         $app->group($prefix, function (\Slim\Routing\RouteCollectorProxy $group) use ($routes) {
             RouteUtil::mapRoutes($group, $routes);
         });
@@ -33,9 +33,10 @@ class OpdsActions extends DefaultActions
     /**
      * Get routes for OPDS actions
      * @param self $self
+     * @param ?object $gatekeeper (optional)
      * @return array<mixed> list of [method(s), path, ...middleware(s), callable] for each action
      */
-    public static function getRoutes($self)
+    public static function getRoutes($self, $gatekeeper = null)
     {
         return [
             // method(s), path, ...middleware(s), callable

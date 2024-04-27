@@ -30,20 +30,21 @@ class MainActions extends DefaultActions
     /**
      * Add routes for main actions
      */
-    public static function addRoutes($app, $prefix = null)
+    public static function addRoutes($app, $prefix = null, $gatekeeper = null)
     {
         $self = new self($app);
         //$app->notFound([$self, 'myNotFound']);
-        $routes = static::getRoutes($self);
+        $routes = static::getRoutes($self, $gatekeeper);
         RouteUtil::mapRoutes($app, $routes);
     }
 
     /**
      * Get routes for main actions
      * @param self $self
+     * @param ?object $gatekeeper (optional)
      * @return array<mixed> list of [method(s), path, ...middleware(s), callable] for each action
      */
-    public static function getRoutes($self)
+    public static function getRoutes($self, $gatekeeper = null)
     {
         return [
             // method(s), path, ...middleware(s), callable
@@ -51,8 +52,9 @@ class MainActions extends DefaultActions
             ['GET', '/login/', [$self, 'show_login']],
             ['POST', '/login/', [$self, 'perform_login']],
             ['GET', '/logout/', [$self, 'logout']],
-            ['GET', '/authors/{id}/notes/', [$self, 'check_admin'], [$self, 'authorNotes']],
-            //['POST', '/authors/{id}/notes/', [$self, 'check_admin'], [$self, 'authorNotesEdit']],
+            // use $gatekeeper for individual routes here
+            ['GET', '/authors/{id}/notes/', $gatekeeper, [$self, 'authorNotes']],
+            //['POST', '/authors/{id}/notes/', $gatekeeper, [$self, 'authorNotesEdit']],
             ['GET', '/authors/{id}/{page}/', [$self, 'authorDetailsSlice']],
             ['GET', '/authorslist/{page}/', [$self, 'authorsSlice']],
             ['GET', '/search/', [$self, 'globalSearch']],
