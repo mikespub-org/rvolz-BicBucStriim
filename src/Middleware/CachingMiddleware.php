@@ -11,6 +11,8 @@
 namespace BicBucStriim\Middleware;
 
 use Psr\Cache\CacheItemPoolInterface;
+use Psr\Container\ContainerInterface;
+use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
@@ -21,23 +23,20 @@ class CachingMiddleware extends CacheMiddleware
 {
     use \BicBucStriim\Traits\AppTrait;
 
-    /** @var \Slim\App|object|null */
-    protected $app;
     protected $resources;
 
     /**
      * Initialize the configuration
      *
-     * @param \Slim\App|object $app The app
-     * @param array $config an array of resource strings
+     * @param array $cacheConfig an array of resource strings
      * @param CacheItemPoolInterface $cachePool the cache item pool for the cache middleware
+     * @param ResponseFactoryInterface $responseFactory the cache item pool for the cache middleware
      */
-    public function __construct($app, $config, $cachePool)
+    public function __construct(ContainerInterface $container, $cacheConfig, $cachePool, $responseFactory)
     {
-        //$this->app = $app;
-        $this->container = $app->getContainer();
-        $this->resources = $config;
-        parent::__construct($cachePool, $app->getResponseFactory());
+        $this->container = $container;
+        $this->resources = $cacheConfig;
+        parent::__construct($cachePool, $responseFactory);
     }
 
     /**
@@ -53,7 +52,7 @@ class CachingMiddleware extends CacheMiddleware
     {
         $this->request = $request;
         //$response = $this->response();
-        $resource = $this->getResourceUri();
+        $resource = $this->getPathInfo();
         foreach ($this->resources as $noCacheResource) {
             if (str_starts_with($resource, $noCacheResource)) {
                 session_cache_limiter('nocache');

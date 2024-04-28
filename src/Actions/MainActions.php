@@ -97,7 +97,7 @@ class MainActions extends DefaultActions
     {
         if ($this->is_authenticated()) {
             $this->log()->info('user is already logged in : ' . $this->auth()->getUserName());
-            $this->mkRedirect($this->getRootUri() . '/');
+            $this->mkRedirect($this->getBasePath() . '/');
         } else {
             $this->render('login.twig', [
                 'page' => $this->mkPage('login')]);
@@ -121,7 +121,7 @@ class MainActions extends DefaultActions
                     $this->log()->debug('login success: ' . $success);
                     if ($this->is_authenticated()) {
                         $this->log()->info('logged in user : ' . $this->auth()->getUserName());
-                        $this->mkRedirect($this->getRootUri() . '/');
+                        $this->mkRedirect($this->getBasePath() . '/');
                         return;
                     }
                 } catch (Exception $e) {
@@ -353,7 +353,6 @@ class MainActions extends DefaultActions
         }
 
         $has_cover = false;
-        $rot = $this->getRootUri();
         $book = $this->calibre()->title($id);
         if (is_null($book)) {
             $this->log()->debug("cover: book not found: " . $id);
@@ -390,7 +389,6 @@ class MainActions extends DefaultActions
 
         $this->log()->debug('thumbnail: ' . $id);
         $has_cover = false;
-        $rot = $this->getRootUri();
         $book = $this->calibre()->title($id);
         if (is_null($book)) {
             $this->log()->error("thumbnail: book not found: " . $id);

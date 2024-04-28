@@ -10,6 +10,7 @@
 
 namespace BicBucStriim\Middleware;
 
+use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\MiddlewareInterface;
@@ -19,18 +20,12 @@ class DefaultMiddleware implements \BicBucStriim\Traits\AppInterface, Middleware
 {
     use \BicBucStriim\Traits\AppTrait;
 
-    /** @var \Slim\App|object|null */
-    protected $app;
-
     /**
      * Initialize the configuration
-     *
-     * @param \Slim\App|object $app The app
      */
-    public function __construct($app)
+    public function __construct(ContainerInterface $container)
     {
-        $this->app = $app;
-        $this->container = $app->getContainer();
+        $this->container = $container;
     }
 
     /**

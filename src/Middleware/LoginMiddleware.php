@@ -12,6 +12,7 @@ namespace BicBucStriim\Middleware;
 
 use BicBucStriim\Utilities\InputUtil;
 use BicBucStriim\Utilities\L10n;
+use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
@@ -25,13 +26,12 @@ class LoginMiddleware extends DefaultMiddleware
      * Initialize the PDO connection and merge user
      * config with defaults.
      *
-     * @param \Slim\App|object $app The app
      * @param string $realm
      * @param array $statics
      */
-    public function __construct($app, $realm, $statics)
+    public function __construct(ContainerInterface $container, $realm, $statics)
     {
-        parent::__construct($app);
+        parent::__construct($container);
         $this->realm = $realm;
         $this->static_resource_paths = $statics;
     }
@@ -72,7 +72,7 @@ class LoginMiddleware extends DefaultMiddleware
     {
         $settings = $this->settings();
         $request = $this->request();
-        $resource = $this->getResourceUri();
+        $resource = $this->getPathInfo();
         $this->log()->debug('login resource: ' . $resource);
         if ($settings->must_login == 1) {
             if (!$this->is_static_resource($resource) && !$this->is_authorized()) {
@@ -154,7 +154,7 @@ class LoginMiddleware extends DefaultMiddleware
         $request = $this->request();
         $session_factory = new \BicBucStriim\Session\SessionFactory();
         $session = $session_factory->newInstance($request->getCookieParams());
-        $session->setCookieParams(['path' => $this->getRootUri() . '/']);
+        $session->setCookieParams(['path' => $this->getBasePath() . '/']);
         $auth_factory = new \Aura\Auth\AuthFactory($request->getCookieParams(), $session);
         $this->auth($auth_factory->newInstance());
         $hash = new \Aura\Auth\Verifier\PasswordVerifier(PASSWORD_BCRYPT);

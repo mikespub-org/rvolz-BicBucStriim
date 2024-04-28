@@ -110,9 +110,6 @@ trait AppTrait
      */
     public function getResponseFactory()
     {
-        if (!empty($this->app)) {
-            return $this->app->getResponseFactory();
-        }
         return $this->container(ResponseFactoryInterface::class);
     }
 
@@ -201,18 +198,18 @@ trait AppTrait
         $settings = $this->settings();
 
         if ($settings->relative_urls == '1') {
-            $root = rtrim($this->getRootUri(), "/");
+            $root = rtrim($this->getBasePath(), "/");
         } else {
             // Get forwarding information, if available
             $util = new \BicBucStriim\Utilities\RequestUtil($this->request());
             $info = $util->getForwardingInfo();
             if (is_null($info) || !$info->is_valid()) {
                 // No forwarding info available
-                $root = rtrim($this->getUrl() . $this->getRootUri(), "/");
+                $root = rtrim($this->getSchemeAndHttpHost() . $this->getBasePath(), "/");
             } else {
                 // Use forwarding info
                 $this->log()->debug("getRootUrl: Using forwarding information " . $info);
-                $root = $info->protocol . '://' . $info->host . $this->getRootUri();
+                $root = $info->protocol . '://' . $info->host . $this->getBasePath();
             }
         }
         $this->log()->debug("getRootUrl: Using root url " . $root);
@@ -222,7 +219,7 @@ trait AppTrait
     /**
      * See https://github.com/slimphp/Slim/blob/2.x/Slim/Http/Request.php#L569
      */
-    public function getUrl()
+    public function getSchemeAndHttpHost()
     {
         $uri = $this->request->getUri();
         $url = $uri->getScheme() . '://' . $uri->getHost();
@@ -236,25 +233,20 @@ trait AppTrait
      * See https://github.com/slimphp/Slim/blob/2.x/Slim/Http/Request.php#L533
      * See https://www.slimframework.com/docs/v4/objects/request.html#obtain-base-path-from-within-route
      * See https://discourse.slimframework.com/t/slim-4-get-base-url/3406
+     * @todo align with request basepath
      */
-    public function getRootUri()
+    public function getBasePath()
     {
         $basedir = dirname($this->request->getServerParams()['SCRIPT_NAME'] ?? '');
-        //$basepath = $this->app->getBasePath();
-        //echo "$basepath ?= $basedir ?= N/A\n";
-        //$routeContext = \Slim\Routing\RouteContext::fromRequest($this->request());
-        //$baseroute = $routeContext->getBasePath();
-        //echo "$basepath ?= $basedir ?= $baseroute\n";
         return rtrim($basedir, '/');
     }
 
     /**
      * See https://github.com/slimphp/Slim/blob/2.x/Slim/Http/Request.php#L560
      */
-    public function getResourceUri()
+    public function getPathInfo()
     {
         $resource = $this->request->getRequestTarget();
-        //$basepath = $this->app->getBasePath();
         //$basepath = $this->request->getAttribute(RouteContext::BASE_PATH);
         $routeContext = RouteContext::fromRequest($this->request);
         $basepath = $routeContext->getBasePath();
@@ -267,28 +259,6 @@ trait AppTrait
             $resource = explode('?', $resource)[0];
         }
         return $resource;
-        /**
-        $pathinfo = $this->request->getServerParams()['PATH_INFO'] ?? null;
-        if (isset($pathinfo)) {
-            return $pathinfo;
-        }
-        $requesturi = explode('?', $this->request->getServerParams()['REQUEST_URI'] ?? '')[0];
-        if (empty($requesturi)) {
-            return '';
-        }
-        $scriptname = str_replace('\\', '/', $this->request->getServerParams()['SCRIPT_NAME'] ?? '');
-        if (empty($scriptname)) {
-            return $requesturi;
-        }
-        if (str_starts_with($requesturi, $scriptname)) {
-            return substr($requesturi, strlen($scriptname));
-        }
-        $scriptname = dirname($scriptname);
-        if (str_starts_with($requesturi, $scriptname)) {
-            return substr($requesturi, strlen($scriptname));
-        }
-        return $requesturi;
-         */
     }
 
     /**

@@ -60,17 +60,6 @@ class ApiActions extends DefaultActions
     }
 
     /**
-     * @return RouteCollectorInterface
-     */
-    public function dontgetRouteCollector()
-    {
-        //if (!empty($this->app)) {
-        //    return $this->app->getRouteCollector();
-        //}
-        return $this->container(RouteCollectorInterface::class);
-    }
-
-    /**
      * Generate the API home page
      * @return void
      */

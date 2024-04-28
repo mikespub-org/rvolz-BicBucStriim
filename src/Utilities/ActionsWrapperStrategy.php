@@ -26,11 +26,8 @@ class ActionsWrapperStrategy implements InvocationStrategyInterface
     ): ResponseInterface {
         if (is_array($callable)) {
             [$class, $method] = $callable;
-            // when using [static::class, 'method'] - doesn't help with middleware
-            // @todo we never get this because Slim goes through CallableResolver first
-            //if (is_string($class) && is_a($class, DefaultActions::class, true)) {
-            //    $class = new $class($this->app);
-            //}
+            // when using [static::class, 'method']
+            // we never get this because Slim goes through CallableResolver first
             // when using [$self, 'method']
             if (is_object($class) && $class instanceof DefaultActions) {
                 $class->request($request);

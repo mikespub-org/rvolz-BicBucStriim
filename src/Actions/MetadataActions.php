@@ -85,20 +85,20 @@ class MetadataActions extends DefaultActions
             if ($_FILES["file"]["error"] > 0) {
                 $this->log()->debug('edit_author_thm: upload error ' . $_FILES["file"]["error"]);
                 $this->flash('error', $this->getMessageString('author_thumbnail_upload_error1') . ': ' . $_FILES["file"]["error"]);
-                $rot = $this->getRootUri();
+                $rot = $this->getBasePath();
                 $this->mkRedirect($rot . '/authors/' . $id . '/0/');
             } else {
                 $this->log()->debug('edit_author_thm: upload ok, converting');
                 $author = $this->calibre()->author($id);
                 $created = $this->bbs()->editAuthorThumbnail($id, $author->name, $settings->thumb_gen_clipped, $_FILES["file"]["tmp_name"], $_FILES["file"]["type"]);
                 $this->log()->debug('edit_author_thm: converted, redirecting');
-                $rot = $this->getRootUri();
+                $rot = $this->getBasePath();
                 $this->mkRedirect($rot . '/authors/' . $id . '/0/');
             }
         } else {
             $this->log()->warning('edit_author_thm: Uploaded thumbnail too big or wrong type');
             $this->flash('error', $this->getMessageString('author_thumbnail_upload_error2'));
-            $rot = $this->getRootUri();
+            $rot = $this->getBasePath();
             $this->mkRedirect($rot . '/authors/' . $id . '/0/');
         }
     }

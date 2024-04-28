@@ -107,17 +107,17 @@ interface AppInterface
     /**
      * See https://github.com/slimphp/Slim/blob/2.x/Slim/Http/Request.php#L569
      */
-    public function getUrl();
+    public function getSchemeAndHttpHost();
 
     /**
      * See https://github.com/slimphp/Slim/blob/2.x/Slim/Http/Request.php#L533
      */
-    public function getRootUri();
+    public function getBasePath();
 
     /**
      * See https://github.com/slimphp/Slim/blob/2.x/Slim/Http/Request.php#L560
      */
-    public function getResourceUri();
+    public function getPathInfo();
 
     /**
      * Create and send an error to authenticate (401)

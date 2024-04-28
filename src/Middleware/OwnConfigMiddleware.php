@@ -12,6 +12,7 @@ namespace BicBucStriim\Middleware;
 
 use BicBucStriim\AppData\BicBucStriim;
 
+use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
@@ -23,12 +24,11 @@ class OwnConfigMiddleware extends DefaultMiddleware
     /**
      * Initialize the configuration
      *
-     * @param \Slim\App|object $app The app
      * @param array $knownConfigs
      */
-    public function __construct($app, $knownConfigs)
+    public function __construct(ContainerInterface $container, $knownConfigs)
     {
-        parent::__construct($app);
+        parent::__construct($container);
         $this->knownConfigs = $knownConfigs;
     }
 
@@ -45,7 +45,7 @@ class OwnConfigMiddleware extends DefaultMiddleware
         $config_status = $this->check_config_db();
         if ($config_status == 0) {
             $this->mkError(500, 'No or bad configuration database. Please use <a href="' .
-                $this->getRootUri() .
+                $this->getBasePath() .
                 '/installcheck.php">installcheck.php</a> to check for errors.');
             return $this->response();
         } elseif ($config_status == 2) {
