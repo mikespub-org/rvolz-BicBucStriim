@@ -72,7 +72,7 @@ trait AppTrait
         if (is_array($settings)) {
             $settings = new Settings($settings);
         }
-        return $this->container('globalSettings', $settings);
+        return $this->container(Settings::class, $settings);
     }
 
     /**

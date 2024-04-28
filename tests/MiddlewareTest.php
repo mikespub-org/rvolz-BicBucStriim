@@ -1,6 +1,7 @@
 <?php
 
 use BicBucStriim\Utilities\RequestUtil;
+use BicBucStriim\Utilities\TestHelper;
 
 /**
  * @todo test with/without login required + caching
@@ -61,21 +62,12 @@ class MiddlewareTest extends PHPUnit\Framework\TestCase
         ];
     }
 
-    public function getApp($login = 0)
-    {
-        $app = require(dirname(__DIR__) . '/config/bootstrap.php');
-        $settings = $app->getContainer()->get('globalSettings');
-        $settings->must_login = $login;
-        $app->getContainer()->set('globalSettings', $settings);
-        return $app;
-    }
-
     /**
      * @runInSeparateProcess
      */
     public function testAppMainRequest()
     {
-        $app = $this->getApp();
+        $app = TestHelper::getApp();
         $this->assertEquals(\Slim\App::class, $app::class);
 
         $expected = '<title>BicBucStriim :: Most recent</title>';
@@ -93,7 +85,7 @@ class MiddlewareTest extends PHPUnit\Framework\TestCase
     {
         $this->assertGreaterThan(0, count($args));
         if (is_string($methods) && $methods == 'GET') {
-            $app = $this->getApp();
+            $app = TestHelper::getApp();
 
             foreach ($input as $name => $value) {
                 $pattern = str_replace('{' . $name . '}', (string) $value, $pattern);

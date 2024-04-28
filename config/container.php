@@ -10,6 +10,7 @@
 
 use Aura\Auth\Auth;
 use BicBucStriim\AppData\BicBucStriim;
+use BicBucStriim\AppData\Settings;
 use BicBucStriim\Calibre\Calibre;
 use BicBucStriim\Session\Session;
 use Psr\Cache\CacheItemPoolInterface;
@@ -42,7 +43,7 @@ $builder->addDefinitions([
     },
     Calibre::class => function (ContainerInterface $c) {
         # Setup the connection to the Calibre metadata db
-        $settings = $c->get('globalSettings');
+        $settings = $c->get(Settings::class);
         $clp = $settings->calibre_dir . '/metadata.db';
         return new Calibre($clp);
     },

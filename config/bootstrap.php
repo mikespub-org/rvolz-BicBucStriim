@@ -11,6 +11,7 @@
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Slim\Factory\AppFactory;
+use BicBucStriim\AppData\Settings;
 //use BicBucStriim\Utilities\ActionsCallableResolver;
 use BicBucStriim\Utilities\ActionsWrapperStrategy;
 use Slim\Interfaces\RouteCollectorInterface;
@@ -49,7 +50,7 @@ $config = require(__DIR__ . '/config.php');
 $config($app, $settings);
 
 # Store $globalSettings in container for everything
-$app->getContainer()->set('globalSettings', $settings['globalSettings']);
+$app->getContainer()->set(Settings::class, $settings['globalSettings']);
 
 # Store responseFactory in container for middleware response
 $app->getContainer()->set(ResponseFactoryInterface::class, fn() => $app->getResponseFactory());

@@ -1,35 +1,22 @@
 <?php
 
 use BicBucStriim\Utilities\RequestUtil;
+use BicBucStriim\Utilities\TestHelper;
 
 /**
  * @covers \BicBucStriim\Actions\ApiActions
  * @covers \BicBucStriim\Actions\DefaultActions
+ * @covers \BicBucStriim\Utilities\TestHelper
  */
 class ApiActionsTest extends PHPUnit\Framework\TestCase
 {
-    /**
-     * Make hasapi configurable via environment variable
-     */
-    public function getApp($hasapi = true)
-    {
-        // we need to set this before bootstrap to get api routes
-        putenv("BBS_HAS_API=$hasapi");
-        $app = require(dirname(__DIR__) . '/config/bootstrap.php');
-        $settings = $app->getContainer()->get('globalSettings');
-        $settings['hasapi'] = $hasapi;
-        $settings->must_login = 0;
-        $app->getContainer()->set('globalSettings', $settings);
-        return $app;
-    }
-
     /**
      * @runInSeparateProcess
      * @preserveGlobalState disabled
      */
     public function testApiHomeRequest()
     {
-        $app = $this->getApp();
+        $app = TestHelper::getAppWithApi();
         $this->assertEquals(\Slim\App::class, $app::class);
 
         $expected = '<title>BicBucStriim - SwaggerUI</title>';
@@ -44,7 +31,7 @@ class ApiActionsTest extends PHPUnit\Framework\TestCase
      */
     public function testApiRoutesRequest()
     {
-        $app = $this->getApp();
+        $app = TestHelper::getAppWithApi();
         $this->assertEquals(\Slim\App::class, $app::class);
 
         // @todo update when route count changes
@@ -63,7 +50,7 @@ class ApiActionsTest extends PHPUnit\Framework\TestCase
      */
     public function testOpenApiRequest()
     {
-        $app = $this->getApp();
+        $app = TestHelper::getAppWithApi();
         $this->assertEquals(\Slim\App::class, $app::class);
 
         // @todo update when route count changes
@@ -85,7 +72,7 @@ class ApiActionsTest extends PHPUnit\Framework\TestCase
      */
     public function testMainRequestWithHeader()
     {
-        $app = $this->getApp();
+        $app = TestHelper::getAppWithApi();
         $this->assertEquals(\Slim\App::class, $app::class);
 
         $expected = ['page', 'books', 'stats'];
@@ -103,7 +90,7 @@ class ApiActionsTest extends PHPUnit\Framework\TestCase
      */
     public function testMainRequestWithoutHasApi()
     {
-        $app = $this->getApp(false);
+        $app = TestHelper::getAppWithApi(false);
         $this->assertEquals(\Slim\App::class, $app::class);
 
         $expected = '<title>BicBucStriim :: Most recent</title>';

@@ -4,11 +4,10 @@ use BicBucStriim\Actions\DefaultActions;
 use BicBucStriim\Utilities\RequestUtil;
 use BicBucStriim\Utilities\ResponseUtil;
 use BicBucStriim\Utilities\RouteUtil;
+use BicBucStriim\Utilities\TestHelper;
 use BicBucStriim\Utilities\ActionsCallableResolver;
 use BicBucStriim\Utilities\ActionsWrapperStrategy;
-use Psr\Http\Message\ResponseFactoryInterface;
 use Slim\Factory\AppFactory;
-use Slim\Interfaces\RouteCollectorInterface;
 
 /**
  * @covers \BicBucStriim\Actions\DefaultActions
@@ -75,28 +74,12 @@ class DefaultActionsTest extends PHPUnit\Framework\TestCase
         }
     }
 
-    protected function getAppWithContainer()
-    {
-        $container = require dirname(__DIR__) . '/config/container.php';
-        AppFactory::setContainer($container);
-        $app = AppFactory::create();
-        $settings = require dirname(__DIR__) . '/config/settings.php';
-        // set by LoginMiddleware based on request in normal operation
-        $settings['globalSettings']['l10n'] = new \BicBucStriim\Utilities\L10n('en');
-        $app->getContainer()->set('globalSettings', $settings['globalSettings']);
-        $app->getContainer()->set(ResponseFactoryInterface::class, fn() => $app->getResponseFactory());
-        $app->getContainer()->set(RouteCollectorInterface::class, fn() => $app->getRouteCollector());
-        // skip middleware and routes here
-
-        return $app;
-    }
-
     public function testHello()
     {
         $expected = 'Hello, world!';
         //$app = AppFactory::create();
         //$self = new DefaultActions($app);
-        $app = $this->getAppWithContainer();
+        $app = TestHelper::getAppWithContainer();
         $self = new DefaultActions($app->getContainer());
         $callable = [$self, 'hello'];
         $args = [];
@@ -110,7 +93,7 @@ class DefaultActionsTest extends PHPUnit\Framework\TestCase
         $expected = 'Hello, name!';
         //$app = AppFactory::create();
         //$self = new DefaultActions($app);
-        $app = $this->getAppWithContainer();
+        $app = TestHelper::getAppWithContainer();
         $self = new DefaultActions($app->getContainer());
         $callable = [$self, 'hello'];
         $args = ['name'];
