@@ -10,19 +10,24 @@
 namespace BicBucStriim\Actions;
 
 use BicBucStriim\Utilities\RouteUtil;
+use Psr\Container\ContainerInterface;
+use Slim\Interfaces\RouteCollectorInterface;
 
 /*********************************************************************
  * JSON API actions
  ********************************************************************/
 class ApiActions extends DefaultActions
 {
+    /** @var ?RouteCollectorInterface */
+    protected $routeCollector;
+
     /**
      * Add routes for API actions
      */
     public static function addRoutes($app, $prefix = '/api', $gatekeeper = null)
     {
-        $self = new self($app);
-        //$self = static::class;
+        //$self = new self($app);
+        $self = static::class;
         $routes = static::getRoutes($self, $gatekeeper);
         $app->group($prefix, function (\Slim\Routing\RouteCollectorProxy $group) use ($routes) {
             RouteUtil::mapRoutes($group, $routes);
@@ -43,6 +48,26 @@ class ApiActions extends DefaultActions
             ['GET', '/routes', [$self, 'routes']],
             ['GET', '/openapi.json', [$self, 'openapi']],
         ];
+    }
+
+    /**
+     * This will be instantiated by callable route resolver with dependency injection
+     */
+    public function __construct(ContainerInterface $container, RouteCollectorInterface $routeCollector)
+    {
+        $this->routeCollector = $routeCollector;
+        parent::__construct($container);
+    }
+
+    /**
+     * @return RouteCollectorInterface
+     */
+    public function dontgetRouteCollector()
+    {
+        //if (!empty($this->app)) {
+        //    return $this->app->getRouteCollector();
+        //}
+        return $this->container(RouteCollectorInterface::class);
     }
 
     /**
@@ -69,7 +94,7 @@ class ApiActions extends DefaultActions
         $settings = $this->settings();
         $title = $settings->display_app_name;
         $rot = $this->getRootUrl();
-        $routes = $this->app()->getRouteCollector()->getRoutes();
+        $routes = $this->routeCollector->getRoutes();
         $patterns = [];
         foreach ($routes as $route) {
             $link = $rot . $route->getPattern();
@@ -124,7 +149,7 @@ class ApiActions extends DefaultActions
             "parameters" => [],
         ];
         $result["paths"] = [];
-        $routes = $this->app()->getRouteCollector()->getRoutes();
+        $routes = $this->routeCollector->getRoutes();
         foreach ($routes as $route) {
             $path = $route->getPattern();
             $methods = array_filter($route->getMethods(), function ($method) {

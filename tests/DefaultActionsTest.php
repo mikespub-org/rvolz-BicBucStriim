@@ -6,7 +6,9 @@ use BicBucStriim\Utilities\ResponseUtil;
 use BicBucStriim\Utilities\RouteUtil;
 use BicBucStriim\Utilities\ActionsCallableResolver;
 use BicBucStriim\Utilities\ActionsWrapperStrategy;
+use Psr\Http\Message\ResponseFactoryInterface;
 use Slim\Factory\AppFactory;
+use Slim\Interfaces\RouteCollectorInterface;
 
 /**
  * @covers \BicBucStriim\Actions\DefaultActions
@@ -31,8 +33,10 @@ class DefaultActionsTest extends PHPUnit\Framework\TestCase
     public function testGetRoutesWithSelf()
     {
         $expected = array_values($this->getExpectedRoutes());
-        $app = AppFactory::create();
-        $self = new DefaultActions($app);
+        //$app = AppFactory::create();
+        //$self = new DefaultActions($app);
+        $container = require dirname(__DIR__) . '/config/container.php';
+        $self = new DefaultActions($container);
         // replace '$self' in $expected with actual $self
         array_walk($expected, function (&$value) use ($self) {
             $value[2][0] = $self;
@@ -71,11 +75,29 @@ class DefaultActionsTest extends PHPUnit\Framework\TestCase
         }
     }
 
+    protected function getAppWithContainer()
+    {
+        $container = require dirname(__DIR__) . '/config/container.php';
+        AppFactory::setContainer($container);
+        $app = AppFactory::create();
+        $settings = require dirname(__DIR__) . '/config/settings.php';
+        // set by LoginMiddleware based on request in normal operation
+        $settings['globalSettings']['l10n'] = new \BicBucStriim\Utilities\L10n('en');
+        $app->getContainer()->set('globalSettings', $settings['globalSettings']);
+        $app->getContainer()->set(ResponseFactoryInterface::class, fn() => $app->getResponseFactory());
+        $app->getContainer()->set(RouteCollectorInterface::class, fn() => $app->getRouteCollector());
+        // skip middleware and routes here
+
+        return $app;
+    }
+
     public function testHello()
     {
         $expected = 'Hello, world!';
-        $app = AppFactory::create();
-        $self = new DefaultActions($app);
+        //$app = AppFactory::create();
+        //$self = new DefaultActions($app);
+        $app = $this->getAppWithContainer();
+        $self = new DefaultActions($app->getContainer());
         $callable = [$self, 'hello'];
         $args = [];
         $callable(...$args);
@@ -86,8 +108,10 @@ class DefaultActionsTest extends PHPUnit\Framework\TestCase
     public function testHelloWithName()
     {
         $expected = 'Hello, name!';
-        $app = AppFactory::create();
-        $self = new DefaultActions($app);
+        //$app = AppFactory::create();
+        //$self = new DefaultActions($app);
+        $app = $this->getAppWithContainer();
+        $self = new DefaultActions($app->getContainer());
         $callable = [$self, 'hello'];
         $args = ['name'];
         $callable(...$args);
@@ -98,7 +122,9 @@ class DefaultActionsTest extends PHPUnit\Framework\TestCase
     public function testHelloViaRouteHandler()
     {
         $app = AppFactory::create();
-        $self = new DefaultActions($app);
+        //$self = new DefaultActions($app);
+        $container = require dirname(__DIR__) . '/config/container.php';
+        $self = new DefaultActions($container);
         $callable = [$self, 'hello'];
         $wrapper = RouteUtil::wrapRouteHandler($callable);
 
@@ -122,17 +148,17 @@ class DefaultActionsTest extends PHPUnit\Framework\TestCase
         $container = require dirname(__DIR__) . '/config/container.php';
         AppFactory::setContainer($container);
         // Slim 4 framework uses its own CallableResolver if this is a class string, *before* invocation strategy 
-        $callableResolver = new ActionsCallableResolver($container);
-        AppFactory::setCallableResolver($callableResolver);
+        //$callableResolver = new ActionsCallableResolver($container);
+        //AppFactory::setCallableResolver($callableResolver);
         $app = AppFactory::create();
-        $callableResolver->setApp($app);
+        //$callableResolver->setApp($app);
         /**
          * See https://www.slimframework.com/docs/v4/objects/routing.html#route-strategies
          * Changing the default invocation strategy on the RouteCollector component
          * will change it for every route being defined after this change being applied
          */
         $routeCollector = $app->getRouteCollector();
-        $routeCollector->setDefaultInvocationStrategy(new ActionsWrapperStrategy($app));
+        $routeCollector->setDefaultInvocationStrategy(new ActionsWrapperStrategy());
         DefaultActions::addRoutes($app);
 
         $expected = 'Hello, world!';

@@ -13,18 +13,6 @@ use Slim\Interfaces\InvocationStrategyInterface;
  */
 class ActionsWrapperStrategy implements InvocationStrategyInterface
 {
-    /** @var \BicBucStriim\App|\Slim\App|object */
-    protected $app;
-
-    /**
-     * If we accept callable of format [static::class, 'method'] too, we need app
-     * @param \BicBucStriim\App|\Slim\App|object $app
-     */
-    public function __construct($app)
-    {
-        $this->app = $app;
-    }
-
     /**
      * Use callable of format [$self, 'method'] as route handler (slim 2 style)
      * and wrap request/response handling on actions instance level

@@ -4,7 +4,9 @@ use BicBucStriim\Actions\DefaultActions;
 use BicBucStriim\Middleware\GatekeeperMiddleware;
 use BicBucStriim\Utilities\RequestUtil;
 use Middlewares\Utils\CallableHandler;
+use Psr\Http\Message\ResponseFactoryInterface;
 use Slim\Factory\AppFactory;
+use Slim\Interfaces\RouteCollectorInterface;
 
 /**
  * @covers \BicBucStriim\Actions\DefaultActions
@@ -23,6 +25,8 @@ class GatekeeperTest extends PHPUnit\Framework\TestCase
         // set by LoginMiddleware based on request in normal operation
         $settings['globalSettings']['l10n'] = new \BicBucStriim\Utilities\L10n('en');
         $app->getContainer()->set('globalSettings', $settings['globalSettings']);
+        $app->getContainer()->set(ResponseFactoryInterface::class, fn() => $app->getResponseFactory());
+        $app->getContainer()->set(RouteCollectorInterface::class, fn() => $app->getRouteCollector());
         // skip middleware and routes here
 
         return $app;
@@ -57,7 +61,7 @@ class GatekeeperTest extends PHPUnit\Framework\TestCase
         $app = $this->getAppWithContainer();
         $request = RequestUtil::getServerRequest('GET', '/');
 
-        $self = new DefaultActions($app);
+        $self = new DefaultActions($app->getContainer());
         $self->request($request);
         $callable = [$self, 'check_admin'];
         $result = $callable();
@@ -78,7 +82,7 @@ class GatekeeperTest extends PHPUnit\Framework\TestCase
         ];
         $auth = $this->getAuth($request, $userData);
 
-        $self = new DefaultActions($app);
+        $self = new DefaultActions($app->getContainer());
         $self->request($request);
         $self->auth($auth);
         $callable = [$self, 'check_admin'];
@@ -93,7 +97,7 @@ class GatekeeperTest extends PHPUnit\Framework\TestCase
         $request = RequestUtil::getServerRequest('GET', '/');
         $handler = $this->getHandler($app);
 
-        $gatekeeper = new GatekeeperMiddleware($app);
+        $gatekeeper = new GatekeeperMiddleware($app->getContainer());
         $response = $gatekeeper->process($request, $handler);
         $this->assertEquals(\Nyholm\Psr7\Response::class, get_class($response));
         $this->assertStringContainsString($expected, (string) $response->getBody());
@@ -111,7 +115,7 @@ class GatekeeperTest extends PHPUnit\Framework\TestCase
         $request = $request->withAttribute('auth', $auth);
         $handler = $this->getHandler($app, $expected);
 
-        $gatekeeper = new GatekeeperMiddleware($app);
+        $gatekeeper = new GatekeeperMiddleware($app->getContainer());
         $response = $gatekeeper->process($request, $handler);
         $this->assertEquals(\Nyholm\Psr7\Response::class, get_class($response));
         $this->assertStringContainsString($expected, (string) $response->getBody());

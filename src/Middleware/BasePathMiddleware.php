@@ -9,6 +9,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Slim\Routing\RouteContext;
 
 /**
  * Slim 4 Base path middleware.
@@ -16,7 +17,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 final class BasePathMiddleware implements MiddlewareInterface
 {
     /**
-     * @var \BicBucStriim\App|\Slim\App|object The slim app
+     * @var \Slim\App|object The slim app
      */
     private $app;
 
@@ -28,7 +29,7 @@ final class BasePathMiddleware implements MiddlewareInterface
     /**
      * The constructor.
      *
-     * @param \BicBucStriim\App|\Slim\App|object $app The app
+     * @param \Slim\App|object $app The app
      * @param string|null $phpSapi The PHP_SAPI value
      */
     public function __construct($app, string $phpSapi = null)
@@ -49,7 +50,10 @@ final class BasePathMiddleware implements MiddlewareInterface
     {
         $detector = new BasePathDetector($request->getServerParams(), $this->phpSapi);
 
-        $this->app->setBasePath($detector->getBasePath());
+        $basePath = $detector->getBasePath();
+        $this->app->setBasePath($basePath);
+        // set attribute on request for caching middleware
+        $request = $request->withAttribute(RouteContext::BASE_PATH, $basePath);
 
         return $handler->handle($request);
     }

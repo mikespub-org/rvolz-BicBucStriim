@@ -25,7 +25,7 @@ class RouteUtil
 
     /**
      * Map routes for action handlers (Slim 4 syntax)
-     * @param \BicBucStriim\App|\Slim\App|\Slim\Routing\RouteCollectorProxy|object $group
+     * @param \Slim\App|\Slim\Routing\RouteCollectorProxy|object $group
      * @param array<mixed> $routes list of [method(s), path, ...middleware(s), callable] for each action
      * @param mixed $gatekeeper middleware to call before each route (e.g. GatekeeperMiddleware)
      * @return void
@@ -42,7 +42,7 @@ class RouteUtil
 
     /**
      * Add route to group (Slim 4 syntax)
-     * @param \BicBucStriim\App|\Slim\App|\Slim\Routing\RouteCollectorProxy|object $group
+     * @param \Slim\App|\Slim\Routing\RouteCollectorProxy|object $group
      * @param array<string>|string $method
      * @param string $path
      * @param callable $callable of format [$self, 'method']

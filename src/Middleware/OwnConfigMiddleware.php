@@ -23,7 +23,7 @@ class OwnConfigMiddleware extends DefaultMiddleware
     /**
      * Initialize the configuration
      *
-     * @param \BicBucStriim\App|\Slim\App|object $app The app
+     * @param \Slim\App|object $app The app
      * @param array $knownConfigs
      */
     public function __construct($app, $knownConfigs)

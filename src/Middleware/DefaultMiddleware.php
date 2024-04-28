@@ -19,17 +19,18 @@ class DefaultMiddleware implements \BicBucStriim\Traits\AppInterface, Middleware
 {
     use \BicBucStriim\Traits\AppTrait;
 
-    /** @var \BicBucStriim\App|\Slim\App|object */
+    /** @var \Slim\App|object|null */
     protected $app;
 
     /**
      * Initialize the configuration
      *
-     * @param \BicBucStriim\App|\Slim\App|object $app The app
+     * @param \Slim\App|object $app The app
      */
     public function __construct($app)
     {
-        $this->app($app);
+        $this->app = $app;
+        $this->container = $app->getContainer();
     }
 
     /**

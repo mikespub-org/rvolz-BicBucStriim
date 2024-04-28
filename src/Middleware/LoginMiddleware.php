@@ -25,7 +25,7 @@ class LoginMiddleware extends DefaultMiddleware
      * Initialize the PDO connection and merge user
      * config with defaults.
      *
-     * @param \BicBucStriim\App|\Slim\App|object $app The app
+     * @param \Slim\App|object $app The app
      * @param string $realm
      * @param array $statics
      */
@@ -45,8 +45,6 @@ class LoginMiddleware extends DefaultMiddleware
     {
         $this->request = $request;
         //$response = $this->response();
-        // Slim 3+ framework does not support hooks anymore
-        //$this->app()->hook('slim.before.dispatch', [$this, 'authBeforeDispatch']);
         try {
             // true if we have a response ready (= need to authenticate), false otherwise
             if ($this->authBeforeDispatch()) {
@@ -94,10 +92,8 @@ class LoginMiddleware extends DefaultMiddleware
                         return true;
                     } else {
                         $this->log()->debug('login: redirecting to login');
-                        // now we can also use the native app->redirect method!
-                        $this->mkRedirect($this->getRootUrl() . '/login/');
                         // app->redirect not useable in middleware
-                        //$this->mkRedirect($this->getRootUrl() . '/login/', 302, false);
+                        $this->mkRedirect($this->getRootUrl() . '/login/');
                         return true;
                     }
                 }

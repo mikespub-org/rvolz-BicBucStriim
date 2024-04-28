@@ -9,9 +9,11 @@
  */
 
 use Psr\Cache\CacheItemPoolInterface;
+use Psr\Http\Message\ResponseFactoryInterface;
 use Slim\Factory\AppFactory;
-use BicBucStriim\Utilities\ActionsCallableResolver;
+//use BicBucStriim\Utilities\ActionsCallableResolver;
 use BicBucStriim\Utilities\ActionsWrapperStrategy;
+use Slim\Interfaces\RouteCollectorInterface;
 
 define('REDBEAN_MODEL_PREFIX', '\\BicBucStriim\\Models\\');
 
@@ -30,24 +32,30 @@ $container = require(__DIR__ . '/container.php');
 AppFactory::setContainer($container);
 
 // Override default callable resolver for actions
-$callableResolver = new ActionsCallableResolver($container);
-AppFactory::setCallableResolver($callableResolver);
+//$callableResolver = new ActionsCallableResolver($container);
+//AppFactory::setCallableResolver($callableResolver);
 
 # Init app
 $app = AppFactory::create();
 # Base path - null means undefined, empty '' or '/bbs' etc. mean predefined
-if (!empty($settings['basepath'])) {
+if (isset($settings['basepath'])) {
     $app->setBasePath($settings['basepath']);
 }
 // Set app in callable resolver to instantiate string actions
-$callableResolver->setApp($app);
+//$callableResolver->setApp($app);
 
 # Configure app for mode
 $config = require(__DIR__ . '/config.php');
 $config($app, $settings);
 
-# Store $globalSettings in app config
+# Store $globalSettings in container for everything
 $app->getContainer()->set('globalSettings', $settings['globalSettings']);
+
+# Store responseFactory in container for middleware response
+$app->getContainer()->set(ResponseFactoryInterface::class, fn() => $app->getResponseFactory());
+
+# Store routeCollector in container for api routes
+$app->getContainer()->set(RouteCollectorInterface::class, fn() => $app->getRouteCollector());
 
 /**
  * See https://www.slimframework.com/docs/v4/objects/routing.html#route-strategies
@@ -55,8 +63,8 @@ $app->getContainer()->set('globalSettings', $settings['globalSettings']);
  * will change it for every route being defined after this change being applied
  */
 $routeCollector = $app->getRouteCollector();
-$routeCollector->setDefaultInvocationStrategy(new ActionsWrapperStrategy($app));
-$callableResolver = $app->getCallableResolver();
+$routeCollector->setDefaultInvocationStrategy(new ActionsWrapperStrategy());
+//$callableResolver = $app->getCallableResolver();
 
 # Init middleware
 $middleware = require(__DIR__ . '/middleware.php');
@@ -64,10 +72,12 @@ $middleware($app, $settings);
 
 # Last in first out
 $app->addBodyParsingMiddleware();
-$app->addRoutingMiddleware();
+
 # We don't really care if someone hits the cache after being logged out
 $cachePool = $app->getContainer()->get(CacheItemPoolInterface::class);
 $app->add(new \BicBucStriim\Middleware\CachingMiddleware($app, ['/admin', '/login', '/api'], $cachePool));
+
+$app->addRoutingMiddleware();
 # Base path - null means undefined, empty '' or '/bbs' etc. mean predefined
 if (!isset($settings['basepath'])) {
     $app->add(new \BicBucStriim\Middleware\BasePathMiddleware($app));
@@ -77,7 +87,7 @@ if (!isset($settings['basepath'])) {
 $app->addErrorMiddleware(true, true, true);
 
 # Use gatekeeper middleware in routes
-$gatekeeper = new \BicBucStriim\Middleware\GatekeeperMiddleware($app);
+$gatekeeper = new \BicBucStriim\Middleware\GatekeeperMiddleware($app->getContainer());
 
 # Init routes
 $routes = require(__DIR__ . '/routes.php');

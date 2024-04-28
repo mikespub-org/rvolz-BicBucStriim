@@ -21,20 +21,21 @@ class CachingMiddleware extends CacheMiddleware
 {
     use \BicBucStriim\Traits\AppTrait;
 
-    /** @var \BicBucStriim\App|\Slim\App|object */
+    /** @var \Slim\App|object|null */
     protected $app;
     protected $resources;
 
     /**
      * Initialize the configuration
      *
-     * @param \BicBucStriim\App|\Slim\App|object $app The app
+     * @param \Slim\App|object $app The app
      * @param array $config an array of resource strings
      * @param CacheItemPoolInterface $cachePool the cache item pool for the cache middleware
      */
     public function __construct($app, $config, $cachePool)
     {
-        $this->app = $app;
+        //$this->app = $app;
+        $this->container = $app->getContainer();
         $this->resources = $config;
         parent::__construct($cachePool, $app->getResponseFactory());
     }

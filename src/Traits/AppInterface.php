@@ -18,13 +18,6 @@ use BicBucStriim\AppData\Settings;
 interface AppInterface
 {
     /**
-     * Get BicBucStriim app
-     * @param \BicBucStriim\App|\Slim\App|object|null $app
-     * @return \BicBucStriim\App|\Slim\App|object
-     */
-    public function app($app = null);
-
-    /**
      * Get BicBucStriim app data
      * @param ?\BicBucStriim\AppData\BicBucStriim $bbs
      * @return \BicBucStriim\AppData\BicBucStriim
@@ -66,6 +59,11 @@ interface AppInterface
      * @return mixed
      */
     public function container($key = null, $value = null);
+
+    /**
+     * @return \Psr\Http\Message\ResponseFactoryInterface
+     */
+    public function getResponseFactory();
 
     /**
      * Get the Request object
@@ -140,9 +138,8 @@ interface AppInterface
      * Create and send a redirect response (redirect)
      * @param  string   $url        The destination URL
      * @param  int      $status     The HTTP redirect status code (optional)
-     * @param  bool     $halt       Invoke response->halt() or not (optional for middleware)
      */
-    public function mkRedirect($url, $status = 302, $halt = true);
+    public function mkRedirect($url, $status = 302);
 
     /**
      * Create and send a JSON response

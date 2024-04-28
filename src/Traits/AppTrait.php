@@ -15,33 +15,22 @@ use BicBucStriim\AppData\BicBucStriim;
 use BicBucStriim\AppData\Settings;
 use BicBucStriim\Calibre\Calibre;
 use BicBucStriim\Session\Session;
+use Psr\Container\ContainerInterface;
+use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Log\LoggerInterface;
+use Slim\Routing\RouteContext;
 
 /*********************************************************************
  * App utility trait
  ********************************************************************/
 trait AppTrait
 {
-    ///** @var \BicBucStriim\App|\Slim\App|object */
-    //protected $app;
-
+    /** @var ?\Psr\Container\ContainerInterface */
+    protected $container;
     /** @var ?\Psr\Http\Message\ServerRequestInterface */
     protected $request;
     /** @var ?\Psr\Http\Message\ResponseInterface */
     protected $response;
-
-    /**
-     * Get BicBucStriim app
-     * @param \BicBucStriim\App|\Slim\App|object|null $app
-     * @return \BicBucStriim\App|\Slim\App|object
-     */
-    public function app($app = null)
-    {
-        if (!empty($app)) {
-            $this->app = $app;
-        }
-        return $this->app;
-    }
 
     /**
      * Get BicBucStriim app data
@@ -105,15 +94,26 @@ trait AppTrait
     public function container($key = null, $value = null)
     {
         if (empty($key)) {
-            return $this->app->getContainer();
+            return $this->container;
         }
         if (!is_null($value)) {
-            $this->app->getContainer()->set($key, $value);
+            $this->container->set($key, $value);
         }
-        if ($this->app->getContainer()->has($key)) {
-            return $this->app->getContainer()->get($key);
+        if ($this->container->has($key)) {
+            return $this->container->get($key);
         }
         return null;
+    }
+
+    /**
+     * @return ResponseFactoryInterface
+     */
+    public function getResponseFactory()
+    {
+        if (!empty($this->app)) {
+            return $this->app->getResponseFactory();
+        }
+        return $this->container(ResponseFactoryInterface::class);
     }
 
     /**
@@ -141,7 +141,7 @@ trait AppTrait
         }
         if (empty($this->response)) {
             // Slim\App contains responseFactory as mandatory first param in constructor
-            $this->response = $this->app->getResponseFactory()->createResponse();
+            $this->response = $this->getResponseFactory()->createResponse();
             //$this->response = new \Slim\Psr7\Response();
         }
         return $this->response;
@@ -240,7 +240,7 @@ trait AppTrait
     public function getRootUri()
     {
         $basedir = dirname($this->request->getServerParams()['SCRIPT_NAME'] ?? '');
-        $basepath = $this->app->getBasePath();
+        //$basepath = $this->app->getBasePath();
         //echo "$basepath ?= $basedir ?= N/A\n";
         //$routeContext = \Slim\Routing\RouteContext::fromRequest($this->request());
         //$baseroute = $routeContext->getBasePath();
@@ -254,7 +254,10 @@ trait AppTrait
     public function getResourceUri()
     {
         $resource = $this->request->getRequestTarget();
-        $basepath = $this->app->getBasePath();
+        //$basepath = $this->app->getBasePath();
+        //$basepath = $this->request->getAttribute(RouteContext::BASE_PATH);
+        $routeContext = RouteContext::fromRequest($this->request);
+        $basepath = $routeContext->getBasePath();
         //echo "Basepath: '$basepath' - Resource: '$resource'\n";
         if (!empty($basepath) && str_starts_with($resource, $basepath . '/')) {
             $resource = substr($resource, strlen($basepath));
@@ -307,8 +310,7 @@ trait AppTrait
      */
     public function mkError($status, $message = '')
     {
-        //$this->app->halt($status, $message);
-        $emptyBody = $this->app->getResponseFactory()->createResponse()->getBody();
+        $emptyBody = $this->getResponseFactory()->createResponse()->getBody();
         $emptyBody->write($message);
         $this->response = $this->response->withStatus($status)->withBody($emptyBody);
     }
@@ -317,16 +319,10 @@ trait AppTrait
      * Create and send a redirect response (redirect)
      * @param  string   $url        The destination URL
      * @param  int      $status     The HTTP redirect status code (optional)
-     * @param  bool     $halt       Invoke response->halt() or not (optional for middleware)
      */
-    public function mkRedirect($url, $status = 302, $halt = true)
+    public function mkRedirect($url, $status = 302)
     {
         $this->response = $this->response()->withStatus($status)->withHeader('Location', $url);
-        if ($halt) {
-            //throw new \Slim\Exception\HttpException($this->request, 'redirected');
-            //$this->app->redirect($url, $status);
-            // @todo throw Exception?
-        }
     }
 
     /**

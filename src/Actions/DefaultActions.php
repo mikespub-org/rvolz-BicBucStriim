@@ -11,6 +11,7 @@
 namespace BicBucStriim\Actions;
 
 use BicBucStriim\Utilities\RouteUtil;
+use Psr\Container\ContainerInterface;
 
 /*********************************************************************
  * Default actions
@@ -19,14 +20,14 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
 {
     use \BicBucStriim\Traits\AppTrait;
 
-    /** @var \BicBucStriim\App|\Slim\App|object */
+    /** @var \Slim\App|object|null */
     protected $app;
     /** @var string|null */
     protected $templatesDir = null;
 
     /**
      * Add routes for default actions
-     * @param \BicBucStriim\App|\Slim\App|object $app
+     * @param \Slim\App|object $app
      * @param ?string $prefix
      * @param ?object $gatekeeper (optional)
      * @return void
@@ -57,11 +58,11 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
     }
 
     /**
-     * @param \BicBucStriim\App|\Slim\App|object $app
+     * This will be instantiated by callable route resolver with dependency injection
      */
-    public function __construct($app)
+    public function __construct(ContainerInterface $container)
     {
-        $this->app($app);
+        $this->container = $container;
     }
 
     /**
@@ -197,7 +198,6 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
             return;
         }
         // Slim 2 framework will replace data, render template and echo output via slim view display()
-        //$this->app()->render($template, $data, $status);
         $this->setTemplatesDir();
         $content = $this->twig()->render($template, $data);
         $this->mkResponse($content, 'text/html');
