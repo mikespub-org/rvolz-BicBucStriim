@@ -159,15 +159,19 @@ class ApiActions extends DefaultActions
                     $schema = [
                         "type" => "string",
                     ];
+                    $required = true;
                     if (str_contains($param, ':')) {
                         [$param, $pattern] = explode(':', $param);
                         $schema["pattern"] = '^' . $pattern . '$';
                         $path = str_replace(':' . $pattern, '', $path);
+                        if ($pattern == '.*') {
+                            $required = false;
+                        }
                     }
                     array_push($params, [
                         "name" => $param,
                         "in" => "path",
-                        "required" => true,
+                        "required" => $required,
                         "schema" => $schema,
                     ]);
                 }
