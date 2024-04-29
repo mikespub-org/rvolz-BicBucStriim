@@ -75,48 +75,57 @@ class LoginMiddleware extends DefaultMiddleware
         $resource = $this->getPathInfo();
         $this->log()->debug('login resource: ' . $resource);
         if ($settings->must_login == 1) {
-            if (!$this->is_static_resource($resource) && !$this->is_authorized()) {
-                if ($resource === '/login/') {
-                    // special case login page
-                    $this->log()->debug('login: login page authorized');
-                    return false;
-                } elseif (stripos($resource, '/opds') === 0) {
-                    $this->log()->debug('login: unauthorized OPDS request');
-                    $this->mkAuthenticate($this->realm);
-                    return true;
-                } else {
-                    $util = new \BicBucStriim\Utilities\RequestUtil($request);
-                    if ($request->getMethod() != 'GET' && ($util->isXhr() || $util->isAjax())) {
-                        $this->log()->debug('login: unauthorized JSON request');
-                        $this->mkAuthenticate($this->realm);
-                        return true;
-                    } else {
-                        $this->log()->debug('login: redirecting to login');
-                        // app->redirect not useable in middleware
-                        $this->mkRedirect($this->getRootUrl() . '/login/');
-                        return true;
-                    }
-                }
+            if ($this->is_static_resource($resource)) {
+                return false;
             }
-        } else {
+            // we need to initialize $this->auth() here to identify the user
+            if ($this->is_authorized()) {
+                return false;
+            }
             if ($resource === '/login/') {
-                // we need to initialize $this->auth() if we want to login in MainActions
-                $this->is_authorized();
                 // special case login page
                 $this->log()->debug('login: login page authorized');
                 return false;
-            } elseif ($resource === '/logout/') {
-                // we need to initialize $this->auth() if we want to logout in MainActions
-                $this->is_authorized();
-                // special case logout page
-                $this->log()->debug('login: logout page authorized');
-                return false;
-            } elseif (stripos($resource, '/admin') === 0 && !$this->is_static_resource($resource) && !$this->is_authorized()) {
+            }
+            if (stripos($resource, '/opds') === 0) {
+                $this->log()->debug('login: unauthorized OPDS request');
+                $this->mkAuthenticate($this->realm);
+                return true;
+            }
+            $util = new \BicBucStriim\Utilities\RequestUtil($request);
+            if ($request->getMethod() != 'GET' && ($util->isXhr() || $util->isAjax())) {
+                $this->log()->debug('login: unauthorized JSON request');
+                $this->mkAuthenticate($this->realm);
+                return true;
+            }
+            $this->log()->debug('login: redirecting to login');
+            // app->redirect not useable in middleware
+            $this->mkRedirect($this->getRootUrl() . '/login/');
+            return true;
+        }
+        if ($resource === '/login/') {
+            // we need to initialize $this->auth() if we want to login in MainActions
+            $this->is_authorized();
+            // special case login page
+            $this->log()->debug('login: login page authorized');
+            return false;
+        }
+        if ($resource === '/logout/') {
+            // we need to initialize $this->auth() if we want to logout in MainActions
+            $this->is_authorized();
+            // special case logout page
+            $this->log()->debug('login: logout page authorized');
+            return false;
+        }
+        if (stripos($resource, '/admin') === 0) {
+            if (!$this->is_static_resource($resource) && !$this->is_authorized()) {
                 $this->log()->debug('login: redirecting to login');
                 $this->mkRedirect($this->getRootUrl() . '/login/');
                 return true;
             }
+            return false;
         }
+        // we do not want/need to initialize $this->auth() here = anonymous user without session
         return false;
     }
 

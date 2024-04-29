@@ -38,8 +38,16 @@ $builder->addDefinitions([
     Session::class => 'depends on request - see login middleware',
     Auth::class => 'depends on request - see login middleware',
     BicBucStriim::class => function (ContainerInterface $c) {
+        $dataPath = 'data/data.db';
         # Freeze (true) DB schema before release! Set to false for DB development.
-        return new BicBucStriim('data/data.db', true);
+        $bbs = new BicBucStriim($dataPath, true);
+        if (!$bbs->dbOk()) {
+            $bbs->createDataDb($dataPath);
+            $bbs = new BicBucStriim($dataPath, true);
+            // @todo save known configs here first?
+            //$bbs->saveConfigs($this->knownConfigs);
+        }
+        return $bbs;
     },
     Calibre::class => function (ContainerInterface $c) {
         # Setup the connection to the Calibre metadata db

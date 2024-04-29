@@ -34,32 +34,29 @@ trait AppTrait
 
     /**
      * Get BicBucStriim app data
-     * @param ?BicBucStriim $bbs
      * @return BicBucStriim
      */
-    public function bbs($bbs = null)
+    public function bbs()
     {
-        return $this->container(BicBucStriim::class, $bbs);
+        return $this->container(BicBucStriim::class);
     }
 
     /**
      * Get Calibre data
-     * @param ?Calibre $calibre
      * @return Calibre
      */
-    public function calibre($calibre = null)
+    public function calibre()
     {
-        return $this->container(Calibre::class, $calibre);
+        return $this->container(Calibre::class);
     }
 
     /**
      * Get application log
-     * @param ?\Psr\Log\LoggerInterface $logger
      * @return \Psr\Log\LoggerInterface
      */
-    public function log($logger = null)
+    public function log()
     {
-        return $this->container(LoggerInterface::class, $logger);
+        return $this->container(LoggerInterface::class);
     }
 
     /**
@@ -77,12 +74,11 @@ trait AppTrait
 
     /**
      * Get Twig environment
-     * @param ?\Twig\Environment $twig
      * @return \Twig\Environment
      */
-    public function twig($twig = null)
+    public function twig()
     {
-        return $this->container(\Twig\Environment::class, $twig);
+        return $this->container(\Twig\Environment::class);
     }
 
     /**
@@ -106,7 +102,7 @@ trait AppTrait
     }
 
     /**
-     * @return ResponseFactoryInterface
+     * @return \Psr\Http\Message\ResponseFactoryInterface
      */
     public function getResponseFactory()
     {
@@ -191,13 +187,14 @@ trait AppTrait
 
     /**
      * Get root url
+     * @param bool $absolute override relative_urls settings
      * @return string root url
      */
-    public function getRootUrl()
+    public function getRootUrl($absolute = false)
     {
         $settings = $this->settings();
 
-        if ($settings->relative_urls == '1') {
+        if ($settings->relative_urls == '1' && !$absolute) {
             $root = rtrim($this->getBasePath(), "/");
         } else {
             // Get forwarding information, if available
@@ -223,6 +220,9 @@ trait AppTrait
     {
         $uri = $this->request->getUri();
         $url = $uri->getScheme() . '://' . $uri->getHost();
+        if (empty($uri->getPort())) {
+            return $url;
+        }
         if (($uri->getScheme() === 'https' && $uri->getPort() !== 443) || ($uri->getScheme() === 'http' && $uri->getPort() !== 80)) {
             $url .= sprintf(':%s', $uri->getPort());
         }
@@ -282,7 +282,7 @@ trait AppTrait
     {
         $emptyBody = $this->getResponseFactory()->createResponse()->getBody();
         $emptyBody->write($message);
-        $this->response = $this->response->withStatus($status)->withBody($emptyBody);
+        $this->response = $this->response()->withStatus($status)->withBody($emptyBody);
     }
 
     /**
@@ -320,6 +320,14 @@ trait AppTrait
     {
         $content = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PARTIAL_OUTPUT_ON_ERROR);
         $this->mkResponse($content, $type, $status);
+        // Add Allow-Origin + Allow-Credentials to response for non-preflighted requests
+        $settings = $this->settings();
+        $allowed = $settings['origin'] ?? '*';
+        $origin = $this->request()->getHeaderLine('Origin') ?: $allowed;
+        // @see https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS#requests_with_credentials
+        $this->response = $this->response()
+            ->withHeader('Access-Control-Allow-Origin', $origin)
+            ->withHeader('Access-Control-Allow-Credentials', 'true');
     }
 
     /**

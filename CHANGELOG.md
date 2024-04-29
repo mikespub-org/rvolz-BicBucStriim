@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Move identification of run mode to settings instead of container definition
 - Pass auth and session as request attribute instead of using container
 - Use gatekeeper middleware instead of wrapped check_admin() action
+- Align uri methods with symfony http foundation helpers
+- Revise middleware vs container setup for bbs and calibre configuration
+- Add CORS options route and Allow-Control-* headers for json response
 
 ## [3.4.0] - 2024-04-26 Basic json API + environment vars + clean-up
 ### Added

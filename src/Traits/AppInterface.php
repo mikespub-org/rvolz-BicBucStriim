@@ -19,24 +19,21 @@ interface AppInterface
 {
     /**
      * Get BicBucStriim app data
-     * @param ?\BicBucStriim\AppData\BicBucStriim $bbs
      * @return \BicBucStriim\AppData\BicBucStriim
      */
-    public function bbs($bbs = null);
+    public function bbs();
 
     /**
      * Get Calibre data
-     * @param ?\BicBucStriim\Calibre\Calibre $calibre
      * @return \BicBucStriim\Calibre\Calibre
      */
-    public function calibre($calibre = null);
+    public function calibre();
 
     /**
      * Get application log
-     * @param ?\Psr\Log\LoggerInterface $logger
      * @return \Psr\Log\LoggerInterface
      */
-    public function log($logger = null);
+    public function log();
 
     /**
      * Get global app settings
@@ -47,10 +44,9 @@ interface AppInterface
 
     /**
      * Get Twig environment
-     * @param ?\Twig\Environment $twig
      * @return \Twig\Environment
      */
-    public function twig($twig = null);
+    public function twig();
 
     /**
      * Get container key

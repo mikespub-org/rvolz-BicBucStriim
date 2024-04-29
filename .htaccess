@@ -4,6 +4,9 @@
     # Tell PHP that the mod_rewrite module is ENABLED.
     SetEnv HTTP_MOD_REWRITE On
 
+    # Tell BicBucStriim to enable debug mode - see .env.example file
+    # SetEnv BBS_DEBUG_MODE true
+
     RewriteEngine On
     #RewriteBase /bbs
     RewriteRule ^index\.php/((img|js|style)/.*)$ $1 [L]

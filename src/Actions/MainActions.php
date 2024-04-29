@@ -79,6 +79,8 @@ class MainActions extends DefaultActions
             ['GET', '/titles/', [$self, 'titlesSlice']],
             ['GET', '/static/covers/{id}/', [$self, 'cover']],
             ['GET', '/static/titlethumbs/{id}/', [$self, 'thumbnail']],
+            // return CORS options for any route(s)
+            ['OPTIONS', '/{routes:.*}', [$self, 'corsOptions']],
         ];
     }
 
@@ -916,5 +918,20 @@ class MainActions extends DefaultActions
         }
         $status = fclose($handle);
         return $status;
+    }
+
+    /**
+     * Send CORS options
+     */
+    public function corsOptions($routes = '')
+    {
+        $settings = $this->settings();
+        $allowed = $settings['origin'] ?? '*';
+        $origin = $this->request()->getHeaderLine('Origin') ?: $allowed;
+        $this->response = $this->response()
+            ->withHeader('Access-Control-Allow-Origin', $origin)
+            ->withHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')  // PUT, DELETE, PATCH
+            ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization')
+            ->withHeader('Access-Control-Allow-Credentials', 'true');
     }
 }

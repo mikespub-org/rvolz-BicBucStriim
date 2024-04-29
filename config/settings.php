@@ -29,6 +29,7 @@ $settings['basepath'] = $basepath;
 $settings['sep'] = ' :: ';
 # Provide basic json api interface - configurable via environment variable
 $settings['hasapi'] = getenv('BBS_HAS_API') ?: true;
+$settings['origin'] = '*';
 
 $knownConfigs = Settings::getKnownConfigs();
 $settings->display_app_name = $appname;
