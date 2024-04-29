@@ -321,13 +321,35 @@ trait AppTrait
         $content = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PARTIAL_OUTPUT_ON_ERROR);
         $this->mkResponse($content, $type, $status);
         // Add Allow-Origin + Allow-Credentials to response for non-preflighted requests
-        $settings = $this->settings();
-        $allowed = $settings['origin'] ?? '*';
-        $origin = $this->request()->getHeaderLine('Origin') ?: $allowed;
+        $origin = $this->getCorsOrigin();
+        if (!$origin) {
+            return;
+        }
         // @see https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS#requests_with_credentials
         $this->response = $this->response()
             ->withHeader('Access-Control-Allow-Origin', $origin)
-            ->withHeader('Access-Control-Allow-Credentials', 'true');
+            ->withHeader('Access-Control-Allow-Credentials', 'true')
+            ->withHeader('Vary', 'Origin');
+    }
+
+    /**
+     * Check if CORS origin is allowed
+     * @return string|false
+     */
+    public function getCorsOrigin()
+    {
+        $settings = $this->settings();
+        $allowed = $settings['cors_origin'] ?? '*';
+        // Check if origin is allowed or undefined
+        $origin = $this->request()->getHeaderLine('Origin') ?: '*';
+        if (is_array($allowed)) {
+            if (!in_array($origin, $allowed)) {
+                return false;
+            }
+        } elseif ($allowed !== '*' && $origin !== $allowed) {
+            return false;
+        }
+        return $origin;
     }
 
     /**

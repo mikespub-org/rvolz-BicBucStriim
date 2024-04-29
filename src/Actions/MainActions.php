@@ -925,13 +925,16 @@ class MainActions extends DefaultActions
      */
     public function corsOptions($routes = '')
     {
-        $settings = $this->settings();
-        $allowed = $settings['origin'] ?? '*';
-        $origin = $this->request()->getHeaderLine('Origin') ?: $allowed;
+        $origin = $this->getCorsOrigin();
+        if (!$origin) {
+            return;
+        }
         $this->response = $this->response()
             ->withHeader('Access-Control-Allow-Origin', $origin)
             ->withHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')  // PUT, DELETE, PATCH
             ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization')
-            ->withHeader('Access-Control-Allow-Credentials', 'true');
+            ->withHeader('Access-Control-Allow-Credentials', 'true')
+            ->withHeader('Access-Control-Max-Age', '86400')
+            ->withHeader('Vary', 'Origin');
     }
 }
