@@ -19,6 +19,7 @@ class TestHelper
     {
         $app = require(static::baseDir() . '/config/bootstrap.php');
         $settings = $app->getContainer()->get(Settings::class);
+        // will be overridden by own config middleware
         $settings->must_login = $login;
         $app->getContainer()->set(Settings::class, $settings);
         return $app;
@@ -55,13 +56,21 @@ class TestHelper
         return $app;
     }
 
+    public static function getAuthFactory($request)
+    {
+        return new \Aura\Auth\AuthFactory($request->getCookieParams(), new \Aura\Auth\Session\NullSession, new \Aura\Auth\Session\NullSegment);
+    }
+
     public static function getAuth($request, $userData = null)
     {
-        $auth_factory = new \Aura\Auth\AuthFactory($request->getCookieParams(), new \Aura\Auth\Session\NullSession, new \Aura\Auth\Session\NullSegment);
-        $auth = $auth_factory->newInstance();
+        $authFactory = static::getAuthFactory($request);
+        $auth = $authFactory->newInstance();
         if (!empty($userData)) {
             $auth->setStatus(\Aura\Auth\Status::VALID);
+            $auth->setUserName($userData['username'] ?? 'admin');
             $auth->setUserData($userData);
+            $auth->setFirstActive(time() - 60);
+            $auth->setLastActive(time());
         }
 
         return $auth;
@@ -71,7 +80,7 @@ class TestHelper
     {
         $handler = new CallableHandler(function ($request) use ($app, $content) {
             $response = $app->getResponseFactory()->createResponse();
-            $response->getBody()->write($content);
+            $response->getBody()->write((string) $content);
             return $response;
         }, $app->getResponseFactory());
 

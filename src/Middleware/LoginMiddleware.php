@@ -10,6 +10,7 @@
 
 namespace BicBucStriim\Middleware;
 
+use BicBucStriim\Session\Session;
 use BicBucStriim\Utilities\InputUtil;
 use BicBucStriim\Utilities\L10n;
 use Psr\Container\ContainerInterface;
@@ -161,18 +162,10 @@ class LoginMiddleware extends DefaultMiddleware
     protected function is_authorized()
     {
         $request = $this->request();
-        $session_factory = new \BicBucStriim\Session\SessionFactory();
-        $session = $session_factory->newInstance($request->getCookieParams());
-        $session->setCookieParams(['path' => $this->getBasePath() . '/']);
-        $auth_factory = new \Aura\Auth\AuthFactory($request->getCookieParams(), $session);
-        $this->auth($auth_factory->newInstance());
-        $hash = new \Aura\Auth\Verifier\PasswordVerifier(PASSWORD_BCRYPT);
-        $cols = ['username', 'password', 'id', 'email', 'role', 'languages', 'tags'];
-        $pdo_adapter = $auth_factory->newPdoAdapter($this->bbs()->mydb, $hash, $cols, 'user');
-        $this->container('login_service', fn() => $auth_factory->newLoginService($pdo_adapter));
-        $this->container('logout_service', fn() => $auth_factory->newLogoutService($pdo_adapter));
-        $resume_service = $auth_factory->newResumeService($pdo_adapter);
+        $session = $this->getSession($request, $this->getBasePath());
+        $this->auth($this->getAuthTracker($request, $session, $this->bbs()->mydb));
         try {
+            $resume_service = $this->container('resume_service');
             $resume_service->resume($this->auth());
             $this->session($session);
         } catch(\ErrorException $e) {
@@ -213,8 +206,41 @@ class LoginMiddleware extends DefaultMiddleware
     }
 
     /**
+     * Get session manager for current request
+     * @param Request $request HTTP request
+     * @param string $basePath
+     * @return Session
+     */
+    protected function getSession($request, $basePath = '')
+    {
+        $sessionFactory = new \BicBucStriim\Session\SessionFactory();
+        $session = $sessionFactory->newInstance($request->getCookieParams());
+        $session->setCookieParams(['path' => $basePath . '/']);
+        return $session;
+    }
+
+    /**
+     * Get authentication tracker for current request and session manager
+     * @param Request $request HTTP request
+     * @param Session $session
+     * @param \PDO $pdo
+     * @return \Aura\Auth\Auth
+     */
+    protected function getAuthTracker($request, $session, $pdo)
+    {
+        $authFactory = new \Aura\Auth\AuthFactory($request->getCookieParams(), $session);
+        $hash = new \Aura\Auth\Verifier\PasswordVerifier(PASSWORD_BCRYPT);
+        $cols = ['username', 'password', 'id', 'email', 'role', 'languages', 'tags'];
+        $pdoAdapter = $authFactory->newPdoAdapter($pdo, $hash, $cols, 'user');
+        $this->container('login_service', fn() => $authFactory->newLoginService($pdoAdapter));
+        $this->container('logout_service', fn() => $authFactory->newLogoutService($pdoAdapter));
+        $this->container('resume_service', fn() => $authFactory->newResumeService($pdoAdapter));
+        return $authFactory->newInstance();
+    }
+
+    /**
      * Look for PHP authorization headers
-     * @param $request HTTP request
+     * @param Request $request HTTP request
      * @return ?array with username and pasword, or null
      */
     protected function checkPhpAuth($request)
@@ -230,7 +256,7 @@ class LoginMiddleware extends DefaultMiddleware
 
     /**
      * Look for a HTTP Authorization header and decode it
-     * @param $request HTTP request
+     * @param Request $request HTTP request
      * @return ?array with username and pasword, or null
      */
     protected function checkHttpAuth($request)
@@ -253,7 +279,7 @@ class LoginMiddleware extends DefaultMiddleware
 
     /**
      * Set current language and load L10n messages
-     * @param $request HTTP request
+     * @param Request $request HTTP request
      * @return void
      */
     protected function setCurrentLanguage($request)

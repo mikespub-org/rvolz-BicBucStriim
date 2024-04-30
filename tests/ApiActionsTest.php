@@ -35,7 +35,7 @@ class ApiActionsTest extends PHPUnit\Framework\TestCase
         $this->assertEquals(\Slim\App::class, $app::class);
 
         // @todo update when route count changes
-        $expected = 56;
+        $expected = 57;
         $request = RequestUtil::getServerRequest('GET', '/api/routes');
         $response = $app->handle($request);
         $result = json_decode((string) $response->getBody(), true);
@@ -54,7 +54,7 @@ class ApiActionsTest extends PHPUnit\Framework\TestCase
         $this->assertEquals(\Slim\App::class, $app::class);
 
         // @todo update when route count changes
-        $expected = 56;
+        $expected = 57;
         $request = RequestUtil::getServerRequest('GET', '/api/openapi.json');
         $response = $app->handle($request);
         $result = json_decode((string) $response->getBody(), true);

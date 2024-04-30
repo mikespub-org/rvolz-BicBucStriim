@@ -1,5 +1,7 @@
 <?php
 
+use BicBucStriim\AppData\Settings;
+use BicBucStriim\Middleware\LoginMiddleware;
 use BicBucStriim\Utilities\RequestUtil;
 use BicBucStriim\Utilities\TestHelper;
 
@@ -15,13 +17,19 @@ use BicBucStriim\Utilities\TestHelper;
  */
 class MiddlewareTest extends PHPUnit\Framework\TestCase
 {
+    public static function setUpBeforeClass(): void
+    {
+        ini_set('session.gc_maxlifetime', 3600);
+    }
+
     public static function getExpectedRoutes()
     {
         return [
             // 'name' => [
-            //    input, output (= text or size),
+            //    input, output (= text, size or header(s)),
             //    method(s), path, ...middleware(s), callable with '$self' string
             //],
+            // for html output specify the expected content text
             'show_login' => [
                 [], '<title>BicBucStriim :: Login</title>',
                 'GET', '/login/', ['$self', 'show_login'],
@@ -38,6 +46,7 @@ class MiddlewareTest extends PHPUnit\Framework\TestCase
                 ['id' => 7], '<title>BicBucStriim :: Book Details</title>',
                 'GET', '/titles/{id}/', ['$self', 'title'],
             ],
+            // for file output specify the expected content size
             'cover' => [
                 ['id' => 7], 168310,
                 'GET', '/titles/{id}/cover/', ['$self', 'cover'],
@@ -58,6 +67,11 @@ class MiddlewareTest extends PHPUnit\Framework\TestCase
             'thumbnail2' => [
                 ['id' => 7], 51232,
                 'GET', '/static/titlethumbs/{id}/', ['$self', 'thumbnail'],
+            ],
+            // for redirect etc. specify the expected header(s)
+            'admin' => [
+                [], ['Location' => './login/'],
+                'GET', '/admin/', ['$self', 'admin'],
             ],
         ];
     }
@@ -98,7 +112,132 @@ class MiddlewareTest extends PHPUnit\Framework\TestCase
             } elseif (is_numeric($expected)) {
                 $this->assertEquals($expected, $response->getHeaderLine('Content-Length'));
                 $this->assertEquals($expected, strlen((string) $response->getBody()));
+            } elseif (is_array($expected)) {
+                foreach ($expected as $header => $line) {
+                    $this->assertEquals($line, $response->getHeaderLine($header));
+                }
             }
         }
+    }
+
+    /**
+     * @dataProvider getExpectedRoutes
+     */
+    public function testMustLoginNoAuth($input, $output, $methods, $pattern, ...$args)
+    {
+        $this->assertGreaterThan(0, count($args));
+        if (is_string($methods) && $methods == 'GET') {
+            $app = TestHelper::getAppWithContainer();
+            $settings = $app->getContainer()->get(Settings::class);
+            $settings->must_login = 1;
+            $app->getContainer()->set(Settings::class, $settings);
+
+            foreach ($input as $name => $value) {
+                $pattern = str_replace('{' . $name . '}', (string) $value, $pattern);
+            }
+            $request = RequestUtil::getServerRequest('GET', $pattern);
+            // Expect the handler to process if authorized
+            if (is_string($output)) {
+                $expected = $output;
+            } elseif (is_numeric($output)) {
+                $expected = (string) $output;
+            } elseif (is_array($output)) {
+                $expected = json_encode($output);
+            }
+            $handler = TestHelper::getHandler($app, $expected);
+
+            // Expect to be redirected here, except for login and static resources
+            $expected = ['Location' => '/usr/local/bin/login/'];
+            $noRedirect = ['/login/', '/cover/', '/thumbnail/'];
+            foreach ($noRedirect as $skip) {
+                if (str_contains($pattern, $skip)) {
+                    $expected = (string) $output;
+                    break;
+                }
+            }
+
+            $middleware = new LoginMiddleware($app->getContainer(), $settings['appname'], []);
+            $response = $middleware->process($request, $handler);
+            $this->assertEquals(\Nyholm\Psr7\Response::class, get_class($response));
+            if (is_string($expected)) {
+                $this->assertStringContainsString($expected, (string) $response->getBody());
+            } elseif (is_array($expected)) {
+                foreach ($expected as $header => $line) {
+                    $this->assertEquals($line, $response->getHeaderLine($header));
+                }
+            }
+        }
+    }
+
+    /**
+     * @dataProvider getExpectedRoutes
+     */
+    public function testMustLoginWithAuth($input, $output, $methods, $pattern, ...$args)
+    {
+        $this->assertGreaterThan(0, count($args));
+        if (is_string($methods) && $methods == 'GET') {
+            $app = TestHelper::getAppWithContainer();
+            $settings = $app->getContainer()->get(Settings::class);
+            $settings->must_login = 1;
+            $app->getContainer()->set(Settings::class, $settings);
+
+            foreach ($input as $name => $value) {
+                $pattern = str_replace('{' . $name . '}', (string) $value, $pattern);
+            }
+            $request = RequestUtil::getServerRequest('GET', $pattern);
+            // Expect the handler to process when authorized
+            if (is_string($output)) {
+                $expected = $output;
+            } elseif (is_numeric($output)) {
+                $expected = (string) $output;
+            } elseif (is_array($output)) {
+                $expected = json_encode($output);
+            }
+            $handler = TestHelper::getHandler($app, $expected);
+
+            // Build mock LoginMiddleware with is_authorized() == true
+            $middleware = $this->getMockBuilder(LoginMiddleware::class)
+                ->setConstructorArgs([$app->getContainer(), $settings['appname'], []])
+                ->onlyMethods(['is_authorized'])
+                ->getMock();
+            // Not expects($this->once()) because this will not be called for static resources
+            $middleware->expects($this->any())->method('is_authorized')->willReturn(true);
+
+            $response = $middleware->process($request, $handler);
+            $this->assertEquals(\Nyholm\Psr7\Response::class, get_class($response));
+            $this->assertStringContainsString($expected, (string) $response->getBody());
+        }
+    }
+
+    public function testIsAuthorizedAndValid()
+    {
+        $app = TestHelper::getAppWithContainer();
+        $settings = $app->getContainer()->get(Settings::class);
+        $settings->must_login = 1;
+        $app->getContainer()->set(Settings::class, $settings);
+
+        $request = RequestUtil::getServerRequest('GET', '/');
+        // Make sure userData is considered "valid"
+        $userData = [
+            'id' => 1,
+            'role' => 1,
+        ];
+        $auth = TestHelper::getAuth($request, $userData);
+        // Set resume service for session
+        $app->getContainer()->set('resume_service', TestHelper::getAuthFactory($request)->newResumeService());
+
+        // Build mock LoginMiddleware with getAuthTracker == $auth
+        $middleware = $this->getMockBuilder(LoginMiddleware::class)
+            ->setConstructorArgs([$app->getContainer(), $settings['appname'], []])
+            ->onlyMethods(['getAuthTracker'])
+            ->getMock();
+        $middleware->expects($this->once())->method('getAuthTracker')->willReturn($auth);
+
+        $expected = 'Expected!';
+        $handler = TestHelper::getHandler($app, $expected);
+
+        $response = $middleware->process($request, $handler);
+        $this->assertEquals(\Nyholm\Psr7\Response::class, get_class($response));
+        $this->assertStringContainsString($expected, (string) $response->getBody());
     }
 }

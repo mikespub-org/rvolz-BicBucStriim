@@ -247,9 +247,9 @@ trait AppTrait
     public function getPathInfo()
     {
         $resource = $this->request->getRequestTarget();
-        //$basepath = $this->request->getAttribute(RouteContext::BASE_PATH);
-        $routeContext = RouteContext::fromRequest($this->request);
-        $basepath = $routeContext->getBasePath();
+        $basepath = $this->request->getAttribute(RouteContext::BASE_PATH);
+        //$routeContext = RouteContext::fromRequest($this->request);
+        //$basepath = $routeContext->getBasePath();
         //echo "Basepath: '$basepath' - Resource: '$resource'\n";
         if (!empty($basepath) && str_starts_with($resource, $basepath . '/')) {
             $resource = substr($resource, strlen($basepath));

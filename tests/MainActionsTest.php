@@ -16,9 +16,10 @@ class MainActionsTest extends PHPUnit\Framework\TestCase
     {
         return [
             // 'name' => [
-            //    input, output (= text or size),
+            //    input, output (= text, size or header(s)),
             //    method(s), path, ...middleware(s), callable with '$self' string
             //],
+            // for html output specify the expected content text
             'main' => [
                 [], '<h2>Most recent</h2>',
                 'GET', '/', ['$self', 'main'],
@@ -75,6 +76,7 @@ class MainActionsTest extends PHPUnit\Framework\TestCase
                 ['id' => 7], '<title>BicBucStriim :: Book Details</title>',
                 'GET', '/titles/{id}/', ['$self', 'title'],
             ],
+            // for file output specify the expected content size
             'cover' => [
                 ['id' => 7], 168310,
                 'GET', '/titles/{id}/cover/', ['$self', 'cover'],
@@ -131,6 +133,11 @@ class MainActionsTest extends PHPUnit\Framework\TestCase
             'thumbnail2' => [
                 ['id' => 7], 51232,
                 'GET', '/static/titlethumbs/{id}/', ['$self', 'thumbnail'],
+            ],
+            // for redirect etc. specify the expected header(s)
+            'corsOptions' => [
+                [], 'skip OPTIONS request',
+                'OPTIONS', '/{routes:.*}', ['$self', 'corsOptions'],
             ],
         ];
     }
