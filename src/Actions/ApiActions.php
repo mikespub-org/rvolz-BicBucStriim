@@ -32,6 +32,9 @@ class ApiActions extends DefaultActions
         $app->group($prefix, function (\Slim\Routing\RouteCollectorProxy $group) use ($routes) {
             RouteUtil::mapRoutes($group, $routes);
         });
+        // return CORS options for any route(s)
+        //['OPTIONS', '/{routes:.*}', [$self, 'corsOptions']],
+        $app->map(['OPTIONS'], '/{routes:.*}', [$self, 'corsOptions']);
     }
 
     /**
@@ -107,6 +110,24 @@ class ApiActions extends DefaultActions
     {
         $data = $this->getOpenApi();
         $this->mkJsonResponse($data);
+    }
+
+    /**
+     * Send CORS options
+     */
+    public function corsOptions($routes = '')
+    {
+        $origin = $this->getCorsOrigin();
+        if (!$origin) {
+            return;
+        }
+        $this->response = $this->response()
+            ->withHeader('Access-Control-Allow-Origin', $origin)
+            ->withHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')  // PUT, DELETE, PATCH
+            ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization')
+            ->withHeader('Access-Control-Allow-Credentials', 'true')
+            ->withHeader('Access-Control-Max-Age', '86400')
+            ->withHeader('Vary', 'Origin');
     }
 
     /**

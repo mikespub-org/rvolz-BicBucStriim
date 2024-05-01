@@ -64,6 +64,37 @@ class ApiActionsTest extends PHPUnit\Framework\TestCase
     }
 
     /**
+     * @runInSeparateProcess
+     * @preserveGlobalState disabled
+     */
+    public function testCorsOptionsRequest()
+    {
+        $app = TestHelper::getAppWithApi();
+        $this->assertEquals(\Slim\App::class, $app::class);
+
+        $origin = '*';
+        $expected = [
+            'Access-Control-Allow-Origin' => $origin,
+            'Access-Control-Allow-Methods' => 'GET, POST, OPTIONS',
+            'Access-Control-Allow-Headers' => 'X-Requested-With, Content-Type, Accept, Origin, Authorization',
+            'Access-Control-Allow-Credentials' => 'true',
+            'Access-Control-Max-Age' => '86400',
+            'Vary' => 'Origin',
+        ];
+        $request = RequestUtil::getServerRequest('OPTIONS', '/');
+        $response = $app->handle($request);
+        foreach ($expected as $header => $line) {
+            $this->assertEquals($line, $response->getHeaderLine($header));
+        }
+
+        $request = RequestUtil::getServerRequest('OPTIONS', '/api/');
+        $response = $app->handle($request);
+        foreach ($expected as $header => $line) {
+            $this->assertEquals($line, $response->getHeaderLine($header));
+        }
+    }
+
+    /**
      * Requesting main page with header 'Accept: application/json'
      * should return the template variables as json object instead
      * of the actual templated page output
@@ -76,10 +107,20 @@ class ApiActionsTest extends PHPUnit\Framework\TestCase
         $this->assertEquals(\Slim\App::class, $app::class);
 
         $expected = ['page', 'books', 'stats'];
-        $request = RequestUtil::getServerRequest('GET', '/')->withHeader('Accept', 'application/json');
+        $origin = 'https://remote.host';
+        $request = RequestUtil::getServerRequest('GET', '/')->withHeader('Accept', 'application/json')->withHeader('Origin', $origin);
         $response = $app->handle($request);
         $result = json_decode((string) $response->getBody(), true);
         $this->assertEquals($expected, array_keys($result));
+        // Add Allow-Origin + Allow-Credentials to response for non-preflighted requests
+        $expected = [
+            'Access-Control-Allow-Origin' => $origin,
+            'Access-Control-Allow-Credentials' => 'true',
+            'Vary' => 'Origin',
+        ];
+        foreach ($expected as $header => $line) {
+            $this->assertEquals($line, $response->getHeaderLine($header));
+        }
     }
 
     /**

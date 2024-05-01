@@ -135,10 +135,6 @@ class MainActionsTest extends PHPUnit\Framework\TestCase
                 'GET', '/static/titlethumbs/{id}/', ['$self', 'thumbnail'],
             ],
             // for redirect etc. specify the expected header(s)
-            'corsOptions' => [
-                [], 'skip OPTIONS request',
-                'OPTIONS', '/{routes:.*}', ['$self', 'corsOptions'],
-            ],
         ];
     }
 

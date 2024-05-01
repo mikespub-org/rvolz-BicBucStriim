@@ -86,7 +86,13 @@ if (!isset($settings['basepath'])) {
 }
 
 //$app->add(ExceptionMiddleware::class);
-$app->addErrorMiddleware(true, true, true);
+$settings['mode'] ??= 'production';
+if ($settings['mode'] == 'production') {
+    $displayErrorDetails = false;
+} else {
+    $displayErrorDetails = true;
+}
+$app->addErrorMiddleware($displayErrorDetails, true, true);
 
 # Use gatekeeper middleware in routes
 $gatekeeper = new \BicBucStriim\Middleware\GatekeeperMiddleware($app->getContainer());
