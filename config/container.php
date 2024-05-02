@@ -13,6 +13,7 @@ use BicBucStriim\AppData\BicBucStriim;
 use BicBucStriim\AppData\Settings;
 use BicBucStriim\Calibre\Calibre;
 use BicBucStriim\Session\Session;
+use BicBucStriim\Utilities\Mailer;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
@@ -54,6 +55,11 @@ $builder->addDefinitions([
         $settings = $c->get(Settings::class);
         $clp = $settings->calibre_dir . '/metadata.db';
         return new Calibre($clp);
+    },
+    Mailer::class => function (ContainerInterface $c) {
+        # Get Mailer instance based on settings
+        $settings = $c->get(Settings::class);
+        return Mailer::newInstance($settings);
     },
     \Twig\Environment::class => function (ContainerInterface $c) {
         $loader = new \Twig\Loader\FilesystemLoader('templates');

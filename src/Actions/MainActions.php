@@ -522,7 +522,7 @@ class MainActions extends DefaultActions
             $this->response = $util->deleteCookie(Settings::KINDLE_COOKIE);
             $bookpath = $this->calibre()->titleFile($id, $file);
             $this->log()->debug("kindle: requested file " . $bookpath);
-            $mailer = Mailer::newInstance($settings);
+            $mailer = $this->mailer();
             $send_success = 0;
             try {
                 $message_success = $mailer->createBookMessage($bookpath, $settings->display_app_name, $to_email, $settings->kindle_from_email, $filename);

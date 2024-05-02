@@ -15,6 +15,7 @@ class Mailer
     public const SENDMAIL = 1;
     // PHP mail transport
     public const MAIL = 2;
+    public const MOCK = 3;
 
     public const SSL = 'ssl';
     public const TLS = 'tls';
@@ -41,9 +42,27 @@ class Mailer
             $this->setSmtpConfig($config);
         } elseif ($transportType == Mailer::SENDMAIL) {
             $this->setSendmailConfig($config);
+        } elseif ($transportType == Mailer::MOCK) {
+            $this->setMockConfig($config);
         } else {
             $this->setMailConfig($config);
         }
+    }
+
+    /**
+     * @param array<string, mixed> $config
+     * @return void
+     */
+    public function setMockConfig($config)
+    {
+        //Create a new PHPMailer instance
+        $this->mailer = new class () extends PHPMailer {
+            public function send()
+            {
+                return true;
+            }
+        };
+        $this->mailer->CharSet = PHPMailer::CHARSET_UTF8;
     }
 
     /**
@@ -223,6 +242,8 @@ class Mailer
             $mailer = new self(static::SMTP, $mail);
         } elseif ($settings->mailer == static::SENDMAIL) {
             $mailer = new self(static::SENDMAIL);
+        } elseif ($settings->mailer == static::MOCK) {
+            $mailer = new self(static::MOCK);
         } else {
             $mailer = new self(static::MAIL);
         }

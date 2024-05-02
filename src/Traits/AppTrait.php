@@ -15,6 +15,7 @@ use BicBucStriim\AppData\BicBucStriim;
 use BicBucStriim\AppData\Settings;
 use BicBucStriim\Calibre\Calibre;
 use BicBucStriim\Session\Session;
+use BicBucStriim\Utilities\Mailer;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Log\LoggerInterface;
@@ -57,6 +58,15 @@ trait AppTrait
     public function log()
     {
         return $this->container(LoggerInterface::class);
+    }
+
+    /**
+     * Get mailer instance
+     * @return \BicBucStriim\Utilities\Mailer
+     */
+    public function mailer()
+    {
+        return $this->container(Mailer::class);
     }
 
     /**

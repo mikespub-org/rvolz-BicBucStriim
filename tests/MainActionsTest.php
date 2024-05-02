@@ -3,6 +3,7 @@
 use BicBucStriim\Actions\MainActions;
 use BicBucStriim\Utilities\RequestUtil;
 use BicBucStriim\Utilities\TestHelper;
+use BicBucStriim\Utilities\Mailer;
 use Slim\Factory\AppFactory;
 
 /**
@@ -227,25 +228,24 @@ class MainActionsTest extends PHPUnit\Framework\TestCase
 
     /**
      * @runInSeparateProcess
-     * @todo handle sendmail error correctly with phpunit
      */
-    public function skipTestMainKindle()
+    public function testMainKindle()
     {
-        $this->expectException(PHPUnit\Framework\Exception::class);
         $_SERVER['REQUEST_METHOD'] = 'POST';
         $_SERVER['CONTENT_TYPE'] = 'multipart/form-data';
         $_POST['email'] = 'kindle@example.org';
         $uri = '/titles/7/kindle/The%20Stones%20of%20Venice%2C%20Volume%20II%20-%20John%20Ruskin.epub';
 
         $app = TestHelper::getApp();
-        $request = RequestUtil::getServerRequest('POST', $uri);
+        $app->getContainer()->set(Mailer::class, new Mailer(Mailer::MOCK));
 
-        $expected = 'Something went wrong. Please check the e-mail address.';
+        $expected = 'The book has been sent!';
+        $request = RequestUtil::getServerRequest('POST', $uri);
         $response = $app->handle($request);
         unset($_SERVER['REQUEST_METHOD']);
         unset($_SERVER['CONTENT_TYPE']);
         unset($_POST['email']);
         $this->assertStringContainsString($expected, (string) $response->getBody());
-        $this->assertEquals(503, $response->getStatusCode());
+        $this->assertEquals(200, $response->getStatusCode());
     }
 }
