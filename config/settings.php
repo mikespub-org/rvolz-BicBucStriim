@@ -28,7 +28,7 @@ $settings['version'] = $appversion;
 $settings['basepath'] = $basepath;
 $settings['sep'] = ' :: ';
 # Provide basic json api interface - configurable via environment variable
-$settings['hasapi'] = getenv('BBS_HAS_API') ?: true;
+$settings['hasapi'] = getenv('BBS_HAS_API') ?: false;
 # Allowed CORS origin - string or array of allowed origins
 $settings['cors_origin'] = '*';
 

@@ -5,7 +5,7 @@
     SetEnv HTTP_MOD_REWRITE On
 
     # Tell BicBucStriim to enable debug mode - see .env.example file
-    # SetEnv BBS_DEBUG_MODE true
+    # SetEnv BBS_DEBUG_MODE 1
 
     RewriteEngine On
     #RewriteBase /bbs

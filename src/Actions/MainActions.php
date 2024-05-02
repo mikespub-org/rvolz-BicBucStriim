@@ -20,6 +20,7 @@ use BicBucStriim\Utilities\ResponseUtil;
 use BicBucStriim\Utilities\RouteUtil;
 use Michelf\MarkdownExtra;
 use Exception;
+use Throwable;
 use Twig\TwigFilter;
 
 /*********************************************************************
@@ -521,25 +522,7 @@ class MainActions extends DefaultActions
             $this->response = $util->deleteCookie(Settings::KINDLE_COOKIE);
             $bookpath = $this->calibre()->titleFile($id, $file);
             $this->log()->debug("kindle: requested file " . $bookpath);
-            if ($settings->mailer == Mailer::SMTP) {
-                $mail = [
-                    'username' => $settings[Settings::SMTP_USER],
-                    'password' => $settings[Settings::SMTP_PASSWORD],
-                    'smtp-server' => $settings[Settings::SMTP_SERVER],
-                    'smtp-port' => $settings[Settings::SMTP_PORT],
-                ];
-                if ($settings[Settings::SMTP_ENCRYPTION] == 1) {
-                    $mail['smtp-encryption'] = Mailer::SSL;
-                } elseif ($settings[Settings::SMTP_ENCRYPTION] == 2) {
-                    $mail['smtp-encryption'] = Mailer::TLS;
-                }
-                $this->log()->debug('kindle mail config: ' . var_export($mail, true));
-                $mailer = new Mailer(Mailer::SMTP, $mail);
-            } elseif ($settings->mailer == Mailer::SENDMAIL) {
-                $mailer = new Mailer(Mailer::SENDMAIL);
-            } else {
-                $mailer = new Mailer(Mailer::MAIL);
-            }
+            $mailer = Mailer::newInstance($settings);
             $send_success = 0;
             try {
                 $message_success = $mailer->createBookMessage($bookpath, $settings->display_app_name, $to_email, $settings->kindle_from_email, $filename);
@@ -556,7 +539,7 @@ class MainActions extends DefaultActions
                     $this->log()->debug('kindle: book delivered to ' . $to_email . ', result ' . $send_success);
                 }
                 # if there was an exception, log it and return gracefully
-            } catch (Exception $e) {
+            } catch (Throwable $e) {
                 $this->log()->warning('kindle: Email exception ' . $e->getMessage());
                 $this->log()->warning('kindle: Mail dump ' . $mailer->getDump());
             }

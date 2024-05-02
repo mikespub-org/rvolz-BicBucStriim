@@ -9,6 +9,7 @@ use Slim\Factory\AppFactory;
  * @covers \BicBucStriim\Actions\MainActions
  * @covers \BicBucStriim\Actions\DefaultActions
  * @covers \BicBucStriim\Utilities\TestHelper
+ * @covers \BicBucStriim\Utilities\Mailer
  */
 class MainActionsTest extends PHPUnit\Framework\TestCase
 {
@@ -204,5 +205,47 @@ class MainActionsTest extends PHPUnit\Framework\TestCase
                 $this->assertEquals($expected, strlen((string) $response->getBody()));
             }
         }
+    }
+
+    /**
+     * @runInSeparateProcess
+     */
+    public function testMainAuthorNotes()
+    {
+        $app = TestHelper::getApp();
+        $request = RequestUtil::getServerRequest('GET', '/authors/5/notes/');
+        $userData = [
+            'role' => 1,
+        ];
+        $auth = TestHelper::getAuth($request, $userData);
+        $request = $request->withAttribute('auth', $auth);
+
+        $expected = '<title>BicBucStriim :: Notes</title>';
+        $response = $app->handle($request);
+        $this->assertStringContainsString($expected, (string) $response->getBody());
+    }
+
+    /**
+     * @runInSeparateProcess
+     * @todo handle sendmail error correctly with phpunit
+     */
+    public function skipTestMainKindle()
+    {
+        $this->expectException(PHPUnit\Framework\Exception::class);
+        $_SERVER['REQUEST_METHOD'] = 'POST';
+        $_SERVER['CONTENT_TYPE'] = 'multipart/form-data';
+        $_POST['email'] = 'kindle@example.org';
+        $uri = '/titles/7/kindle/The%20Stones%20of%20Venice%2C%20Volume%20II%20-%20John%20Ruskin.epub';
+
+        $app = TestHelper::getApp();
+        $request = RequestUtil::getServerRequest('POST', $uri);
+
+        $expected = 'Something went wrong. Please check the e-mail address.';
+        $response = $app->handle($request);
+        unset($_SERVER['REQUEST_METHOD']);
+        unset($_SERVER['CONTENT_TYPE']);
+        unset($_POST['email']);
+        $this->assertStringContainsString($expected, (string) $response->getBody());
+        $this->assertEquals(503, $response->getStatusCode());
     }
 }

@@ -14,6 +14,9 @@ use BicBucStriim\Utilities\TestHelper;
  * @covers \BicBucStriim\Middleware\DefaultMiddleware
  * @covers \BicBucStriim\Middleware\LoginMiddleware
  * @covers \BicBucStriim\Middleware\OwnConfigMiddleware
+ * @covers \BicBucStriim\Session\SessionFactory
+ * @covers \BicBucStriim\Session\Session
+ * @covers \BicBucStriim\Traits\AppTrait
  */
 class MiddlewareTest extends PHPUnit\Framework\TestCase
 {
@@ -72,6 +75,10 @@ class MiddlewareTest extends PHPUnit\Framework\TestCase
             'admin' => [
                 [], ['Location' => './login/'],
                 'GET', '/admin/', ['$self', 'admin'],
+            ],
+            'opds' => [
+                [], '<title>BicBucStriim Root Catalog</title>',
+                'GET', '/opds/', ['$self', 'opdsRoot'],
             ],
         ];
     }
@@ -155,6 +162,10 @@ class MiddlewareTest extends PHPUnit\Framework\TestCase
                     break;
                 }
             }
+            // Expect to get authentication error for /opds
+            if (str_contains($pattern, '/opds')) {
+                $expected = ['WWW-Authenticate' => 'Basic realm="BicBucStriim"'];
+            }
 
             $middleware = new LoginMiddleware($app->getContainer(), $settings['appname'], []);
             $response = $middleware->process($request, $handler);
@@ -209,14 +220,14 @@ class MiddlewareTest extends PHPUnit\Framework\TestCase
         }
     }
 
-    public function testIsAuthorizedAndValid()
+    public function testIsAuthorizedWithAuthValid()
     {
         $app = TestHelper::getAppWithContainer();
         $settings = $app->getContainer()->get(Settings::class);
         $settings->must_login = 1;
         $app->getContainer()->set(Settings::class, $settings);
 
-        $request = RequestUtil::getServerRequest('GET', '/');
+        $request = RequestUtil::getServerRequest('GET', '/admin/');
         // Make sure userData is considered "valid"
         $userData = [
             'id' => 1,
@@ -239,5 +250,128 @@ class MiddlewareTest extends PHPUnit\Framework\TestCase
         $response = $middleware->process($request, $handler);
         $this->assertEquals(\Nyholm\Psr7\Response::class, get_class($response));
         $this->assertStringContainsString($expected, (string) $response->getBody());
+    }
+
+    public function testIsAuthorizedWithAuthInvalid()
+    {
+        $app = TestHelper::getAppWithContainer();
+        $settings = $app->getContainer()->get(Settings::class);
+        $settings->must_login = 1;
+        $app->getContainer()->set(Settings::class, $settings);
+
+        $request = RequestUtil::getServerRequest('GET', '/admin/');
+        // Make sure userData is considered "invalid" = missing id and role
+        $userData = [
+            'invalid' => true,
+        ];
+        $auth = TestHelper::getAuth($request, $userData);
+        // Set resume service for session
+        $app->getContainer()->set('resume_service', TestHelper::getAuthFactory($request)->newResumeService());
+
+        // Build mock LoginMiddleware with getAuthTracker == $auth
+        $middleware = $this->getMockBuilder(LoginMiddleware::class)
+            ->setConstructorArgs([$app->getContainer(), $settings['appname'], []])
+            ->onlyMethods(['getAuthTracker'])
+            ->getMock();
+        $middleware->expects($this->once())->method('getAuthTracker')->willReturn($auth);
+
+        $expected = 'Handled!';
+        $handler = TestHelper::getHandler($app, $expected);
+
+        // Expect to be redirected here
+        $expected = ['Location' => '/usr/local/bin/login/'];
+        $response = $middleware->process($request, $handler);
+        $this->assertEquals(\Nyholm\Psr7\Response::class, get_class($response));
+        foreach ($expected as $header => $line) {
+            $this->assertEquals($line, $response->getHeaderLine($header));
+        }
+    }
+
+    public function testIsAuthorizedWithPhpAuthTrue()
+    {
+        $app = TestHelper::getAppWithContainer();
+        $settings = $app->getContainer()->get(Settings::class);
+        $settings->must_login = 1;
+        $app->getContainer()->set(Settings::class, $settings);
+
+        $request = RequestUtil::getServerRequest('GET', '/admin/');
+        $request = $request->withHeader('PHP_AUTH_USER', 'admin')->withHeader('PHP_AUTH_PW', 'admin');
+        $middleware = new LoginMiddleware($app->getContainer(), $settings['appname'], []);
+        $middleware->request($request);
+
+        // test protected method using closure bind & call or use reflection
+        $isAuthorized = function () {
+            /** @var LoginMiddleware $this */
+            return $this->is_authorized();
+        };
+        $result = $isAuthorized->call($middleware);
+        $this->assertTrue($result);
+        unset($_SESSION[\Aura\Auth\Auth::class]);
+    }
+
+    public function testIsAuthorizedWithPhpAuthFalse()
+    {
+        $app = TestHelper::getAppWithContainer();
+        $settings = $app->getContainer()->get(Settings::class);
+        $settings->must_login = 1;
+        $app->getContainer()->set(Settings::class, $settings);
+
+        $request = RequestUtil::getServerRequest('GET', '/admin/');
+        $request = $request->withHeader('PHP_AUTH_USER', 'admin')->withHeader('PHP_AUTH_PW', 'wrong');
+        $middleware = new LoginMiddleware($app->getContainer(), $settings['appname'], []);
+        $middleware->request($request);
+
+        // test protected method using closure bind & call or use reflection
+        $isAuthorized = function () {
+            /** @var LoginMiddleware $this */
+            return $this->is_authorized();
+        };
+        $result = $isAuthorized->call($middleware);
+        $this->assertFalse($result);
+        unset($_SESSION[\Aura\Auth\Auth::class]);
+    }
+
+    public function testIsAuthorizedWithHttpAuthTrue()
+    {
+        $app = TestHelper::getAppWithContainer();
+        $settings = $app->getContainer()->get(Settings::class);
+        $settings->must_login = 1;
+        $app->getContainer()->set(Settings::class, $settings);
+
+        $request = RequestUtil::getServerRequest('GET', '/admin/');
+        $request = $request->withHeader('Authorization', 'Basic ' . base64_encode('admin:admin'));
+        $middleware = new LoginMiddleware($app->getContainer(), $settings['appname'], []);
+        $middleware->request($request);
+
+        // test protected method using closure bind & call or use reflection
+        $isAuthorized = function () {
+            /** @var LoginMiddleware $this */
+            return $this->is_authorized();
+        };
+        $result = $isAuthorized->call($middleware);
+        $this->assertTrue($result);
+        unset($_SESSION[\Aura\Auth\Auth::class]);
+    }
+
+    public function testIsAuthorizedWithHttpAuthFalse()
+    {
+        $app = TestHelper::getAppWithContainer();
+        $settings = $app->getContainer()->get(Settings::class);
+        $settings->must_login = 1;
+        $app->getContainer()->set(Settings::class, $settings);
+
+        $request = RequestUtil::getServerRequest('GET', '/admin/');
+        $request = $request->withHeader('Authorization', 'Basic ' . base64_encode('admin:wrong'));
+        $middleware = new LoginMiddleware($app->getContainer(), $settings['appname'], []);
+        $middleware->request($request);
+
+        // test protected method using closure bind & call or use reflection
+        $isAuthorized = function () {
+            /** @var LoginMiddleware $this */
+            return $this->is_authorized();
+        };
+        $result = $isAuthorized->call($middleware);
+        $this->assertFalse($result);
+        unset($_SESSION[\Aura\Auth\Auth::class]);
     }
 }

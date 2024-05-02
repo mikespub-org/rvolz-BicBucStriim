@@ -2,6 +2,7 @@
 
 namespace BicBucStriim\Utilities;
 
+use BicBucStriim\AppData\Settings;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
 use Exception;
@@ -18,20 +19,23 @@ class Mailer
     public const SSL = 'ssl';
     public const TLS = 'tls';
 
+    /** @var PHPMailer */
     protected $mailer;
+    /** @var string */
     protected $dump;
 
     /**
      * Initialize the transport mechanism. Default is PHP mail.
-     * @param int 	$transportType	one of SMTP, SENDMAIL or MAIL
-     * @param array $config 		configuration values, mainly for the SMTP transport:
-     *								'smtp-server' - server name
-     *								'smtp-port' - port
-     *								'smtp-encryption' - 'ssl' or 'tls', if encryption is required
-     *								'username' - SMTP user
-     *								'password' - SMTP password
+     * @param int  $transportType one of SMTP, SENDMAIL or MAIL
+     * @param array<string, mixed> $config
+     * Configuration values, mainly for the SMTP transport:
+     *     'smtp-server' - server name
+     *     'smtp-port' - port
+     *     'smtp-encryption' - 'ssl' or 'tls', if encryption is required
+     *     'username' - SMTP user
+     *     'password' - SMTP password
      */
-    public function __construct($transportType = Mailer::MAIL, $config = [])
+    final public function __construct($transportType = Mailer::MAIL, $config = [])
     {
         if ($transportType == Mailer::SMTP) {
             $this->setSmtpConfig($config);
@@ -133,12 +137,12 @@ class Mailer
 
     /**
      * Create a mail for sending a book to a Kindle account or elsewhere.
-     * @param string 	$bookpath	complete path to the book/file to be sent
-     * @param string 	$subject 	mail subject line
-     * @param string 	$recipient 	mail address of recipient
-     * @param string 	$sender 	mail address of sender
-     * @param string 	$filename 	new filename
-     * @return bool		true if successfully created with attachment, false otherwise
+     * @param string $bookpath  complete path to the book/file to be sent
+     * @param string $subject   mail subject line
+     * @param string $recipient mail address of recipient
+     * @param string $sender    mail address of sender
+     * @param string $filename  new filename
+     * @return bool true if successfully created with attachment, false otherwise
      */
     public function createBookMessage($bookpath, $subject, $recipient, $sender, $filename)
     {
@@ -157,8 +161,9 @@ class Mailer
     }
 
     /**
-    * Returns a dump of the last sending process. Just for troubleshooting.
-    */
+     * Returns a dump of the last sending process. Just for troubleshooting.
+     * @return string
+     */
     public function getDump()
     {
         return $this->dump;
@@ -166,7 +171,7 @@ class Mailer
 
     /**
      * Send an email via the transport.
-     * @return 	int	number of messages sent
+     * @return int number of messages sent
      */
     public function sendMessage()
     {
@@ -194,5 +199,33 @@ class Mailer
     public function getMessage()
     {
         return $this->mailer->getSentMIMEMessage();
+    }
+
+    /**
+     * Get new Mailer instance
+     * @param Settings $settings
+     * @return self
+     */
+    public static function newInstance($settings)
+    {
+        if ($settings->mailer == static::SMTP) {
+            $mail = [
+                'username' => $settings[Settings::SMTP_USER],
+                'password' => $settings[Settings::SMTP_PASSWORD],
+                'smtp-server' => $settings[Settings::SMTP_SERVER],
+                'smtp-port' => $settings[Settings::SMTP_PORT],
+            ];
+            if ($settings[Settings::SMTP_ENCRYPTION] == 1) {
+                $mail['smtp-encryption'] = static::SSL;
+            } elseif ($settings[Settings::SMTP_ENCRYPTION] == 2) {
+                $mail['smtp-encryption'] = static::TLS;
+            }
+            $mailer = new self(static::SMTP, $mail);
+        } elseif ($settings->mailer == static::SENDMAIL) {
+            $mailer = new self(static::SENDMAIL);
+        } else {
+            $mailer = new self(static::MAIL);
+        }
+        return $mailer;
     }
 }
