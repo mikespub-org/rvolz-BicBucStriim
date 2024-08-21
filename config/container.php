@@ -18,6 +18,8 @@ use Psr\Cache\CacheItemPoolInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Cache\Adapter\ApcuAdapter;
+use Symfony\Component\Cache\Adapter\ChainAdapter;
+use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 
 //$container = new Container();
 $builder = new \DI\ContainerBuilder();
@@ -34,7 +36,10 @@ $builder->addDefinitions([
         return new \BicBucStriim\Utilities\Logger();
     },
     CacheItemPoolInterface::class => function (ContainerInterface $c) {
-        return new ApcuAdapter('BicBucStriim', 3600);
+        return new ChainAdapter([
+            new ApcuAdapter('BicBucStriim', 3600),
+            new FilesystemAdapter('BicBucStriim', 3600),
+        ]);
     },
     Session::class => 'depends on request - see login middleware',
     Auth::class => 'depends on request - see login middleware',
