@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Align uri methods with symfony http foundation helpers
 - Revise middleware vs container setup for bbs and calibre configuration
 - Add CORS options route and Allow-Control-* headers for json response
+- Use ChainAdapter with ApcuAdapter and FilesystemAdapter for cache - see issue #3
 
 ## [3.4.0] - 2024-04-26 Basic json API + environment vars + clean-up
 ### Added
