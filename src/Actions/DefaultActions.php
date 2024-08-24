@@ -81,6 +81,7 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
     /**
      * Hello function (example) - old-style = returning void
      * @param ?string $name
+     * @deprecated 3.5.0 return response instead of void in actions
      * @return void
      */
     public function helloVoid($name = null)
@@ -100,6 +101,18 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
         $name ??= 'world';
         $answer = 'Hello, ' . $name . '!';
         return $this->mkResponse($answer, 'text/plain');
+    }
+
+    /**
+     * Initialize actions with ActionsWrapperStrategy
+     * @param Request $request
+     * @param Response $response
+     * @return void
+     */
+    public function initialize($request, $response)
+    {
+        $this->request($request);
+        $this->response($response);
     }
 
     /**

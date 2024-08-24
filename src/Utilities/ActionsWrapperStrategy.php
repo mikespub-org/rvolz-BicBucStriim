@@ -30,8 +30,8 @@ class ActionsWrapperStrategy implements InvocationStrategyInterface
             // ... we never get this because Slim goes through CallableResolver first
             // when using [$self, 'method']
             if (is_object($class) && $class instanceof DefaultActions) {
-                $class->request($request);
-                $class->response($response);
+                // set initial request and response in actions instance
+                $class->initialize($request, $response);
                 // callable can return void (old-style) or response (new-style)
                 $result = $callable(...array_values($routeArguments));
                 $result ??= $class->response();
