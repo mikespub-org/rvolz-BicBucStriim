@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Support returning response from callable action in ActionsWrapperStrategy
 - Show returning response (new-style) or void (old-style) in DefaultActions::hello()
 - Change other actions to return response instead of void
+### Removed
+- Drop deprecated methods for releases older than 3.4.0
 
 ## [3.4.3] - 2024-08-24 Reduce AppTrait code
 ### Changed
