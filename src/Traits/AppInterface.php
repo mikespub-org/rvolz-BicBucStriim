@@ -11,6 +11,7 @@
 namespace BicBucStriim\Traits;
 
 use BicBucStriim\AppData\Settings;
+use Psr\Http\Message\ResponseInterface as Response;
 
 /*********************************************************************
  * App utility interface (documentation only) - use AppTrait in class
@@ -127,6 +128,7 @@ interface AppInterface
      * @param  string   $realm      The realm
      * @param  int      $status     The HTTP response status
      * @param  string   $message    The HTTP response body
+     * @return Response
      */
     public function mkAuthenticate($realm, $status = 401, $message = 'Please authenticate');
 
@@ -134,6 +136,7 @@ interface AppInterface
      * Create and send an error response (halt)
      * @param  int      $status     The HTTP response status
      * @param  string   $message    The HTTP response body
+     * @return Response
      */
     public function mkError($status, $message = '');
 
@@ -141,6 +144,7 @@ interface AppInterface
      * Create and send a redirect response (redirect)
      * @param  string   $url        The destination URL
      * @param  int      $status     The HTTP redirect status code (optional)
+     * @return Response
      */
     public function mkRedirect($url, $status = 302);
 
@@ -149,7 +153,7 @@ interface AppInterface
      * @param mixed $data array or object
      * @param string $type (optional)
      * @param int $status (optional)
-     * @return void
+     * @return Response
      */
     public function mkJsonResponse($data, $type = 'application/json', $status = 200);
 
@@ -158,7 +162,7 @@ interface AppInterface
      * @param string $content
      * @param string $type
      * @param int $status
-     * @return void
+     * @return Response
      */
     public function mkResponse($content, $type, $status = 200);
 
@@ -167,7 +171,7 @@ interface AppInterface
      * @param string $filepath
      * @param string $type
      * @param int $status
-     * @return void
+     * @return Response
      */
     public function mkSendFile($filepath, $type, $status = 200);
 
@@ -177,7 +181,7 @@ interface AppInterface
      * @param string $type
      * @param string $filename
      * @param int $status
-     * @return void
+     * @return Response
      */
     public function mkSendFileAsAttachment($filepath, $type, $filename, $status = 200);
 }

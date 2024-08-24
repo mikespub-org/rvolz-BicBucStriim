@@ -12,6 +12,7 @@ namespace BicBucStriim\Actions;
 
 use BicBucStriim\Utilities\RouteUtil;
 use Michelf\MarkdownExtra;
+use Psr\Http\Message\ResponseInterface as Response;
 use Exception;
 
 /*********************************************************************
@@ -55,6 +56,7 @@ class MetadataActions extends DefaultActions
     /**
      * Upload an author thumbnail picture -> POST /metadata/authors/{id}/thumbnail/
      * Works only with JPG/PNG, max. size 3MB
+     * @return Response
      */
     public function edit_author_thm($id)
     {
@@ -63,8 +65,7 @@ class MetadataActions extends DefaultActions
         // parameter checking
         if (!is_numeric($id)) {
             $this->log()->warning('edit_author_thm: invalid author id ' . $id);
-            $this->mkError(400, "Bad parameter");
-            return;
+            return $this->mkError(400, "Bad parameter");
         }
 
         // @todo replace $_FILES with $request files info once available?
@@ -86,33 +87,33 @@ class MetadataActions extends DefaultActions
                 $this->log()->debug('edit_author_thm: upload error ' . $_FILES["file"]["error"]);
                 $this->setFlash('error', $this->getMessageString('author_thumbnail_upload_error1') . ': ' . $_FILES["file"]["error"]);
                 $rot = $this->getBasePath();
-                $this->mkRedirect($rot . '/authors/' . $id . '/0/');
+                return $this->mkRedirect($rot . '/authors/' . $id . '/0/');
             } else {
                 $this->log()->debug('edit_author_thm: upload ok, converting');
                 $author = $this->calibre()->author($id);
                 $created = $this->bbs()->editAuthorThumbnail($id, $author->name, $settings->thumb_gen_clipped, $_FILES["file"]["tmp_name"], $_FILES["file"]["type"]);
                 $this->log()->debug('edit_author_thm: converted, redirecting');
                 $rot = $this->getBasePath();
-                $this->mkRedirect($rot . '/authors/' . $id . '/0/');
+                return $this->mkRedirect($rot . '/authors/' . $id . '/0/');
             }
         } else {
             $this->log()->warning('edit_author_thm: Uploaded thumbnail too big or wrong type');
             $this->setFlash('error', $this->getMessageString('author_thumbnail_upload_error2'));
             $rot = $this->getBasePath();
-            $this->mkRedirect($rot . '/authors/' . $id . '/0/');
+            return $this->mkRedirect($rot . '/authors/' . $id . '/0/');
         }
     }
 
     /**
      * Delete the author's thumbnail -> DELETE /metadata/authors/{id}/thumbnail/ JSON
+     * @return Response
      */
     public function del_author_thm($id)
     {
         // parameter checking
         if (!is_numeric($id)) {
             $this->log()->warning('del_author_thm: invalid author id ' . $id);
-            $this->mkError(400, "Bad parameter");
-            return;
+            return $this->mkError(400, "Bad parameter");
         }
 
         $this->log()->debug('del_author_thm: ' . $id);
@@ -120,23 +121,23 @@ class MetadataActions extends DefaultActions
         if ($del) {
             $msg = $this->getMessageString('admin_modified');
             $answer = json_encode(['msg' => $msg]);
-            $this->mkResponse($answer, 'application/json', 200);
+            return $this->mkResponse($answer, 'application/json', 200);
         } else {
             $answer = $this->getMessageString('admin_modify_error');
-            $this->mkResponse($answer, 'text/plain', 500);
+            return $this->mkResponse($answer, 'text/plain', 500);
         }
     }
 
     /**
      * Edit the notes about the author -> POST /metadata/authors/{id}/notes/ JSON
+     * @return Response
      */
     public function edit_author_notes($id)
     {
         // parameter checking
         if (!is_numeric($id)) {
             $this->log()->warning('edit_author_notes: invalid author id ' . $id);
-            $this->mkError(400, "Bad parameter");
-            return;
+            return $this->mkError(400, "Bad parameter");
         }
 
         $this->log()->debug('edit_author_notes: ' . $id);
@@ -158,23 +159,23 @@ class MetadataActions extends DefaultActions
             $note2 = $note->unbox()->getProperties();
             $note2['html'] = $html;
             $answer = json_encode(['note' => $note2, 'msg' => $msg]);
-            $this->mkResponse($answer, 'application/json', 200);
+            return $this->mkResponse($answer, 'application/json', 200);
         } else {
             $answer = $this->getMessageString('admin_modify_error');
-            $this->mkResponse($answer, 'text/plain', 500);
+            return $this->mkResponse($answer, 'text/plain', 500);
         }
     }
 
     /**
      * Delete notes about the author -> DELETE /metadata/authors/{id}/notes/ JSON
+     * @return Response
      */
     public function del_author_notes($id)
     {
         // parameter checking
         if (!is_numeric($id)) {
             $this->log()->warning('del_author_notes: invalid author id ' . $id);
-            $this->mkError(400, "Bad parameter");
-            return;
+            return $this->mkError(400, "Bad parameter");
         }
 
         $this->log()->debug('del_author_notes: ' . $id);
@@ -182,23 +183,23 @@ class MetadataActions extends DefaultActions
         if ($del) {
             $msg = $this->getMessageString('admin_modified');
             $answer = json_encode(['msg' => $msg]);
-            $this->mkResponse($answer, 'application/json', 200);
+            return $this->mkResponse($answer, 'application/json', 200);
         } else {
             $answer = $this->getMessageString('admin_modify_error');
-            $this->mkResponse($answer, 'text/plain', 500);
+            return $this->mkResponse($answer, 'text/plain', 500);
         }
     }
 
     /**
      * Add a new author link -> POST /metadata/authors/{id}/links JSON
+     * @return Response
      */
     public function new_author_link($id)
     {
         // parameter checking
         if (!is_numeric($id)) {
             $this->log()->warning('new_author_link: invalid author id ' . $id);
-            $this->mkError(400, "Bad parameter");
-            return;
+            return $this->mkError(400, "Bad parameter");
         }
 
         $link_data = $this->post();
@@ -211,23 +212,23 @@ class MetadataActions extends DefaultActions
         if (!is_null($link)) {
             $msg = $this->getMessageString('admin_modified');
             $answer = json_encode(['link' => $link->unbox()->getProperties(), 'msg' => $msg]);
-            $this->mkResponse($answer, 'application/json', 200);
+            return $this->mkResponse($answer, 'application/json', 200);
         } else {
             $answer = $this->getMessageString('admin_modify_error');
-            $this->mkResponse($answer, 'text/plain', 500);
+            return $this->mkResponse($answer, 'text/plain', 500);
         }
     }
 
     /**
      * Delete an author link -> DELETE /metadata/authors/{id}/links/{link}/ JSON
+     * @return Response
      */
     public function del_author_link($id, $link)
     {
         // parameter checking
         if (!is_numeric($id) || !is_numeric($link)) {
             $this->log()->warning('del_author_link: invalid author id ' . $id . ' or link id ' . $link);
-            $this->mkError(400, "Bad parameter");
-            return;
+            return $this->mkError(400, "Bad parameter");
         }
 
         $this->log()->debug('del_author_link: author ' . $id . ', link ' . $link);
@@ -235,10 +236,10 @@ class MetadataActions extends DefaultActions
         if ($ret) {
             $msg = $this->getMessageString('admin_modified');
             $answer = json_encode(['msg' => $msg]);
-            $this->mkResponse($answer, 'application/json', 200);
+            return $this->mkResponse($answer, 'application/json', 200);
         } else {
             $answer = $this->getMessageString('admin_modify_error');
-            $this->mkResponse($answer, 'text/plain', 500);
+            return $this->mkResponse($answer, 'text/plain', 500);
         }
     }
 }

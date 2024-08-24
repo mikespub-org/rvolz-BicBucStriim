@@ -309,14 +309,14 @@ trait AppTrait
     public function mkJsonResponse($data, $type = 'application/json', $status = 200)
     {
         $content = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PARTIAL_OUTPUT_ON_ERROR);
-        $this->mkResponse($content, $type, $status);
+        $response = $this->mkResponse($content, $type, $status);
         // Add Allow-Origin + Allow-Credentials to response for non-preflighted requests
         $origin = $this->getCorsOrigin();
         if (!$origin) {
-            return $this->response;
+            return $response;
         }
         // @see https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS#requests_with_credentials
-        $this->response = $this->response()
+        $this->response = $this->response($response)
             ->withHeader('Access-Control-Allow-Origin', $origin)
             ->withHeader('Access-Control-Allow-Credentials', 'true')
             ->withHeader('Vary', 'Origin');

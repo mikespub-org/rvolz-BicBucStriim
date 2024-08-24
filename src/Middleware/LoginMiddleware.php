@@ -70,7 +70,7 @@ class LoginMiddleware extends DefaultMiddleware
     /**
      * Check if we need to authenticate before dispatching the request further
      * @param Request $request HTTP request
-     * @return bool true if we have a response ready (= need to authenticate), false otherwise
+     * @return bool|Response true if we have a response ready (= need to authenticate), false otherwise
      */
     public function authBeforeDispatch(Request $request)
     {
@@ -93,19 +93,16 @@ class LoginMiddleware extends DefaultMiddleware
             }
             if (stripos($resource, '/opds') === 0) {
                 $this->log()->debug('login: unauthorized OPDS request');
-                $this->mkAuthenticate($this->realm);
-                return true;
+                return $this->mkAuthenticate($this->realm);
             }
-            $requestUtil = new \BicBucStriim\Utilities\RequestUtil($request);
+            $requestUtil = new RequestUtil($request);
             if ($request->getMethod() != 'GET' && ($requestUtil->isXhr() || $requestUtil->isAjax())) {
                 $this->log()->debug('login: unauthorized JSON request');
-                $this->mkAuthenticate($this->realm);
-                return true;
+                return $this->mkAuthenticate($this->realm);
             }
             $this->log()->debug('login: redirecting to login');
             // app->redirect not useable in middleware
-            $this->mkRedirect($this->getRootUrl() . '/login/');
-            return true;
+            return $this->mkRedirect($this->getRootUrl() . '/login/');
         }
         if ($resource === '/login/') {
             // we need to initialize $this->setAuth() if we want to login in MainActions
@@ -124,8 +121,7 @@ class LoginMiddleware extends DefaultMiddleware
         if (stripos($resource, '/admin') === 0) {
             if (!$this->is_static_resource($resource) && !$this->is_authorized($request)) {
                 $this->log()->debug('login: redirecting to login');
-                $this->mkRedirect($this->getRootUrl() . '/login/');
-                return true;
+                return $this->mkRedirect($this->getRootUrl() . '/login/');
             }
             return false;
         }

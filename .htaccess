@@ -6,6 +6,8 @@
 
     # Tell BicBucStriim to enable debug mode - see .env.example file
     # SetEnv BBS_DEBUG_MODE 1
+    # Tell BicBucStriim to enable basic json api - see .env.example file
+    # SetEnv BBS_HAS_API 1
 
     RewriteEngine On
     #RewriteBase /bbs

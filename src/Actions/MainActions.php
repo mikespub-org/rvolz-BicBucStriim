@@ -19,6 +19,7 @@ use BicBucStriim\Utilities\MetadataEpub;
 use BicBucStriim\Utilities\ResponseUtil;
 use BicBucStriim\Utilities\RouteUtil;
 use Michelf\MarkdownExtra;
+use Psr\Http\Message\ResponseInterface as Response;
 use Exception;
 use Throwable;
 use Twig\TwigFilter;
@@ -84,27 +85,36 @@ class MainActions extends DefaultActions
     }
 
     /**
-    * 404 page for invalid URLs
-    */
-    public function myNotFound()
+     * 404 Not Found page for invalid URLs
+     * @return Response
+     */
+    public function mkNotFound()
     {
-        $this->render('error.twig', [
+        return $this->render('error.twig', [
             'page' => $this->mkPage('not_found1'),
             'title' => $this->getMessageString('not_found1'),
             'error' => $this->getMessageString('not_found2')]);
     }
 
+    /**
+     * Show login page
+     * @return Response
+     */
     public function show_login()
     {
         if ($this->is_authenticated()) {
             $this->log()->info('user is already logged in : ' . $this->getAuth()->getUserName());
-            $this->mkRedirect($this->getBasePath() . '/');
+            return $this->mkRedirect($this->getBasePath() . '/');
         } else {
-            $this->render('login.twig', [
+            return $this->render('login.twig', [
                 'page' => $this->mkPage('login')]);
         }
     }
 
+    /**
+     * Perform login page
+     * @return Response
+     */
     public function perform_login()
     {
         $login_data = $this->post();
@@ -113,7 +123,7 @@ class MainActions extends DefaultActions
             $uname = $login_data['username'];
             $upw = $login_data['password'];
             if (empty($uname) || empty($upw)) {
-                $this->render('login.twig', [
+                return $this->render('login.twig', [
                     'page' => $this->mkPage('login')]);
             } else {
                 try {
@@ -122,22 +132,25 @@ class MainActions extends DefaultActions
                     $this->log()->debug('login success: ' . $success);
                     if ($this->is_authenticated()) {
                         $this->log()->info('logged in user : ' . $this->getAuth()->getUserName());
-                        $this->mkRedirect($this->getBasePath() . '/');
-                        return;
+                        return $this->mkRedirect($this->getBasePath() . '/');
                     }
                 } catch (Exception $e) {
                     $this->log()->error('error logging in user : ' . $e->getMessage());
                 }
                 $this->log()->error('error logging in user : ' . $login_data['username']);
-                $this->render('login.twig', [
+                return $this->render('login.twig', [
                     'page' => $this->mkPage('login')]);
             }
         } else {
-            $this->render('login.twig', [
+            return $this->render('login.twig', [
                 'page' => $this->mkPage('login')]);
         }
     }
 
+    /**
+     * Logout page
+     * @return Response
+     */
     public function logout()
     {
         if ($this->is_authenticated()) {
@@ -150,7 +163,7 @@ class MainActions extends DefaultActions
                 $this->log()->info("logged out user: " . $username);
             }
         }
-        $this->render('logout.twig', [
+        return $this->render('logout.twig', [
             'page' => $this->mkPage('logout')]);
     }
 
@@ -160,6 +173,7 @@ class MainActions extends DefaultActions
 
     /**
      * Generate the main page with the 30 most recent titles
+     * @return Response
      */
     public function main()
     {
@@ -169,7 +183,7 @@ class MainActions extends DefaultActions
         $books1 = $this->calibre()->last30Books($settings['lang'], $settings->page_size, $filter);
         $books = array_map([$this, 'checkThumbnail'], $books1);
         $stats = $this->calibre()->libraryStats($filter);
-        $this->render('index_last30.twig', [
+        return $this->render('index_last30.twig', [
             'page' => $this->mkPage('dl30', 1, 1),
             'books' => $books,
             'stats' => $stats]);
@@ -178,6 +192,7 @@ class MainActions extends DefaultActions
     /**
      * Make a search over all categories. Returns only the first PAGES_SIZE items per category.
      * If there are more entries per category, there will be a link to the full results.
+     * @return Response
      */
     public function globalSearch()
     {
@@ -195,7 +210,7 @@ class MainActions extends DefaultActions
         $tlt_books = array_map([$this, 'checkThumbnail'], $tlt['entries']);
         $tls = $this->calibre()->seriesSlice(0, $settings->page_size, trim($search));
         $tls_books = array_map([$this, 'checkThumbnail'], $tls['entries']);
-        $this->render('global_search.twig', [
+        return $this->render('global_search.twig', [
             'page' => $this->mkPage('pagination_search', 0),
             'books' => $tlb_books,
             'books_total' => $tlb['total'] == -1 ? 0 : $tlb['total'],
@@ -214,6 +229,7 @@ class MainActions extends DefaultActions
 
     /**
      * A list of titles at $page -> /titleslist/{page}
+     * @return Response
      */
     public function titlesSlice($page = 0)
     {
@@ -222,8 +238,7 @@ class MainActions extends DefaultActions
         // parameter checking
         if (!is_numeric($page)) {
             $this->log()->warning('titlesSlice: invalid page id ' . $page);
-            $this->mkError(400, "Bad parameter");
-            return;
+            return $this->mkError(400, "Bad parameter");
         }
 
         $filter = $this->getFilter();
@@ -254,7 +269,7 @@ class MainActions extends DefaultActions
         }
 
         $books = array_map([$this, 'checkThumbnail'], $tl['entries']);
-        $this->render('titles.twig', [
+        return $this->render('titles.twig', [
             'page' => $this->mkPage('titles', 2, 1),
             'url' => 'titleslist',
             'books' => $books,
@@ -266,6 +281,7 @@ class MainActions extends DefaultActions
 
     /**
      * Creates a human readable filesize string
+     * @return string
      */
     public function human_filesize($bytes, $decimals = 0)
     {
@@ -276,6 +292,7 @@ class MainActions extends DefaultActions
 
     /**
      * Show a single title > /titles/{id}/ The ID ist the Calibre ID
+     * @return Response
      */
     public function title($id)
     {
@@ -290,21 +307,18 @@ class MainActions extends DefaultActions
         // parameter checking
         if (!is_numeric($id)) {
             $this->log()->warning('title: invalid title id ' . $id);
-            $this->mkError(400, "Bad parameter");
-            return;
+            return $this->mkError(400, "Bad parameter");
         }
 
         $details = $this->calibre()->titleDetails($settings['lang'], $id);
         if (is_null($details)) {
             $this->log()->warning("title: book not found: " . $id);
-            $this->myNotFound();
-            return;
+            return $this->mkNotFound();
         }
         // for people trying to circumvent filtering by direct access
         if ($this->title_forbidden($details)) {
             $this->log()->warning("title: requested book not allowed for user: " . $id);
-            $this->myNotFound();
-            return;
+            return $this->mkNotFound();
         }
         // Show ID links only if there are templates and ID data
         $idtemplates = $this->bbs()->idTemplates();
@@ -319,7 +333,7 @@ class MainActions extends DefaultActions
         }
         $kindle_format = ($settings->kindle == 1) ? $this->calibre()->titleGetKindleFormat($id) : null;
         $this->log()->debug('titleDetails custom columns: ' . count($details['custom']));
-        $this->render(
+        return $this->render(
             'title_detail.twig',
             ['page' => $this->mkPage('book_details', 2, 2),
                 'book' => $details['book'],
@@ -343,22 +357,21 @@ class MainActions extends DefaultActions
      * Return the cover for the book with ID. Calibre generates only JPEGs, so we always return a JPEG.
      * If there is no cover, return 404.
      * Route: /titles/{id}/cover/
+     * @return Response
      */
     public function cover($id)
     {
         // parameter checking
         if (!is_numeric($id)) {
             $this->log()->warning('cover: invalid title id ' . $id);
-            $this->mkError(400, "Bad parameter");
-            return;
+            return $this->mkError(400, "Bad parameter");
         }
 
         $has_cover = false;
         $book = $this->calibre()->title($id);
         if (is_null($book)) {
             $this->log()->debug("cover: book not found: " . $id);
-            $this->mkError(404);
-            return;
+            return $this->mkError(404);
         }
 
         if ($book->has_cover) {
@@ -366,9 +379,9 @@ class MainActions extends DefaultActions
             $has_cover = true;
         }
         if ($has_cover) {
-            $this->mkSendFile($cover, 'image/jpeg;base64');
+            return $this->mkSendFile($cover, 'image/jpeg;base64');
         } else {
-            $this->mkError(404);
+            return $this->mkError(404);
         }
     }
 
@@ -376,6 +389,7 @@ class MainActions extends DefaultActions
      * Return the cover for the book with ID. Calibre generates only JPEGs, so we always return a JPEG.
      * If there is no cover, return 404.
      * Route: /titles/{id}/thumbnail/
+     * @return Response
      */
     public function thumbnail($id)
     {
@@ -384,8 +398,7 @@ class MainActions extends DefaultActions
         // parameter checking
         if (!is_numeric($id)) {
             $this->log()->warning('thumbnail: invalid title id ' . $id);
-            $this->mkError(400, "Bad parameter");
-            return;
+            return $this->mkError(400, "Bad parameter");
         }
 
         $this->log()->debug('thumbnail: ' . $id);
@@ -393,8 +406,7 @@ class MainActions extends DefaultActions
         $book = $this->calibre()->title($id);
         if (is_null($book)) {
             $this->log()->error("thumbnail: book not found: " . $id);
-            $this->mkError(404);
-            return;
+            return $this->mkError(404);
         }
 
         if ($book->has_cover) {
@@ -404,15 +416,16 @@ class MainActions extends DefaultActions
             $has_cover = true;
         }
         if ($has_cover) {
-            $this->mkSendFile($thumb, 'image/png;base64');
+            return $this->mkSendFile($thumb, 'image/png;base64');
         } else {
-            $this->mkError(404);
+            return $this->mkError(404);
         }
     }
 
     /**
      * Return the selected file for the book with ID.
      * Route: /titles/{id}/file/{file}
+     * @return Response
      */
     public function book($id, $file)
     {
@@ -421,22 +434,19 @@ class MainActions extends DefaultActions
         // parameter checking
         if (!is_numeric($id)) {
             $this->log()->warning('book: invalid title id ' . $id);
-            $this->mkError(400, "Bad parameter");
-            return;
+            return $this->mkError(400, "Bad parameter");
         }
         // TODO check file parameter?
 
         $details = $this->calibre()->titleDetails($settings['lang'], $id);
         if (is_null($details)) {
             $this->log()->warning("book: no book found for " . $id);
-            $this->myNotFound();
-            return;
+            return $this->mkNotFound();
         }
         // for people trying to circumvent filtering by direct access
         if ($this->title_forbidden($details)) {
             $this->log()->warning("book: requested book not allowed for user: " . $id);
-            $this->myNotFound();
-            return;
+            return $this->mkNotFound();
         }
 
         $real_bookpath = $this->calibre()->titleFile($id, $file);
@@ -462,7 +472,7 @@ class MainActions extends DefaultActions
             $this->log()->debug("book(e): type " . $contentType);
             $booksize = filesize($bookpath);
             $this->log()->debug("book(e): size " . $booksize);
-            $this->mkSendFileAsAttachment($bookpath, $contentType, $file);
+            return $this->mkSendFileAsAttachment($bookpath, $contentType, $file);
         } else {
             // Else send the file as is
             $bookpath = $real_bookpath;
@@ -470,7 +480,7 @@ class MainActions extends DefaultActions
             $this->log()->debug("book: type " . $contentType);
             $booksize = filesize($bookpath);
             $this->log()->debug("book: size " . $booksize);
-            $this->mkSendFileAsAttachment($bookpath, $contentType, $file);
+            return $this->mkSendFileAsAttachment($bookpath, $contentType, $file);
         }
     }
 
@@ -478,6 +488,7 @@ class MainActions extends DefaultActions
     /**
      * Send the selected file to a Kindle e-mail address
      * Route: /titles/{id}/kindle/{file}
+     * @return Response
      */
     public function kindle($id, $file)
     {
@@ -486,8 +497,7 @@ class MainActions extends DefaultActions
         // parameter checking
         if (!is_numeric($id)) {
             $this->log()->warning('kindle: invalid title id ' . $id);
-            $this->mkError(400, "Bad parameter");
-            return;
+            return $this->mkError(400, "Bad parameter");
         }
         // TODO check file parameter?
 
@@ -495,8 +505,7 @@ class MainActions extends DefaultActions
 
         if (is_null($book)) {
             $this->log()->debug("kindle: book not found: " . $id);
-            $this->myNotFound();
-            return;
+            return $this->mkNotFound();
         }
 
         $details = $this->calibre()->titleDetails($settings['lang'], $id);
@@ -515,8 +524,7 @@ class MainActions extends DefaultActions
         $to_email = $this->post('email');
         if (!InputUtil::isEMailValid($to_email)) {
             $this->log()->debug("kindle: invalid email, " . $to_email);
-            $this->mkError(400);
-            return;
+            return $this->mkError(400);
         } else {
             $util = new ResponseUtil($this->response());
             $this->response = $util->deleteCookie(Settings::KINDLE_COOKIE);
@@ -529,8 +537,7 @@ class MainActions extends DefaultActions
                 if (!$message_success) {
                     $this->log()->warning('kindle: book message to ' . $to_email . ' failed, dump: ' . $mailer->getDump());
                     $answer = $this->getMessageString('error_kindle_send');
-                    $this->mkResponse($answer, 'text/plain', 503);
-                    return;
+                    return $this->mkResponse($answer, 'text/plain', 503);
                 }
                 $send_success = $mailer->sendMessage();
                 if ($send_success == 0) {
@@ -548,10 +555,10 @@ class MainActions extends DefaultActions
             $this->response = $util->setCookie(Settings::KINDLE_COOKIE, $to_email);
             if ($send_success > 0) {
                 $answer = $this->getMessageString('send_success');
-                $this->mkResponse($answer, 'text/plain', 200);
+                return $this->mkResponse($answer, 'text/plain', 200);
             } else {
                 $answer = $this->getMessageString('error_kindle_send');
-                $this->mkResponse($answer, 'text/plain', 503);
+                return $this->mkResponse($answer, 'text/plain', 503);
             }
         }
     }
@@ -560,6 +567,7 @@ class MainActions extends DefaultActions
     /**
      *  A list of authors at $page -> /authorslist/{page}
      * @param int $page author list page index
+     * @return Response
      */
     public function authorsSlice($page = 0)
     {
@@ -568,8 +576,7 @@ class MainActions extends DefaultActions
         // parameter checking
         if (!is_numeric($page)) {
             $this->log()->warning('authorsSlice: invalid page id ' . $page);
-            $this->mkError(400, "Bad parameter");
-            return;
+            return $this->mkError(400, "Bad parameter");
         }
 
         $search = $this->get('search');
@@ -585,7 +592,7 @@ class MainActions extends DefaultActions
                 $this->log()->debug('authorsSlice thumbnail ' . var_export($author->thumbnail->url, true));
             }
         }
-        $this->render('authors.twig', [
+        return $this->render('authors.twig', [
             'page' => $this->mkPage('authors', 3, 1),
             'url' => 'authorslist',
             'authors' => $tl['entries'],
@@ -600,7 +607,7 @@ class MainActions extends DefaultActions
      *
      * @param  integer $id author id
      * @param  integer $page page index for book list
-     * @return void HTML page
+     * @return Response
      */
     public function authorDetailsSlice($id, $page = 0)
     {
@@ -609,16 +616,14 @@ class MainActions extends DefaultActions
         // parameter checking
         if (!is_numeric($id) || !is_numeric($page)) {
             $this->log()->warning('authorDetailsSlice: invalid author id ' . $id . ' or page id ' . $page);
-            $this->mkError(400, "Bad parameter");
-            return;
+            return $this->mkError(400, "Bad parameter");
         }
 
         $filter = $this->getFilter();
         $tl = $this->calibre()->authorDetailsSlice($settings['lang'], $id, $page, $settings->page_size, $filter);
         if (is_null($tl)) {
             $this->log()->debug('no author ' . $id);
-            $this->myNotFound();
-            return;
+            return $this->mkNotFound();
         }
         $books = array_map([$this, 'checkThumbnail'], $tl['entries']);
 
@@ -641,7 +646,7 @@ class MainActions extends DefaultActions
         }
 
         $author->links = $this->bbs()->authorLinks($id);
-        $this->render('author_detail.twig', [
+        return $this->render('author_detail.twig', [
             'page' => $this->mkPage('author_details', 3, 2),
             'url' => 'authors/' . $id,
             'author' => $author,
@@ -657,22 +662,21 @@ class MainActions extends DefaultActions
      * Notes for a single author -> /authors/{id}/notes/
      *
      * @param  int $id author id
+     * @return Response
      */
     public function authorNotes($id)
     {
         // parameter checking
         if (!is_numeric($id)) {
             $this->log()->warning('authorNotes: invalid author id ' . $id);
-            $this->mkError(400, "Bad parameter");
-            return;
+            return $this->mkError(400, "Bad parameter");
         }
 
         /** @var ?Author $author */
         $author = $this->calibre()->author($id);
         if (is_null($author)) {
             $this->log()->debug('authorNotes: author id not found ' . $id);
-            $this->myNotFound();
-            return;
+            return $this->mkNotFound();
         }
         $note = $this->bbs()->authorNote($id);
         if (!is_null($note)) {
@@ -686,7 +690,7 @@ class MainActions extends DefaultActions
         } else {
             $author->notes = null;
         }
-        $this->render('author_notes.twig', [
+        return $this->render('author_notes.twig', [
             'page' => $this->mkPage('author_notes', 3, 2),
             'url' => 'authors/' . $id,
             'author' => $author,
@@ -697,6 +701,7 @@ class MainActions extends DefaultActions
     /**
      * Return a HTML page of series at page $page.
      * @param  int $page =0 page index into series list
+     * @return Response
      */
     public function seriesSlice($page = 0)
     {
@@ -705,8 +710,7 @@ class MainActions extends DefaultActions
         // parameter checking
         if (!is_numeric($page)) {
             $this->log()->warning('seriesSlice: invalid series index ' . $page);
-            $this->mkError(400, "Bad parameter");
-            return;
+            return $this->mkError(400, "Bad parameter");
         }
 
         $search = $this->get('search');
@@ -716,14 +720,14 @@ class MainActions extends DefaultActions
         } else {
             $tl = $this->calibre()->seriesSlice($page, $settings->page_size);
         }
-        $this->render('series.twig', [
+        $this->log()->debug('seriesSlice ended');
+        return $this->render('series.twig', [
             'page' => $this->mkPage('series', 5, 1),
             'url' => 'serieslist',
             'series' => $tl['entries'],
             'curpage' => $tl['page'],
             'pages' => $tl['pages'],
             'search' => $search]);
-        $this->log()->debug('seriesSlice ended');
     }
 
     /**
@@ -732,6 +736,7 @@ class MainActions extends DefaultActions
      *
      * @param  int $id series id
      * @param  int $page page index for books
+     * @return Response
      */
     public function seriesDetailsSlice($id, $page = 0)
     {
@@ -740,19 +745,17 @@ class MainActions extends DefaultActions
         // parameter checking
         if (!is_numeric($id) || !is_numeric($page)) {
             $this->log()->warning('seriesDetailsSlice: invalid series id ' . $id . ' or page id ' . $page);
-            $this->mkError(400, "Bad parameter");
-            return;
+            return $this->mkError(400, "Bad parameter");
         }
 
         $filter = $this->getFilter();
         $tl = $this->calibre()->seriesDetailsSlice($settings['lang'], $id, $page, $settings->page_size, $filter);
         if (is_null($tl)) {
             $this->log()->debug('seriesDetailsSlice: no series ' . $id);
-            $this->myNotFound();
-            return;
+            return $this->mkNotFound();
         }
         $books = array_map([$this, 'checkThumbnail'], $tl['entries']);
-        $this->render('series_detail.twig', [
+        return $this->render('series_detail.twig', [
             'page' => $this->mkPage('series_details', 5, 2),
             'url' => 'series/' . $id,
             'series' => $tl['series'],
@@ -765,6 +768,7 @@ class MainActions extends DefaultActions
     /**
      * A list of tags at $page -> /tagslist/{page}
      * @param int $page
+     * @return Response
      */
     public function tagsSlice($page = 0)
     {
@@ -773,8 +777,7 @@ class MainActions extends DefaultActions
         // parameter checking
         if (!is_numeric($page)) {
             $this->log()->warning('tagsSlice: invalid page id ' . $page);
-            $this->mkError(400, "Bad parameter");
-            return;
+            return $this->mkError(400, "Bad parameter");
         }
 
         $search = $this->get('search');
@@ -783,7 +786,7 @@ class MainActions extends DefaultActions
         } else {
             $tl = $this->calibre()->tagsSlice($page, $settings->page_size);
         }
-        $this->render('tags.twig', [
+        return $this->render('tags.twig', [
             'page' => $this->mkPage('tags', 4, 1),
             'url' => 'tagslist',
             'tags' => $tl['entries'],
@@ -798,7 +801,7 @@ class MainActions extends DefaultActions
      *
      * @param  integer $id series id
      * @param  integer $page page index for books
-     * @return void HTML page
+     * @return Response
      */
     public function tagDetailsSlice($id, $page = 0)
     {
@@ -807,19 +810,17 @@ class MainActions extends DefaultActions
         // parameter checking
         if (!is_numeric($id) || !is_numeric($page)) {
             $this->log()->warning('tagsDetailsSlice: invalid tag id ' . $id . ' or page id ' . $page);
-            $this->mkError(400, "Bad parameter");
-            return;
+            return $this->mkError(400, "Bad parameter");
         }
 
         $filter = $this->getFilter();
         $tl = $this->calibre()->tagDetailsSlice($settings['lang'], $id, $page, $settings->page_size, $filter);
         if (is_null($tl)) {
             $this->log()->debug('no tag ' . $id);
-            $this->myNotFound();
-            return;
+            return $this->mkNotFound();
         }
         $books = array_map([$this, 'checkThumbnail'], $tl['entries']);
-        $this->render('tag_detail.twig', [
+        return $this->render('tag_detail.twig', [
             'page' => $this->mkPage('tag_details', 4, 2),
             'url' => 'tags/' . $id,
             'tag' => $tl['tag'],

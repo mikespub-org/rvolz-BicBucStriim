@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Return response instead of void from mkSomething() and render() methods
 - Support returning response from callable action in ActionsWrapperStrategy
 - Show returning response (new-style) or void (old-style) in DefaultActions::hello()
+- Change other actions to return response instead of void
 
 ## [3.4.3] - 2024-08-24 Reduce AppTrait code
 ### Changed

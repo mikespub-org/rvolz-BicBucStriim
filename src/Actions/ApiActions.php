@@ -11,6 +11,7 @@ namespace BicBucStriim\Actions;
 
 use BicBucStriim\Utilities\RouteUtil;
 use Psr\Container\ContainerInterface;
+use Psr\Http\Message\ResponseInterface as Response;
 use Slim\Interfaces\RouteCollectorInterface;
 
 /*********************************************************************
@@ -64,7 +65,7 @@ class ApiActions extends DefaultActions
 
     /**
      * Generate the API home page
-     * @return void
+     * @return Response
      */
     public function home()
     {
@@ -72,14 +73,14 @@ class ApiActions extends DefaultActions
         $title = $settings->display_app_name;
         $rot = $this->getRootUrl();
         $link = $rot . '/api/openapi.json';
-        $this->render('api_home.twig', [
+        return $this->render('api_home.twig', [
             'title' => $title,
             'link' => $link]);
     }
 
     /**
      * Get the list of routes
-     * @return void
+     * @return Response
      */
     public function routes()
     {
@@ -99,27 +100,28 @@ class ApiActions extends DefaultActions
             'title' => $title,
             'routes' => $patterns,
         ];
-        $this->mkJsonResponse($data);
+        return $this->mkJsonResponse($data);
     }
 
     /**
      * Get minimal OpenAPI specification for the routes
-     * @return void
+     * @return Response
      */
     public function openapi()
     {
         $data = $this->getOpenApi();
-        $this->mkJsonResponse($data);
+        return $this->mkJsonResponse($data);
     }
 
     /**
      * Send CORS options
+     * @return Response;
      */
     public function corsOptions($routes = '')
     {
         $origin = $this->getCorsOrigin();
         if (!$origin) {
-            return;
+            return $this->response();
         }
         $this->response = $this->response()
             ->withHeader('Access-Control-Allow-Origin', $origin)
@@ -128,6 +130,7 @@ class ApiActions extends DefaultActions
             ->withHeader('Access-Control-Allow-Credentials', 'true')
             ->withHeader('Access-Control-Max-Age', '86400')
             ->withHeader('Vary', 'Origin');
+        return $this->response;
     }
 
     /**

@@ -17,6 +17,7 @@ use BicBucStriim\Calibre\Tag;
 use BicBucStriim\Utilities\InputUtil;
 use BicBucStriim\Utilities\Mailer;
 use BicBucStriim\Utilities\RouteUtil;
+use Psr\Http\Message\ResponseInterface as Response;
 use Exception;
 
 /*********************************************************************
@@ -67,10 +68,11 @@ class AdminActions extends DefaultActions
 
     /**
      * Generate the admin page -> /admin/
+     * @return Response
      */
     public function admin()
     {
-        $this->render('admin.twig', [
+        return $this->render('admin.twig', [
             'page' => $this->mkPage('admin', 0, 1),
             'isadmin' => $this->is_admin()]);
     }
@@ -122,10 +124,11 @@ class AdminActions extends DefaultActions
 
     /**
      * Generate the configuration page -> GET /admin/configuration/
+     * @return Response
      */
     public function configuration()
     {
-        $this->render('admin_configuration.twig', [
+        return $this->render('admin_configuration.twig', [
             'page' => $this->mkPage('admin', 0, 2),
             'mailers' => $this->mkMailers(),
             'ttss' => $this->mkTitleTimeSortOptions(),
@@ -135,6 +138,7 @@ class AdminActions extends DefaultActions
 
     /**
      * Generate the ID templates page -> GET /admin/idtemplates/
+     * @return Response
      */
     public function get_idtemplates()
     {
@@ -165,19 +169,22 @@ class AdminActions extends DefaultActions
             array_push($idtemplates, $ni);
         }
         $this->log()->debug('admin_get_idtemplates ' . json_encode($idtemplates));
-        $this->render('admin_idtemplates.twig', [
+        return $this->render('admin_idtemplates.twig', [
             'page' => $this->mkPage('admin_idtemplates', 0, 2),
             'templates' => $idtemplates,
             'isadmin' => $this->is_admin()]);
     }
 
+    /**
+     * Modify an ID template page -> PUT /admin/idtemplates/{id}/
+     * @return Response
+     */
     public function modify_idtemplate($id)
     {
         // parameter checking
         if (!preg_match('/^\w+$/u', $id)) {
             $this->log()->warning('admin_modify_idtemplate: invalid template id ' . $id);
-            $this->mkError(400, "Invalid ID for template: " . $id);
-            return;
+            return $this->mkError(400, "Invalid ID for template: " . $id);
         }
 
         $template_data = $this->post();
@@ -197,21 +204,24 @@ class AdminActions extends DefaultActions
         if (!is_null($ntemplate)) {
             $msg = $this->getMessageString('admin_modified');
             $answer = json_encode(['template' => $ntemplate->unbox()->getProperties(), 'msg' => $msg]);
-            $this->mkResponse($answer, 'application/json', 200);
+            return $this->mkResponse($answer, 'application/json', 200);
         } else {
             $answer = $this->getMessageString('admin_modify_error');
-            $this->mkResponse($answer, 'text/plain', 500);
+            return $this->mkResponse($answer, 'text/plain', 500);
         }
         #$this->log()->debug('admin_modify_idtemplate 2: '.var_export($ntemplate, true));
     }
 
+    /**
+     * Clear an ID template page -> DELETE /admin/idtemplates/{id}/
+     * @return Response
+     */
     public function clear_idtemplate($id)
     {
         // parameter checking
         if (!preg_match('/^\w+$/u', $id)) {
             $this->log()->warning('admin_clear_idtemplate: invalid template id ' . $id);
-            $this->mkError(400, "Invalid ID for template: " . $id);
-            return;
+            return $this->mkError(400, "Invalid ID for template: " . $id);
         }
 
         $this->log()->debug('admin_clear_idtemplate: ' . var_export($id, true));
@@ -219,15 +229,16 @@ class AdminActions extends DefaultActions
         if ($success) {
             $msg = $this->getMessageString('admin_modified');
             $answer = json_encode(['msg' => $msg]);
-            $this->mkResponse($answer, 'application/json', 200);
+            return $this->mkResponse($answer, 'application/json', 200);
         } else {
             $answer = $this->getMessageString('admin_modify_error');
-            $this->mkResponse($answer, 'text/plain', 404);
+            return $this->mkResponse($answer, 'text/plain', 404);
         }
     }
 
     /**
      * Generate the SMTP configuration page -> GET /admin/mail/
+     * @return Response
      */
     public function get_smtp_config()
     {
@@ -239,7 +250,7 @@ class AdminActions extends DefaultActions
             'smtpport' => $settings[Settings::SMTP_PORT],
             'smtpenc' => $settings[Settings::SMTP_ENCRYPTION],
         ];
-        $this->render('admin_mail.twig', [
+        return $this->render('admin_mail.twig', [
             'page' => $this->mkPage('admin_mail', 0, 2),
             'mail' => $mail,
             'encryptions' => $this->mkEncryptions(),
@@ -262,6 +273,7 @@ class AdminActions extends DefaultActions
 
     /**
      * Change the SMTP configuration -> PUT /admin/mail/
+     * @return Response
      */
     public function change_smtp_config()
     {
@@ -275,7 +287,7 @@ class AdminActions extends DefaultActions
             Settings::SMTP_ENCRYPTION => $mail_data['smtpenc'],
         ];
         $this->bbs()->saveConfigs($mail_config);
-        $this->render('admin_mail.twig', [
+        return $this->render('admin_mail.twig', [
             'page' => $this->mkPage('admin_smtp', 0, 2),
             'mail' => $mail_data,
             'encryptions' => $this->mkEncryptions(),
@@ -285,11 +297,12 @@ class AdminActions extends DefaultActions
 
     /**
      * Generate the users overview page -> GET /admin/users/
+     * @return Response
      */
     public function get_users()
     {
         $users = $this->bbs()->users();
-        $this->render('admin_users.twig', [
+        return $this->render('admin_users.twig', [
             'page' => $this->mkPage('admin_users', 0, 2),
             'users' => $users,
             'isadmin' => $this->is_admin()]);
@@ -298,14 +311,14 @@ class AdminActions extends DefaultActions
 
     /**
      * Generate the single user page -> GET /admin/users/{id}/
+     * @return Response
      */
     public function get_user($id)
     {
         // parameter checking
         if (!is_numeric($id)) {
             $this->log()->warning('admin_get_user: invalid user id ' . $id);
-            $this->mkError(400, "Bad parameter");
-            return;
+            return $this->mkError(400, "Bad parameter");
         }
 
         $user = $this->bbs()->user($id);
@@ -326,7 +339,7 @@ class AdminActions extends DefaultActions
         $nt->key = '';
         array_unshift($tags, $nt);
         $this->log()->debug('admin_get_user: ' . json_encode($user));
-        $this->render('admin_user.twig', [
+        return $this->render('admin_user.twig', [
             'page' => $this->mkPage('admin_users', 0, 3),
             'user' => $user,
             'languages' => $languages,
@@ -336,6 +349,7 @@ class AdminActions extends DefaultActions
 
     /**
      * Add a user -> POST /admin/users/ (JSON)
+     * @return Response
      */
     public function add_user()
     {
@@ -351,23 +365,23 @@ class AdminActions extends DefaultActions
         if (isset($user) && !is_null($user)) {
             $msg = $this->getMessageString('admin_modified');
             $answer = json_encode(['user' => $user->unbox()->getProperties(), 'msg' => $msg]);
-            $this->mkResponse($answer, 'application/json', 200);
+            return $this->mkResponse($answer, 'application/json', 200);
         } else {
             $answer = $this->getMessageString('admin_modify_error');
-            $this->mkResponse($answer, 'text/plain', 500);
+            return $this->mkResponse($answer, 'text/plain', 500);
         }
     }
 
     /**
      * Delete a user -> DELETE /admin/users/{id}/ (JSON)
+     * @return Response
      */
     public function delete_user($id)
     {
         // parameter checking
         if (!is_numeric($id)) {
             $this->log()->warning('admin_delete_user: invalid user id ' . $id);
-            $this->mkError(400, "Bad parameter");
-            return;
+            return $this->mkError(400, "Bad parameter");
         }
 
         $this->log()->debug('admin_delete_user: ' . var_export($id, true));
@@ -375,23 +389,23 @@ class AdminActions extends DefaultActions
         if ($success) {
             $msg = $this->getMessageString('admin_modified');
             $answer = json_encode(['msg' => $msg]);
-            $this->mkResponse($answer, 'application/json', 200);
+            return $this->mkResponse($answer, 'application/json', 200);
         } else {
             $answer = $this->getMessageString('admin_modify_error');
-            $this->mkResponse($answer, 'text/plain', 500);
+            return $this->mkResponse($answer, 'text/plain', 500);
         }
     }
 
     /**
      * Modify a user -> PUT /admin/users/{id}/ (JSON)
+     * @return Response
      */
     public function modify_user($id)
     {
         // parameter checking
         if (!is_numeric($id)) {
             $this->log()->warning('admin_modify_user: invalid user id ' . $id);
-            $this->mkError(400, "Bad parameter");
-            return;
+            return $this->mkError(400, "Bad parameter");
         }
 
         $user_data = $this->post();
@@ -407,16 +421,17 @@ class AdminActions extends DefaultActions
         if (isset($user) && !is_null($user)) {
             $msg = $this->getMessageString('admin_modified');
             $answer = json_encode(['user' => $user->unbox()->getProperties(), 'msg' => $msg]);
-            $this->mkResponse($answer, 'application/json', 200);
+            return $this->mkResponse($answer, 'application/json', 200);
         } else {
             $answer = $this->getMessageString('admin_modify_error');
-            $this->mkResponse($answer, 'text/plain', 500);
+            return $this->mkResponse($answer, 'text/plain', 500);
         }
     }
 
 
     /**
      * Processes changes in the admin page -> POST /admin/configuration/
+     * @return Response
      */
     public function change_json()
     {
@@ -425,11 +440,10 @@ class AdminActions extends DefaultActions
         # Check access permission
         if (!$this->is_admin()) {
             $this->log()->warning('admin_change: no admin permission');
-            $this->render('admin_configuration.twig', [
+            return $this->render('admin_configuration.twig', [
                 'page' => $this->mkPage('admin'),
                 'messages' => [$this->getMessageString('invalid_password')],
                 'isadmin' => false]);
-            return;
         }
         $nconfigs = [];
         $req_configs = $this->post();
@@ -487,7 +501,7 @@ class AdminActions extends DefaultActions
         # Don't save just return the error status
         if (count($errors) > 0) {
             $this->log()->error('admin_change: ended with error ' . var_export($errors, true));
-            $this->render('admin_configuration.twig', [
+            return $this->render('admin_configuration.twig', [
                 'page' => $this->mkPage('admin'),
                 'isadmin' => true,
                 'errors' => $errors]);
@@ -507,7 +521,7 @@ class AdminActions extends DefaultActions
                 $this->settings($settings);
             }
             $this->log()->debug('admin_change: ended');
-            $this->render('admin_configuration.twig', [
+            return $this->render('admin_configuration.twig', [
                 'page' => $this->mkPage('admin', 0, 2),
                 'messages' => [$this->getMessageString('changes_saved')],
                 'mailers' => $this->mkMailers(),
@@ -520,6 +534,7 @@ class AdminActions extends DefaultActions
 
     /**
      * Get the new version info and compare it to our version -> GET /admin/version/
+     * @return Response
      */
     public function check_version()
     {
@@ -548,7 +563,7 @@ class AdminActions extends DefaultActions
                 $versionAnswer = sprintf($this->getMessageString('admin_no_new_version'), $settings['version']);
             }
         }
-        $this->render('admin_version.twig', [
+        return $this->render('admin_version.twig', [
             'page' => $this->mkPage('admin_check_version', 0, 2),
             'versionClass' => $versionClass,
             'versionAnswer' => $versionAnswer,
