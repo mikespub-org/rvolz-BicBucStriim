@@ -82,47 +82,6 @@ class RouteUtil
     }
 
     /**
-     * Use callable of format [$self, 'method'] as route handler (with RequestResponseArgs strategy)
-     * @param callable|array $callable
-     * @deprecated 3.3.0 replaced by using ActionsWrapperStrategy instead
-     * @return callable
-     */
-    public static function wrapRouteHandler($callable)
-    {
-        return function (Request $request, Response $response, ...$args) use ($callable) {
-            $callable[0]->request($request);
-            $callable[0]->response($response);
-            $callable(...$args);
-            return $callable[0]->response();
-        };
-    }
-
-    /**
-     * Use callable of format [$self, 'method'] as route handler (with RequestResponseArgs strategy)
-     * @param callable|array $callable
-     * @param mixed $gatekeeper of format [$self, 'method'] to call before each route (e.g. check_admin)
-     * @deprecated 3.3.0 replaced by using ActionsWrapperStrategy instead
-     * @return callable
-     */
-    public static function wrapGuardedRouteHandler($callable, $gatekeeper)
-    {
-        return function (Request $request, Response $response, ...$args) use ($callable, $gatekeeper) {
-            // invoke gatekeeper first (e.g. check_admin)
-            $gatekeeper[0]->request($request);
-            $gatekeeper[0]->response($response);
-            // return gatekeeper response if it returns true
-            if ($gatekeeper(...$args)) {
-                return $gatekeeper[0]->response();
-            }
-            // invoke callable and return its response
-            $callable[0]->request($gatekeeper[0]->request());
-            $callable[0]->response($gatekeeper[0]->response());
-            $callable(...$args);
-            return $callable[0]->response();
-        };
-    }
-
-    /**
      * Use callable of format [$self, 'method'] in "request" middleware (= callable first, then handler)
      * Note: the callable must return true if we have a response ready, false otherwise
      * @param callable|array $callable

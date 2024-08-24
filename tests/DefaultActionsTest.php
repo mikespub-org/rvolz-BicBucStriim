@@ -104,31 +104,6 @@ class DefaultActionsTest extends PHPUnit\Framework\TestCase
         $this->assertEquals($expected, (string) $self->response()->getBody());
     }
 
-    protected function skipTestHelloViaRouteHandler()
-    {
-        //$this->markTestSkipped('Using wrap route handler is deprecated');
-        $app = AppFactory::create();
-        //$self = new DefaultActions($app);
-        $container = require dirname(__DIR__) . '/config/container.php';
-        $self = new DefaultActions($container);
-        $callable = [$self, 'hello'];
-        $wrapper = RouteUtil::wrapRouteHandler($callable);
-
-        $expected = 'Hello, world!';
-        $request = RequestUtil::getServerRequest();
-        $response = ResponseUtil::getResponse($app);
-        $args = [];
-        $response = $wrapper($request, $response, ...$args);
-        $this->assertEquals($expected, (string) $response->getBody());
-
-        $expected = 'Hello, name!';
-        $request = RequestUtil::getServerRequest();
-        $response = ResponseUtil::getResponse($app);
-        $args = ['name'];
-        $response = $wrapper($request, $response, ...$args);
-        $this->assertEquals($expected, (string) $response->getBody());
-    }
-
     protected function skipTestHelloViaCallableResolver()
     {
         //$this->markTestSkipped('Using actions callable resolver is deprecated');

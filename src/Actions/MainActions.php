@@ -880,25 +880,4 @@ class MainActions extends DefaultActions
             return false;
         }
     }
-
-    /**
-     * Utility function to serve files
-     * @deprecated v3.0.0 use PSR-7 StreamInterface instead
-     */
-    public function readfile_chunked($filename)
-    {
-        $this->log()->debug('readfile_chunked ' . $filename);
-        $handle = fopen($filename, 'rb');
-        if ($handle === false) {
-            return false;
-        }
-        while (!feof($handle)) {
-            $buffer = fread($handle, 1024 * 1024);
-            echo $buffer;
-            ob_flush();
-            flush();
-        }
-        $status = fclose($handle);
-        return $status;
-    }
 }
