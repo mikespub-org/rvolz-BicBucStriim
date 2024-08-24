@@ -52,7 +52,6 @@ class CachingMiddleware extends CacheMiddleware
     public function process(Request $request, RequestHandler $handler): Response
     {
         $this->request = $request;
-        //$response = $this->response();
         $requestUtil = new RequestUtil($request);
         $resource = $requestUtil->getPathInfo();
         foreach ($this->resources as $noCacheResource) {

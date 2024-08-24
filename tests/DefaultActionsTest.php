@@ -83,8 +83,9 @@ class DefaultActionsTest extends PHPUnit\Framework\TestCase
         $self = new DefaultActions($app->getContainer());
         $callable = [$self, 'hello'];
         $args = [];
-        $callable(...$args);
-        $this->assertEquals(\Nyholm\Psr7\Response::class, get_class($self->response()));
+        $result = $callable(...$args);
+        $result ??= $self->response();
+        $this->assertEquals(\Nyholm\Psr7\Response::class, get_class($result));
         $this->assertEquals($expected, (string) $self->response()->getBody());
     }
 
@@ -97,8 +98,9 @@ class DefaultActionsTest extends PHPUnit\Framework\TestCase
         $self = new DefaultActions($app->getContainer());
         $callable = [$self, 'hello'];
         $args = ['name'];
-        $callable(...$args);
-        $this->assertEquals(\Nyholm\Psr7\Response::class, get_class($self->response()));
+        $result = $callable(...$args);
+        $result ??= $self->response();
+        $this->assertEquals(\Nyholm\Psr7\Response::class, get_class($result));
         $this->assertEquals($expected, (string) $self->response()->getBody());
     }
 

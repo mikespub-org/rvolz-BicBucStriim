@@ -47,7 +47,6 @@ class LoginMiddleware extends DefaultMiddleware
     public function process(Request $request, RequestHandler $handler): Response
     {
         $this->request = $request;
-        //$response = $this->response();
         try {
             // true if we have a response ready (= need to authenticate), false otherwise
             if ($this->authBeforeDispatch($request)) {

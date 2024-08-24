@@ -250,33 +250,38 @@ trait AppTrait
      * @param  string   $realm      The realm
      * @param  int      $status     The HTTP response status
      * @param  string   $message    The HTTP response body
+     * @return Response
      */
     public function mkAuthenticate($realm, $status = 401, $message = 'Please authenticate')
     {
         $this->response = $this->response()->withHeader('WWW-Authenticate', sprintf('Basic realm="%s"', $realm));
-        $this->mkError($status, $message);
+        return $this->mkError($status, $message);
     }
 
     /**
      * Create and send an error response (halt)
      * @param  int      $status     The HTTP response status
      * @param  string   $message    The HTTP response body
+     * @return Response
      */
     public function mkError($status, $message = '')
     {
         $emptyBody = $this->getResponseFactory()->createResponse()->getBody();
         $emptyBody->write($message);
         $this->response = $this->response()->withStatus($status)->withBody($emptyBody);
+        return $this->response;
     }
 
     /**
      * Create and send a redirect response (redirect)
      * @param  string   $url        The destination URL
      * @param  int      $status     The HTTP redirect status code (optional)
+     * @return Response
      */
     public function mkRedirect($url, $status = 302)
     {
         $this->response = $this->response()->withStatus($status)->withHeader('Location', $url);
+        return $this->response;
     }
 
     /**
@@ -284,13 +289,14 @@ trait AppTrait
      * @param string $content
      * @param string $type
      * @param int $status
-     * @return void
+     * @return Response
      */
     public function mkResponse($content, $type, $status = 200)
     {
         // Slim 2 framework will finalize response after slim call() and echo output in run()
         $this->response = $this->response()->withStatus($status)->withHeader('Content-type', $type)->withHeader('Content-Length', (string) strlen($content));
         $this->response->getBody()->write($content);
+        return $this->response;
     }
 
     /**
@@ -298,7 +304,7 @@ trait AppTrait
      * @param mixed $data array or object
      * @param string $type (optional)
      * @param int $status (optional)
-     * @return void
+     * @return Response
      */
     public function mkJsonResponse($data, $type = 'application/json', $status = 200)
     {
@@ -307,13 +313,14 @@ trait AppTrait
         // Add Allow-Origin + Allow-Credentials to response for non-preflighted requests
         $origin = $this->getCorsOrigin();
         if (!$origin) {
-            return;
+            return $this->response;
         }
         // @see https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS#requests_with_credentials
         $this->response = $this->response()
             ->withHeader('Access-Control-Allow-Origin', $origin)
             ->withHeader('Access-Control-Allow-Credentials', 'true')
             ->withHeader('Vary', 'Origin');
+        return $this->response;
     }
 
     /**
@@ -341,7 +348,7 @@ trait AppTrait
      * @param string $filepath
      * @param string $type
      * @param int $status
-     * @return void
+     * @return Response
      */
     public function mkSendFile($filepath, $type, $status = 200)
     {
@@ -349,6 +356,7 @@ trait AppTrait
         $resp = $this->response()->withStatus($status)->withHeader('Content-type', $type)->withHeader('Content-Length', (string) filesize($filepath))->withHeader('ETag', $etag);
         $psr17Factory = new \Nyholm\Psr7\Factory\Psr17Factory();
         $this->response = $resp->withBody($psr17Factory->createStreamFromFile($filepath));
+        return $this->response;
     }
 
     /**
@@ -357,7 +365,7 @@ trait AppTrait
      * @param string $type
      * @param string $filename
      * @param int $status
-     * @return void
+     * @return Response
      */
     public function mkSendFileAsAttachment($filepath, $type, $filename, $status = 200)
     {
@@ -366,5 +374,6 @@ trait AppTrait
         $resp = $this->response()->withStatus($status)->withHeader('Content-type', $type)->withHeader('Content-Length', (string) filesize($filepath))->withHeader('Content-Disposition', "attachment; filename=\"" . $filename . "\"");
         $psr17Factory = new \Nyholm\Psr7\Factory\Psr17Factory();
         $this->response = $resp->withBody($psr17Factory->createStreamFromFile($filepath));
+        return $this->response;
     }
 }

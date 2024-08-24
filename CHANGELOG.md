@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [3.x.x] - 20xx-xx-xx
 ### Changed
+- Return response instead of void from mkSomething() and render() methods
+- Support returning response from callable action in ActionsWrapperStrategy
+- Show returning response (new-style) or void (old-style) in DefaultActions::hello()
 
 ## [3.4.3] - 2024-08-24 Reduce AppTrait code
 ### Changed

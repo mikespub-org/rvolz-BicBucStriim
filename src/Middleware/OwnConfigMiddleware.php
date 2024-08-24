@@ -44,17 +44,14 @@ class OwnConfigMiddleware extends DefaultMiddleware
     public function process(Request $request, RequestHandler $handler): Response
     {
         $this->request = $request;
-        //$response = $this->response();
         $config_status = $this->check_config_db();
         if ($config_status == static::STATUS_OOPS) {
-            $this->mkError(500, 'No or bad configuration database. Please use <a href="' .
+            return $this->mkError(500, 'No or bad configuration database. Please use <a href="' .
                 $this->getBasePath() .
                 '/installcheck.php">installcheck.php</a> to check for errors.');
-            return $this->response();
         } elseif ($config_status == static::STATUS_OLD) {
             // TODO Redirect to an update script in the future
-            $this->mkError(500, 'Old configuration database detected. Please refer to the <a href="http://projekte.textmulch.de/bicbucstriim/#upgrading">upgrade documentation</a> for more information.');
-            return $this->response();
+            return $this->mkError(500, 'Old configuration database detected. Please refer to the <a href="http://projekte.textmulch.de/bicbucstriim/#upgrading">upgrade documentation</a> for more information.');
         } else {
             return $handler->handle($request);
         }

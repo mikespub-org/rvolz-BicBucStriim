@@ -27,13 +27,15 @@ class ActionsWrapperStrategy implements InvocationStrategyInterface
         if (is_array($callable)) {
             [$class, $method] = $callable;
             // when using [static::class, 'method']
-            // we never get this because Slim goes through CallableResolver first
+            // ... we never get this because Slim goes through CallableResolver first
             // when using [$self, 'method']
             if (is_object($class) && $class instanceof DefaultActions) {
                 $class->request($request);
                 $class->response($response);
-                $callable(...array_values($routeArguments));
-                return $class->response();
+                // callable can return void (old-style) or response (new-style)
+                $result = $callable(...array_values($routeArguments));
+                $result ??= $class->response();
+                return $result;
             }
         }
         return $callable($request, $response, ...array_values($routeArguments));

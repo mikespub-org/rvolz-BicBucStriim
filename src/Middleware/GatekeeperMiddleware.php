@@ -35,10 +35,9 @@ class GatekeeperMiddleware extends DefaultActions implements MiddlewareInterface
 
         // @todo replace with direct use of request
         if (!$this->is_admin($request)) {
-            $this->render('error.twig', [
+            return $this->render('error.twig', [
                 'page' => $this->mkPage('error', 0, 0),
                 'error' => $this->getMessageString('error_no_access')]);
-            return $this->response();
         }
 
         return $handler->handle($request);

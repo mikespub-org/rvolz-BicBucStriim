@@ -70,13 +70,36 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
     /**
      * Hello function (example)
      * @param ?string $name
-     * @return void
+     * @return void|Response
      */
     public function hello($name = null)
+    {
+        //$this->helloVoid($name);
+        return $this->helloResponse($name);
+    }
+
+    /**
+     * Hello function (example) - old-style = returning void
+     * @param ?string $name
+     * @return void
+     */
+    public function helloVoid($name = null)
     {
         $name ??= 'world';
         $answer = 'Hello, ' . $name . '!';
         $this->mkResponse($answer, 'text/plain');
+    }
+
+    /**
+     * Hello function (example) - new-style = returning response
+     * @param ?string $name
+     * @return Response
+     */
+    public function helloResponse($name = null)
+    {
+        $name ??= 'world';
+        $answer = 'Hello, ' . $name . '!';
+        return $this->mkResponse($answer, 'text/plain');
     }
 
     /**
@@ -170,7 +193,7 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
      * Create json response for template data (if hasapi with Accept header)
      * @param  array  $data     Associative array of data made available to the view
      * @param  ?int    $status   The HTTP response status code to use (optional)
-     * @return void
+     * @return Response
      */
     public function renderJson($data = [], $status = null)
     {
@@ -184,8 +207,7 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
                 unset($data['users'][$id]['password']);
             }
         }
-        $this->mkJsonResponse($data);
-        return;
+        return $this->mkJsonResponse($data);
     }
 
     /**
@@ -193,19 +215,18 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
      * @param  string $template The name of the template passed into the view's render() method
      * @param  array  $data     Associative array of data made available to the view
      * @param  ?int    $status   The HTTP response status code to use (optional)
-     * @return void
+     * @return Response
      */
     public function render($template, $data = [], $status = null)
     {
         $settings = $this->settings();
         if (!empty($settings['hasapi']) && $this->request()->hasHeader('Accept') && in_array('application/json', $this->request()->getHeader('Accept'))) {
-            $this->renderJson($data, $status);
-            return;
+            return $this->renderJson($data, $status);
         }
         // Slim 2 framework will replace data, render template and echo output via slim view display()
         $this->setTemplatesDir();
         $content = $this->twig()->render($template, $data);
-        $this->mkResponse($content, 'text/html');
+        return $this->mkResponse($content, 'text/html');
     }
 
     /**
