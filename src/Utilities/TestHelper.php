@@ -58,7 +58,7 @@ class TestHelper
 
     public static function getAuthFactory($request)
     {
-        return new \Aura\Auth\AuthFactory($request->getCookieParams(), new \Aura\Auth\Session\NullSession, new \Aura\Auth\Session\NullSegment);
+        return new \Aura\Auth\AuthFactory($request->getCookieParams(), new \Aura\Auth\Session\NullSession(), new \Aura\Auth\Session\NullSegment());
     }
 
     public static function getAuth($request, $userData = null)

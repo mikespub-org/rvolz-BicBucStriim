@@ -38,7 +38,7 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
     {
         // Slim 2 framework uses callable - we need $app instance
         //$self = new self($app);
-        // Slim 4 framework uses its own CallableResolver if this is a class string, *before* invocation strategy 
+        // Slim 4 framework uses its own CallableResolver if this is a class string, *before* invocation strategy
         $self = static::class;
         $routes = static::getRoutes($self, $gatekeeper);
         RouteUtil::mapRoutes($app, $routes);

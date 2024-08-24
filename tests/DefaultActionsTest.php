@@ -132,7 +132,7 @@ class DefaultActionsTest extends PHPUnit\Framework\TestCase
         //$this->markTestSkipped('Using actions callable resolver is deprecated');
         $container = require dirname(__DIR__) . '/config/container.php';
         AppFactory::setContainer($container);
-        // Slim 4 framework uses its own CallableResolver if this is a class string, *before* invocation strategy 
+        // Slim 4 framework uses its own CallableResolver if this is a class string, *before* invocation strategy
         $callableResolver = new ActionsCallableResolver($container);
         AppFactory::setCallableResolver($callableResolver);
         $app = AppFactory::create();

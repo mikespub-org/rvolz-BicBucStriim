@@ -150,6 +150,8 @@ class MiddlewareTest extends PHPUnit\Framework\TestCase
                 $expected = (string) $output;
             } elseif (is_array($output)) {
                 $expected = json_encode($output);
+            } else {
+                $expected = null;
             }
             $handler = TestHelper::getHandler($app, $expected);
 
@@ -203,6 +205,8 @@ class MiddlewareTest extends PHPUnit\Framework\TestCase
                 $expected = (string) $output;
             } elseif (is_array($output)) {
                 $expected = json_encode($output);
+            } else {
+                $expected = null;
             }
             $handler = TestHelper::getHandler($app, $expected);
 

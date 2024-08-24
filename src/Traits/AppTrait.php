@@ -189,7 +189,7 @@ trait AppTrait
     public function flash($key, $value = null)
     {
         // @todo pass along $request or $session here?
-        $session = $this->getSession();
+        $session = $this->session();
         if (empty($session)) {
             return;
         }

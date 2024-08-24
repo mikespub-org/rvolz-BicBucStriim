@@ -29,3 +29,8 @@ parameters:
 			message: "#^Call to an undefined method Psr\\\\Container\\\\ContainerInterface\\:\\:set\\(\\)\\.$#"
 			count: 3
 			path: src/Utilities/TestHelper.php
+
+		-
+			message: "#^Call to protected method is_authorized\\(\\) of class BicBucStriim\\\\Middleware\\\\LoginMiddleware\\.$#"
+			count: 4
+			path: tests/MiddlewareTest.php

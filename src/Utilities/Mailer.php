@@ -56,7 +56,7 @@ class Mailer
     public function setMockConfig($config)
     {
         //Create a new PHPMailer instance
-        $this->mailer = new class () extends PHPMailer {
+        $this->mailer = new class extends PHPMailer {
             public function send()
             {
                 return true;
@@ -136,9 +136,9 @@ class Mailer
             //Set the encryption mechanism to use:
             // - STARTTLS (explicit TLS on port 587)
             $this->mailer->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-        //Custom connection options
-        //Note that these settings are INSECURE
-        //$this->mailer->SMTPOptions = [];
+            //Custom connection options
+            //Note that these settings are INSECURE
+            //$this->mailer->SMTPOptions = [];
         } elseif ($config['smtp-encryption'] == static::SSL) {
             //Set the SMTP port number:
             // - 465 for SMTP with implicit TLS, a.k.a. RFC8314 SMTPS or
@@ -146,9 +146,9 @@ class Mailer
             //Set the encryption mechanism to use:
             // - SMTPS (implicit TLS on port 465) or
             $this->mailer->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
-        //Custom connection options
-        //Note that these settings are INSECURE
-        //$this->mailer->SMTPOptions = [];
+            //Custom connection options
+            //Note that these settings are INSECURE
+            //$this->mailer->SMTPOptions = [];
         } else {
             throw new Exception('Invalid SMTP encryption option');
         }
