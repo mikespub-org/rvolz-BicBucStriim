@@ -10,6 +10,7 @@
 
 namespace BicBucStriim\Middleware;
 
+use BicBucStriim\Utilities\RequestUtil;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
@@ -29,7 +30,8 @@ class CalibreConfigMiddleware extends DefaultMiddleware
     {
         $this->request = $request;
 
-        $resource = $this->getPathInfo();
+        $requestUtil = new RequestUtil($request);
+        $resource = $requestUtil->getPathInfo();
         if ($resource == '/login/') {
             return $handler->handle($request);
         }

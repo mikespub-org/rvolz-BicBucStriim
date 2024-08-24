@@ -16,10 +16,11 @@ use BicBucStriim\AppData\Settings;
 use BicBucStriim\Calibre\Calibre;
 use BicBucStriim\Session\Session;
 use BicBucStriim\Utilities\Mailer;
-use Psr\Container\ContainerInterface;
+use BicBucStriim\Utilities\RequestUtil;
 use Psr\Http\Message\ResponseFactoryInterface;
+use Psr\Http\Message\ResponseInterface as Response;
+use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Log\LoggerInterface;
-use Slim\Routing\RouteContext;
 
 /*********************************************************************
  * App utility trait
@@ -28,9 +29,9 @@ trait AppTrait
 {
     /** @var ?\Psr\Container\ContainerInterface */
     protected $container;
-    /** @var ?\Psr\Http\Message\ServerRequestInterface */
+    /** @var ?Request */
     protected $request;
-    /** @var ?\Psr\Http\Message\ResponseInterface */
+    /** @var ?Response */
     protected $response;
 
     /**
@@ -121,8 +122,8 @@ trait AppTrait
 
     /**
      * Get the Request object
-     * @param ?\Psr\Http\Message\ServerRequestInterface $request
-     * @return \Psr\Http\Message\ServerRequestInterface
+     * @param ?Request $request
+     * @return Request
      */
     public function request($request = null)
     {
@@ -134,8 +135,8 @@ trait AppTrait
 
     /**
      * Get the Response object or create one if needed
-     * @param ?\Psr\Http\Message\ResponseInterface $response
-     * @return \Psr\Http\Message\ResponseInterface
+     * @param ?Response $response
+     * @return Response
      */
     public function response($response = null)
     {
@@ -153,6 +154,7 @@ trait AppTrait
     /**
      * Get session - depends on request
      * @param ?Session $session
+     * @deprecated 3.4.3 use DefaultActions::getSession() instead
      * @return Session|null
      */
     public function session($session = null)
@@ -166,6 +168,7 @@ trait AppTrait
     /**
      * Get authentication tracker - depends on request
      * @param ?Auth $auth
+     * @deprecated 3.4.3 use DefaultActions::getAuth() instead
      * @return Auth|null
      */
     public function auth($auth = null)
@@ -180,11 +183,13 @@ trait AppTrait
      * Set flash message for next request or get flash from previous request
      * @param  string   $key
      * @param  mixed    $value
+     * @deprecated 3.4.3 use DefaultActions::getFlash() or DefaultActions::setFlash() instead
      * @return void|mixed
      */
     public function flash($key, $value = null)
     {
-        $session = $this->session();
+        // @todo pass along $request or $session here?
+        $session = $this->getSession();
         if (empty($session)) {
             return;
         }
@@ -198,77 +203,46 @@ trait AppTrait
     /**
      * Get root url
      * @param bool $absolute override relative_urls settings
+     * @todo deprecated 3.4.3 moved to \BicBucStriim\Utilities\RequestUtil
      * @return string root url
      */
     public function getRootUrl($absolute = false)
     {
-        $settings = $this->settings();
-
-        if ($settings->relative_urls == '1' && !$absolute) {
-            $root = rtrim($this->getBasePath(), "/");
-        } else {
-            // Get forwarding information, if available
-            $util = new \BicBucStriim\Utilities\RequestUtil($this->request());
-            $info = $util->getForwardingInfo();
-            if (is_null($info) || !$info->is_valid()) {
-                // No forwarding info available
-                $root = rtrim($this->getSchemeAndHttpHost() . $this->getBasePath(), "/");
-            } else {
-                // Use forwarding info
-                $this->log()->debug("getRootUrl: Using forwarding information " . $info);
-                $root = $info->protocol . '://' . $info->host . $this->getBasePath();
-            }
-        }
-        $this->log()->debug("getRootUrl: Using root url " . $root);
-        return $root;
+        $requestUtil = new RequestUtil($this->request, $this->settings());
+        return $requestUtil->getRootUrl($absolute);
     }
 
     /**
      * See https://github.com/slimphp/Slim/blob/2.x/Slim/Http/Request.php#L569
+     * @deprecated 3.4.3 moved to \BicBucStriim\Utilities\RequestUtil
      */
     public function getSchemeAndHttpHost()
     {
-        $uri = $this->request->getUri();
-        $url = $uri->getScheme() . '://' . $uri->getHost();
-        if (empty($uri->getPort())) {
-            return $url;
-        }
-        if (($uri->getScheme() === 'https' && $uri->getPort() !== 443) || ($uri->getScheme() === 'http' && $uri->getPort() !== 80)) {
-            $url .= sprintf(':%s', $uri->getPort());
-        }
-        return $url;
+        $requestUtil = new RequestUtil($this->request);
+        return $requestUtil->getSchemeAndHttpHost();
     }
 
     /**
      * See https://github.com/slimphp/Slim/blob/2.x/Slim/Http/Request.php#L533
      * See https://www.slimframework.com/docs/v4/objects/request.html#obtain-base-path-from-within-route
      * See https://discourse.slimframework.com/t/slim-4-get-base-url/3406
+     * @deprecated 3.4.3 moved to \BicBucStriim\Utilities\RequestUtil
      * @todo align with request basepath
      */
     public function getBasePath()
     {
-        $basedir = dirname($this->request->getServerParams()['SCRIPT_NAME'] ?? '');
-        return rtrim($basedir, '/');
+        $requestUtil = new RequestUtil($this->request);
+        return $requestUtil->getBasePath();
     }
 
     /**
      * See https://github.com/slimphp/Slim/blob/2.x/Slim/Http/Request.php#L560
+     * @deprecated 3.4.3 moved to \BicBucStriim\Utilities\RequestUtil
      */
     public function getPathInfo()
     {
-        $resource = $this->request->getRequestTarget();
-        $basepath = $this->request->getAttribute(RouteContext::BASE_PATH);
-        //$routeContext = RouteContext::fromRequest($this->request);
-        //$basepath = $routeContext->getBasePath();
-        //echo "Basepath: '$basepath' - Resource: '$resource'\n";
-        if (!empty($basepath) && str_starts_with($resource, $basepath . '/')) {
-            $resource = substr($resource, strlen($basepath));
-        }
-        // with trafex/php-nginx, request target becomes "/login/?q=/login/&" for "/login/"
-        if (str_contains($resource, '?')) {
-            $resource = explode('?', $resource)[0];
-        }
-        return $resource;
+        $requestUtil = new RequestUtil($this->request);
+        return $requestUtil->getPathInfo();
     }
 
     /**

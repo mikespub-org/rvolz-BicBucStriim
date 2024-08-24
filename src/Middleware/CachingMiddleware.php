@@ -10,6 +10,7 @@
 
 namespace BicBucStriim\Middleware;
 
+use BicBucStriim\Utilities\RequestUtil;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
@@ -52,7 +53,8 @@ class CachingMiddleware extends CacheMiddleware
     {
         $this->request = $request;
         //$response = $this->response();
-        $resource = $this->getPathInfo();
+        $requestUtil = new RequestUtil($request);
+        $resource = $requestUtil->getPathInfo();
         foreach ($this->resources as $noCacheResource) {
             if (str_starts_with($resource, $noCacheResource)) {
                 session_cache_limiter('nocache');

@@ -5,6 +5,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [3.x.x] - 20xx-xx-xx
+### Changed
+
+## [3.4.3] - 2024-08-24 Reduce AppTrait code
+### Changed
+- Split auth() and session() with getter in DefaultActions + setter in LoginMiddleware
+- Split flash() with getter and setter in DefaultActions
+- Pass along $request to auth and session methods (partial)
+- Move url and path methods from AppTrait to RequestUtil helper
 
 ## [3.4.2] - 2024-08-24 Additional code clean-up + fixes
 ### Changed

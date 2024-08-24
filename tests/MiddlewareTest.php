@@ -237,12 +237,12 @@ class MiddlewareTest extends PHPUnit\Framework\TestCase
         // Set resume service for session
         $app->getContainer()->set('resume_service', TestHelper::getAuthFactory($request)->newResumeService());
 
-        // Build mock LoginMiddleware with getAuthTracker == $auth
+        // Build mock LoginMiddleware with makeAuthTracker == $auth
         $middleware = $this->getMockBuilder(LoginMiddleware::class)
             ->setConstructorArgs([$app->getContainer(), $settings['appname'], []])
-            ->onlyMethods(['getAuthTracker'])
+            ->onlyMethods(['makeAuthTracker'])
             ->getMock();
-        $middleware->expects($this->once())->method('getAuthTracker')->willReturn($auth);
+        $middleware->expects($this->once())->method('makeAuthTracker')->willReturn($auth);
 
         $expected = 'Expected!';
         $handler = TestHelper::getHandler($app, $expected);
@@ -268,12 +268,12 @@ class MiddlewareTest extends PHPUnit\Framework\TestCase
         // Set resume service for session
         $app->getContainer()->set('resume_service', TestHelper::getAuthFactory($request)->newResumeService());
 
-        // Build mock LoginMiddleware with getAuthTracker == $auth
+        // Build mock LoginMiddleware with makeAuthTracker == $auth
         $middleware = $this->getMockBuilder(LoginMiddleware::class)
             ->setConstructorArgs([$app->getContainer(), $settings['appname'], []])
-            ->onlyMethods(['getAuthTracker'])
+            ->onlyMethods(['makeAuthTracker'])
             ->getMock();
-        $middleware->expects($this->once())->method('getAuthTracker')->willReturn($auth);
+        $middleware->expects($this->once())->method('makeAuthTracker')->willReturn($auth);
 
         $expected = 'Handled!';
         $handler = TestHelper::getHandler($app, $expected);
@@ -300,11 +300,11 @@ class MiddlewareTest extends PHPUnit\Framework\TestCase
         $middleware->request($request);
 
         // test protected method using closure bind & call or use reflection
-        $isAuthorized = function () {
+        $isAuthorized = function ($request) {
             /** @var LoginMiddleware $this */
-            return $this->is_authorized();
+            return $this->is_authorized($request);
         };
-        $result = $isAuthorized->call($middleware);
+        $result = $isAuthorized->call($middleware, $request);
         $this->assertTrue($result);
         unset($_SESSION[\Aura\Auth\Auth::class]);
     }
@@ -322,11 +322,11 @@ class MiddlewareTest extends PHPUnit\Framework\TestCase
         $middleware->request($request);
 
         // test protected method using closure bind & call or use reflection
-        $isAuthorized = function () {
+        $isAuthorized = function ($request) {
             /** @var LoginMiddleware $this */
-            return $this->is_authorized();
+            return $this->is_authorized($request);
         };
-        $result = $isAuthorized->call($middleware);
+        $result = $isAuthorized->call($middleware, $request);
         $this->assertFalse($result);
         unset($_SESSION[\Aura\Auth\Auth::class]);
     }
@@ -344,11 +344,11 @@ class MiddlewareTest extends PHPUnit\Framework\TestCase
         $middleware->request($request);
 
         // test protected method using closure bind & call or use reflection
-        $isAuthorized = function () {
+        $isAuthorized = function ($request) {
             /** @var LoginMiddleware $this */
-            return $this->is_authorized();
+            return $this->is_authorized($request);
         };
-        $result = $isAuthorized->call($middleware);
+        $result = $isAuthorized->call($middleware, $request);
         $this->assertTrue($result);
         unset($_SESSION[\Aura\Auth\Auth::class]);
     }
@@ -366,11 +366,11 @@ class MiddlewareTest extends PHPUnit\Framework\TestCase
         $middleware->request($request);
 
         // test protected method using closure bind & call or use reflection
-        $isAuthorized = function () {
+        $isAuthorized = function ($request) {
             /** @var LoginMiddleware $this */
-            return $this->is_authorized();
+            return $this->is_authorized($request);
         };
-        $result = $isAuthorized->call($middleware);
+        $result = $isAuthorized->call($middleware, $request);
         $this->assertFalse($result);
         unset($_SESSION[\Aura\Auth\Auth::class]);
     }

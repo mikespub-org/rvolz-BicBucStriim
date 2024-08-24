@@ -10,9 +10,11 @@
 
 namespace BicBucStriim\Middleware;
 
+use Aura\Auth\Auth;
 use BicBucStriim\Session\Session;
 use BicBucStriim\Utilities\InputUtil;
 use BicBucStriim\Utilities\L10n;
+use BicBucStriim\Utilities\RequestUtil;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -48,7 +50,7 @@ class LoginMiddleware extends DefaultMiddleware
         //$response = $this->response();
         try {
             // true if we have a response ready (= need to authenticate), false otherwise
-            if ($this->authBeforeDispatch()) {
+            if ($this->authBeforeDispatch($request)) {
                 return $this->response;
             }
         } catch (\Exception $e) {
@@ -61,26 +63,28 @@ class LoginMiddleware extends DefaultMiddleware
             echo "Done: " . $e->getMessage();
             exit;
         }
+        // $this->request is updated in is_authorized()
         $this->setCurrentLanguage($this->request);
         return $handler->handle($this->request);
     }
 
     /**
      * Check if we need to authenticate before dispatching the request further
+     * @param Request $request HTTP request
      * @return bool true if we have a response ready (= need to authenticate), false otherwise
      */
-    public function authBeforeDispatch()
+    public function authBeforeDispatch(Request $request)
     {
         $settings = $this->settings();
-        $request = $this->request();
-        $resource = $this->getPathInfo();
+        $requestUtil = new RequestUtil($request);
+        $resource = $requestUtil->getPathInfo();
         $this->log()->debug('login resource: ' . $resource);
         if ($settings->must_login == 1) {
             if ($this->is_static_resource($resource)) {
                 return false;
             }
-            // we need to initialize $this->auth() here to identify the user
-            if ($this->is_authorized()) {
+            // we need to initialize $this->setAuth() here to identify the user
+            if ($this->is_authorized($request)) {
                 return false;
             }
             if ($resource === '/login/') {
@@ -93,8 +97,8 @@ class LoginMiddleware extends DefaultMiddleware
                 $this->mkAuthenticate($this->realm);
                 return true;
             }
-            $util = new \BicBucStriim\Utilities\RequestUtil($request);
-            if ($request->getMethod() != 'GET' && ($util->isXhr() || $util->isAjax())) {
+            $requestUtil = new \BicBucStriim\Utilities\RequestUtil($request);
+            if ($request->getMethod() != 'GET' && ($requestUtil->isXhr() || $requestUtil->isAjax())) {
                 $this->log()->debug('login: unauthorized JSON request');
                 $this->mkAuthenticate($this->realm);
                 return true;
@@ -105,28 +109,28 @@ class LoginMiddleware extends DefaultMiddleware
             return true;
         }
         if ($resource === '/login/') {
-            // we need to initialize $this->auth() if we want to login in MainActions
-            $this->is_authorized();
+            // we need to initialize $this->setAuth() if we want to login in MainActions
+            $this->is_authorized($request);
             // special case login page
             $this->log()->debug('login: login page authorized');
             return false;
         }
         if ($resource === '/logout/') {
-            // we need to initialize $this->auth() if we want to logout in MainActions
-            $this->is_authorized();
+            // we need to initialize $this->setAuth() if we want to logout in MainActions
+            $this->is_authorized($request);
             // special case logout page
             $this->log()->debug('login: logout page authorized');
             return false;
         }
         if (stripos($resource, '/admin') === 0) {
-            if (!$this->is_static_resource($resource) && !$this->is_authorized()) {
+            if (!$this->is_static_resource($resource) && !$this->is_authorized($request)) {
                 $this->log()->debug('login: redirecting to login');
                 $this->mkRedirect($this->getRootUrl() . '/login/');
                 return true;
             }
             return false;
         }
-        // we do not want/need to initialize $this->auth() here = anonymous user without session
+        // we do not want/need to initialize $this->setAuth() here = anonymous user without session
         return false;
     }
 
@@ -157,24 +161,27 @@ class LoginMiddleware extends DefaultMiddleware
      * Check if the access request is authorized by a user. A request must either contain session data from
      * a previous login or contain a HTTP Basic authorization info, which is then used to
      * perform a login against the users table in the database.
+     * @param Request $request HTTP request
      * @return bool true if authorized else false
      */
-    protected function is_authorized()
+    protected function is_authorized(Request $request)
     {
-        $request = $this->request();
-        $session = $this->getSession($request, $this->getBasePath());
-        $this->auth($this->getAuthTracker($request, $session, $this->bbs()->mydb));
+        $session = $this->makeSession($request, $this->getBasePath());
+        $authTracker = $this->makeAuthTracker($request, $session, $this->bbs()->mydb);
+        // @todo this sets 'auth' attribute on $this->request
+        $request = $this->setAuth($request, $authTracker);
         try {
             $resume_service = $this->container('resume_service');
-            $resume_service->resume($this->auth());
-            $this->session($session);
+            $resume_service->resume($authTracker);
+            // @todo this sets 'session' attribute on $this->request
+            $request = $this->setSession($request, $session);
         } catch(\ErrorException $e) {
             $this->log()->warning('login error: bad cookie data ' . var_export(get_class($e), true));
         }
-        $this->log()->debug("after resume: " . $this->auth()->getStatus());
-        if ($this->auth()->isValid()) {
+        $this->log()->debug("after resume: " . $authTracker->getStatus());
+        if ($authTracker->isValid()) {
             // already logged in -- check for bad cookie contents
-            $ud = $this->auth()->getUserData();
+            $ud = $authTracker->getUserData();
             if (is_array($ud) && array_key_exists('role', $ud) && array_key_exists('id', $ud)) {
                 // contents seems ok
                 return true;
@@ -185,24 +192,24 @@ class LoginMiddleware extends DefaultMiddleware
             return false;
         }
         // not logged in - check for login info
-        $auth = $this->checkPhpAuth($request);
-        if (is_null($auth)) {
-            $auth = $this->checkHttpAuth($request);
+        $authArray = $this->checkPhpAuth($request);
+        if (is_null($authArray)) {
+            $authArray = $this->checkHttpAuth($request);
         }
-        $this->log()->debug('login auth: ' . var_export($auth, true));
+        $this->log()->debug('login auth: ' . var_export($authArray, true));
         // if auth info found check the database
-        if (is_null($auth)) {
+        if (is_null($authArray)) {
             return false;
         }
         try {
-            $this->container('login_service')->login($this->auth(), [
-                'username' => $auth[0],
-                'password' => $auth[1]]);
-            $this->log()->debug('login status: ' . var_export($this->auth()->getStatus(), true));
+            $this->container('login_service')->login($authTracker, [
+                'username' => $authArray[0],
+                'password' => $authArray[1]]);
+            $this->log()->debug('login status: ' . var_export($authTracker->getStatus(), true));
         } catch (\Aura\Auth\Exception $e) {
             $this->log()->debug('login error: ' . var_export(get_class($e), true));
         }
-        return $this->auth()->isValid();
+        return $authTracker->isValid();
     }
 
     /**
@@ -211,7 +218,7 @@ class LoginMiddleware extends DefaultMiddleware
      * @param string $basePath
      * @return Session
      */
-    protected function getSession($request, $basePath = '')
+    protected function makeSession($request, $basePath = '')
     {
         $sessionFactory = new \BicBucStriim\Session\SessionFactory();
         $session = $sessionFactory->newInstance($request->getCookieParams());
@@ -226,7 +233,7 @@ class LoginMiddleware extends DefaultMiddleware
      * @param \PDO $pdo
      * @return \Aura\Auth\Auth
      */
-    protected function getAuthTracker($request, $session, $pdo)
+    protected function makeAuthTracker($request, $session, $pdo)
     {
         $authFactory = new \Aura\Auth\AuthFactory($request->getCookieParams(), $session);
         $hash = new \Aura\Auth\Verifier\PasswordVerifier(PASSWORD_BCRYPT);
@@ -275,6 +282,32 @@ class LoginMiddleware extends DefaultMiddleware
         } else {
             return null;
         }
+    }
+
+    /**
+     * Set session - depends on request
+     * @param Request $request
+     * @param Session $session
+     * @return Request
+     */
+    protected function setSession($request, $session)
+    {
+        $request = $request->withAttribute('session', $session);
+        $this->request($request);
+        return $request;
+    }
+
+    /**
+     * Set authentication tracker - depends on request
+     * @param Request $request
+     * @param Auth $auth
+     * @return Request
+     */
+    protected function setAuth($request, $auth)
+    {
+        $request = $request->withAttribute('auth', $auth);
+        $this->request($request);
+        return $request;
     }
 
     /**

@@ -399,9 +399,9 @@ class OpdsActions extends DefaultActions
 
         $this->log()->debug('opdsLogout: OPDS logout request');
         if ($this->is_authenticated()) {
-            $username = $this->auth()->getUserName();
+            $username = $this->getAuth()->getUserName();
             $this->log()->debug("logging out user: " . $username);
-            $this->container('logout_service')->logout($this->auth());
+            $this->container('logout_service')->logout($this->getAuth());
             if ($this->is_authenticated()) {
                 $this->log()->error("error logging out user: " . $username);
             } else {

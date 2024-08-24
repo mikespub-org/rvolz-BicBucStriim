@@ -84,7 +84,7 @@ class MetadataActions extends DefaultActions
             $this->log()->debug('edit_author_thm: filetype ' . $_FILES["file"]["type"] . ', size ' . $_FILES["file"]["size"]);
             if ($_FILES["file"]["error"] > 0) {
                 $this->log()->debug('edit_author_thm: upload error ' . $_FILES["file"]["error"]);
-                $this->flash('error', $this->getMessageString('author_thumbnail_upload_error1') . ': ' . $_FILES["file"]["error"]);
+                $this->setFlash('error', $this->getMessageString('author_thumbnail_upload_error1') . ': ' . $_FILES["file"]["error"]);
                 $rot = $this->getBasePath();
                 $this->mkRedirect($rot . '/authors/' . $id . '/0/');
             } else {
@@ -97,7 +97,7 @@ class MetadataActions extends DefaultActions
             }
         } else {
             $this->log()->warning('edit_author_thm: Uploaded thumbnail too big or wrong type');
-            $this->flash('error', $this->getMessageString('author_thumbnail_upload_error2'));
+            $this->setFlash('error', $this->getMessageString('author_thumbnail_upload_error2'));
             $rot = $this->getBasePath();
             $this->mkRedirect($rot . '/authors/' . $id . '/0/');
         }

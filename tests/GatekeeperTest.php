@@ -40,10 +40,10 @@ class GatekeeperTest extends PHPUnit\Framework\TestCase
             'role' => 1,
         ];
         $auth = TestHelper::getAuth($request, $userData);
+        $request = $request->withAttribute('auth', $auth);
 
         $self = new DefaultActions($app->getContainer());
         $self->request($request);
-        $self->auth($auth);
         $callable = [$self, 'check_admin'];
         $result = $callable();
         $this->assertEquals($expected, $result);

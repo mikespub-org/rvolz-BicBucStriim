@@ -97,7 +97,7 @@ class MainActions extends DefaultActions
     public function show_login()
     {
         if ($this->is_authenticated()) {
-            $this->log()->info('user is already logged in : ' . $this->auth()->getUserName());
+            $this->log()->info('user is already logged in : ' . $this->getAuth()->getUserName());
             $this->mkRedirect($this->getBasePath() . '/');
         } else {
             $this->render('login.twig', [
@@ -117,11 +117,11 @@ class MainActions extends DefaultActions
                     'page' => $this->mkPage('login')]);
             } else {
                 try {
-                    $this->container('login_service')->login($this->auth(), ['username' => $uname, 'password' => $upw]);
-                    $success = $this->auth()->getStatus();
+                    $this->container('login_service')->login($this->getAuth(), ['username' => $uname, 'password' => $upw]);
+                    $success = $this->getAuth()->getStatus();
                     $this->log()->debug('login success: ' . $success);
                     if ($this->is_authenticated()) {
-                        $this->log()->info('logged in user : ' . $this->auth()->getUserName());
+                        $this->log()->info('logged in user : ' . $this->getAuth()->getUserName());
                         $this->mkRedirect($this->getBasePath() . '/');
                         return;
                     }
@@ -141,9 +141,9 @@ class MainActions extends DefaultActions
     public function logout()
     {
         if ($this->is_authenticated()) {
-            $username = $this->auth()->getUserName();
+            $username = $this->getAuth()->getUserName();
             $this->log()->debug("logging out user: " . $username);
-            $this->container('logout_service')->logout($this->auth());
+            $this->container('logout_service')->logout($this->getAuth());
             if ($this->is_authenticated()) {
                 $this->log()->error("error logging out user: " . $username);
             } else {
@@ -442,7 +442,7 @@ class MainActions extends DefaultActions
         $real_bookpath = $this->calibre()->titleFile($id, $file);
         $contentType = CalibreUtil::titleMimeType($real_bookpath);
         if ($this->is_authenticated()) {
-            $this->log()->info("book download by " . $this->auth()->getUserName() . " for " . $real_bookpath .
+            $this->log()->info("book download by " . $this->getAuth()->getUserName() . " for " . $real_bookpath .
                 " with metadata update = " . $settings->metadata_update);
         } else {
             $this->log()->info("book download for " . $real_bookpath .
@@ -848,7 +848,7 @@ class MainActions extends DefaultActions
         if (!$this->is_authenticated()) {
             return false;
         }
-        $user = $this->auth()->getUserData();
+        $user = $this->getAuth()->getUserData();
         if (empty($user['languages']) && empty($user['tags'])) {
             return false;
         } else {

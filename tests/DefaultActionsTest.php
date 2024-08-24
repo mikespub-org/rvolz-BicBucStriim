@@ -136,7 +136,7 @@ class DefaultActionsTest extends PHPUnit\Framework\TestCase
         $callableResolver = new ActionsCallableResolver($container);
         AppFactory::setCallableResolver($callableResolver);
         $app = AppFactory::create();
-        $callableResolver->setApp($app);
+        //$callableResolver->setApp($app);
         /**
          * See https://www.slimframework.com/docs/v4/objects/routing.html#route-strategies
          * Changing the default invocation strategy on the RouteCollector component

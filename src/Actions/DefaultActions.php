@@ -10,8 +10,12 @@
 
 namespace BicBucStriim\Actions;
 
+use Aura\Auth\Auth;
+use BicBucStriim\Session\Session;
 use BicBucStriim\Utilities\RouteUtil;
 use Psr\Container\ContainerInterface;
+use Psr\Http\Message\ResponseInterface as Response;
+use Psr\Http\Message\ServerRequestInterface as Request;
 
 /*********************************************************************
  * Default actions
@@ -20,8 +24,6 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
 {
     use \BicBucStriim\Traits\AppTrait;
 
-    /** @var \Slim\App|object|null */
-    protected $app;
     /** @var string|null */
     protected $templatesDir = null;
 
@@ -106,11 +108,12 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
     /**
      * Check admin rights and redirect if necessary
      * @see \BicBucStriim\Middleware\GatekeeperMiddleware
+     * @param ?Request $request
      * @return bool true if we have a response ready (= no access), false otherwise
      */
-    public function check_admin()
+    public function check_admin($request = null)
     {
-        if (!$this->is_admin()) {
+        if (!$this->is_admin($request)) {
             $this->render('error.twig', [
                 'page' => $this->mkPage('error', 0, 0),
                 'error' => $this->getMessageString('error_no_access')]);
@@ -121,22 +124,24 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
 
     /**
      * Check if the current user was authenticated
+     * @param ?Request $request
      * @return boolean  true if authenticated, else false
      */
-    public function is_authenticated()
+    public function is_authenticated($request = null)
     {
-        return (is_object($this->auth()) && $this->auth()->isValid());
+        return (is_object($this->getAuth($request)) && $this->getAuth($request)->isValid());
     }
 
     /**
      * Check for admin permissions. Currently this is only the user
      * <em>admin</em>, ID 1.
+     * @param ?Request $request
      * @return boolean  true if admin user, else false
      */
-    public function is_admin()
+    public function is_admin($request = null)
     {
-        if ($this->is_authenticated()) {
-            $user = $this->auth()->getUserData();
+        if ($this->is_authenticated($request)) {
+            $user = $this->getAuth($request)->getUserData();
             return (intval($user['role']) === 1);
         } else {
             return false;
@@ -148,7 +153,7 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
         $lang = null;
         $tag = null;
         if ($this->is_authenticated()) {
-            $user = $this->auth()->getUserData();
+            $user = $this->getAuth()->getUserData();
             $this->log()->debug('getFilter: ' . var_export($user, true));
             if (!empty($user['languages'])) {
                 $lang = $this->calibre()->getLanguageId($user['languages']);
@@ -275,5 +280,58 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
         $settings = $this->settings();
         $msg = $settings['l10n']->message($id);
         return $msg;
+    }
+
+    /**
+     * Get session - depends on request
+     * @param ?Request $request
+     * @return Session|null
+     */
+    public function getSession($request = null)
+    {
+        $request ??= $this->request();
+        return $request?->getAttribute('session');
+    }
+
+    /**
+     * Get authentication tracker - depends on request
+     * @param ?Request $request
+     * @return Auth|null
+     */
+    public function getAuth($request = null)
+    {
+        $request ??= $this->request();
+        return $request?->getAttribute('auth');
+    }
+
+    /**
+     * Set flash message for next request
+     * @param  string   $key
+     * @param  mixed    $value
+     * @return void
+     */
+    public function setFlash($key, $value)
+    {
+        // @todo pass along $request or $session here?
+        $session = $this->getSession();
+        if (empty($session)) {
+            return;
+        }
+        $session->getLocalSegment()->setFlash($key, $value);
+    }
+
+    /**
+     * Get flash from previous request
+     * @param  string   $key
+     * @return void|mixed
+     */
+    public function getFlash($key)
+    {
+        // @todo pass along $request or $session here?
+        $session = $this->getSession();
+        if (empty($session)) {
+            return;
+        }
+        return $session->getLocalSegment()->getFlash($key);
     }
 }
