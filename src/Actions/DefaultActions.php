@@ -13,6 +13,7 @@ namespace BicBucStriim\Actions;
 use Aura\Auth\Auth;
 use BicBucStriim\Session\Session;
 use BicBucStriim\Utilities\RequestUtil;
+use BicBucStriim\Utilities\ResponseUtil;
 use BicBucStriim\Utilities\RouteUtil;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface as Response;
@@ -27,6 +28,12 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
 
     /** @var Request|null */
     protected $request = null;
+    /** @var Response|null */
+    protected $response = null;
+    /** @var RequestUtil|null */
+    protected $requester = null;
+    /** @var ResponseUtil|null */
+    protected $responder = null;
 
     /** @var string|null */
     protected $templatesDir = null;
@@ -92,7 +99,7 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
     {
         $name ??= 'world';
         $answer = 'Hello, ' . $name . '!';
-        $this->mkResponse($answer, 'text/plain');
+        $this->responder->mkResponse($answer, 'text/plain');
     }
 
     /**
@@ -104,19 +111,53 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
     {
         $name ??= 'world';
         $answer = 'Hello, ' . $name . '!';
-        return $this->mkResponse($answer, 'text/plain');
+        return $this->responder->mkResponse($answer, 'text/plain');
     }
 
     /**
      * Initialize actions with ActionsWrapperStrategy
-     * @param Request $request
-     * @param Response $response
+     * @param ?Request $request
+     * @param ?Response $response
      * @return void
      */
     public function initialize($request, $response)
     {
-        $this->request = $request;
+        $this->request($request);
         $this->response($response);
+    }
+
+    /**
+     * Get the Request object
+     * @param ?Request $request
+     * @return Request
+     */
+    public function request($request = null)
+    {
+        if (!empty($request)) {
+            $this->request = $request;
+            $this->requester = new RequestUtil($this->request, $this->settings());
+        }
+        return $this->request;
+    }
+
+    /**
+     * Get the Response object or create one if needed
+     * @param ?Response $response
+     * @return Response
+     */
+    public function response($response = null)
+    {
+        if (!empty($response)) {
+            $this->response = $response;
+            $this->responder = new ResponseUtil($this->response);
+        }
+        if (empty($this->response)) {
+            // Slim\App contains responseFactory as mandatory first param in constructor
+            $this->response = $this->getResponseFactory()->createResponse();
+            //$this->response = new \Slim\Psr7\Response();
+            $this->responder = new ResponseUtil($this->response);
+        }
+        return $this->response;
     }
 
     /**
@@ -207,7 +248,9 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
                 unset($data['users'][$id]['password']);
             }
         }
-        return $this->mkJsonResponse($data);
+        // Add Allow-Origin + Allow-Credentials to response for non-preflighted requests
+        $origin = $this->requester->getCorsOrigin();
+        return $this->responder->mkJsonResponse($data, $origin);
     }
 
     /**
@@ -219,14 +262,13 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
      */
     public function render($template, $data = [], $status = null)
     {
-        $requestUtil = new RequestUtil($this->request, $this->settings());
-        if ($requestUtil->isJsonApi()) {
+        if ($this->requester->isJsonApi()) {
             return $this->renderJson($data, $status);
         }
         // Slim 2 framework will replace data, render template and echo output via slim view display()
         $this->setTemplatesDir();
         $content = $this->twig()->render($template, $data);
-        return $this->mkResponse($content, 'text/html');
+        return $this->responder->mkResponse($content, 'text/html');
     }
 
     /**
@@ -266,8 +308,7 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
         if (!empty($settings->templates_dir)) {
             $templatesDirName = basename($settings->templates_dir);
         }
-        $requestUtil = new RequestUtil($this->request, $this->settings());
-        $root = $requestUtil->getRootUrl();
+        $root = $this->requester->getRootUrl();
         $auth = $this->is_authenticated();
         if ($settings->must_login) {
             $adm = $this->is_admin();

@@ -184,7 +184,7 @@ class AdminActions extends DefaultActions
         // parameter checking
         if (!preg_match('/^\w+$/u', $id)) {
             $this->log()->warning('admin_modify_idtemplate: invalid template id ' . $id);
-            return $this->mkError(400, "Invalid ID for template: " . $id);
+            return $this->responder->mkError(400, "Invalid ID for template: " . $id);
         }
 
         $template_data = $this->post();
@@ -204,10 +204,10 @@ class AdminActions extends DefaultActions
         if (!is_null($ntemplate)) {
             $msg = $this->getMessageString('admin_modified');
             $answer = json_encode(['template' => $ntemplate->unbox()->getProperties(), 'msg' => $msg]);
-            return $this->mkResponse($answer, 'application/json', 200);
+            return $this->responder->mkResponse($answer, 'application/json', 200);
         } else {
             $answer = $this->getMessageString('admin_modify_error');
-            return $this->mkResponse($answer, 'text/plain', 500);
+            return $this->responder->mkResponse($answer, 'text/plain', 500);
         }
         #$this->log()->debug('admin_modify_idtemplate 2: '.var_export($ntemplate, true));
     }
@@ -221,7 +221,7 @@ class AdminActions extends DefaultActions
         // parameter checking
         if (!preg_match('/^\w+$/u', $id)) {
             $this->log()->warning('admin_clear_idtemplate: invalid template id ' . $id);
-            return $this->mkError(400, "Invalid ID for template: " . $id);
+            return $this->responder->mkError(400, "Invalid ID for template: " . $id);
         }
 
         $this->log()->debug('admin_clear_idtemplate: ' . var_export($id, true));
@@ -229,10 +229,10 @@ class AdminActions extends DefaultActions
         if ($success) {
             $msg = $this->getMessageString('admin_modified');
             $answer = json_encode(['msg' => $msg]);
-            return $this->mkResponse($answer, 'application/json', 200);
+            return $this->responder->mkResponse($answer, 'application/json', 200);
         } else {
             $answer = $this->getMessageString('admin_modify_error');
-            return $this->mkResponse($answer, 'text/plain', 404);
+            return $this->responder->mkResponse($answer, 'text/plain', 404);
         }
     }
 
@@ -318,7 +318,7 @@ class AdminActions extends DefaultActions
         // parameter checking
         if (!is_numeric($id)) {
             $this->log()->warning('admin_get_user: invalid user id ' . $id);
-            return $this->mkError(400, "Bad parameter");
+            return $this->responder->mkError(400, "Bad parameter");
         }
 
         $user = $this->bbs()->user($id);
@@ -365,10 +365,10 @@ class AdminActions extends DefaultActions
         if (isset($user)) {
             $msg = $this->getMessageString('admin_modified');
             $answer = json_encode(['user' => $user->unbox()->getProperties(), 'msg' => $msg]);
-            return $this->mkResponse($answer, 'application/json', 200);
+            return $this->responder->mkResponse($answer, 'application/json', 200);
         } else {
             $answer = $this->getMessageString('admin_modify_error');
-            return $this->mkResponse($answer, 'text/plain', 500);
+            return $this->responder->mkResponse($answer, 'text/plain', 500);
         }
     }
 
@@ -381,7 +381,7 @@ class AdminActions extends DefaultActions
         // parameter checking
         if (!is_numeric($id)) {
             $this->log()->warning('admin_delete_user: invalid user id ' . $id);
-            return $this->mkError(400, "Bad parameter");
+            return $this->responder->mkError(400, "Bad parameter");
         }
 
         $this->log()->debug('admin_delete_user: ' . var_export($id, true));
@@ -389,10 +389,10 @@ class AdminActions extends DefaultActions
         if ($success) {
             $msg = $this->getMessageString('admin_modified');
             $answer = json_encode(['msg' => $msg]);
-            return $this->mkResponse($answer, 'application/json', 200);
+            return $this->responder->mkResponse($answer, 'application/json', 200);
         } else {
             $answer = $this->getMessageString('admin_modify_error');
-            return $this->mkResponse($answer, 'text/plain', 500);
+            return $this->responder->mkResponse($answer, 'text/plain', 500);
         }
     }
 
@@ -405,7 +405,7 @@ class AdminActions extends DefaultActions
         // parameter checking
         if (!is_numeric($id)) {
             $this->log()->warning('admin_modify_user: invalid user id ' . $id);
-            return $this->mkError(400, "Bad parameter");
+            return $this->responder->mkError(400, "Bad parameter");
         }
 
         $user_data = $this->post();
@@ -421,10 +421,10 @@ class AdminActions extends DefaultActions
         if (isset($user)) {
             $msg = $this->getMessageString('admin_modified');
             $answer = json_encode(['user' => $user->unbox()->getProperties(), 'msg' => $msg]);
-            return $this->mkResponse($answer, 'application/json', 200);
+            return $this->responder->mkResponse($answer, 'application/json', 200);
         } else {
             $answer = $this->getMessageString('admin_modify_error');
-            return $this->mkResponse($answer, 'text/plain', 500);
+            return $this->responder->mkResponse($answer, 'text/plain', 500);
         }
     }
 

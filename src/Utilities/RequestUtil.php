@@ -29,30 +29,21 @@ class RequestUtil
     /**
      * See https://github.com/slimphp/Slim/blob/2.x/Slim/Http/Request.php#L166
      * Is this an AJAX request?
+     * @deprecated 3.5.0 use isXhr() instead - see slim/http
      * @return bool
      */
     public function isAjax()
     {
-        $params = $this->request->getQueryParams();
-        $body = $this->request->getParsedBody();
-        if (is_array($body)) {
-            $params = array_merge($params, $body);
-        }
-        $requestedWith = $this->request->getHeaderLine('X_REQUESTED_WITH');
-        if (!empty($params['isajax'])) {
-            return true;
-        } elseif (!empty($requestedWith) && $requestedWith === 'XMLHttpRequest') {
-            return true;
-        }
-        return false;
+        return $this->isXhr();
     }
 
     /**
      * See https://github.com/slimphp/Slim/blob/2.x/Slim/Http/Request.php#L181
+     * See https://github.com/slimphp/Slim-Http/blob/master/src/ServerRequest.php#L765
      */
     public function isXhr()
     {
-        return $this->isAjax();
+        return $this->request->getHeaderLine('X-Requested-With') === 'XMLHttpRequest';
     }
 
     /**

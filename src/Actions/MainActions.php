@@ -14,9 +14,7 @@ use BicBucStriim\AppData\Settings;
 use BicBucStriim\Calibre\Author;
 use BicBucStriim\Utilities\CalibreUtil;
 use BicBucStriim\Utilities\InputUtil;
-use BicBucStriim\Utilities\Mailer;
 use BicBucStriim\Utilities\MetadataEpub;
-use BicBucStriim\Utilities\RequestUtil;
 use BicBucStriim\Utilities\ResponseUtil;
 use BicBucStriim\Utilities\RouteUtil;
 use Michelf\MarkdownExtra;
@@ -104,9 +102,8 @@ class MainActions extends DefaultActions
     public function show_login()
     {
         if ($this->is_authenticated()) {
-            $requestUtil = new RequestUtil($this->request);
             $this->log()->info('user is already logged in : ' . $this->getAuth()->getUserName());
-            return $this->mkRedirect($requestUtil->getBasePath() . '/');
+            return $this->responder->mkRedirect($this->requester->getBasePath() . '/');
         } else {
             return $this->render('login.twig', [
                 'page' => $this->mkPage('login')]);
@@ -133,9 +130,8 @@ class MainActions extends DefaultActions
                     $success = $this->getAuth()->getStatus();
                     $this->log()->debug('login success: ' . $success);
                     if ($this->is_authenticated()) {
-                        $requestUtil = new RequestUtil($this->request);
                         $this->log()->info('logged in user : ' . $this->getAuth()->getUserName());
-                        return $this->mkRedirect($requestUtil->getBasePath() . '/');
+                        return $this->responder->mkRedirect($this->requester->getBasePath() . '/');
                     }
                 } catch (Exception $e) {
                     $this->log()->error('error logging in user : ' . $e->getMessage());
@@ -241,7 +237,7 @@ class MainActions extends DefaultActions
         // parameter checking
         if (!is_numeric($page)) {
             $this->log()->warning('titlesSlice: invalid page id ' . $page);
-            return $this->mkError(400, "Bad parameter");
+            return $this->responder->mkError(400, "Bad parameter");
         }
 
         $filter = $this->getFilter();
@@ -310,7 +306,7 @@ class MainActions extends DefaultActions
         // parameter checking
         if (!is_numeric($id)) {
             $this->log()->warning('title: invalid title id ' . $id);
-            return $this->mkError(400, "Bad parameter");
+            return $this->responder->mkError(400, "Bad parameter");
         }
 
         $details = $this->calibre()->titleDetails($settings['lang'], $id);
@@ -367,14 +363,14 @@ class MainActions extends DefaultActions
         // parameter checking
         if (!is_numeric($id)) {
             $this->log()->warning('cover: invalid title id ' . $id);
-            return $this->mkError(400, "Bad parameter");
+            return $this->responder->mkError(400, "Bad parameter");
         }
 
         $has_cover = false;
         $book = $this->calibre()->title($id);
         if (is_null($book)) {
             $this->log()->debug("cover: book not found: " . $id);
-            return $this->mkError(404);
+            return $this->responder->mkError(404);
         }
 
         if ($book->has_cover) {
@@ -382,9 +378,9 @@ class MainActions extends DefaultActions
             $has_cover = true;
         }
         if ($has_cover) {
-            return $this->mkSendFile($cover, 'image/jpeg;base64');
+            return $this->responder->mkSendFile($cover, 'image/jpeg;base64');
         } else {
-            return $this->mkError(404);
+            return $this->responder->mkError(404);
         }
     }
 
@@ -401,7 +397,7 @@ class MainActions extends DefaultActions
         // parameter checking
         if (!is_numeric($id)) {
             $this->log()->warning('thumbnail: invalid title id ' . $id);
-            return $this->mkError(400, "Bad parameter");
+            return $this->responder->mkError(400, "Bad parameter");
         }
 
         $this->log()->debug('thumbnail: ' . $id);
@@ -409,7 +405,7 @@ class MainActions extends DefaultActions
         $book = $this->calibre()->title($id);
         if (is_null($book)) {
             $this->log()->error("thumbnail: book not found: " . $id);
-            return $this->mkError(404);
+            return $this->responder->mkError(404);
         }
 
         if ($book->has_cover) {
@@ -419,9 +415,9 @@ class MainActions extends DefaultActions
             $has_cover = true;
         }
         if ($has_cover) {
-            return $this->mkSendFile($thumb, 'image/png;base64');
+            return $this->responder->mkSendFile($thumb, 'image/png;base64');
         } else {
-            return $this->mkError(404);
+            return $this->responder->mkError(404);
         }
     }
 
@@ -437,7 +433,7 @@ class MainActions extends DefaultActions
         // parameter checking
         if (!is_numeric($id)) {
             $this->log()->warning('book: invalid title id ' . $id);
-            return $this->mkError(400, "Bad parameter");
+            return $this->responder->mkError(400, "Bad parameter");
         }
         // TODO check file parameter?
 
@@ -475,7 +471,7 @@ class MainActions extends DefaultActions
             $this->log()->debug("book(e): type " . $contentType);
             $booksize = filesize($bookpath);
             $this->log()->debug("book(e): size " . $booksize);
-            return $this->mkSendFileAsAttachment($bookpath, $contentType, $file);
+            return $this->responder->mkSendFileAsAttachment($bookpath, $contentType, $file);
         } else {
             // Else send the file as is
             $bookpath = $real_bookpath;
@@ -483,7 +479,7 @@ class MainActions extends DefaultActions
             $this->log()->debug("book: type " . $contentType);
             $booksize = filesize($bookpath);
             $this->log()->debug("book: size " . $booksize);
-            return $this->mkSendFileAsAttachment($bookpath, $contentType, $file);
+            return $this->responder->mkSendFileAsAttachment($bookpath, $contentType, $file);
         }
     }
 
@@ -500,7 +496,7 @@ class MainActions extends DefaultActions
         // parameter checking
         if (!is_numeric($id)) {
             $this->log()->warning('kindle: invalid title id ' . $id);
-            return $this->mkError(400, "Bad parameter");
+            return $this->responder->mkError(400, "Bad parameter");
         }
         // TODO check file parameter?
 
@@ -527,10 +523,11 @@ class MainActions extends DefaultActions
         $to_email = $this->post('email');
         if (!InputUtil::isEMailValid($to_email)) {
             $this->log()->debug("kindle: invalid email, " . $to_email);
-            return $this->mkError(400);
+            return $this->responder->mkError(400);
         } else {
-            $util = new ResponseUtil($this->response());
-            $this->response = $util->deleteCookie(Settings::KINDLE_COOKIE);
+            // @todo replace with $this->responder if possible
+            $responder = new ResponseUtil($this->response());
+            $this->response = $responder->deleteCookie(Settings::KINDLE_COOKIE);
             $bookpath = $this->calibre()->titleFile($id, $file);
             $this->log()->debug("kindle: requested file " . $bookpath);
             $mailer = $this->mailer();
@@ -540,7 +537,7 @@ class MainActions extends DefaultActions
                 if (!$message_success) {
                     $this->log()->warning('kindle: book message to ' . $to_email . ' failed, dump: ' . $mailer->getDump());
                     $answer = $this->getMessageString('error_kindle_send');
-                    return $this->mkResponse($answer, 'text/plain', 503);
+                    return $this->responder->mkResponse($answer, 'text/plain', 503);
                 }
                 $send_success = $mailer->sendMessage();
                 if ($send_success == 0) {
@@ -554,14 +551,14 @@ class MainActions extends DefaultActions
                 $this->log()->warning('kindle: Mail dump ' . $mailer->getDump());
             }
             # Store e-mail address in cookie so user needs to enter it only once
-            $util = new ResponseUtil($this->response());
-            $this->response = $util->setCookie(Settings::KINDLE_COOKIE, $to_email);
+            $responder = new ResponseUtil($this->response());
+            $this->response = $responder->setCookie(Settings::KINDLE_COOKIE, $to_email);
             if ($send_success > 0) {
                 $answer = $this->getMessageString('send_success');
-                return $this->mkResponse($answer, 'text/plain', 200);
+                return $this->responder->mkResponse($answer, 'text/plain', 200);
             } else {
                 $answer = $this->getMessageString('error_kindle_send');
-                return $this->mkResponse($answer, 'text/plain', 503);
+                return $this->responder->mkResponse($answer, 'text/plain', 503);
             }
         }
     }
@@ -579,7 +576,7 @@ class MainActions extends DefaultActions
         // parameter checking
         if (!is_numeric($page)) {
             $this->log()->warning('authorsSlice: invalid page id ' . $page);
-            return $this->mkError(400, "Bad parameter");
+            return $this->responder->mkError(400, "Bad parameter");
         }
 
         $search = $this->get('search');
@@ -619,7 +616,7 @@ class MainActions extends DefaultActions
         // parameter checking
         if (!is_numeric($id) || !is_numeric($page)) {
             $this->log()->warning('authorDetailsSlice: invalid author id ' . $id . ' or page id ' . $page);
-            return $this->mkError(400, "Bad parameter");
+            return $this->responder->mkError(400, "Bad parameter");
         }
 
         $filter = $this->getFilter();
@@ -672,7 +669,7 @@ class MainActions extends DefaultActions
         // parameter checking
         if (!is_numeric($id)) {
             $this->log()->warning('authorNotes: invalid author id ' . $id);
-            return $this->mkError(400, "Bad parameter");
+            return $this->responder->mkError(400, "Bad parameter");
         }
 
         /** @var ?Author $author */
@@ -713,7 +710,7 @@ class MainActions extends DefaultActions
         // parameter checking
         if (!is_numeric($page)) {
             $this->log()->warning('seriesSlice: invalid series index ' . $page);
-            return $this->mkError(400, "Bad parameter");
+            return $this->responder->mkError(400, "Bad parameter");
         }
 
         $search = $this->get('search');
@@ -748,7 +745,7 @@ class MainActions extends DefaultActions
         // parameter checking
         if (!is_numeric($id) || !is_numeric($page)) {
             $this->log()->warning('seriesDetailsSlice: invalid series id ' . $id . ' or page id ' . $page);
-            return $this->mkError(400, "Bad parameter");
+            return $this->responder->mkError(400, "Bad parameter");
         }
 
         $filter = $this->getFilter();
@@ -780,7 +777,7 @@ class MainActions extends DefaultActions
         // parameter checking
         if (!is_numeric($page)) {
             $this->log()->warning('tagsSlice: invalid page id ' . $page);
-            return $this->mkError(400, "Bad parameter");
+            return $this->responder->mkError(400, "Bad parameter");
         }
 
         $search = $this->get('search');
@@ -813,7 +810,7 @@ class MainActions extends DefaultActions
         // parameter checking
         if (!is_numeric($id) || !is_numeric($page)) {
             $this->log()->warning('tagsDetailsSlice: invalid tag id ' . $id . ' or page id ' . $page);
-            return $this->mkError(400, "Bad parameter");
+            return $this->responder->mkError(400, "Bad parameter");
         }
 
         $filter = $this->getFilter();

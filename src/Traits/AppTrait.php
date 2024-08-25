@@ -14,10 +14,7 @@ use BicBucStriim\AppData\BicBucStriim;
 use BicBucStriim\AppData\Settings;
 use BicBucStriim\Calibre\Calibre;
 use BicBucStriim\Utilities\Mailer;
-use BicBucStriim\Utilities\RequestUtil;
 use Psr\Http\Message\ResponseFactoryInterface;
-use Psr\Http\Message\ResponseInterface as Response;
-use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Log\LoggerInterface;
 
 /*********************************************************************
@@ -27,10 +24,6 @@ trait AppTrait
 {
     /** @var ?\Psr\Container\ContainerInterface */
     protected $container;
-    /** @var ?Request */
-    protected $request;
-    /** @var ?Response */
-    protected $response;
 
     /**
      * Get BicBucStriim app data
@@ -61,7 +54,7 @@ trait AppTrait
 
     /**
      * Get mailer instance
-     * @return \BicBucStriim\Utilities\Mailer
+     * @return Mailer
      */
     public function mailer()
     {
@@ -126,171 +119,5 @@ trait AppTrait
     public function getResponseFactory()
     {
         return $this->container(ResponseFactoryInterface::class);
-    }
-
-    /**
-     * Get the Request object
-     * @param ?Request $request
-     * @deprecated 3.5.0 use $request directly in middleware or initialize() $this->request in action
-     * @return Request
-     */
-    public function request($request = null)
-    {
-        if (!empty($request)) {
-            $this->request = $request;
-        }
-        return $this->request;
-    }
-
-    /**
-     * Get the Response object or create one if needed
-     * @param ?Response $response
-     * @return Response
-     */
-    public function response($response = null)
-    {
-        if (!empty($response)) {
-            $this->response = $response;
-        }
-        if (empty($this->response)) {
-            // Slim\App contains responseFactory as mandatory first param in constructor
-            $this->response = $this->getResponseFactory()->createResponse();
-            //$this->response = new \Slim\Psr7\Response();
-        }
-        return $this->response;
-    }
-
-    /**
-     * Create and send an error to authenticate (401)
-     * @param  string   $realm      The realm
-     * @param  int      $status     The HTTP response status
-     * @param  string   $message    The HTTP response body
-     * @return Response
-     */
-    public function mkAuthenticate($realm, $status = 401, $message = 'Please authenticate')
-    {
-        $this->response = $this->response()->withHeader('WWW-Authenticate', sprintf('Basic realm="%s"', $realm));
-        return $this->mkError($status, $message);
-    }
-
-    /**
-     * Create and send an error response (halt)
-     * @param  int      $status     The HTTP response status
-     * @param  string   $message    The HTTP response body
-     * @return Response
-     */
-    public function mkError($status, $message = '')
-    {
-        $emptyBody = $this->getResponseFactory()->createResponse()->getBody();
-        $emptyBody->write($message);
-        $this->response = $this->response()->withStatus($status)->withBody($emptyBody);
-        return $this->response;
-    }
-
-    /**
-     * Create and send a redirect response (redirect)
-     * @param  string   $url        The destination URL
-     * @param  int      $status     The HTTP redirect status code (optional)
-     * @return Response
-     */
-    public function mkRedirect($url, $status = 302)
-    {
-        $this->response = $this->response()->withStatus($status)->withHeader('Location', $url);
-        return $this->response;
-    }
-
-    /**
-     * Create and send a normal response
-     * @param string $content
-     * @param string $type
-     * @param int $status
-     * @return Response
-     */
-    public function mkResponse($content, $type, $status = 200)
-    {
-        // Slim 2 framework will finalize response after slim call() and echo output in run()
-        $this->response = $this->response()->withStatus($status)->withHeader('Content-type', $type)->withHeader('Content-Length', (string) strlen($content));
-        $this->response->getBody()->write($content);
-        return $this->response;
-    }
-
-    /**
-     * Create and send a JSON response
-     * @param mixed $data array or object
-     * @param string $type (optional)
-     * @param int $status (optional)
-     * @return Response
-     */
-    public function mkJsonResponse($data, $type = 'application/json', $status = 200)
-    {
-        $content = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PARTIAL_OUTPUT_ON_ERROR);
-        $response = $this->mkResponse($content, $type, $status);
-        // Add Allow-Origin + Allow-Credentials to response for non-preflighted requests
-        $requestUtil = new RequestUtil($this->request, $this->settings());
-        $origin = $requestUtil->getCorsOrigin();
-        if (!$origin) {
-            return $response;
-        }
-        // @see https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS#requests_with_credentials
-        $this->response = $response
-            ->withHeader('Access-Control-Allow-Origin', $origin)
-            ->withHeader('Access-Control-Allow-Credentials', 'true')
-            ->withHeader('Vary', 'Origin');
-        return $this->response;
-    }
-
-    /**
-     * Check if CORS origin is allowed
-     * @deprecated 3.5.0 moved to \BicBucStriim\Utilities\RequestUtil
-     * @return string|false
-     */
-    public function getCorsOrigin()
-    {
-        $settings = $this->settings();
-        $allowed = $settings['cors_origin'] ?? '*';
-        // Check if origin is allowed or undefined
-        $origin = $this->request->getHeaderLine('Origin') ?: '*';
-        if (is_array($allowed)) {
-            if (!in_array($origin, $allowed)) {
-                return false;
-            }
-        } elseif ($allowed !== '*' && $origin !== $allowed) {
-            return false;
-        }
-        return $origin;
-    }
-
-    /**
-     * Create and send a file response
-     * @param string $filepath
-     * @param string $type
-     * @param int $status
-     * @return Response
-     */
-    public function mkSendFile($filepath, $type, $status = 200)
-    {
-        $etag = '"' . md5((string) filemtime($filepath) . '-' . $filepath) . '"';
-        $resp = $this->response()->withStatus($status)->withHeader('Content-type', $type)->withHeader('Content-Length', (string) filesize($filepath))->withHeader('ETag', $etag);
-        $psr17Factory = new \Nyholm\Psr7\Factory\Psr17Factory();
-        $this->response = $resp->withBody($psr17Factory->createStreamFromFile($filepath));
-        return $this->response;
-    }
-
-    /**
-     * Create and send a file response as attachment
-     * @param string $filepath
-     * @param string $type
-     * @param string $filename
-     * @param int $status
-     * @return Response
-     */
-    public function mkSendFileAsAttachment($filepath, $type, $filename, $status = 200)
-    {
-        //header("Content-Description: File Transfer");
-        //header("Content-Transfer-Encoding: binary");
-        $resp = $this->response()->withStatus($status)->withHeader('Content-type', $type)->withHeader('Content-Length', (string) filesize($filepath))->withHeader('Content-Disposition', "attachment; filename=\"" . $filename . "\"");
-        $psr17Factory = new \Nyholm\Psr7\Factory\Psr17Factory();
-        $this->response = $resp->withBody($psr17Factory->createStreamFromFile($filepath));
-        return $this->response;
     }
 }

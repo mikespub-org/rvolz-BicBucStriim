@@ -34,7 +34,7 @@ class ActionsWrapperStrategy implements InvocationStrategyInterface
                 $class->initialize($request, $response);
                 // callable can return void (old-style) or response (new-style)
                 $result = $callable(...array_values($routeArguments));
-                $result ??= $class->response();
+                //$result ??= $class->response();
                 return $result;
             }
         }

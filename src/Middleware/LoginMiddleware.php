@@ -15,6 +15,7 @@ use BicBucStriim\Session\Session;
 use BicBucStriim\Utilities\InputUtil;
 use BicBucStriim\Utilities\L10n;
 use BicBucStriim\Utilities\RequestUtil;
+use BicBucStriim\Utilities\ResponseUtil;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -95,15 +96,18 @@ class LoginMiddleware extends DefaultMiddleware
             }
             if (stripos($resource, '/opds') === 0) {
                 $this->log()->debug('login: unauthorized OPDS request');
-                return $this->mkAuthenticate($this->realm);
+                $responder = new ResponseUtil(null);
+                return $responder->mkAuthenticate($this->realm);
             }
-            if ($request->getMethod() != 'GET' && ($requestUtil->isXhr() || $requestUtil->isAjax())) {
-                $this->log()->debug('login: unauthorized JSON request');
-                return $this->mkAuthenticate($this->realm);
+            if ($request->getMethod() != 'GET' && $requestUtil->isXhr()) {
+                $this->log()->debug('login: unauthorized XMLHttpRequest = Ajax request');
+                $responder = new ResponseUtil(null);
+                return $responder->mkAuthenticate($this->realm);
             }
             $this->log()->debug('login: redirecting to login');
             // app->redirect not useable in middleware
-            return $this->mkRedirect($requestUtil->getRootUrl() . '/login/');
+            $responder = new ResponseUtil(null);
+            return $responder->mkRedirect($requestUtil->getRootUrl() . '/login/');
         }
         if ($resource === '/login/') {
             // we need to initialize $this->setAuth() if we want to login in MainActions
@@ -122,7 +126,8 @@ class LoginMiddleware extends DefaultMiddleware
         if (stripos($resource, '/admin') === 0) {
             if (!$this->is_static_resource($resource) && !$this->is_authorized($request)) {
                 $this->log()->debug('login: redirecting to login');
-                return $this->mkRedirect($requestUtil->getRootUrl() . '/login/');
+                $responder = new ResponseUtil(null);
+                return $responder->mkRedirect($requestUtil->getRootUrl() . '/login/');
             }
             return false;
         }

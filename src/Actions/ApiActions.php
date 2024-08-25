@@ -9,7 +9,6 @@
 
 namespace BicBucStriim\Actions;
 
-use BicBucStriim\Utilities\RequestUtil;
 use BicBucStriim\Utilities\RouteUtil;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface as Response;
@@ -72,8 +71,7 @@ class ApiActions extends DefaultActions
     {
         $settings = $this->settings();
         $title = $settings->display_app_name;
-        $requestUtil = new RequestUtil($this->request, $this->settings());
-        $root = $requestUtil->getRootUrl();
+        $root = $this->requester->getRootUrl();
         $link = $root . '/api/openapi.json';
         return $this->render('api_home.twig', [
             'title' => $title,
@@ -88,8 +86,7 @@ class ApiActions extends DefaultActions
     {
         $settings = $this->settings();
         $title = $settings->display_app_name;
-        $requestUtil = new RequestUtil($this->request, $this->settings());
-        $root = $requestUtil->getRootUrl();
+        $root = $this->requester->getRootUrl();
         $routes = $this->routeCollector->getRoutes();
         $patterns = [];
         foreach ($routes as $route) {
@@ -103,7 +100,7 @@ class ApiActions extends DefaultActions
             'title' => $title,
             'routes' => $patterns,
         ];
-        return $this->mkJsonResponse($data);
+        return $this->responder->mkJsonResponse($data);
     }
 
     /**
@@ -113,7 +110,7 @@ class ApiActions extends DefaultActions
     public function openapi()
     {
         $data = $this->getOpenApi();
-        return $this->mkJsonResponse($data);
+        return $this->responder->mkJsonResponse($data);
     }
 
     /**
@@ -122,9 +119,8 @@ class ApiActions extends DefaultActions
      */
     public function corsOptions($routes = '')
     {
-        $requestUtil = new RequestUtil($this->request, $this->settings());
-        $origin = $requestUtil->getCorsOrigin();
-        if (!$origin) {
+        $origin = $this->requester->getCorsOrigin();
+        if (empty($origin)) {
             return $this->response();
         }
         $this->response = $this->response()
@@ -143,8 +139,7 @@ class ApiActions extends DefaultActions
      */
     public function getOpenApi()
     {
-        $requestUtil = new RequestUtil($this->request, $this->settings());
-        $root = $requestUtil->getRootUrl();
+        $root = $this->requester->getRootUrl();
         $settings = $this->settings();
         $result = [
             "openapi" => "3.0.3",

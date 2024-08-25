@@ -11,6 +11,7 @@
 namespace BicBucStriim\Middleware;
 
 use BicBucStriim\Utilities\RequestUtil;
+use BicBucStriim\Utilities\ResponseUtil;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
@@ -35,7 +36,8 @@ class CalibreConfigMiddleware extends DefaultMiddleware
         }
         if (!$this->check_calibre() && $resource != '/admin/configuration/') {
             // app->redirect not useable in middleware
-            return $this->mkRedirect($requestUtil->getBasePath() . '/admin/configuration/');
+            $responder = new ResponseUtil(null);
+            return $responder->mkRedirect($requestUtil->getBasePath() . '/admin/configuration/');
         }
         return $handler->handle($request);
     }

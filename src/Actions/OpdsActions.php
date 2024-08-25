@@ -11,7 +11,6 @@
 namespace BicBucStriim\Actions;
 
 use BicBucStriim\Utilities\OpdsGenerator;
-use BicBucStriim\Utilities\RequestUtil;
 use BicBucStriim\Utilities\RouteUtil;
 use Psr\Http\Message\ResponseInterface as Response;
 
@@ -74,7 +73,7 @@ class OpdsActions extends DefaultActions
     {
         $gen = $this->mkOpdsGenerator();
         $cat = $gen->rootCatalog(null);
-        return $this->mkOpdsResponse($cat, OpdsGenerator::OPDS_MIME_NAV);
+        return $this->responder->mkOpdsResponse($cat, OpdsGenerator::OPDS_MIME_NAV);
     }
 
     /**
@@ -101,7 +100,7 @@ class OpdsActions extends DefaultActions
         $books = array_map([$this, 'checkThumbnailOpds'], $books1);
         $gen = $this->mkOpdsGenerator();
         $cat = $gen->newestCatalog(null, $books, false);
-        return $this->mkOpdsResponse($cat, OpdsGenerator::OPDS_MIME_ACQ);
+        return $this->responder->mkOpdsResponse($cat, OpdsGenerator::OPDS_MIME_ACQ);
     }
 
     /**
@@ -120,7 +119,7 @@ class OpdsActions extends DefaultActions
         // parameter checking
         if (!is_numeric($page)) {
             $this->log()->warning('opdsByTitle: invalid page id ' . $page);
-            return $this->mkError(400, "Bad parameter");
+            return $this->responder->mkError(400, "Bad parameter");
         }
 
         $filter = $this->getFilter();
@@ -141,7 +140,7 @@ class OpdsActions extends DefaultActions
             $this->getNextSearchPage($tl),
             $this->getLastSearchPage($tl)
         );
-        return $this->mkOpdsResponse($cat, OpdsGenerator::OPDS_MIME_ACQ);
+        return $this->responder->mkOpdsResponse($cat, OpdsGenerator::OPDS_MIME_ACQ);
     }
 
     /**
@@ -153,7 +152,7 @@ class OpdsActions extends DefaultActions
         $initials = $this->calibre()->authorsInitials();
         $gen = $this->mkOpdsGenerator();
         $cat = $gen->authorsRootCatalog(null, $initials);
-        return $this->mkOpdsResponse($cat, OpdsGenerator::OPDS_MIME_NAV);
+        return $this->responder->mkOpdsResponse($cat, OpdsGenerator::OPDS_MIME_NAV);
     }
 
     /**
@@ -166,13 +165,13 @@ class OpdsActions extends DefaultActions
         // parameter checking
         if (!(ctype_upper($initial))) {
             $this->log()->warning('opdsByAuthorNamesForInitial: invalid initial ' . $initial);
-            return $this->mkError(400, "Bad parameter");
+            return $this->responder->mkError(400, "Bad parameter");
         }
 
         $authors = $this->calibre()->authorsNamesForInitial($initial);
         $gen = $this->mkOpdsGenerator();
         $cat = $gen->authorsNamesForInitialCatalog(null, $authors, $initial);
-        return $this->mkOpdsResponse($cat, OpdsGenerator::OPDS_MIME_NAV);
+        return $this->responder->mkOpdsResponse($cat, OpdsGenerator::OPDS_MIME_NAV);
     }
 
     /**
@@ -189,7 +188,7 @@ class OpdsActions extends DefaultActions
         // parameter checking
         if (!is_numeric($id) || !is_numeric($page)) {
             $this->log()->warning('opdsByAuthor: invalid author id ' . $id . ' or page id ' . $page);
-            return $this->mkError(400, "Bad parameter");
+            return $this->responder->mkError(400, "Bad parameter");
         }
 
         $filter = $this->getFilter();
@@ -209,7 +208,7 @@ class OpdsActions extends DefaultActions
             $this->getNextSearchPage($tl),
             $this->getLastSearchPage($tl)
         );
-        return $this->mkOpdsResponse($cat, OpdsGenerator::OPDS_MIME_ACQ);
+        return $this->responder->mkOpdsResponse($cat, OpdsGenerator::OPDS_MIME_ACQ);
     }
 
     /**
@@ -221,7 +220,7 @@ class OpdsActions extends DefaultActions
         $initials = $this->calibre()->tagsInitials();
         $gen = $this->mkOpdsGenerator();
         $cat = $gen->tagsRootCatalog(null, $initials);
-        return $this->mkOpdsResponse($cat, OpdsGenerator::OPDS_MIME_NAV);
+        return $this->responder->mkOpdsResponse($cat, OpdsGenerator::OPDS_MIME_NAV);
     }
 
     /**
@@ -234,13 +233,13 @@ class OpdsActions extends DefaultActions
         // parameter checking
         if (!(ctype_upper($initial))) {
             $this->log()->warning('opdsByTagNamesForInitial: invalid initial ' . $initial);
-            return $this->mkError(400, "Bad parameter");
+            return $this->responder->mkError(400, "Bad parameter");
         }
 
         $tags = $this->calibre()->tagsNamesForInitial($initial);
         $gen = $this->mkOpdsGenerator();
         $cat = $gen->tagsNamesForInitialCatalog(null, $tags, $initial);
-        return $this->mkOpdsResponse($cat, OpdsGenerator::OPDS_MIME_NAV);
+        return $this->responder->mkOpdsResponse($cat, OpdsGenerator::OPDS_MIME_NAV);
     }
 
     /**
@@ -257,7 +256,7 @@ class OpdsActions extends DefaultActions
         // parameter checking
         if (!is_numeric($id) || !is_numeric($page)) {
             $this->log()->warning('opdsByTag: invalid tag id ' . $id . ' or page id ' . $page);
-            return $this->mkError(400, "Bad parameter");
+            return $this->responder->mkError(400, "Bad parameter");
         }
 
         $filter = $this->getFilter();
@@ -275,7 +274,7 @@ class OpdsActions extends DefaultActions
             $this->getNextSearchPage($tl),
             $this->getLastSearchPage($tl)
         );
-        return $this->mkOpdsResponse($cat, OpdsGenerator::OPDS_MIME_ACQ);
+        return $this->responder->mkOpdsResponse($cat, OpdsGenerator::OPDS_MIME_ACQ);
     }
 
     /**
@@ -287,7 +286,7 @@ class OpdsActions extends DefaultActions
         $initials = $this->calibre()->seriesInitials();
         $gen = $this->mkOpdsGenerator();
         $cat = $gen->seriesRootCatalog(null, $initials);
-        return $this->mkOpdsResponse($cat, OpdsGenerator::OPDS_MIME_NAV);
+        return $this->responder->mkOpdsResponse($cat, OpdsGenerator::OPDS_MIME_NAV);
     }
 
     /**
@@ -300,13 +299,13 @@ class OpdsActions extends DefaultActions
         // parameter checking
         if (!($initial == 'all' || ctype_upper($initial))) {
             $this->log()->warning('opdsBySeriesNamesForInitial: invalid initial ' . $initial);
-            return $this->mkError(400, "Bad parameter");
+            return $this->responder->mkError(400, "Bad parameter");
         }
 
         $tags = $this->calibre()->seriesNamesForInitial($initial);
         $gen = $this->mkOpdsGenerator();
         $cat = $gen->seriesNamesForInitialCatalog(null, $tags, $initial);
-        return $this->mkOpdsResponse($cat, OpdsGenerator::OPDS_MIME_NAV);
+        return $this->responder->mkOpdsResponse($cat, OpdsGenerator::OPDS_MIME_NAV);
     }
 
     /**
@@ -323,7 +322,7 @@ class OpdsActions extends DefaultActions
         // parameter checking
         if (!is_numeric($id) || !is_numeric($page)) {
             $this->log()->warning('opdsBySeries: invalid series id ' . $id . ' or page id ' . $page);
-            return $this->mkError(400, "Bad parameter");
+            return $this->responder->mkError(400, "Bad parameter");
         }
 
         $filter = $this->getFilter();
@@ -341,7 +340,7 @@ class OpdsActions extends DefaultActions
             $this->getNextSearchPage($tl),
             $this->getLastSearchPage($tl)
         );
-        return $this->mkOpdsResponse($cat, OpdsGenerator::OPDS_MIME_ACQ);
+        return $this->responder->mkOpdsResponse($cat, OpdsGenerator::OPDS_MIME_ACQ);
     }
 
     /**
@@ -352,7 +351,7 @@ class OpdsActions extends DefaultActions
     {
         $gen = $this->mkOpdsGenerator();
         $cat = $gen->searchDescriptor(null, '/opds/searchlist/0/');
-        return $this->mkOpdsResponse($cat, OpdsGenerator::OPENSEARCH_MIME);
+        return $this->responder->mkOpdsResponse($cat, OpdsGenerator::OPENSEARCH_MIME);
     }
 
     /**
@@ -369,14 +368,14 @@ class OpdsActions extends DefaultActions
         // parameter checking
         if (!is_numeric($page)) {
             $this->log()->warning('opdsBySearch: invalid page id ' . $page);
-            return $this->mkError(400, "Bad parameter");
+            return $this->responder->mkError(400, "Bad parameter");
         }
 
         $search = $this->get('search');
         if (!isset($search)) {
             $this->log()->error('opdsBySearch called without search criteria, page ' . $page);
             // 400 Bad request
-            return $this->mkError(400);
+            return $this->responder->mkError(400);
         }
         $filter = $this->getFilter();
         $tl = $this->calibre()->titlesSlice($settings['lang'], $page, $settings->page_size, $filter, $search);
@@ -394,7 +393,7 @@ class OpdsActions extends DefaultActions
             $tl['total'],
             $settings->page_size
         );
-        return $this->mkOpdsResponse($cat, OpdsGenerator::OPDS_MIME_ACQ);
+        return $this->responder->mkOpdsResponse($cat, OpdsGenerator::OPDS_MIME_ACQ);
     }
 
     /**
@@ -416,7 +415,7 @@ class OpdsActions extends DefaultActions
                 $this->log()->info("logged out user: " . $username);
             }
         }
-        return $this->mkAuthenticate($settings['appname']);
+        return $this->responder->mkAuthenticate($settings['appname']);
     }
 
     /*********************************************************************
@@ -437,8 +436,7 @@ class OpdsActions extends DefaultActions
     {
         $settings = $this->settings();
 
-        $requestUtil = new RequestUtil($this->request, $this->settings());
-        $root = $requestUtil->getRootUrl();
+        $root = $this->requester->getRootUrl();
         $gen = new OpdsGenerator(
             $root,
             $settings['version'],
@@ -447,15 +445,6 @@ class OpdsActions extends DefaultActions
             $settings['l10n']
         );
         return $gen;
-    }
-
-    /**
-     * Create and send the typical OPDS response
-     * @return Response
-     */
-    public function mkOpdsResponse($content, $type, $status = 200)
-    {
-        return $this->mkResponse($content, $type, $status);
     }
 
     /**

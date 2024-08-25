@@ -11,6 +11,7 @@
 namespace BicBucStriim\Middleware;
 
 use BicBucStriim\Utilities\RequestUtil;
+use BicBucStriim\Utilities\ResponseUtil;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -47,12 +48,14 @@ class OwnConfigMiddleware extends DefaultMiddleware
         $requestUtil = new RequestUtil($request);
         $config_status = $this->check_config_db();
         if ($config_status == static::STATUS_OOPS) {
-            return $this->mkError(500, 'No or bad configuration database. Please use <a href="' .
+            $responder = new ResponseUtil(null);
+            return $responder->mkError(500, 'No or bad configuration database. Please use <a href="' .
                 $requestUtil->getBasePath() .
                 '/installcheck.php">installcheck.php</a> to check for errors.');
         } elseif ($config_status == static::STATUS_OLD) {
             // TODO Redirect to an update script in the future
-            return $this->mkError(500, 'Old configuration database detected. Please refer to the <a href="http://projekte.textmulch.de/bicbucstriim/#upgrading">upgrade documentation</a> for more information.');
+            $responder = new ResponseUtil(null);
+            return $responder->mkError(500, 'Old configuration database detected. Please refer to the <a href="http://projekte.textmulch.de/bicbucstriim/#upgrading">upgrade documentation</a> for more information.');
         } else {
             return $handler->handle($request);
         }

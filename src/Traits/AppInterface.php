@@ -10,9 +10,6 @@
 
 namespace BicBucStriim\Traits;
 
-use BicBucStriim\AppData\Settings;
-use Psr\Http\Message\ResponseInterface as Response;
-
 /*********************************************************************
  * App utility interface (documentation only) - use AppTrait in class
  ********************************************************************/
@@ -37,15 +34,21 @@ interface AppInterface
     public function log();
 
     /**
+     * Get mailer instance
+     * @return \BicBucStriim\Utilities\Mailer
+     */
+    public function mailer();
+
+    /**
      * Set global app settings
-     * @param array<string, mixed>|Settings $settings
-     * @return Settings
+     * @param array<string, mixed>|\BicBucStriim\AppData\Settings $settings
+     * @return \BicBucStriim\AppData\Settings
      */
     public function setSettings($settings);
 
     /**
      * Get global app settings
-     * @return Settings
+     * @return \BicBucStriim\AppData\Settings
      */
     public function settings();
 
@@ -68,79 +71,4 @@ interface AppInterface
      * @return \Psr\Http\Message\ResponseFactoryInterface
      */
     public function getResponseFactory();
-
-    /**
-     * Get the Request object
-     * @deprecated 3.5.0 use $request directly in middleware or initialize() $this->request in action
-     * @return \Psr\Http\Message\ServerRequestInterface
-     */
-    public function request();
-
-    /**
-     * Get the Response object
-     * @return \Psr\Http\Message\ResponseInterface
-     */
-    public function response();
-
-    /**
-     * Create and send an error to authenticate (401)
-     * @param  string   $realm      The realm
-     * @param  int      $status     The HTTP response status
-     * @param  string   $message    The HTTP response body
-     * @return Response
-     */
-    public function mkAuthenticate($realm, $status = 401, $message = 'Please authenticate');
-
-    /**
-     * Create and send an error response (halt)
-     * @param  int      $status     The HTTP response status
-     * @param  string   $message    The HTTP response body
-     * @return Response
-     */
-    public function mkError($status, $message = '');
-
-    /**
-     * Create and send a redirect response (redirect)
-     * @param  string   $url        The destination URL
-     * @param  int      $status     The HTTP redirect status code (optional)
-     * @return Response
-     */
-    public function mkRedirect($url, $status = 302);
-
-    /**
-     * Create and send a JSON response
-     * @param mixed $data array or object
-     * @param string $type (optional)
-     * @param int $status (optional)
-     * @return Response
-     */
-    public function mkJsonResponse($data, $type = 'application/json', $status = 200);
-
-    /**
-     * Create and send a normal response
-     * @param string $content
-     * @param string $type
-     * @param int $status
-     * @return Response
-     */
-    public function mkResponse($content, $type, $status = 200);
-
-    /**
-     * Create and send a file response
-     * @param string $filepath
-     * @param string $type
-     * @param int $status
-     * @return Response
-     */
-    public function mkSendFile($filepath, $type, $status = 200);
-
-    /**
-     * Create and send a file response as attachment
-     * @param string $filepath
-     * @param string $type
-     * @param string $filename
-     * @param int $status
-     * @return Response
-     */
-    public function mkSendFileAsAttachment($filepath, $type, $filename, $status = 200);
 }
