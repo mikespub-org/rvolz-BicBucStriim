@@ -71,6 +71,7 @@ interface AppInterface
 
     /**
      * Get the Request object
+     * @deprecated 3.5.0 use $request directly in middleware or initialize() $this->request in action
      * @return \Psr\Http\Message\ServerRequestInterface
      */
     public function request();
@@ -80,55 +81,6 @@ interface AppInterface
      * @return \Psr\Http\Message\ResponseInterface
      */
     public function response();
-
-    /**
-     * Get session - depends on request
-     * @param ?\Aura\Session\Session $session
-     * @deprecated 3.4.3 use DefaultActions::getSession() instead
-     * @return \Aura\Session\Session|null
-     */
-    public function session($session = null);
-
-    /**
-     * Get authentication tracker - depends on request
-     * @param ?\Aura\Auth\Auth $auth
-     * @deprecated 3.4.3 use DefaultActions::getAuth() instead
-     * @return \Aura\Auth\Auth|null
-     */
-    public function auth($auth = null);
-
-    /**
-     * Set flash message for subsequent request
-     * @param  string   $key
-     * @param  mixed    $value
-     * @deprecated 3.4.3 use DefaultActions::getFlash() or DefaultActions::setFlash() instead
-     */
-    public function flash($key, $value);
-
-    /**
-     * Get root url
-     * @deprecated 3.5.0 moved to \BicBucStriim\Utilities\RequestUtil
-     * @return string root url
-     */
-    public function getRootUrl();
-
-    /**
-     * See https://github.com/slimphp/Slim/blob/2.x/Slim/Http/Request.php#L569
-     * @deprecated 3.4.3 moved to \BicBucStriim\Utilities\RequestUtil
-     */
-    public function getSchemeAndHttpHost();
-
-    /**
-     * See https://github.com/slimphp/Slim/blob/2.x/Slim/Http/Request.php#L533
-     * @deprecated 3.4.3 moved to \BicBucStriim\Utilities\RequestUtil
-     */
-    public function getBasePath();
-
-    /**
-     * See https://github.com/slimphp/Slim/blob/2.x/Slim/Http/Request.php#L560
-     * @deprecated 3.4.3 moved to \BicBucStriim\Utilities\RequestUtil
-     */
-    public function getPathInfo();
 
     /**
      * Create and send an error to authenticate (401)

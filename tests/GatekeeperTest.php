@@ -1,6 +1,5 @@
 <?php
 
-use BicBucStriim\Actions\DefaultActions;
 use BicBucStriim\Middleware\GatekeeperMiddleware;
 use BicBucStriim\Utilities\RequestUtil;
 use BicBucStriim\Utilities\TestHelper;
@@ -14,45 +13,6 @@ use BicBucStriim\Utilities\TestHelper;
  */
 class GatekeeperTest extends PHPUnit\Framework\TestCase
 {
-    /**
-     * @deprecated 3.4.0 replaced by using GatekeeperMiddleware instead
-     */
-    public function testCheckAdmin()
-    {
-        $expected = true;
-        $app = TestHelper::getAppWithContainer();
-        $request = RequestUtil::getServerRequest('GET', '/');
-
-        $self = new DefaultActions($app->getContainer());
-        $callable = [$self, 'check_admin'];
-        $result = $callable($request);
-        $this->assertEquals($expected, $result);
-
-        $expected = 'You don&#039;t have sufficient access rights.';
-        $this->assertEquals(\Nyholm\Psr7\Response::class, get_class($self->response()));
-        $this->assertStringContainsString($expected, (string) $self->response()->getBody());
-    }
-
-    /**
-     * @deprecated 3.4.0 replaced by using GatekeeperMiddleware instead
-     */
-    public function testCheckAdminAuth()
-    {
-        $expected = false;
-        $app = TestHelper::getAppWithContainer();
-        $request = RequestUtil::getServerRequest('GET', '/');
-        $userData = [
-            'role' => 1,
-        ];
-        $auth = TestHelper::getAuth($request, $userData);
-        $request = $request->withAttribute('auth', $auth);
-
-        $self = new DefaultActions($app->getContainer());
-        $callable = [$self, 'check_admin'];
-        $result = $callable($request);
-        $this->assertEquals($expected, $result);
-    }
-
     public function testGatekeeper()
     {
         $expected = 'You don&#039;t have sufficient access rights.';

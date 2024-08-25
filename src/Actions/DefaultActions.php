@@ -146,25 +146,6 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
     }
 
     /**
-     * Check admin rights and redirect if necessary
-     * @see \BicBucStriim\Middleware\GatekeeperMiddleware
-     * @param ?Request $request
-     * @deprecated 3.4.2 use gatekeeper middleware instead of wrapped check_admin() action
-     * @return bool true if we have a response ready (= no access), false otherwise
-     */
-    public function check_admin($request = null)
-    {
-        if (!$this->is_admin($request)) {
-            $this->request($request);
-            $this->render('error.twig', [
-                'page' => $this->mkPage('error', 0, 0),
-                'error' => $this->getMessageString('error_no_access')]);
-            return true;
-        }
-        return false;
-    }
-
-    /**
      * Check if the current user was authenticated
      * @param ?Request $request
      * @return boolean  true if authenticated, else false

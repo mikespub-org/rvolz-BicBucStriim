@@ -362,7 +362,7 @@ class AdminActions extends DefaultActions
             $this->log()->error('admin_add_user: exception ' . $e->getMessage());
             $user = null;
         }
-        if (isset($user) && !is_null($user)) {
+        if (isset($user)) {
             $msg = $this->getMessageString('admin_modified');
             $answer = json_encode(['user' => $user->unbox()->getProperties(), 'msg' => $msg]);
             return $this->mkResponse($answer, 'application/json', 200);
@@ -418,7 +418,7 @@ class AdminActions extends DefaultActions
             $user_data['role']
         );
         $this->log()->debug('admin_modify_user: ' . json_encode($user));
-        if (isset($user) && !is_null($user)) {
+        if (isset($user)) {
             $msg = $this->getMessageString('admin_modified');
             $answer = json_encode(['user' => $user->unbox()->getProperties(), 'msg' => $msg]);
             return $this->mkResponse($answer, 'application/json', 200);

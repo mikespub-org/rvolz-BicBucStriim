@@ -2,10 +2,6 @@
 
 namespace BicBucStriim\Utilities;
 
-use Psr\Http\Message\ResponseInterface as Response;
-use Psr\Http\Message\ServerRequestInterface as Request;
-use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
-
 /**
  * Class RouteUtil provides route utilities for callables and middleware
  */
@@ -79,46 +75,5 @@ class RouteUtil
             //$wrapper = static::wrapRequestMiddleware($middleware);
             $route = $route->add($middleware);
         }
-    }
-
-    /**
-     * Use callable of format [$self, 'method'] in "request" middleware (= callable first, then handler)
-     * Note: the callable must return true if we have a response ready, false otherwise
-     * @param callable|array $callable
-     * @deprecated 3.4.0 replaced by using GatekeeperMiddleware instead
-     * @return callable
-     */
-    public static function wrapRequestMiddleware($callable)
-    {
-        return function (Request $request, RequestHandler $handler) use ($callable) {
-            // invoke callable first
-            $callable[0]->request($request);
-            // return callable response if it returns true
-            if ($callable()) {
-                return $callable[0]->response();
-            }
-            // invoke handler last and return its response
-            return $handler->handle($callable[0]->request());
-        };
-    }
-
-    /**
-     * Use callable of format [$self, 'method'] in "response" middleware (= handler first, then callable)
-     * @param callable|array $callable
-     * @deprecated 3.4.0 replaced by using actual middleware instead
-     * @return callable
-     */
-    public static function wrapResponseMiddleware($callable)
-    {
-        return function (Request $request, RequestHandler $handler) use ($callable) {
-            // invoke handler first and get its response
-            $response = $handler->handle($request);
-            // invoke callable last
-            $callable[0]->request($request);
-            $callable[0]->response($response);
-            $callable();
-            // return callable response
-            return $callable[0]->response();
-        };
     }
 }

@@ -24,7 +24,7 @@ class CalibreUtil
     {
         try {
             $path = $cd . '/' . $bp . '/' . $file;
-            stat($path);
+            $stat = stat($path);
         } catch (Exception $e) {
             $p = explode("/", $bp);
             $path = $cd . '/' . ucwords($p[0]) . '/' . $p[1] . '/' . $file;
