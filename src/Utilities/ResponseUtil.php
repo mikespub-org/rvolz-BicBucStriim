@@ -4,25 +4,22 @@ namespace BicBucStriim\Utilities;
 
 use Dflydev\FigCookies\FigResponseCookies;
 use Dflydev\FigCookies\SetCookie;
+use Psr\Http\Message\ResponseInterface as Response;
 
 /**
  * Class ResponseUtil provides utilities for the response
  */
 class ResponseUtil
 {
-    /** @var \Psr\Http\Message\ResponseInterface */
+    /** @var Response */
     public $response;
-    /** @var ?\Psr\Container\ContainerInterface */
-    public $container;
 
     /**
-     * @param \Psr\Http\Message\ResponseInterface $response
-     * @param ?\Psr\Container\ContainerInterface $container
+     * @param Response $response
      */
-    public function __construct($response, $container = null)
+    public function __construct($response)
     {
         $this->response = $response;
-        $this->container = $container;
     }
 
     /**
@@ -39,7 +36,7 @@ class ResponseUtil
      * @param bool       $secure    Indicates that the cookie should only be transmitted over a secure
      *                              HTTPS connection to/from the client
      * @param bool       $httponly  When TRUE the cookie will be made accessible only through the HTTP protocol
-     * @return \Psr\Http\Message\ResponseInterface updated response
+     * @return Response updated response
      */
     public function setCookie($name, $value, $time = null, $path = null, $domain = null, $secure = null, $httponly = null)
     {
@@ -78,7 +75,7 @@ class ResponseUtil
      * @param bool      $secure     Indicates that the cookie should only be transmitted over a secure
      *                              HTTPS connection from the client
      * @param  bool     $httponly   When TRUE the cookie will be made accessible only through the HTTP protocol
-     * @return \Psr\Http\Message\ResponseInterface updated response
+     * @return Response updated response
      */
     public function deleteCookie($name, $path = null, $domain = null, $secure = null, $httponly = null)
     {
@@ -102,7 +99,7 @@ class ResponseUtil
     /**
      * Create response from app response factory or Nyholm PSR-17 factory
      * @param ?\Slim\App $app
-     * @return \Psr\Http\Message\ResponseInterface
+     * @return Response
      */
     public static function getResponse($app = null)
     {

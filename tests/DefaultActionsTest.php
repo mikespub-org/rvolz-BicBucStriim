@@ -104,31 +104,6 @@ class DefaultActionsTest extends PHPUnit\Framework\TestCase
         $this->assertEquals($expected, (string) $self->response()->getBody());
     }
 
-    protected function skipTestHelloViaCallableResolver()
-    {
-        //$this->markTestSkipped('Using actions callable resolver is deprecated');
-        $container = require dirname(__DIR__) . '/config/container.php';
-        AppFactory::setContainer($container);
-        // Slim 4 framework uses its own CallableResolver if this is a class string, *before* invocation strategy
-        $callableResolver = new ActionsCallableResolver($container);
-        AppFactory::setCallableResolver($callableResolver);
-        $app = AppFactory::create();
-        //$callableResolver->setApp($app);
-        /**
-         * See https://www.slimframework.com/docs/v4/objects/routing.html#route-strategies
-         * Changing the default invocation strategy on the RouteCollector component
-         * will change it for every route being defined after this change being applied
-         */
-        $routeCollector = $app->getRouteCollector();
-        $routeCollector->setDefaultInvocationStrategy(new ActionsWrapperStrategy());
-        DefaultActions::addRoutes($app);
-
-        $expected = 'Hello, world!';
-        $request = RequestUtil::getServerRequest('GET', '/');
-        $response = $app->handle($request);
-        $this->assertEquals($expected, (string) $response->getBody());
-    }
-
     public function testHelloViaAppRequest()
     {
         $container = require dirname(__DIR__) . '/config/container.php';

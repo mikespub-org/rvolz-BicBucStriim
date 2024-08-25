@@ -518,7 +518,7 @@ class AdminActions extends DefaultActions
             if (count($nconfigs) > 0) {
                 $this->bbs()->saveConfigs($nconfigs);
                 $this->log()->debug('admin_change: changes saved');
-                $this->settings($settings);
+                $this->setSettings($settings);
             }
             $this->log()->debug('admin_change: ended');
             return $this->render('admin_configuration.twig', [

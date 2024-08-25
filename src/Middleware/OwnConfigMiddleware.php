@@ -85,7 +85,7 @@ class OwnConfigMiddleware extends DefaultMiddleware
                 ));
             }
         }
-        $this->settings($settings);
+        $this->setSettings($settings);
 
         if ($settings->db_version != $settings::DB_SCHEMA_VERSION) {
             $this->log()->warning('own_config_middleware: old db schema detected. please run update');

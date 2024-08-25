@@ -71,16 +71,25 @@ trait AppTrait
     }
 
     /**
-     * Get global app settings
-     * @param array<string, mixed>|Settings|null $settings
+     * Set global app settings
+     * @param array<string, mixed>|Settings $settings
      * @return Settings
      */
-    public function settings($settings = null)
+    public function setSettings($settings)
     {
         if (is_array($settings)) {
             $settings = new Settings($settings);
         }
         return $this->container(Settings::class, $settings);
+    }
+
+    /**
+     * Get global app settings
+     * @return Settings
+     */
+    public function settings()
+    {
+        return $this->container(Settings::class);
     }
 
     /**
@@ -113,6 +122,7 @@ trait AppTrait
     }
 
     /**
+     * Get response factory
      * @return \Psr\Http\Message\ResponseFactoryInterface
      */
     public function getResponseFactory()
@@ -123,7 +133,7 @@ trait AppTrait
     /**
      * Get the Request object
      * @param ?Request $request
-     * @deprecated 3.5.0 use DefaultActions::getSession() instead
+     * @deprecated 3.5.0 use $request directly in middleware or initialize() $this->request in action
      * @return Request
      */
     public function request($request = null)
@@ -204,7 +214,7 @@ trait AppTrait
     /**
      * Get root url
      * @param bool $absolute override relative_urls settings
-     * @todo deprecated 3.4.3 moved to \BicBucStriim\Utilities\RequestUtil
+     * @deprecated 3.5.0 moved to \BicBucStriim\Utilities\RequestUtil
      * @return string root url
      */
     public function getRootUrl($absolute = false)

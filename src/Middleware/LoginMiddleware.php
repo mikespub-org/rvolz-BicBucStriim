@@ -53,13 +53,11 @@ class LoginMiddleware extends DefaultMiddleware
         $this->request = $request;
         try {
             // true if we have a response ready (= need to authenticate), false otherwise
-            if ($this->authBeforeDispatch($request)) {
-                return $this->response;
+            $response = $this->authBeforeDispatch($request);
+            if ($response) {
+                return $response;
             }
         } catch (\Exception $e) {
-            if (!empty($this->response)) {
-                return $this->response;
-            }
             //$response = $this->response();
             //$this->response()->write(ob_get_clean());
             echo ob_get_clean();
@@ -323,6 +321,6 @@ class LoginMiddleware extends DefaultMiddleware
         $settings['l10n'] = new L10n($settings['lang']);
         $settings['langa'] = $settings['l10n']->langa;
         $settings['langb'] = $settings['l10n']->langb;
-        $this->settings($settings);
+        $this->setSettings($settings);
     }
 }

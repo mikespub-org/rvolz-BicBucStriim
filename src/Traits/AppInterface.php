@@ -37,11 +37,17 @@ interface AppInterface
     public function log();
 
     /**
-     * Get global app settings
-     * @param array<string, mixed>|Settings|null $settings
+     * Set global app settings
+     * @param array<string, mixed>|Settings $settings
      * @return Settings
      */
-    public function settings($settings = null);
+    public function setSettings($settings);
+
+    /**
+     * Get global app settings
+     * @return Settings
+     */
+    public function settings();
 
     /**
      * Get Twig environment
@@ -58,6 +64,7 @@ interface AppInterface
     public function container($key = null, $value = null);
 
     /**
+     * Get response factory
      * @return \Psr\Http\Message\ResponseFactoryInterface
      */
     public function getResponseFactory();
@@ -100,7 +107,7 @@ interface AppInterface
 
     /**
      * Get root url
-     * @todo deprecated 3.4.3 moved to \BicBucStriim\Utilities\RequestUtil
+     * @deprecated 3.5.0 moved to \BicBucStriim\Utilities\RequestUtil
      * @return string root url
      */
     public function getRootUrl();
