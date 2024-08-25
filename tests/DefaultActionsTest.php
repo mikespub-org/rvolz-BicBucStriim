@@ -2,10 +2,7 @@
 
 use BicBucStriim\Actions\DefaultActions;
 use BicBucStriim\Utilities\RequestUtil;
-use BicBucStriim\Utilities\ResponseUtil;
-use BicBucStriim\Utilities\RouteUtil;
 use BicBucStriim\Utilities\TestHelper;
-use BicBucStriim\Utilities\ActionsCallableResolver;
 use BicBucStriim\Utilities\ActionsWrapperStrategy;
 use Slim\Factory\AppFactory;
 
@@ -32,8 +29,6 @@ class DefaultActionsTest extends PHPUnit\Framework\TestCase
     public function testGetRoutesWithSelf(): void
     {
         $expected = array_values($this->getExpectedRoutes());
-        //$app = AppFactory::create();
-        //$self = new DefaultActions($app);
         $container = require dirname(__DIR__) . '/config/container.php';
         $self = new DefaultActions($container);
         // replace '$self' in $expected with actual $self
@@ -77,15 +72,12 @@ class DefaultActionsTest extends PHPUnit\Framework\TestCase
     public function testHello(): void
     {
         $expected = 'Hello, world!';
-        //$app = AppFactory::create();
-        //$self = new DefaultActions($app);
         $app = TestHelper::getAppWithContainer();
         $self = new DefaultActions($app->getContainer());
         $self->initialize(null, null);
         $callable = [$self, 'hello'];
         $args = [];
         $result = $callable(...$args);
-        //$result ??= $self->response();
         $this->assertEquals(\Nyholm\Psr7\Response::class, get_class($result));
         $this->assertEquals($expected, (string) $result->getBody());
     }
@@ -93,15 +85,12 @@ class DefaultActionsTest extends PHPUnit\Framework\TestCase
     public function testHelloWithName(): void
     {
         $expected = 'Hello, name!';
-        //$app = AppFactory::create();
-        //$self = new DefaultActions($app);
         $app = TestHelper::getAppWithContainer();
         $self = new DefaultActions($app->getContainer());
         $self->initialize(null, null);
         $callable = [$self, 'hello'];
         $args = ['name'];
         $result = $callable(...$args);
-        //$result ??= $self->response();
         $this->assertEquals(\Nyholm\Psr7\Response::class, get_class($result));
         $this->assertEquals($expected, (string) $result->getBody());
     }
