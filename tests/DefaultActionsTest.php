@@ -29,7 +29,7 @@ class DefaultActionsTest extends PHPUnit\Framework\TestCase
         ];
     }
 
-    public function testGetRoutesWithSelf()
+    public function testGetRoutesWithSelf(): void
     {
         $expected = array_values($this->getExpectedRoutes());
         //$app = AppFactory::create();
@@ -44,7 +44,7 @@ class DefaultActionsTest extends PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $routes);
     }
 
-    public function testGetRoutesWithStatic()
+    public function testGetRoutesWithStatic(): void
     {
         $expected = array_values($this->getExpectedRoutes());
         //$app = AppFactory::create();
@@ -57,7 +57,7 @@ class DefaultActionsTest extends PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $routes);
     }
 
-    public function testAddRoutes()
+    public function testAddRoutes(): void
     {
         $expected = $this->getExpectedRoutes();
         $app = AppFactory::create();
@@ -74,7 +74,7 @@ class DefaultActionsTest extends PHPUnit\Framework\TestCase
         }
     }
 
-    public function testHello()
+    public function testHello(): void
     {
         $expected = 'Hello, world!';
         //$app = AppFactory::create();
@@ -89,7 +89,7 @@ class DefaultActionsTest extends PHPUnit\Framework\TestCase
         $this->assertEquals($expected, (string) $self->response()->getBody());
     }
 
-    public function testHelloWithName()
+    public function testHelloWithName(): void
     {
         $expected = 'Hello, name!';
         //$app = AppFactory::create();
@@ -104,7 +104,7 @@ class DefaultActionsTest extends PHPUnit\Framework\TestCase
         $this->assertEquals($expected, (string) $self->response()->getBody());
     }
 
-    public function testHelloViaAppRequest()
+    public function testHelloViaAppRequest(): void
     {
         $container = require dirname(__DIR__) . '/config/container.php';
         AppFactory::setContainer($container);

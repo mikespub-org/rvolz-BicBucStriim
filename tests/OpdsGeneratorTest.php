@@ -24,8 +24,11 @@ class OpdsGeneratorTest extends PHPUnit\Framework\TestCase
     public const CDB2 = './tests/fixtures/lib2/metadata.db';
     public const DATADB = './tests/data/data.db';
 
+    /** @var ?BicBucStriim */
     public $bbs;
+    /** @var OpdsGenerator */
     public $gen;
+    /** @var ?Calibre */
     public $calibre;
 
     public function setUp(): void
@@ -100,7 +103,7 @@ class OpdsGeneratorTest extends PHPUnit\Framework\TestCase
         return $offsetString;
     }
 
-    public function testRootCatalogValidation()
+    public function testRootCatalogValidation(): void
     {
         $feed = self::DATA . '/feed.xml';
         $xml = $this->gen->rootCatalog($feed);
@@ -112,7 +115,7 @@ class OpdsGeneratorTest extends PHPUnit\Framework\TestCase
 
 
 
-    public function testPartialAcquisitionEntry()
+    public function testPartialAcquisitionEntry(): void
     {
         // @todo align opds routes with or without /opds/
         $expected = '<entry>
@@ -142,7 +145,7 @@ class OpdsGeneratorTest extends PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $result);
     }
 
-    public function testPartialAcquisitionEntryWithProtection()
+    public function testPartialAcquisitionEntryWithProtection(): void
     {
         // @todo align opds routes with or without /opds/
         $expected = '<entry>
@@ -175,7 +178,7 @@ class OpdsGeneratorTest extends PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $result);
     }
 
-    public function testNewestCatalogValidation()
+    public function testNewestCatalogValidation(): void
     {
         $feed = self::DATA . '/feed.xml';
         $just_books = $this->calibre->last30Books('en', 30, new CalibreFilter());
@@ -187,7 +190,7 @@ class OpdsGeneratorTest extends PHPUnit\Framework\TestCase
         $this->assertTrue($this->opdsValidate($feed, '1.1'));
     }
 
-    public function testTitlesCatalogValidation()
+    public function testTitlesCatalogValidation(): void
     {
         $feed = self::DATA . '/feed.xml';
         $tl = $this->calibre->titlesSlice('en', 0, 2, new CalibreFilter());
@@ -206,7 +209,7 @@ class OpdsGeneratorTest extends PHPUnit\Framework\TestCase
         $this->assertTrue($this->opdsValidate($feed, '1.1'));
     }
 
-    public function testTitlesCatalogOpenSearch()
+    public function testTitlesCatalogOpenSearch(): void
     {
         $tl = $this->calibre->titlesSlice('en', 0, 2, new CalibreFilter());
         $books = $this->calibre->titleDetailsFilteredOpds($tl['entries']);
@@ -226,7 +229,7 @@ class OpdsGeneratorTest extends PHPUnit\Framework\TestCase
     }
 
 
-    public function testAuthorsInitialCatalogValidation()
+    public function testAuthorsInitialCatalogValidation(): void
     {
         $feed = self::DATA . '/feed.xml';
         $tl = $this->calibre->authorsInitials();
@@ -237,7 +240,7 @@ class OpdsGeneratorTest extends PHPUnit\Framework\TestCase
         $this->assertTrue($this->opdsValidate($feed, '1.1'));
     }
 
-    public function testAuthorsNamesForInitialCatalogValidation()
+    public function testAuthorsNamesForInitialCatalogValidation(): void
     {
         $feed = self::DATA . '/feed.xml';
         $tl = $this->calibre->authorsNamesForInitial('R');
@@ -248,7 +251,7 @@ class OpdsGeneratorTest extends PHPUnit\Framework\TestCase
         $this->assertTrue($this->opdsValidate($feed, '1.1'));
     }
 
-    public function testAuthorsBooksForAuthorCatalogValidation()
+    public function testAuthorsBooksForAuthorCatalogValidation(): void
     {
         $feed = self::DATA . '/feed.xml';
         $adetails = $this->calibre->authorDetails(5);
@@ -260,7 +263,7 @@ class OpdsGeneratorTest extends PHPUnit\Framework\TestCase
         $this->assertTrue($this->opdsValidate($feed, '1.1'));
     }
 
-    public function testTagsInitialCatalogValidation()
+    public function testTagsInitialCatalogValidation(): void
     {
         $feed = self::DATA . '/feed.xml';
         $tl = $this->calibre->tagsInitials();
@@ -271,7 +274,7 @@ class OpdsGeneratorTest extends PHPUnit\Framework\TestCase
         $this->assertTrue($this->opdsValidate($feed, '1.1'));
     }
 
-    public function testTagsNamesForInitialCatalogValidation()
+    public function testTagsNamesForInitialCatalogValidation(): void
     {
         $feed = self::DATA . '/feed.xml';
         $tl = $this->calibre->tagsNamesForInitial('B');
@@ -282,7 +285,7 @@ class OpdsGeneratorTest extends PHPUnit\Framework\TestCase
         $this->assertTrue($this->opdsValidate($feed, '1.1'));
     }
 
-    public function testTagsBooksForTagCatalogValidation()
+    public function testTagsBooksForTagCatalogValidation(): void
     {
         $feed = self::DATA . '/feed.xml';
         $adetails = $this->calibre->tagDetails(9);
@@ -294,7 +297,7 @@ class OpdsGeneratorTest extends PHPUnit\Framework\TestCase
         $this->assertTrue($this->opdsValidate($feed, '1.1'));
     }
 
-    public function testSeriesInitialCatalogValidation()
+    public function testSeriesInitialCatalogValidation(): void
     {
         $feed = self::DATA . '/feed.xml';
         $tl = $this->calibre->seriesInitials();
@@ -305,7 +308,7 @@ class OpdsGeneratorTest extends PHPUnit\Framework\TestCase
         $this->assertTrue($this->opdsValidate($feed, '1.1'));
     }
 
-    public function testSeriesNamesForInitialCatalogValidation()
+    public function testSeriesNamesForInitialCatalogValidation(): void
     {
         $feed = self::DATA . '/feed.xml';
         $tl = $this->calibre->seriesNamesForInitial('S');
@@ -316,7 +319,7 @@ class OpdsGeneratorTest extends PHPUnit\Framework\TestCase
         $this->assertTrue($this->opdsValidate($feed, '1.1'));
     }
 
-    protected function testSeriesBooksForSeriesCatalogValidation()
+    protected function testSeriesBooksForSeriesCatalogValidation(): void
     {
         $feed = self::DATA . '/feed.xml';
         $adetails = $this->calibre->seriesDetailsSlice('en', 1);

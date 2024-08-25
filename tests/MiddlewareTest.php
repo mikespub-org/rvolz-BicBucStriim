@@ -86,7 +86,7 @@ class MiddlewareTest extends PHPUnit\Framework\TestCase
     /**
      * @runInSeparateProcess
      */
-    public function testAppMainRequest()
+    public function testAppMainRequest(): void
     {
         $app = TestHelper::getApp();
         $this->assertEquals(\Slim\App::class, $app::class);
@@ -102,7 +102,7 @@ class MiddlewareTest extends PHPUnit\Framework\TestCase
      * @runInSeparateProcess
      * @depends testAppMainRequest
      */
-    public function testAppGetRequest($input, $output, $methods, $pattern, ...$args)
+    public function testAppGetRequest($input, $output, $methods, $pattern, ...$args): void
     {
         $this->assertGreaterThan(0, count($args));
         if (is_string($methods) && $methods == 'GET') {
@@ -130,7 +130,7 @@ class MiddlewareTest extends PHPUnit\Framework\TestCase
     /**
      * @dataProvider getExpectedRoutes
      */
-    public function testMustLoginNoAuth($input, $output, $methods, $pattern, ...$args)
+    public function testMustLoginNoAuth($input, $output, $methods, $pattern, ...$args): void
     {
         $this->assertGreaterThan(0, count($args));
         if (is_string($methods) && $methods == 'GET') {
@@ -185,7 +185,7 @@ class MiddlewareTest extends PHPUnit\Framework\TestCase
     /**
      * @dataProvider getExpectedRoutes
      */
-    public function testMustLoginWithAuth($input, $output, $methods, $pattern, ...$args)
+    public function testMustLoginWithAuth($input, $output, $methods, $pattern, ...$args): void
     {
         $this->assertGreaterThan(0, count($args));
         if (is_string($methods) && $methods == 'GET') {
@@ -224,7 +224,7 @@ class MiddlewareTest extends PHPUnit\Framework\TestCase
         }
     }
 
-    public function testIsAuthorizedWithAuthValid()
+    public function testIsAuthorizedWithAuthValid(): void
     {
         $app = TestHelper::getAppWithContainer();
         $settings = $app->getContainer()->get(Settings::class);
@@ -256,7 +256,7 @@ class MiddlewareTest extends PHPUnit\Framework\TestCase
         $this->assertStringContainsString($expected, (string) $response->getBody());
     }
 
-    public function testIsAuthorizedWithAuthInvalid()
+    public function testIsAuthorizedWithAuthInvalid(): void
     {
         $app = TestHelper::getAppWithContainer();
         $settings = $app->getContainer()->get(Settings::class);
@@ -291,7 +291,7 @@ class MiddlewareTest extends PHPUnit\Framework\TestCase
         }
     }
 
-    public function testIsAuthorizedWithPhpAuthTrue()
+    public function testIsAuthorizedWithPhpAuthTrue(): void
     {
         $app = TestHelper::getAppWithContainer();
         $settings = $app->getContainer()->get(Settings::class);
@@ -312,7 +312,7 @@ class MiddlewareTest extends PHPUnit\Framework\TestCase
         unset($_SESSION[\Aura\Auth\Auth::class]);
     }
 
-    public function testIsAuthorizedWithPhpAuthFalse()
+    public function testIsAuthorizedWithPhpAuthFalse(): void
     {
         $app = TestHelper::getAppWithContainer();
         $settings = $app->getContainer()->get(Settings::class);
@@ -333,7 +333,7 @@ class MiddlewareTest extends PHPUnit\Framework\TestCase
         unset($_SESSION[\Aura\Auth\Auth::class]);
     }
 
-    public function testIsAuthorizedWithHttpAuthTrue()
+    public function testIsAuthorizedWithHttpAuthTrue(): void
     {
         $app = TestHelper::getAppWithContainer();
         $settings = $app->getContainer()->get(Settings::class);
@@ -354,7 +354,7 @@ class MiddlewareTest extends PHPUnit\Framework\TestCase
         unset($_SESSION[\Aura\Auth\Auth::class]);
     }
 
-    public function testIsAuthorizedWithHttpAuthFalse()
+    public function testIsAuthorizedWithHttpAuthFalse(): void
     {
         $app = TestHelper::getAppWithContainer();
         $settings = $app->getContainer()->get(Settings::class);

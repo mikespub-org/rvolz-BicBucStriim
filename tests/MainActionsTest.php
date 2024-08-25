@@ -140,7 +140,7 @@ class MainActionsTest extends PHPUnit\Framework\TestCase
         ];
     }
 
-    public function testAddRoutes()
+    public function testAddRoutes(): void
     {
         $expected = $this->getExpectedRoutes();
         $app = AppFactory::create();
@@ -161,7 +161,7 @@ class MainActionsTest extends PHPUnit\Framework\TestCase
     /**
      * @runInSeparateProcess
      */
-    public function testAppBootstrap()
+    public function testAppBootstrap(): void
     {
         $app = require(dirname(__DIR__) . '/config/bootstrap.php');
         $this->assertEquals(\Slim\App::class, $app::class);
@@ -171,7 +171,7 @@ class MainActionsTest extends PHPUnit\Framework\TestCase
      * @runInSeparateProcess
      * @depends testAppBootstrap
      */
-    public function testAppMainRequest()
+    public function testAppMainRequest(): void
     {
         $app = TestHelper::getApp();
         $this->assertEquals(\Slim\App::class, $app::class);
@@ -187,7 +187,7 @@ class MainActionsTest extends PHPUnit\Framework\TestCase
      * @runInSeparateProcess
      * @depends testAppBootstrap
      */
-    public function testAppGetRequest($input, $output, $methods, $pattern, ...$args)
+    public function testAppGetRequest($input, $output, $methods, $pattern, ...$args): void
     {
         $this->assertGreaterThan(0, count($args));
         if (is_string($methods) && $methods == 'GET') {
@@ -211,7 +211,7 @@ class MainActionsTest extends PHPUnit\Framework\TestCase
     /**
      * @runInSeparateProcess
      */
-    public function testMainAuthorNotes()
+    public function testMainAuthorNotes(): void
     {
         $app = TestHelper::getApp();
         $request = RequestUtil::getServerRequest('GET', '/authors/5/notes/');
@@ -229,7 +229,7 @@ class MainActionsTest extends PHPUnit\Framework\TestCase
     /**
      * @runInSeparateProcess
      */
-    public function testMainKindle()
+    public function testMainKindle(): void
     {
         $_SERVER['REQUEST_METHOD'] = 'POST';
         $_SERVER['CONTENT_TYPE'] = 'multipart/form-data';

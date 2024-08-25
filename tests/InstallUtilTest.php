@@ -20,7 +20,7 @@ class InstallUtilTest extends PHPUnit\Framework\TestCase
 
     public function tearDown(): void {}
 
-    public function testFindGdVersion()
+    public function testFindGdVersion(): void
     {
         $this->assertEquals("2.1", InstallUtil::find_gd_version("gd version 2.1"));
         $this->assertEquals("2.1.0", InstallUtil::find_gd_version("gd version 2.1.0"));

@@ -13,7 +13,7 @@ use BicBucStriim\Utilities\TestHelper;
  */
 class GatekeeperTest extends PHPUnit\Framework\TestCase
 {
-    public function testGatekeeper()
+    public function testGatekeeper(): void
     {
         $expected = 'You don&#039;t have sufficient access rights.';
         $app = TestHelper::getAppWithContainer();
@@ -26,7 +26,7 @@ class GatekeeperTest extends PHPUnit\Framework\TestCase
         $this->assertStringContainsString($expected, (string) $response->getBody());
     }
 
-    public function testGatekeeperAuth()
+    public function testGatekeeperAuth(): void
     {
         $expected = 'Expected!';
         $app = TestHelper::getAppWithContainer();

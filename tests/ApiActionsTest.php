@@ -14,7 +14,7 @@ class ApiActionsTest extends PHPUnit\Framework\TestCase
      * @runInSeparateProcess
      * @preserveGlobalState disabled
      */
-    public function testApiHomeRequest()
+    public function testApiHomeRequest(): void
     {
         $app = TestHelper::getAppWithApi();
         $this->assertEquals(\Slim\App::class, $app::class);
@@ -29,7 +29,7 @@ class ApiActionsTest extends PHPUnit\Framework\TestCase
      * @runInSeparateProcess
      * @preserveGlobalState disabled
      */
-    public function testApiRoutesRequest()
+    public function testApiRoutesRequest(): void
     {
         $app = TestHelper::getAppWithApi();
         $this->assertEquals(\Slim\App::class, $app::class);
@@ -48,7 +48,7 @@ class ApiActionsTest extends PHPUnit\Framework\TestCase
      * @runInSeparateProcess
      * @preserveGlobalState disabled
      */
-    public function testOpenApiRequest()
+    public function testOpenApiRequest(): void
     {
         $app = TestHelper::getAppWithApi();
         $this->assertEquals(\Slim\App::class, $app::class);
@@ -67,7 +67,7 @@ class ApiActionsTest extends PHPUnit\Framework\TestCase
      * @runInSeparateProcess
      * @preserveGlobalState disabled
      */
-    public function testCorsOptionsRequest()
+    public function testCorsOptionsRequest(): void
     {
         $app = TestHelper::getAppWithApi();
         $this->assertEquals(\Slim\App::class, $app::class);
@@ -101,7 +101,7 @@ class ApiActionsTest extends PHPUnit\Framework\TestCase
      * @runInSeparateProcess
      * @preserveGlobalState disabled
      */
-    public function testMainRequestWithHeader()
+    public function testMainRequestWithHeader(): void
     {
         $app = TestHelper::getAppWithApi();
         $this->assertEquals(\Slim\App::class, $app::class);
@@ -129,7 +129,7 @@ class ApiActionsTest extends PHPUnit\Framework\TestCase
      * @runInSeparateProcess
      * @preserveGlobalState disabled
      */
-    public function testMainRequestWithoutHasApi()
+    public function testMainRequestWithoutHasApi(): void
     {
         $app = TestHelper::getAppWithApi(false);
         $this->assertEquals(\Slim\App::class, $app::class);

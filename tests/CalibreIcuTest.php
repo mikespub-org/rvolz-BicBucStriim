@@ -14,6 +14,7 @@ class CalibreIcuTest extends PHPUnit\Framework\TestCase
 {
     public const CDB4 = './tests/fixtures/lib4/metadata.db';
 
+    /** @var ?Calibre */
     public $calibre;
 
     public function setUp(): void
@@ -26,7 +27,7 @@ class CalibreIcuTest extends PHPUnit\Framework\TestCase
         $this->calibre = null;
     }
 
-    public function testAuthorsSliceSearch()
+    public function testAuthorsSliceSearch(): void
     {
         $result0 = $this->calibre->authorsSlice(0, 2, 'Асприн');
         $this->assertEquals(1, count($result0['entries']));
@@ -34,13 +35,13 @@ class CalibreIcuTest extends PHPUnit\Framework\TestCase
         $this->assertEquals(1, count($result0['entries']));
     }
 
-    public function testSeriesSliceSearch()
+    public function testSeriesSliceSearch(): void
     {
         $result0 = $this->calibre->seriesSlice(0, 2, 'ü');
         $this->assertEquals(1, count($result0['entries']));
     }
 
-    public function testTagsSliceSearch()
+    public function testTagsSliceSearch(): void
     {
         $result0 = $this->calibre->tagsSlice(0, 2, 'I');
         $this->assertEquals(2, count($result0['entries']));
@@ -50,7 +51,7 @@ class CalibreIcuTest extends PHPUnit\Framework\TestCase
         $this->assertEquals(2, count($result0['entries']));
     }
 
-    public function testTitlesSliceSearch()
+    public function testTitlesSliceSearch(): void
     {
         $result0 = $this->calibre->titlesSlice('de', 0, 2, new CalibreFilter(), 'ü');
         $this->assertEquals(1, count($result0['entries']));

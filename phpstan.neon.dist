@@ -1,5 +1,5 @@
 # baseline re-generated with level 3 to keep some issues visible on higher levels
-# at the time this file was updated there are 16 errors reported for levels 3 to 5
+# at the time this file was updated there are 11 errors reported for levels 3 to 5
 includes:
     - phpstan-baseline.neon
 

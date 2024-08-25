@@ -84,7 +84,7 @@ class OpdsActionsTest extends PHPUnit\Framework\TestCase
         ];
     }
 
-    public function testAddRoutes()
+    public function testAddRoutes(): void
     {
         $expected = $this->getExpectedRoutes();
         $app = AppFactory::create();
@@ -106,7 +106,7 @@ class OpdsActionsTest extends PHPUnit\Framework\TestCase
      * @dataProvider getExpectedRoutes
      * @runInSeparateProcess
      */
-    public function testAppGetRequest($input, $output, $methods, $pattern, ...$args)
+    public function testAppGetRequest($input, $output, $methods, $pattern, ...$args): void
     {
         $this->assertGreaterThan(0, count($args));
         if (is_string($methods) && $methods == 'GET') {
@@ -146,7 +146,7 @@ class OpdsActionsTest extends PHPUnit\Framework\TestCase
     /**
      * @runInSeparateProcess
      */
-    public function testOpdsSearchMissing()
+    public function testOpdsSearchMissing(): void
     {
         $app = TestHelper::getApp();
 

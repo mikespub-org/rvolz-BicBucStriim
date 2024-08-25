@@ -1,5 +1,6 @@
 <?php
 
+use BicBucStriim\Calibre\Bic;
 use BicBucStriim\Calibre\Calibre;
 
 /**
@@ -16,7 +17,7 @@ class CustomColumnsTest extends PHPUnit\Framework\TestCase
     public const DATA = './tests/data';
     public const DATADB = './tests/data/data.db';
 
-    public $bbs;
+    /** @var ?Calibre */
     public $calibre;
 
     public function setUp(): void
@@ -30,7 +31,7 @@ class CustomColumnsTest extends PHPUnit\Framework\TestCase
     }
 
     # Lots of ccs -- one with multiple values
-    public function testCustomColumns()
+    public function testCustomColumns(): void
     {
         $ccs = $this->calibre->customColumns(7);
         #print_r($ccs);
@@ -39,7 +40,7 @@ class CustomColumnsTest extends PHPUnit\Framework\TestCase
     }
 
     # Ignore series ccs for now
-    public function testCustomColumnsIgnoreSeries()
+    public function testCustomColumnsIgnoreSeries(): void
     {
         $ccs = $this->calibre->customColumns(5);
         #print_r($ccs);
@@ -47,7 +48,7 @@ class CustomColumnsTest extends PHPUnit\Framework\TestCase
     }
 
     # Only one cc
-    public function testCustomColumnsJustOneCC()
+    public function testCustomColumnsJustOneCC(): void
     {
         $ccs = $this->calibre->customColumns(1);
         $this->assertEquals(1, sizeof($ccs));

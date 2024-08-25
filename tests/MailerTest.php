@@ -22,7 +22,7 @@ class MailerTest extends PHPUnit\Framework\TestCase
     /**
      * @dataProvider mailProvider
      */
-    public function testSendMail($type, $method, $expected, $result)
+    public function testSendMail($type, $method, $expected, $result): void
     {
         /** @var Mailer $mailer */
         $mailer = [$this, $method]();

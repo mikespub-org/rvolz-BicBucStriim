@@ -21,6 +21,7 @@ class BicBucStriimTest extends PHPUnit\Framework\TestCase
     public const DATA = './tests/data';
     public const DATADB = './tests/data/data.db';
 
+    /** @var ?BicBucStriim */
     public $bbs;
 
     public function setUp(): void
@@ -44,14 +45,14 @@ class BicBucStriimTest extends PHPUnit\Framework\TestCase
         system("rm -rf " . self::DATA);
     }
 
-    public function testDbOk()
+    public function testDbOk(): void
     {
         $this->assertTrue($this->bbs->dbOk());
         $this->bbs = new BicBucStriim(self::DATA . '/nodata.db');
         $this->assertFalse($this->bbs->dbOk());
     }
 
-    public function testCreateDb()
+    public function testCreateDb(): void
     {
         $this->bbs = new BicBucStriim(self::DATA . '/nodata.db');
         $this->assertFalse($this->bbs->dbOk());
@@ -61,7 +62,7 @@ class BicBucStriimTest extends PHPUnit\Framework\TestCase
         $this->assertTrue($this->bbs->dbOk());
     }
 
-    public function testConfigs()
+    public function testConfigs(): void
     {
         $configs = $this->bbs->configs();
         $this->assertEquals(1, count($configs));
@@ -85,7 +86,7 @@ class BicBucStriimTest extends PHPUnit\Framework\TestCase
         $this->assertEquals(2, $configs[3]->val);
     }
 
-    public function testAddUser()
+    public function testAddUser(): void
     {
         $this->assertEquals(1, count($this->bbs->users()));
         $user = $this->bbs->addUser('testuser', 'testuser');
@@ -97,25 +98,25 @@ class BicBucStriimTest extends PHPUnit\Framework\TestCase
         $this->assertEquals(0, $user->role);
     }
 
-    public function testAddUserEmptyUser()
+    public function testAddUserEmptyUser(): void
     {
         $user = $this->bbs->addUser('', '');
         $this->assertNull($user);
     }
 
-    public function testAddUserEmptyUsername()
+    public function testAddUserEmptyUsername(): void
     {
         $user = $this->bbs->addUser('testuser2', '');
         $this->assertNull($user);
     }
 
-    public function testAddUserEmptyPassword()
+    public function testAddUserEmptyPassword(): void
     {
         $user = $this->bbs->addUser('', '');
         $this->assertNull($user);
     }
 
-    public function testGetUser()
+    public function testGetUser(): void
     {
         $this->bbs->addUser('testuser', 'testuser');
         $this->bbs->addUser('testuser2', 'testuser2');
@@ -129,7 +130,7 @@ class BicBucStriimTest extends PHPUnit\Framework\TestCase
         $this->assertEquals(0, $user->role);
     }
 
-    public function testDeleteUser()
+    public function testDeleteUser(): void
     {
         $this->bbs->addUser('testuser', 'testuser');
         $this->bbs->addUser('testuser2', 'testuser2');
@@ -149,7 +150,7 @@ class BicBucStriimTest extends PHPUnit\Framework\TestCase
         $this->assertEquals('testuser', $user->username);
     }
 
-    public function testChangeUser()
+    public function testChangeUser(): void
     {
         $this->bbs->addUser('testuser', 'testuser');
         $this->bbs->addUser('testuser2', 'testuser2');
@@ -170,7 +171,7 @@ class BicBucStriimTest extends PHPUnit\Framework\TestCase
         $this->assertNull($changed);
     }
 
-    public function testChangeUserRole()
+    public function testChangeUserRole(): void
     {
         $this->bbs->addUser('testuser', 'testuser');
         $this->bbs->addUser('testuser2', 'testuser2');
@@ -184,7 +185,7 @@ class BicBucStriimTest extends PHPUnit\Framework\TestCase
         $this->assertNull($changed);
     }
 
-    public function testIdTemplates()
+    public function testIdTemplates(): void
     {
         $this->assertEquals(0, count($this->bbs->idTemplates()));
         $this->bbs->addIdTemplate('google', 'http://google.com/%id%', 'Google search');
@@ -196,7 +197,7 @@ class BicBucStriimTest extends PHPUnit\Framework\TestCase
         $this->assertEquals('Amazon search', $template->label);
     }
 
-    public function testDeleteIdTemplates()
+    public function testDeleteIdTemplates(): void
     {
         $this->assertEquals(0, count($this->bbs->idTemplates()));
         $this->bbs->addIdTemplate('google', 'http://google.com/%id%', 'Google search');
@@ -208,7 +209,7 @@ class BicBucStriimTest extends PHPUnit\Framework\TestCase
         $this->assertEquals(1, count($this->bbs->idTemplates()));
     }
 
-    public function testChangeIdTemplate()
+    public function testChangeIdTemplate(): void
     {
         $this->assertEquals(0, count($this->bbs->idTemplates()));
         $this->bbs->addIdTemplate('google', 'http://google.com/%id%', 'Google search');
@@ -224,7 +225,7 @@ class BicBucStriimTest extends PHPUnit\Framework\TestCase
         $this->assertEquals('Amazon DE search', $template->label);
     }
 
-    public function testCalibreThing()
+    public function testCalibreThing(): void
     {
         $this->assertNull($this->bbs->getCalibreThing(DataConstants::CALIBRE_AUTHOR_TYPE, 1));
         $result = $this->bbs->addCalibreThing(DataConstants::CALIBRE_AUTHOR_TYPE, 1, 'Author 1');
@@ -236,7 +237,7 @@ class BicBucStriimTest extends PHPUnit\Framework\TestCase
         $this->assertEquals(0, $result2->refctr);
     }
 
-    public function testEditAuthorThumbnail()
+    public function testEditAuthorThumbnail(): void
     {
         $this->assertTrue($this->bbs->editAuthorThumbnail(1, 'Author Name', true, 'tests/fixtures/author1.jpg', 'image/jpeg'));
         $this->assertTrue(file_exists(self::DATA . '/authors/author_1_thm.png'));
@@ -251,7 +252,7 @@ class BicBucStriimTest extends PHPUnit\Framework\TestCase
         $this->assertEquals(self::DATA . '/authors/author_1_thm.png', $result->url);
     }
 
-    public function testGetAuthorThumbnail()
+    public function testGetAuthorThumbnail(): void
     {
         $this->assertTrue($this->bbs->editAuthorThumbnail(1, 'Author Name', true, 'tests/fixtures/author1.jpg', 'image/jpeg'));
         $this->assertTrue($this->bbs->editAuthorThumbnail(2, 'Author Name', true, 'tests/fixtures/author1.jpg', 'image/jpeg'));
@@ -263,7 +264,7 @@ class BicBucStriimTest extends PHPUnit\Framework\TestCase
         $this->assertNotNull($result);
     }
 
-    public function testDeleteAuthorThumbnail()
+    public function testDeleteAuthorThumbnail(): void
     {
         $this->assertTrue($this->bbs->editAuthorThumbnail(1, 'Author Name', true, 'tests/fixtures/author1.jpg', 'image/jpeg'));
         $this->assertNotNull($this->bbs->getAuthorThumbnail(1));
@@ -274,7 +275,7 @@ class BicBucStriimTest extends PHPUnit\Framework\TestCase
         $this->assertEquals(0, R::count('calibrething'));
     }
 
-    public function testAuthorLinks()
+    public function testAuthorLinks(): void
     {
         $this->assertEquals(0, count($this->bbs->authorLinks(1)));
         $this->bbs->addAuthorLink(2, 'Author 1', 'google', 'http://google.com/1');
@@ -291,7 +292,7 @@ class BicBucStriimTest extends PHPUnit\Framework\TestCase
         $this->assertEquals(1, R::count('link'));
     }
 
-    public function testAuthorNote()
+    public function testAuthorNote(): void
     {
         $this->assertNull($this->bbs->authorNote(1));
         $this->bbs->editAuthorNote(2, 'Author 1', 'text/plain', 'Goodbye, goodbye!');
@@ -310,7 +311,7 @@ class BicBucStriimTest extends PHPUnit\Framework\TestCase
         $this->assertEquals(1, R::count('note'));
     }
 
-    public function testIsTitleThumbnailAvailable()
+    public function testIsTitleThumbnailAvailable(): void
     {
         $this->assertNotNull($this->bbs->titleThumbnail(1, 'tests/fixtures/author1.jpg', true));
         $this->assertTrue($this->bbs->isTitleThumbnailAvailable(1));
@@ -318,7 +319,7 @@ class BicBucStriimTest extends PHPUnit\Framework\TestCase
     }
 
 
-    public function testClearThumbnail()
+    public function testClearThumbnail(): void
     {
         $result = $this->bbs->titleThumbnail(3, 'tests/fixtures/author1.jpg', true);
         $this->assertNotNull($result);

@@ -16,7 +16,7 @@ class UtilitiesTest extends PHPUnit\Framework\TestCase
 {
     public const FIXT = './tests/fixtures';
 
-    public function testConstructUrlInfoSimple()
+    public function testConstructUrlInfoSimple(): void
     {
         $gen = new UrlInfo('host.org', null);
         $this->assertTrue($gen->is_valid());
@@ -29,7 +29,7 @@ class UtilitiesTest extends PHPUnit\Framework\TestCase
         $this->assertEquals('https', $gen->protocol);
     }
 
-    public function testConstructUrlInfoForwarded()
+    public function testConstructUrlInfoForwarded(): void
     {
         $input1 = "for=192.0.2.60;proto=http;by=203.0.113.43";
         $input2 = "for=192.0.2.60;proto=https;by=203.0.113.43";
@@ -50,7 +50,7 @@ class UtilitiesTest extends PHPUnit\Framework\TestCase
         $this->assertEquals('https', $gen->protocol);
     }
 
-    public function testUrlInfoGetForwardingInfo()
+    public function testUrlInfoGetForwardingInfo(): void
     {
         $headers = [];
         $gen = UrlInfo::getForwardingInfo($headers);
@@ -67,7 +67,7 @@ class UtilitiesTest extends PHPUnit\Framework\TestCase
         $this->assertEquals('https', $gen->protocol);
     }
 
-    public function testBookPath()
+    public function testBookPath(): void
     {
         $this->assertEquals(
             'tests/fixtures/lib2/Gotthold Ephraim Lessing/Lob der Faulheit (1)/Lob der Faulheit - Gotthold Ephraim Lessing.epub',
@@ -75,7 +75,7 @@ class UtilitiesTest extends PHPUnit\Framework\TestCase
         );
     }
 
-    public function testTitleMimeType()
+    public function testTitleMimeType(): void
     {
         $this->assertEquals('application/epub+zip', CalibreUtil::titleMimeType('x/y/test.epub'));
         $this->assertEquals('application/x-mobi8-ebook', CalibreUtil::titleMimeType('test.azw3'));
@@ -87,7 +87,7 @@ class UtilitiesTest extends PHPUnit\Framework\TestCase
         $this->assertEquals('text/xml', CalibreUtil::titleMimeType(self::FIXT . '/atom.rng'));
     }
 
-    public function testGetUserLang()
+    public function testGetUserLang(): void
     {
         $expected = 'pl';
         $_GET['lang'] = $expected;
@@ -129,7 +129,7 @@ class UtilitiesTest extends PHPUnit\Framework\TestCase
         $this->assertEquals($expected, InputUtil::getUserLang($request));
     }
 
-    public function testIsEMailValid()
+    public function testIsEMailValid(): void
     {
         $this->assertFalse(InputUtil::isEMailValid('a'));
         $this->assertFalse(InputUtil::isEMailValid('@b'));

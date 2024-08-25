@@ -23,6 +23,7 @@ class MetadataEpubTest extends PHPUnit\Framework\TestCase
     public const CDIR = './tests/fixtures/lib2/';
     public const CDB2 = './tests/fixtures/lib2/metadata.db';
 
+    /** @var ?Calibre */
     public $calibre;
 
     public function setUp(): void
@@ -59,7 +60,7 @@ class MetadataEpubTest extends PHPUnit\Framework\TestCase
         return true;
     }
 
-    public function testConstructStdDir()
+    public function testConstructStdDir(): void
     {
         $orig = self::CDIR . '/Gotthold Ephraim Lessing/Lob der Faulheit (1)/Lob der Faulheit - Gotthold Ephraim Lessing.epub';
         $conv = new MetadataEpub($orig);
@@ -70,7 +71,7 @@ class MetadataEpubTest extends PHPUnit\Framework\TestCase
         $this->assertEquals(filesize($orig), filesize($tmpfile));
     }
 
-    public function testConstructOtherDir()
+    public function testConstructOtherDir(): void
     {
         $orig = self::CDIR . '/Gotthold Ephraim Lessing/Lob der Faulheit (1)/Lob der Faulheit - Gotthold Ephraim Lessing.epub';
         $conv = new MetadataEpub($orig, self::DATA);
@@ -81,7 +82,7 @@ class MetadataEpubTest extends PHPUnit\Framework\TestCase
         $this->assertEquals(filesize($orig), filesize($tmpfile));
     }
 
-    public function testDestruct()
+    public function testDestruct(): void
     {
         $orig = self::CDIR . '/Gotthold Ephraim Lessing/Lob der Faulheit (1)/Lob der Faulheit - Gotthold Ephraim Lessing.epub';
         $conv = new MetadataEpub($orig);
@@ -91,7 +92,7 @@ class MetadataEpubTest extends PHPUnit\Framework\TestCase
         $this->assertFalse(file_exists($tmpfile));
     }
 
-    public function testUpdateMetadataTitle()
+    public function testUpdateMetadataTitle(): void
     {
         $orig = self::CDIR . '/Gotthold Ephraim Lessing/Lob der Faulheit (1)/Lob der Faulheit - Gotthold Ephraim Lessing.epub';
         $new_title = 'Kein Lob der Faulheit';
@@ -105,7 +106,7 @@ class MetadataEpubTest extends PHPUnit\Framework\TestCase
         $this->assertEquals($new_title, $check->Title());
     }
 
-    public function testUpdateMetadataAuthors()
+    public function testUpdateMetadataAuthors(): void
     {
         $orig = self::CDIR . '/Gotthold Ephraim Lessing/Lob der Faulheit (1)/Lob der Faulheit - Gotthold Ephraim Lessing.epub';
         $new_author = new Author();
@@ -124,7 +125,7 @@ class MetadataEpubTest extends PHPUnit\Framework\TestCase
         $this->assertEquals('Gotthold Ephraim Lessing', $authors_check['Lessing, Gotthold Ephraim']);
     }
 
-    public function testUpdateMetadataLanguage()
+    public function testUpdateMetadataLanguage(): void
     {
         $orig = self::CDIR . '/Gotthold Ephraim Lessing/Lob der Faulheit (1)/Lob der Faulheit - Gotthold Ephraim Lessing.epub';
         $new_lang = 'eng';
@@ -142,7 +143,7 @@ class MetadataEpubTest extends PHPUnit\Framework\TestCase
         }
     }
 
-    public function testUpdateMetadataMultipleLanguages()
+    public function testUpdateMetadataMultipleLanguages(): void
     {
         $orig = self::CDIR . '/Gotthold Ephraim Lessing/Lob der Faulheit (1)/Lob der Faulheit - Gotthold Ephraim Lessing.epub';
         $conv = new MetadataEpub($orig);
@@ -160,7 +161,7 @@ class MetadataEpubTest extends PHPUnit\Framework\TestCase
         }
     }
 
-    public function testUpdateId()
+    public function testUpdateId(): void
     {
         $orig = self::CDIR . '/Gotthold Ephraim Lessing/Lob der Faulheit (1)/Lob der Faulheit - Gotthold Ephraim Lessing.epub';
         $conv = new MetadataEpub($orig);
@@ -177,7 +178,7 @@ class MetadataEpubTest extends PHPUnit\Framework\TestCase
         $this->assertEquals('222222', $check->Amazon());
     }
 
-    public function testUpdateMetadataTags()
+    public function testUpdateMetadataTags(): void
     {
         $orig = self::CDIR . '/Gotthold Ephraim Lessing/Lob der Faulheit (1)/Lob der Faulheit - Gotthold Ephraim Lessing.epub';
         $new_tag1 = new Tag();
@@ -197,7 +198,7 @@ class MetadataEpubTest extends PHPUnit\Framework\TestCase
         $this->assertEquals('Subject 2', $subjects_check[1]);
     }
 
-    public function testUpdateMetadataCover()
+    public function testUpdateMetadataCover(): void
     {
         $orig = self::CDIR . '/Gotthold Ephraim Lessing/Lob der Faulheit (1)/Lob der Faulheit - Gotthold Ephraim Lessing.epub';
         $cover = self::FDIR . 'test-cover.jpg';
@@ -210,7 +211,7 @@ class MetadataEpubTest extends PHPUnit\Framework\TestCase
         $this->assertFalse($this->compareCover($tmpfile, $cover2));
     }
 
-    public function testUpdateMetadataDescription()
+    public function testUpdateMetadataDescription(): void
     {
         $orig = self::CDIR . '/Gotthold Ephraim Lessing/Lob der Faulheit (1)/Lob der Faulheit - Gotthold Ephraim Lessing.epub';
         $new_desc = '<div><p>Kein Lob der Faulheit</p></div>';

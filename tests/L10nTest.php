@@ -14,7 +14,7 @@ class L10nTest extends PHPUnit\Framework\TestCase
     ##
     # Test array functionality
     #
-    public function testArrayGet()
+    public function testArrayGet(): void
     {
         $langde = L10n::loadMessages('de');
 
@@ -25,7 +25,7 @@ class L10nTest extends PHPUnit\Framework\TestCase
         $this->assertEquals('Undefined message!', $l10n['bla bla']);
     }
 
-    public function testDefaultLanguage()
+    public function testDefaultLanguage(): void
     {
         $langen = L10n::loadMessages('en');
 
@@ -33,7 +33,7 @@ class L10nTest extends PHPUnit\Framework\TestCase
         $this->assertEquals($langen['admin'], $l10n->message('admin'));
     }
 
-    public function testInvalidLanguage()
+    public function testInvalidLanguage(): void
     {
         $langen = L10n::loadMessages('en');
 
@@ -41,7 +41,7 @@ class L10nTest extends PHPUnit\Framework\TestCase
         $this->assertEquals($langen['admin'], $l10n->message('admin'));
     }
 
-    public function testEmptyMessage()
+    public function testEmptyMessage(): void
     {
         $l10n = new L10n('en');
         $this->assertEquals('', $l10n->message(null));
