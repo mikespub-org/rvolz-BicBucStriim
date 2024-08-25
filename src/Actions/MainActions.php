@@ -16,6 +16,7 @@ use BicBucStriim\Utilities\CalibreUtil;
 use BicBucStriim\Utilities\InputUtil;
 use BicBucStriim\Utilities\Mailer;
 use BicBucStriim\Utilities\MetadataEpub;
+use BicBucStriim\Utilities\RequestUtil;
 use BicBucStriim\Utilities\ResponseUtil;
 use BicBucStriim\Utilities\RouteUtil;
 use Michelf\MarkdownExtra;
@@ -103,8 +104,9 @@ class MainActions extends DefaultActions
     public function show_login()
     {
         if ($this->is_authenticated()) {
+            $requestUtil = new RequestUtil($this->request);
             $this->log()->info('user is already logged in : ' . $this->getAuth()->getUserName());
-            return $this->mkRedirect($this->getBasePath() . '/');
+            return $this->mkRedirect($requestUtil->getBasePath() . '/');
         } else {
             return $this->render('login.twig', [
                 'page' => $this->mkPage('login')]);
@@ -131,8 +133,9 @@ class MainActions extends DefaultActions
                     $success = $this->getAuth()->getStatus();
                     $this->log()->debug('login success: ' . $success);
                     if ($this->is_authenticated()) {
+                        $requestUtil = new RequestUtil($this->request);
                         $this->log()->info('logged in user : ' . $this->getAuth()->getUserName());
-                        return $this->mkRedirect($this->getBasePath() . '/');
+                        return $this->mkRedirect($requestUtil->getBasePath() . '/');
                     }
                 } catch (Exception $e) {
                     $this->log()->error('error logging in user : ' . $e->getMessage());

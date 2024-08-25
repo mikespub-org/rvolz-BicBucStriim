@@ -37,8 +37,6 @@ class DefaultMiddleware implements \BicBucStriim\Traits\AppInterface, Middleware
      */
     public function process(Request $request, RequestHandler $handler): Response
     {
-        $this->request = $request;
-        //$response = $this->response();
         return $handler->handle($request);
     }
 }

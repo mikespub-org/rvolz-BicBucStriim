@@ -10,6 +10,7 @@
 
 namespace BicBucStriim\Middleware;
 
+use BicBucStriim\Utilities\RequestUtil;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -43,11 +44,11 @@ class OwnConfigMiddleware extends DefaultMiddleware
      */
     public function process(Request $request, RequestHandler $handler): Response
     {
-        $this->request = $request;
+        $requestUtil = new RequestUtil($request);
         $config_status = $this->check_config_db();
         if ($config_status == static::STATUS_OOPS) {
             return $this->mkError(500, 'No or bad configuration database. Please use <a href="' .
-                $this->getBasePath() .
+                $requestUtil->getBasePath() .
                 '/installcheck.php">installcheck.php</a> to check for errors.');
         } elseif ($config_status == static::STATUS_OLD) {
             // TODO Redirect to an update script in the future

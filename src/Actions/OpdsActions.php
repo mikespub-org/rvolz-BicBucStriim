@@ -11,6 +11,7 @@
 namespace BicBucStriim\Actions;
 
 use BicBucStriim\Utilities\OpdsGenerator;
+use BicBucStriim\Utilities\RequestUtil;
 use BicBucStriim\Utilities\RouteUtil;
 use Psr\Http\Message\ResponseInterface as Response;
 
@@ -436,7 +437,8 @@ class OpdsActions extends DefaultActions
     {
         $settings = $this->settings();
 
-        $root = $this->getRootUrl();
+        $requestUtil = new RequestUtil($this->request, $this->settings());
+        $root = $requestUtil->getRootUrl();
         $gen = new OpdsGenerator(
             $root,
             $settings['version'],

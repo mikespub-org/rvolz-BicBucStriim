@@ -123,6 +123,7 @@ trait AppTrait
     /**
      * Get the Request object
      * @param ?Request $request
+     * @deprecated 3.5.0 use DefaultActions::getSession() instead
      * @return Request
      */
     public function request($request = null)
@@ -311,12 +312,13 @@ trait AppTrait
         $content = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PARTIAL_OUTPUT_ON_ERROR);
         $response = $this->mkResponse($content, $type, $status);
         // Add Allow-Origin + Allow-Credentials to response for non-preflighted requests
-        $origin = $this->getCorsOrigin();
+        $requestUtil = new RequestUtil($this->request, $this->settings());
+        $origin = $requestUtil->getCorsOrigin();
         if (!$origin) {
             return $response;
         }
         // @see https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS#requests_with_credentials
-        $this->response = $this->response($response)
+        $this->response = $response
             ->withHeader('Access-Control-Allow-Origin', $origin)
             ->withHeader('Access-Control-Allow-Credentials', 'true')
             ->withHeader('Vary', 'Origin');
@@ -325,6 +327,7 @@ trait AppTrait
 
     /**
      * Check if CORS origin is allowed
+     * @deprecated 3.5.0 moved to \BicBucStriim\Utilities\RequestUtil
      * @return string|false
      */
     public function getCorsOrigin()
@@ -332,7 +335,7 @@ trait AppTrait
         $settings = $this->settings();
         $allowed = $settings['cors_origin'] ?? '*';
         // Check if origin is allowed or undefined
-        $origin = $this->request()->getHeaderLine('Origin') ?: '*';
+        $origin = $this->request->getHeaderLine('Origin') ?: '*';
         if (is_array($allowed)) {
             if (!in_array($origin, $allowed)) {
                 return false;

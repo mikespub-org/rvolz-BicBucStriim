@@ -10,6 +10,7 @@
 
 namespace BicBucStriim\Actions;
 
+use BicBucStriim\Utilities\RequestUtil;
 use BicBucStriim\Utilities\RouteUtil;
 use Michelf\MarkdownExtra;
 use Psr\Http\Message\ResponseInterface as Response;
@@ -74,6 +75,8 @@ class MetadataActions extends DefaultActions
         #$extension = end($temp);
         $extension = pathinfo($_FILES["file"]["name"], PATHINFO_EXTENSION);
         $this->log()->debug('edit_author_thm: ' . $_FILES["file"]["name"]);
+        $requestUtil = new RequestUtil($this->request);
+        $root = $requestUtil->getBasePath();
         if ((($_FILES["file"]["type"] == "image/jpeg")
                 || ($_FILES["file"]["type"] == "image/jpg")
                 || ($_FILES["file"]["type"] == "image/pjpeg")
@@ -86,21 +89,18 @@ class MetadataActions extends DefaultActions
             if ($_FILES["file"]["error"] > 0) {
                 $this->log()->debug('edit_author_thm: upload error ' . $_FILES["file"]["error"]);
                 $this->setFlash('error', $this->getMessageString('author_thumbnail_upload_error1') . ': ' . $_FILES["file"]["error"]);
-                $rot = $this->getBasePath();
-                return $this->mkRedirect($rot . '/authors/' . $id . '/0/');
+                return $this->mkRedirect($root . '/authors/' . $id . '/0/');
             } else {
                 $this->log()->debug('edit_author_thm: upload ok, converting');
                 $author = $this->calibre()->author($id);
                 $created = $this->bbs()->editAuthorThumbnail($id, $author->name, $settings->thumb_gen_clipped, $_FILES["file"]["tmp_name"], $_FILES["file"]["type"]);
                 $this->log()->debug('edit_author_thm: converted, redirecting');
-                $rot = $this->getBasePath();
-                return $this->mkRedirect($rot . '/authors/' . $id . '/0/');
+                return $this->mkRedirect($root . '/authors/' . $id . '/0/');
             }
         } else {
             $this->log()->warning('edit_author_thm: Uploaded thumbnail too big or wrong type');
             $this->setFlash('error', $this->getMessageString('author_thumbnail_upload_error2'));
-            $rot = $this->getBasePath();
-            return $this->mkRedirect($rot . '/authors/' . $id . '/0/');
+            return $this->mkRedirect($root . '/authors/' . $id . '/0/');
         }
     }
 

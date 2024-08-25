@@ -56,6 +56,18 @@ class RequestUtil
     }
 
     /**
+     * Is this an API request expecting a JSON response?
+     * @return bool
+     */
+    public function isJsonApi()
+    {
+        if (!empty($this->settings['hasapi']) && $this->request->hasHeader('Accept') && in_array('application/json', $this->request->getHeader('Accept'))) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Get root url
      * @param bool $absolute override relative_urls settings
      * @return string root url
@@ -141,6 +153,25 @@ class RequestUtil
     {
         $headers = $this->request->getHeaders();
         return UrlInfo::getForwardingInfo($headers);
+    }
+
+    /**
+     * Check if CORS origin is allowed
+     * @return string|false
+     */
+    public function getCorsOrigin()
+    {
+        $allowed = $this->settings['cors_origin'] ?? '*';
+        // Check if origin is allowed or undefined
+        $origin = $this->request->getHeaderLine('Origin') ?: '*';
+        if (is_array($allowed)) {
+            if (!in_array($origin, $allowed)) {
+                return false;
+            }
+        } elseif ($allowed !== '*' && $origin !== $allowed) {
+            return false;
+        }
+        return $origin;
     }
 
     /**

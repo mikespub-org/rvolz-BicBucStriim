@@ -9,6 +9,7 @@
 
 namespace BicBucStriim\Actions;
 
+use BicBucStriim\Utilities\RequestUtil;
 use BicBucStriim\Utilities\RouteUtil;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface as Response;
@@ -71,8 +72,9 @@ class ApiActions extends DefaultActions
     {
         $settings = $this->settings();
         $title = $settings->display_app_name;
-        $rot = $this->getRootUrl();
-        $link = $rot . '/api/openapi.json';
+        $requestUtil = new RequestUtil($this->request, $this->settings());
+        $root = $requestUtil->getRootUrl();
+        $link = $root . '/api/openapi.json';
         return $this->render('api_home.twig', [
             'title' => $title,
             'link' => $link]);
@@ -86,11 +88,12 @@ class ApiActions extends DefaultActions
     {
         $settings = $this->settings();
         $title = $settings->display_app_name;
-        $rot = $this->getRootUrl();
+        $requestUtil = new RequestUtil($this->request, $this->settings());
+        $root = $requestUtil->getRootUrl();
         $routes = $this->routeCollector->getRoutes();
         $patterns = [];
         foreach ($routes as $route) {
-            $link = $rot . $route->getPattern();
+            $link = $root . $route->getPattern();
             $patterns[$link] ??= [];
             $patterns[$link] = array_merge($patterns[$link], array_filter($route->getMethods(), function ($method) {
                 return $method !== 'HEAD';
@@ -119,7 +122,8 @@ class ApiActions extends DefaultActions
      */
     public function corsOptions($routes = '')
     {
-        $origin = $this->getCorsOrigin();
+        $requestUtil = new RequestUtil($this->request, $this->settings());
+        $origin = $requestUtil->getCorsOrigin();
         if (!$origin) {
             return $this->response();
         }
@@ -139,7 +143,8 @@ class ApiActions extends DefaultActions
      */
     public function getOpenApi()
     {
-        $root = $this->getRootUrl();
+        $requestUtil = new RequestUtil($this->request, $this->settings());
+        $root = $requestUtil->getRootUrl();
         $settings = $this->settings();
         $result = [
             "openapi" => "3.0.3",

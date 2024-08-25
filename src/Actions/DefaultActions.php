@@ -12,6 +12,7 @@ namespace BicBucStriim\Actions;
 
 use Aura\Auth\Auth;
 use BicBucStriim\Session\Session;
+use BicBucStriim\Utilities\RequestUtil;
 use BicBucStriim\Utilities\RouteUtil;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface as Response;
@@ -23,6 +24,9 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 class DefaultActions implements \BicBucStriim\Traits\AppInterface
 {
     use \BicBucStriim\Traits\AppTrait;
+
+    /** @var Request|null */
+    protected $request = null;
 
     /** @var string|null */
     protected $templatesDir = null;
@@ -111,7 +115,7 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
      */
     public function initialize($request, $response)
     {
-        $this->request($request);
+        $this->request = $request;
         $this->response($response);
     }
 
@@ -121,7 +125,7 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
      */
     public function get($name = null)
     {
-        $params = $this->request()->getQueryParams();
+        $params = $this->request->getQueryParams();
         if (empty($name)) {
             return $params;
         }
@@ -145,11 +149,13 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
      * Check admin rights and redirect if necessary
      * @see \BicBucStriim\Middleware\GatekeeperMiddleware
      * @param ?Request $request
+     * @deprecated 3.4.2 use gatekeeper middleware instead of wrapped check_admin() action
      * @return bool true if we have a response ready (= no access), false otherwise
      */
     public function check_admin($request = null)
     {
         if (!$this->is_admin($request)) {
+            $this->request($request);
             $this->render('error.twig', [
                 'page' => $this->mkPage('error', 0, 0),
                 'error' => $this->getMessageString('error_no_access')]);
@@ -232,8 +238,8 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
      */
     public function render($template, $data = [], $status = null)
     {
-        $settings = $this->settings();
-        if (!empty($settings['hasapi']) && $this->request()->hasHeader('Accept') && in_array('application/json', $this->request()->getHeader('Accept'))) {
+        $requestUtil = new RequestUtil($this->request, $this->settings());
+        if ($requestUtil->isJsonApi()) {
             return $this->renderJson($data, $status);
         }
         // Slim 2 framework will replace data, render template and echo output via slim view display()
@@ -279,7 +285,8 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
         if (!empty($settings->templates_dir)) {
             $templatesDirName = basename($settings->templates_dir);
         }
-        $rot = $this->getRootUrl();
+        $requestUtil = new RequestUtil($this->request, $this->settings());
+        $root = $requestUtil->getRootUrl();
         $auth = $this->is_authenticated();
         if ($settings->must_login) {
             $adm = $this->is_admin();
@@ -287,7 +294,7 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
             $adm = true;
         }    # the admin button should be always visible if no login is required
         $page = ['title' => $title,
-            'rot' => $rot,
+            'rot' => $root,
             'h1' => $subtitle,
             'version' => $settings['version'],
             'custom' => $templatesDirName,
@@ -323,7 +330,7 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
      */
     public function getSession($request = null)
     {
-        $request ??= $this->request();
+        $request ??= $this->request;
         return $request?->getAttribute('session');
     }
 
@@ -334,7 +341,7 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
      */
     public function getAuth($request = null)
     {
-        $request ??= $this->request();
+        $request ??= $this->request;
         return $request?->getAttribute('auth');
     }
 

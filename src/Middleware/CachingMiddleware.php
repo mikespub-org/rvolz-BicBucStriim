@@ -24,12 +24,13 @@ class CachingMiddleware extends CacheMiddleware
 {
     use \BicBucStriim\Traits\AppTrait;
 
+    /** @var array<string> */
     protected $resources;
 
     /**
      * Initialize the configuration
      *
-     * @param array $cacheConfig an array of resource strings
+     * @param array<string> $cacheConfig an array of resource strings
      * @param CacheItemPoolInterface $cachePool the cache item pool for the cache middleware
      * @param ResponseFactoryInterface $responseFactory the cache item pool for the cache middleware
      */
@@ -51,7 +52,6 @@ class CachingMiddleware extends CacheMiddleware
      */
     public function process(Request $request, RequestHandler $handler): Response
     {
-        $this->request = $request;
         $requestUtil = new RequestUtil($request);
         $resource = $requestUtil->getPathInfo();
         foreach ($this->resources as $noCacheResource) {

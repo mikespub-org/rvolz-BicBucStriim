@@ -301,7 +301,6 @@ class MiddlewareTest extends PHPUnit\Framework\TestCase
         $request = RequestUtil::getServerRequest('GET', '/admin/');
         $request = $request->withHeader('PHP_AUTH_USER', 'admin')->withHeader('PHP_AUTH_PW', 'admin');
         $middleware = new LoginMiddleware($app->getContainer(), $settings['appname'], []);
-        $middleware->request($request);
 
         // test protected method using closure bind & call or use reflection
         $isAuthorized = function ($request) {
@@ -323,7 +322,6 @@ class MiddlewareTest extends PHPUnit\Framework\TestCase
         $request = RequestUtil::getServerRequest('GET', '/admin/');
         $request = $request->withHeader('PHP_AUTH_USER', 'admin')->withHeader('PHP_AUTH_PW', 'wrong');
         $middleware = new LoginMiddleware($app->getContainer(), $settings['appname'], []);
-        $middleware->request($request);
 
         // test protected method using closure bind & call or use reflection
         $isAuthorized = function ($request) {
@@ -345,7 +343,6 @@ class MiddlewareTest extends PHPUnit\Framework\TestCase
         $request = RequestUtil::getServerRequest('GET', '/admin/');
         $request = $request->withHeader('Authorization', 'Basic ' . base64_encode('admin:admin'));
         $middleware = new LoginMiddleware($app->getContainer(), $settings['appname'], []);
-        $middleware->request($request);
 
         // test protected method using closure bind & call or use reflection
         $isAuthorized = function ($request) {
@@ -367,7 +364,6 @@ class MiddlewareTest extends PHPUnit\Framework\TestCase
         $request = RequestUtil::getServerRequest('GET', '/admin/');
         $request = $request->withHeader('Authorization', 'Basic ' . base64_encode('admin:wrong'));
         $middleware = new LoginMiddleware($app->getContainer(), $settings['appname'], []);
-        $middleware->request($request);
 
         // test protected method using closure bind & call or use reflection
         $isAuthorized = function ($request) {

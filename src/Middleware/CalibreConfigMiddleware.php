@@ -28,8 +28,6 @@ class CalibreConfigMiddleware extends DefaultMiddleware
      */
     public function process(Request $request, RequestHandler $handler): Response
     {
-        $this->request = $request;
-
         $requestUtil = new RequestUtil($request);
         $resource = $requestUtil->getPathInfo();
         if ($resource == '/login/') {
@@ -37,7 +35,7 @@ class CalibreConfigMiddleware extends DefaultMiddleware
         }
         if (!$this->check_calibre() && $resource != '/admin/configuration/') {
             // app->redirect not useable in middleware
-            return $this->mkRedirect($this->getBasePath() . '/admin/configuration/');
+            return $this->mkRedirect($requestUtil->getBasePath() . '/admin/configuration/');
         }
         return $handler->handle($request);
     }

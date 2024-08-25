@@ -22,7 +22,11 @@ use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
 
 class LoginMiddleware extends DefaultMiddleware
 {
+    /** @var Request */
+    protected $request;
+    /** @var string */
     protected $realm;
+    /** @var array<string> */
     protected $static_resource_paths;
 
     /**
@@ -30,7 +34,7 @@ class LoginMiddleware extends DefaultMiddleware
      * config with defaults.
      *
      * @param string $realm
-     * @param array $statics
+     * @param array<string> $statics
      */
     public function __construct(ContainerInterface $container, $realm, $statics)
     {
@@ -75,7 +79,7 @@ class LoginMiddleware extends DefaultMiddleware
     public function authBeforeDispatch(Request $request)
     {
         $settings = $this->settings();
-        $requestUtil = new RequestUtil($request);
+        $requestUtil = new RequestUtil($request, $this->settings());
         $resource = $requestUtil->getPathInfo();
         $this->log()->debug('login resource: ' . $resource);
         if ($settings->must_login == 1) {
@@ -95,14 +99,13 @@ class LoginMiddleware extends DefaultMiddleware
                 $this->log()->debug('login: unauthorized OPDS request');
                 return $this->mkAuthenticate($this->realm);
             }
-            $requestUtil = new RequestUtil($request);
             if ($request->getMethod() != 'GET' && ($requestUtil->isXhr() || $requestUtil->isAjax())) {
                 $this->log()->debug('login: unauthorized JSON request');
                 return $this->mkAuthenticate($this->realm);
             }
             $this->log()->debug('login: redirecting to login');
             // app->redirect not useable in middleware
-            return $this->mkRedirect($this->getRootUrl() . '/login/');
+            return $this->mkRedirect($requestUtil->getRootUrl() . '/login/');
         }
         if ($resource === '/login/') {
             // we need to initialize $this->setAuth() if we want to login in MainActions
@@ -121,7 +124,7 @@ class LoginMiddleware extends DefaultMiddleware
         if (stripos($resource, '/admin') === 0) {
             if (!$this->is_static_resource($resource) && !$this->is_authorized($request)) {
                 $this->log()->debug('login: redirecting to login');
-                return $this->mkRedirect($this->getRootUrl() . '/login/');
+                return $this->mkRedirect($requestUtil->getRootUrl() . '/login/');
             }
             return false;
         }
@@ -161,7 +164,8 @@ class LoginMiddleware extends DefaultMiddleware
      */
     protected function is_authorized(Request $request)
     {
-        $session = $this->makeSession($request, $this->getBasePath());
+        $requestUtil = new RequestUtil($request);
+        $session = $this->makeSession($request, $requestUtil->getBasePath());
         $authTracker = $this->makeAuthTracker($request, $session, $this->bbs()->mydb);
         // @todo this sets 'auth' attribute on $this->request
         $request = $this->setAuth($request, $authTracker);
@@ -288,7 +292,7 @@ class LoginMiddleware extends DefaultMiddleware
     protected function setSession($request, $session)
     {
         $request = $request->withAttribute('session', $session);
-        $this->request($request);
+        $this->request = $request;
         return $request;
     }
 
@@ -301,7 +305,7 @@ class LoginMiddleware extends DefaultMiddleware
     protected function setAuth($request, $auth)
     {
         $request = $request->withAttribute('auth', $auth);
-        $this->request($request);
+        $this->request = $request;
         return $request;
     }
 
