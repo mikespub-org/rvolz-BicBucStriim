@@ -6,11 +6,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [3.x.x] - 20xx-xx-xx
 ### Changed
+
+## [3.5.0] - 2024-08-25 Return response in Actions methods
+### Changed
 - Return response instead of void from mkSomething() and render() methods
 - Support returning response from callable action in ActionsWrapperStrategy
 - Show returning response (new-style) or void (old-style) in DefaultActions::hello()
 - Change other actions to return response instead of void
 - Deprecate use of AppTrait::request() in middleware and actions
+- Clean up settings() and response() (partial)
 ### Removed
 - Drop deprecated methods for releases older than 3.4.0
 
