@@ -61,8 +61,9 @@ class LoginMiddleware extends DefaultMiddleware
             return $responder->error(500, $message);
         }
         // $this->request is updated in is_authorized()
-        $this->setCurrentLanguage($this->requester->request);
-        return $handler->handle($this->requester->request);
+        $request = $this->requester->value();
+        $this->setCurrentLanguage($request);
+        return $handler->handle($request);
     }
 
     /**

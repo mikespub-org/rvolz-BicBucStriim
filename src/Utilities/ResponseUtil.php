@@ -12,7 +12,7 @@ use Psr\Http\Message\ResponseInterface as Response;
 class ResponseUtil
 {
     /** @var Response */
-    public $response;
+    protected $response;
 
     /**
      * @param ?Response $response
@@ -21,6 +21,19 @@ class ResponseUtil
     {
         // @todo get app responsefactory from container
         $this->response = $response ?? static::getResponse();
+    }
+
+    /**
+     * Get or set current response value in responder
+     * @param ?Response $response
+     * @return Response
+     */
+    public function value($response = null)
+    {
+        if (!empty($response)) {
+            $this->response = $response;
+        }
+        return $this->response;
     }
 
     /**

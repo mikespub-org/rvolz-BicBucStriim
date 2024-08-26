@@ -14,9 +14,9 @@ use Slim\Routing\RouteContext;
 class RequestUtil
 {
     /** @var Request */
-    public $request;
+    protected $request;
     /** @var ?Settings */
-    public $settings;
+    protected $settings;
 
     /**
      * @param Request $request
@@ -26,6 +26,19 @@ class RequestUtil
     {
         $this->request = $request;
         $this->settings = $settings;
+    }
+
+    /**
+     * Get or set current request value in requester
+     * @param ?Request $request
+     * @return Request
+     */
+    public function value($request = null)
+    {
+        if (!empty($request)) {
+            $this->request = $request;
+        }
+        return $this->request;
     }
 
     /**
