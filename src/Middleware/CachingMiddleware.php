@@ -52,8 +52,8 @@ class CachingMiddleware extends CacheMiddleware
      */
     public function process(Request $request, RequestHandler $handler): Response
     {
-        $requestUtil = new RequestUtil($request);
-        $resource = $requestUtil->getPathInfo();
+        $requester = new RequestUtil($request);
+        $resource = $requester->getPathInfo();
         foreach ($this->resources as $noCacheResource) {
             if (str_starts_with($resource, $noCacheResource)) {
                 session_cache_limiter('nocache');

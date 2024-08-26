@@ -15,7 +15,6 @@ use BicBucStriim\Calibre\Author;
 use BicBucStriim\Utilities\CalibreUtil;
 use BicBucStriim\Utilities\InputUtil;
 use BicBucStriim\Utilities\MetadataEpub;
-use BicBucStriim\Utilities\ResponseUtil;
 use BicBucStriim\Utilities\RouteUtil;
 use Michelf\MarkdownExtra;
 use Psr\Http\Message\ResponseInterface as Response;
@@ -101,8 +100,8 @@ class MainActions extends DefaultActions
      */
     public function show_login()
     {
-        if ($this->is_authenticated()) {
-            $this->log()->info('user is already logged in : ' . $this->getAuth()->getUserName());
+        if ($this->requester->isAuthenticated()) {
+            $this->log()->info('user is already logged in : ' . $this->requester->getUserName());
             return $this->responder->mkRedirect($this->requester->getBasePath() . '/');
         } else {
             return $this->render('login.twig', [
@@ -116,7 +115,7 @@ class MainActions extends DefaultActions
      */
     public function perform_login()
     {
-        $login_data = $this->post();
+        $login_data = $this->requester->post();
         $this->log()->debug('login: ' . var_export($login_data, true));
         if (isset($login_data['username']) && isset($login_data['password'])) {
             $uname = $login_data['username'];
@@ -126,11 +125,11 @@ class MainActions extends DefaultActions
                     'page' => $this->mkPage('login')]);
             } else {
                 try {
-                    $this->container('login_service')->login($this->getAuth(), ['username' => $uname, 'password' => $upw]);
-                    $success = $this->getAuth()->getStatus();
+                    $this->container('login_service')->login($this->requester->getAuth(), ['username' => $uname, 'password' => $upw]);
+                    $success = $this->requester->getAuth()->getStatus();
                     $this->log()->debug('login success: ' . $success);
-                    if ($this->is_authenticated()) {
-                        $this->log()->info('logged in user : ' . $this->getAuth()->getUserName());
+                    if ($this->requester->isAuthenticated()) {
+                        $this->log()->info('logged in user : ' . $this->requester->getUserName());
                         return $this->responder->mkRedirect($this->requester->getBasePath() . '/');
                     }
                 } catch (Exception $e) {
@@ -152,11 +151,11 @@ class MainActions extends DefaultActions
      */
     public function logout()
     {
-        if ($this->is_authenticated()) {
-            $username = $this->getAuth()->getUserName();
+        if ($this->requester->isAuthenticated()) {
+            $username = $this->requester->getUserName();
             $this->log()->debug("logging out user: " . $username);
-            $this->container('logout_service')->logout($this->getAuth());
-            if ($this->is_authenticated()) {
+            $this->container('logout_service')->logout($this->requester->getAuth());
+            if ($this->requester->isAuthenticated()) {
                 $this->log()->error("error logging out user: " . $username);
             } else {
                 $this->log()->info("logged out user: " . $username);
@@ -200,7 +199,7 @@ class MainActions extends DefaultActions
         // TODO check search paramater?
 
         $filter = $this->getFilter();
-        $search = $this->get('search') ?? '';
+        $search = $this->requester->get('search') ?? '';
         $tlb = $this->calibre()->titlesSlice($settings['lang'], 0, $settings->page_size, $filter, trim($search));
         $tlb_books = array_map([$this, 'checkThumbnail'], $tlb['entries']);
         $tla = $this->calibre()->authorsSlice(0, $settings->page_size, trim($search));
@@ -241,11 +240,11 @@ class MainActions extends DefaultActions
         }
 
         $filter = $this->getFilter();
-        $search = $this->get('search');
+        $search = $this->requester->get('search');
         if (isset($search)) {
             $search = trim($search);
         }
-        $sort = $this->get('sort');
+        $sort = $this->requester->get('sort');
 
         if (isset($sort) && $sort == 'byReverseDate') {
             switch ($settings->title_time_sort) {
@@ -450,8 +449,8 @@ class MainActions extends DefaultActions
 
         $real_bookpath = $this->calibre()->titleFile($id, $file);
         $contentType = CalibreUtil::titleMimeType($real_bookpath);
-        if ($this->is_authenticated()) {
-            $this->log()->info("book download by " . $this->getAuth()->getUserName() . " for " . $real_bookpath .
+        if ($this->requester->isAuthenticated()) {
+            $this->log()->info("book download by " . $this->requester->getUserName() . " for " . $real_bookpath .
                 " with metadata update = " . $settings->metadata_update);
         } else {
             $this->log()->info("book download for " . $real_bookpath .
@@ -520,14 +519,12 @@ class MainActions extends DefaultActions
         }
         $filename .= ".epub";
         # Validate request e-mail format
-        $to_email = $this->post('email');
+        $to_email = $this->requester->post('email');
         if (!InputUtil::isEMailValid($to_email)) {
             $this->log()->debug("kindle: invalid email, " . $to_email);
             return $this->responder->mkError(400);
         } else {
-            // @todo replace with $this->responder if possible
-            $responder = new ResponseUtil($this->response());
-            $this->response = $responder->deleteCookie(Settings::KINDLE_COOKIE);
+            $this->responder->deleteCookie(Settings::KINDLE_COOKIE);
             $bookpath = $this->calibre()->titleFile($id, $file);
             $this->log()->debug("kindle: requested file " . $bookpath);
             $mailer = $this->mailer();
@@ -551,8 +548,7 @@ class MainActions extends DefaultActions
                 $this->log()->warning('kindle: Mail dump ' . $mailer->getDump());
             }
             # Store e-mail address in cookie so user needs to enter it only once
-            $responder = new ResponseUtil($this->response());
-            $this->response = $responder->setCookie(Settings::KINDLE_COOKIE, $to_email);
+            $this->responder->setCookie(Settings::KINDLE_COOKIE, $to_email);
             if ($send_success > 0) {
                 $answer = $this->getMessageString('send_success');
                 return $this->responder->mkResponse($answer, 'text/plain', 200);
@@ -579,7 +575,7 @@ class MainActions extends DefaultActions
             return $this->responder->mkError(400, "Bad parameter");
         }
 
-        $search = $this->get('search');
+        $search = $this->requester->get('search');
         if (isset($search)) {
             $tl = $this->calibre()->authorsSlice($page, $settings->page_size, trim($search));
         } else {
@@ -654,7 +650,7 @@ class MainActions extends DefaultActions
             'series' => $series,
             'curpage' => $tl['page'],
             'pages' => $tl['pages'],
-            'isadmin' => $this->is_admin()]);
+            'isadmin' => $this->requester->isAdmin()]);
     }
 
 
@@ -694,7 +690,7 @@ class MainActions extends DefaultActions
             'page' => $this->mkPage('author_notes', 3, 2),
             'url' => 'authors/' . $id,
             'author' => $author,
-            'isadmin' => $this->is_admin()]);
+            'isadmin' => $this->requester->isAdmin()]);
     }
 
 
@@ -713,7 +709,7 @@ class MainActions extends DefaultActions
             return $this->responder->mkError(400, "Bad parameter");
         }
 
-        $search = $this->get('search');
+        $search = $this->requester->get('search');
         if (isset($search)) {
             $this->log()->debug('seriesSlice: search ' . $search);
             $tl = $this->calibre()->seriesSlice($page, $settings->page_size, trim($search));
@@ -780,7 +776,7 @@ class MainActions extends DefaultActions
             return $this->responder->mkError(400, "Bad parameter");
         }
 
-        $search = $this->get('search');
+        $search = $this->requester->get('search');
         if (isset($search)) {
             $tl = $this->calibre()->tagsSlice($page, $settings->page_size, trim($search));
         } else {
@@ -846,10 +842,10 @@ class MainActions extends DefaultActions
      */
     public function title_forbidden($book_details)
     {
-        if (!$this->is_authenticated()) {
+        if (!$this->requester->isAuthenticated()) {
             return false;
         }
-        $user = $this->getAuth()->getUserData();
+        $user = $this->requester->getAuth()->getUserData();
         if (empty($user['languages']) && empty($user['tags'])) {
             return false;
         } else {

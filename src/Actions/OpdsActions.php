@@ -123,7 +123,7 @@ class OpdsActions extends DefaultActions
         }
 
         $filter = $this->getFilter();
-        $search = $this->get('search');
+        $search = $this->requester->get('search');
         if (isset($search)) {
             $tl = $this->calibre()->titlesSlice($settings['lang'], $page, $settings->page_size, $filter, $search);
         } else {
@@ -371,7 +371,7 @@ class OpdsActions extends DefaultActions
             return $this->responder->mkError(400, "Bad parameter");
         }
 
-        $search = $this->get('search');
+        $search = $this->requester->get('search');
         if (!isset($search)) {
             $this->log()->error('opdsBySearch called without search criteria, page ' . $page);
             // 400 Bad request
@@ -405,11 +405,11 @@ class OpdsActions extends DefaultActions
         $settings = $this->settings();
 
         $this->log()->debug('opdsLogout: OPDS logout request');
-        if ($this->is_authenticated()) {
-            $username = $this->getAuth()->getUserName();
+        if ($this->requester->isAuthenticated()) {
+            $username = $this->requester->getUserName();
             $this->log()->debug("logging out user: " . $username);
-            $this->container('logout_service')->logout($this->getAuth());
-            if ($this->is_authenticated()) {
+            $this->container('logout_service')->logout($this->requester->getAuth());
+            if ($this->requester->isAuthenticated()) {
                 $this->log()->error("error logging out user: " . $username);
             } else {
                 $this->log()->info("logged out user: " . $username);

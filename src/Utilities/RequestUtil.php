@@ -2,6 +2,8 @@
 
 namespace BicBucStriim\Utilities;
 
+use Aura\Auth\Auth;
+use BicBucStriim\Session\Session;
 use BicBucStriim\AppData\Settings;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Routing\RouteContext;
@@ -56,6 +58,105 @@ class RequestUtil
             return true;
         }
         return false;
+    }
+
+    /**
+     * Get param(s)
+     * @param ?string $name
+     */
+    public function get($name = null)
+    {
+        $params = $this->request->getQueryParams();
+        if (empty($name)) {
+            return $params;
+        }
+        return $params[$name] ?? null;
+    }
+
+    /**
+     * Post param(s)
+     * @param ?string $name
+     */
+    public function post($name = null)
+    {
+        $params = $this->request->getParsedBody();
+        if (empty($name)) {
+            return $params;
+        }
+        return $params[$name] ?? null;
+    }
+
+    /**
+     * Get session
+     * @return Session|null
+     */
+    public function getSession()
+    {
+        return $this->request->getAttribute('session');
+    }
+
+    /**
+     * Get authentication tracker
+     * @return Auth|null
+     */
+    public function getAuth()
+    {
+        return $this->request->getAttribute('auth');
+    }
+
+    /**
+     * Get authenticated username or null
+     * @return string|null
+     */
+    public function getUserName()
+    {
+        return $this->getAuth()?->getUserName();
+    }
+
+    /**
+     * Check if the current user was authenticated
+     * @return bool  true if authenticated, else false
+     */
+    public function isAuthenticated()
+    {
+        return is_object($this->getAuth()) && $this->getAuth()->isValid();
+    }
+
+    /**
+     * Check for admin permissions. Currently this is only the user
+     * <em>admin</em>, ID 1.
+     * @return bool  true if admin user, else false
+     */
+    public function isAdmin()
+    {
+        if ($this->isAuthenticated()) {
+            $user = $this->getAuth()->getUserData();
+            return (intval($user['role']) === 1);
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Set session
+     * @param Session $session
+     * @return Request
+     */
+    public function setSession($session)
+    {
+        $this->request = $this->request->withAttribute('session', $session);
+        return $this->request;
+    }
+
+    /**
+     * Set authentication tracker
+     * @param Auth $auth
+     * @return Request
+     */
+    public function setAuth($auth)
+    {
+        $this->request = $this->request->withAttribute('auth', $auth);
+        return $this->request;
     }
 
     /**

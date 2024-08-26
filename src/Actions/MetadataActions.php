@@ -139,7 +139,7 @@ class MetadataActions extends DefaultActions
         }
 
         $this->log()->debug('edit_author_notes: ' . $id);
-        $note_data = $this->post();
+        $note_data = $this->requester->post();
         $this->log()->debug('edit_author_notes: note ' . var_export($note_data, true));
         try {
             $markdownParser = new MarkdownExtra();
@@ -200,7 +200,7 @@ class MetadataActions extends DefaultActions
             return $this->responder->mkError(400, "Bad parameter");
         }
 
-        $link_data = $this->post();
+        $link_data = $this->requester->post();
         $this->log()->debug('new_author_link: ' . var_export($link_data, true));
         $author = $this->calibre()->author($id);
         $link = null;

@@ -31,9 +31,9 @@ class GatekeeperMiddleware extends DefaultActions implements MiddlewareInterface
      */
     public function process(Request $request, RequestHandler $handler): Response
     {
-        if (!$this->is_admin($request)) {
-            // @todo remove dependency on $this->request, $this->requester and $this->responder
-            $this->initialize($request, null);
+        // @todo remove dependency on $this->requester and $this->responder?
+        $this->initialize($request, null);
+        if (!$this->requester->isAdmin()) {
             return $this->render('error.twig', [
                 'page' => $this->mkPage('error', 0, 0),
                 'error' => $this->getMessageString('error_no_access')]);

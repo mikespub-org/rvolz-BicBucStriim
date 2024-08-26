@@ -49,7 +49,7 @@ class OpdsGenerator
      * Create the root OPDS catalog, which is a navigation catalog
      * mentioning all available catalogs.
      * @param  string $of   a URI or NULL
-     * @return string           if $output is a URI NULL, else the XML is returned as a string.
+     * @return ?string           if $output is a URI NULL, else the XML is returned as a string.
      */
     public function rootCatalog($of = null)
     {
@@ -107,6 +107,7 @@ class OpdsGenerator
      * @param  ?string   $of=NULL   output URI or NULL for string output
      * @param  array    $entries   an array of Book
      * @param  boolean  $protected true = we need password authentication before a download
+     * @return ?string
      */
     public function newestCatalog($of, $entries, $protected)
     {
@@ -136,6 +137,7 @@ class OpdsGenerator
      * @param  int      $page      number of page to show, minimum 0
      * @param  ?int     $next      number of the next page to show, or NULL
      * @param  int      $last      number of the last page
+     * @return ?string
      */
     public function titlesCatalog($of, $entries, $protected, $page, $next, $last)
     {
@@ -169,6 +171,7 @@ class OpdsGenerator
      * Generate a list of initials of author names
      * @param  ?string   $of=NULL   output URI or NULL for string output
      * @param  array    $entries   an array of Items
+     * @return ?string
      */
     public function authorsRootCatalog($of, $entries)
     {
@@ -201,6 +204,7 @@ class OpdsGenerator
      * @param  ?string   $of=NULL   output URI or NULL for string output
      * @param  array    $entries   an array of Authors
      * @param  string   $initial   the initial character
+     * @return ?string
      */
     public function authorsNamesForInitialCatalog($of, $entries, $initial)
     {
@@ -242,6 +246,7 @@ class OpdsGenerator
      * @param  int      $page      number of page to show, minimum 0
      * @param  ?int     $next      number of the next page to show, or NULL
      * @param  int      $last      number of the last page
+     * @return ?string
      */
     public function booksForAuthorCatalog($of, $entries, $initial, $author, $protected, $page, $next, $last)
     {
@@ -277,6 +282,7 @@ class OpdsGenerator
      * Generate a list of initials of tag names
      * @param  ?string   $of=NULL   output URI or NULL for string output
      * @param  array    $entries   an array of Items
+     * @return ?string
      */
     public function tagsRootCatalog($of, $entries)
     {
@@ -309,6 +315,7 @@ class OpdsGenerator
      * @param  ?string   $of=NULL   output URI or NULL for string output
      * @param  array    $entries   an array of Tags
      * @param  string   $initial   the initial character
+     * @return ?string
      */
     public function tagsNamesForInitialCatalog($of, $entries, $initial)
     {
@@ -350,6 +357,7 @@ class OpdsGenerator
      * @param  int      $page      number of page to show, minimum 0
      * @param  ?int     $next      number of the next page to show, or NULL
      * @param  int      $last      number of the last page
+     * @return ?string
      */
     public function booksForTagCatalog($of, $entries, $initial, $tag, $protected, $page, $next, $last)
     {
@@ -385,6 +393,7 @@ class OpdsGenerator
      * Generate a list of initials of series names
      * @param  ?string  $of=NULL   output URI or NULL for string output
      * @param  array    $entries   an array of Items
+     * @return ?string
      */
     public function seriesRootCatalog($of, $entries)
     {
@@ -425,6 +434,7 @@ class OpdsGenerator
      * @param  ?string  $of=NULL   output URI or NULL for string output
      * @param  array    $entries   an array of Series
      * @param  string   $initial   the initial character
+     * @return ?string
      */
     public function seriesNamesForInitialCatalog($of, $entries, $initial)
     {
@@ -466,6 +476,7 @@ class OpdsGenerator
      * @param  int      $page      number of page to show, minimum 0
      * @param  ?int     $next      number of the next page to show, or NULL
      * @param  int      $last      number of the last page
+     * @return ?string
      */
     public function booksForSeriesCatalog($of, $entries, $initial, $series, $protected, $page, $next, $last)
     {
@@ -501,7 +512,7 @@ class OpdsGenerator
      * Create an OpenSearch descriptor
      * @param  ?string $of=NULL    output URI or NULL for string output
      * @param  string $fragment   path fragment for search operation
-     * @return string XML stream         the OpenSearch descriptor
+     * @return ?string XML stream         the OpenSearch descriptor
      */
     public function searchDescriptor($of, $fragment)
     {
@@ -564,7 +575,7 @@ class OpdsGenerator
      * @param  string   $search    search terms
      * @param  int      $total     total number of search results
      * @param  int      $page_size number of entries per search page
-     * @return string XML stream          the search result feed
+     * @return ?string XML stream          the search result feed
      */
     public function searchCatalog($of, $entries, $protected, $page, $next, $last, $search, $total, $page_size)
     {
@@ -611,6 +622,7 @@ class OpdsGenerator
      * @param  array    $entry      the book and its details
      * @param  boolean  $protected  true = use an indirect acquisition link,
      *                              else a direct one
+     * @return void
      */
     public function partialAcquisitionEntry($entry, $protected)
     {
@@ -668,6 +680,7 @@ class OpdsGenerator
      * @param  string $url     catalog url, appended to bbs_root.'/opds'
      * @param  string $type     navigation or acquisition feed
      * @param  string $rel     optional relation according to OPDS spec
+     * @return void
      */
     public function navigationEntry($title, $id, $content, $url, $type, $rel = 'subsection')
     {
@@ -689,6 +702,7 @@ class OpdsGenerator
      * @param  string $subtitle OPDS feed subtitle
      * @param  string $id       feed-specific part of the id, appendend to 'urn:bicbucstriim:'
      * @param  string $title_ext optional extionsion for title, not translated
+     * @return void
      */
     public function header($title, $subtitle, $id, $title_ext = '')
     {
@@ -715,6 +729,7 @@ class OpdsGenerator
 
     /**
      * Close the OPDS feed
+     * @return void
      */
     public function footer()
     {
@@ -730,6 +745,7 @@ class OpdsGenerator
      * @param  string $rel            link rel, optional
      * @param  string $title          link title, optional
      * @param  string $indirectType   real $type for indirect acquisition links, optional
+     * @return void
      */
     public function link($href, $type, $rel = null, $title = null, $indirectType = null)
     {
@@ -755,6 +771,7 @@ class OpdsGenerator
      * @param  string $href   link URL
      * @param  string $rel   link type
      * @param  string $title  link title, optional
+     * @return void
      */
     public function navigationCatalogLink($href, $rel = null, $title = null)
     {
@@ -766,6 +783,7 @@ class OpdsGenerator
      * @param  string $href   link URL
      * @param  string $rel   link type
      * @param  string $title  link title, optional
+     * @return void
      */
     public function acquisitionCatalogLink($href, $rel = null, $title = null)
     {
@@ -775,6 +793,7 @@ class OpdsGenerator
     /**
      * Link to a thumbnail pic
      * @param  string $href link URL for thumbnail
+     * @return void
      */
     public function thumbnailLink($href)
     {
@@ -784,6 +803,7 @@ class OpdsGenerator
     /**
      * Link to a full image
      * @param  string $href link URL for image
+     * @return void
      */
     public function imageLink($href)
     {
@@ -794,6 +814,7 @@ class OpdsGenerator
      * Link to a OPDS entry document with the complete book details
      * @param  string $href   link URL
      * @param  string $title  link title
+     * @return void
      */
     public function detailsLink($href, $title)
     {
@@ -804,6 +825,7 @@ class OpdsGenerator
      * Link directly to the downloadable ressource
      * @param  string $href link URL
      * @param  string $type MIME type of book
+     * @return void
      */
     public function directDownloadLink($href, $type)
     {
@@ -814,6 +836,7 @@ class OpdsGenerator
      * Link indirectly to the downloadable ressource, to allow for authentication via HTML
      * @param  string $href link URL
      * @param  string $type MIME type of book
+     * @return void
      */
     public function indirectDownloadLink($href, $type)
     {
@@ -837,6 +860,7 @@ class OpdsGenerator
     /**
      * Open and initialize the XML stream
      * @param  ?string $of=NULL URI or NULL
+     * @return void
      */
     public function openStream($of = null)
     {

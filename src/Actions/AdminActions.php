@@ -74,7 +74,7 @@ class AdminActions extends DefaultActions
     {
         return $this->render('admin.twig', [
             'page' => $this->mkPage('admin', 0, 1),
-            'isadmin' => $this->is_admin()]);
+            'isadmin' => $this->requester->isAdmin()]);
     }
 
     public function mkMailers()
@@ -133,7 +133,7 @@ class AdminActions extends DefaultActions
             'mailers' => $this->mkMailers(),
             'ttss' => $this->mkTitleTimeSortOptions(),
             'templates_dirs' => $this->mkTemplatesDirs(),
-            'isadmin' => $this->is_admin()]);
+            'isadmin' => $this->requester->isAdmin()]);
     }
 
     /**
@@ -172,7 +172,7 @@ class AdminActions extends DefaultActions
         return $this->render('admin_idtemplates.twig', [
             'page' => $this->mkPage('admin_idtemplates', 0, 2),
             'templates' => $idtemplates,
-            'isadmin' => $this->is_admin()]);
+            'isadmin' => $this->requester->isAdmin()]);
     }
 
     /**
@@ -187,7 +187,7 @@ class AdminActions extends DefaultActions
             return $this->responder->mkError(400, "Invalid ID for template: " . $id);
         }
 
-        $template_data = $this->post();
+        $template_data = $this->requester->post();
         $this->log()->debug('admin_modify_idtemplate: ' . var_export($template_data, true));
         try {
             $template = $this->bbs()->idTemplate($id);
@@ -254,7 +254,7 @@ class AdminActions extends DefaultActions
             'page' => $this->mkPage('admin_mail', 0, 2),
             'mail' => $mail,
             'encryptions' => $this->mkEncryptions(),
-            'isadmin' => $this->is_admin()]);
+            'isadmin' => $this->requester->isAdmin()]);
     }
 
     public function mkEncryptions()
@@ -277,7 +277,7 @@ class AdminActions extends DefaultActions
      */
     public function change_smtp_config()
     {
-        $mail_data = $this->post();
+        $mail_data = $this->requester->post();
         $this->log()->debug('admin_change_smtp_configuration: ' . var_export($mail_data, true));
         $mail_config = [
             Settings::SMTP_USER => $mail_data['username'],
@@ -291,7 +291,7 @@ class AdminActions extends DefaultActions
             'page' => $this->mkPage('admin_smtp', 0, 2),
             'mail' => $mail_data,
             'encryptions' => $this->mkEncryptions(),
-            'isadmin' => $this->is_admin()]);
+            'isadmin' => $this->requester->isAdmin()]);
     }
 
 
@@ -305,7 +305,7 @@ class AdminActions extends DefaultActions
         return $this->render('admin_users.twig', [
             'page' => $this->mkPage('admin_users', 0, 2),
             'users' => $users,
-            'isadmin' => $this->is_admin()]);
+            'isadmin' => $this->requester->isAdmin()]);
     }
 
 
@@ -344,7 +344,7 @@ class AdminActions extends DefaultActions
             'user' => $user,
             'languages' => $languages,
             'tags' => $tags,
-            'isadmin' => $this->is_admin()]);
+            'isadmin' => $this->requester->isAdmin()]);
     }
 
     /**
@@ -353,7 +353,7 @@ class AdminActions extends DefaultActions
      */
     public function add_user()
     {
-        $user_data = $this->post();
+        $user_data = $this->requester->post();
         $this->log()->debug('admin_add_user: ' . var_export($user_data, true));
         try {
             $user = $this->bbs()->addUser($user_data['username'], $user_data['password']);
@@ -408,7 +408,7 @@ class AdminActions extends DefaultActions
             return $this->responder->mkError(400, "Bad parameter");
         }
 
-        $user_data = $this->post();
+        $user_data = $this->requester->post();
         $this->log()->debug('admin_modify_user: ' . var_export($user_data, true));
         $user = $this->bbs()->changeUser(
             $id,
@@ -438,7 +438,7 @@ class AdminActions extends DefaultActions
         $settings = $this->settings();
         $this->log()->debug('admin_change: started');
         # Check access permission
-        if (!$this->is_admin()) {
+        if (!$this->requester->isAdmin()) {
             $this->log()->warning('admin_change: no admin permission');
             return $this->render('admin_configuration.twig', [
                 'page' => $this->mkPage('admin'),
@@ -446,7 +446,7 @@ class AdminActions extends DefaultActions
                 'isadmin' => false]);
         }
         $nconfigs = [];
-        $req_configs = $this->post();
+        $req_configs = $this->requester->post();
         $errors = [];
         $messages = [];
         $this->log()->debug('admin_change: ' . var_export($req_configs, true));

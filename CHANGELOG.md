@@ -6,8 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [3.x.x] - 20xx-xx-xx
 ### Changed
+- Use requester and move getAuth(), isAuthenticated() etc. methods to RequestUtil
 - Use responder and move mkResponse() etc. methods to ResponseUtil
 - Move request() and response() to DefaultActions
+- Use setRequester() in DefaultMiddleware
 ### Removed
 - Drop deprecated methods for releases older than 3.5.0
 

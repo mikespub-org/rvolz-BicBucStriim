@@ -10,11 +10,9 @@
 
 namespace BicBucStriim\Middleware;
 
-use Aura\Auth\Auth;
 use BicBucStriim\Session\Session;
 use BicBucStriim\Utilities\InputUtil;
 use BicBucStriim\Utilities\L10n;
-use BicBucStriim\Utilities\RequestUtil;
 use BicBucStriim\Utilities\ResponseUtil;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface as Response;
@@ -23,8 +21,6 @@ use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
 
 class LoginMiddleware extends DefaultMiddleware
 {
-    /** @var Request */
-    protected $request;
     /** @var string */
     protected $realm;
     /** @var array<string> */
@@ -51,7 +47,7 @@ class LoginMiddleware extends DefaultMiddleware
      */
     public function process(Request $request, RequestHandler $handler): Response
     {
-        $this->request = $request;
+        $this->setRequester($request);
         try {
             // true if we have a response ready (= need to authenticate), false otherwise
             $response = $this->authBeforeDispatch($request);
@@ -59,15 +55,14 @@ class LoginMiddleware extends DefaultMiddleware
                 return $response;
             }
         } catch (\Exception $e) {
-            //$response = $this->response();
-            //$this->response()->write(ob_get_clean());
-            echo ob_get_clean();
-            echo "Done: " . $e->getMessage();
-            exit;
+            $message = (string) ob_get_clean();
+            $message .= "Done: " . $e->getMessage();
+            $responder = new ResponseUtil(null);
+            return $responder->mkError(500, $message);
         }
         // $this->request is updated in is_authorized()
-        $this->setCurrentLanguage($this->request);
-        return $handler->handle($this->request);
+        $this->setCurrentLanguage($this->requester->request);
+        return $handler->handle($this->requester->request);
     }
 
     /**
@@ -78,8 +73,7 @@ class LoginMiddleware extends DefaultMiddleware
     public function authBeforeDispatch(Request $request)
     {
         $settings = $this->settings();
-        $requestUtil = new RequestUtil($request, $this->settings());
-        $resource = $requestUtil->getPathInfo();
+        $resource = $this->requester->getPathInfo();
         $this->log()->debug('login resource: ' . $resource);
         if ($settings->must_login == 1) {
             if ($this->is_static_resource($resource)) {
@@ -99,7 +93,7 @@ class LoginMiddleware extends DefaultMiddleware
                 $responder = new ResponseUtil(null);
                 return $responder->mkAuthenticate($this->realm);
             }
-            if ($request->getMethod() != 'GET' && $requestUtil->isXhr()) {
+            if ($request->getMethod() != 'GET' && $this->requester->isXhr()) {
                 $this->log()->debug('login: unauthorized XMLHttpRequest = Ajax request');
                 $responder = new ResponseUtil(null);
                 return $responder->mkAuthenticate($this->realm);
@@ -107,7 +101,7 @@ class LoginMiddleware extends DefaultMiddleware
             $this->log()->debug('login: redirecting to login');
             // app->redirect not useable in middleware
             $responder = new ResponseUtil(null);
-            return $responder->mkRedirect($requestUtil->getRootUrl() . '/login/');
+            return $responder->mkRedirect($this->requester->getRootUrl() . '/login/');
         }
         if ($resource === '/login/') {
             // we need to initialize $this->setAuth() if we want to login in MainActions
@@ -127,7 +121,7 @@ class LoginMiddleware extends DefaultMiddleware
             if (!$this->is_static_resource($resource) && !$this->is_authorized($request)) {
                 $this->log()->debug('login: redirecting to login');
                 $responder = new ResponseUtil(null);
-                return $responder->mkRedirect($requestUtil->getRootUrl() . '/login/');
+                return $responder->mkRedirect($this->requester->getRootUrl() . '/login/');
             }
             return false;
         }
@@ -167,16 +161,15 @@ class LoginMiddleware extends DefaultMiddleware
      */
     protected function is_authorized(Request $request)
     {
-        $requestUtil = new RequestUtil($request);
-        $session = $this->makeSession($request, $requestUtil->getBasePath());
+        $session = $this->makeSession($request, $this->requester->getBasePath());
         $authTracker = $this->makeAuthTracker($request, $session, $this->bbs()->mydb);
         // @todo this sets 'auth' attribute on $this->request
-        $request = $this->setAuth($request, $authTracker);
+        $this->requester->setAuth($authTracker);
         try {
             $resume_service = $this->container('resume_service');
             $resume_service->resume($authTracker);
             // @todo this sets 'session' attribute on $this->request
-            $request = $this->setSession($request, $session);
+            $this->requester->setSession($session);
         } catch(\ErrorException $e) {
             $this->log()->warning('login error: bad cookie data ' . var_export(get_class($e), true));
         }
@@ -284,32 +277,6 @@ class LoginMiddleware extends DefaultMiddleware
         } else {
             return null;
         }
-    }
-
-    /**
-     * Set session - depends on request
-     * @param Request $request
-     * @param Session $session
-     * @return Request
-     */
-    protected function setSession($request, $session)
-    {
-        $request = $request->withAttribute('session', $session);
-        $this->request = $request;
-        return $request;
-    }
-
-    /**
-     * Set authentication tracker - depends on request
-     * @param Request $request
-     * @param Auth $auth
-     * @return Request
-     */
-    protected function setAuth($request, $auth)
-    {
-        $request = $request->withAttribute('auth', $auth);
-        $this->request = $request;
-        return $request;
     }
 
     /**

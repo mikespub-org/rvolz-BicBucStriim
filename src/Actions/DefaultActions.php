@@ -10,8 +10,6 @@
 
 namespace BicBucStriim\Actions;
 
-use Aura\Auth\Auth;
-use BicBucStriim\Session\Session;
 use BicBucStriim\Utilities\RequestUtil;
 use BicBucStriim\Utilities\ResponseUtil;
 use BicBucStriim\Utilities\RouteUtil;
@@ -26,10 +24,6 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
 {
     use \BicBucStriim\Traits\AppTrait;
 
-    /** @var Request|null */
-    protected $request = null;
-    /** @var Response|null */
-    protected $response = null;
     /** @var RequestUtil|null */
     protected $requester = null;
     /** @var ResponseUtil|null */
@@ -79,6 +73,21 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
     }
 
     /**
+     * Initialize actions with ActionsWrapperStrategy
+     * @param ?Request $request
+     * @param ?Response $response
+     * @return void
+     */
+    public function initialize($request, $response)
+    {
+        $this->requester = new RequestUtil($request, $this->settings());
+        // Slim\App contains responseFactory as mandatory first param in constructor
+        $response ??= $this->getResponseFactory()->createResponse();
+        //$response ??= new \Slim\Psr7\Response();
+        $this->responder = new ResponseUtil($response);
+    }
+
+    /**
      * Hello function (example)
      * @param ?string $name
      * @return void|Response
@@ -115,109 +124,15 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
     }
 
     /**
-     * Initialize actions with ActionsWrapperStrategy
-     * @param ?Request $request
-     * @param ?Response $response
-     * @return void
+     * Get filter based on user languages and tags
+     * @return \BicBucStriim\Calibre\CalibreFilter
      */
-    public function initialize($request, $response)
-    {
-        $this->request($request);
-        $this->response($response);
-    }
-
-    /**
-     * Get the Request object
-     * @param ?Request $request
-     * @return Request
-     */
-    public function request($request = null)
-    {
-        if (!empty($request)) {
-            $this->request = $request;
-            $this->requester = new RequestUtil($this->request, $this->settings());
-        }
-        return $this->request;
-    }
-
-    /**
-     * Get the Response object or create one if needed
-     * @param ?Response $response
-     * @return Response
-     */
-    public function response($response = null)
-    {
-        if (!empty($response)) {
-            $this->response = $response;
-            $this->responder = new ResponseUtil($this->response);
-        }
-        if (empty($this->response)) {
-            // Slim\App contains responseFactory as mandatory first param in constructor
-            $this->response = $this->getResponseFactory()->createResponse();
-            //$this->response = new \Slim\Psr7\Response();
-            $this->responder = new ResponseUtil($this->response);
-        }
-        return $this->response;
-    }
-
-    /**
-     * Get param(s)
-     * @param ?string $name
-     */
-    public function get($name = null)
-    {
-        $params = $this->request->getQueryParams();
-        if (empty($name)) {
-            return $params;
-        }
-        return $params[$name] ?? null;
-    }
-
-    /**
-     * Post param(s)
-     * @param ?string $name
-     */
-    public function post($name = null)
-    {
-        $params = $this->request->getParsedBody();
-        if (empty($name)) {
-            return $params;
-        }
-        return $params[$name] ?? null;
-    }
-
-    /**
-     * Check if the current user was authenticated
-     * @param ?Request $request
-     * @return boolean  true if authenticated, else false
-     */
-    public function is_authenticated($request = null)
-    {
-        return (is_object($this->getAuth($request)) && $this->getAuth($request)->isValid());
-    }
-
-    /**
-     * Check for admin permissions. Currently this is only the user
-     * <em>admin</em>, ID 1.
-     * @param ?Request $request
-     * @return boolean  true if admin user, else false
-     */
-    public function is_admin($request = null)
-    {
-        if ($this->is_authenticated($request)) {
-            $user = $this->getAuth($request)->getUserData();
-            return (intval($user['role']) === 1);
-        } else {
-            return false;
-        }
-    }
-
     public function getFilter()
     {
         $lang = null;
         $tag = null;
-        if ($this->is_authenticated()) {
-            $user = $this->getAuth()->getUserData();
+        if ($this->requester->isAuthenticated()) {
+            $user = $this->requester->getAuth()->getUserData();
             $this->log()->debug('getFilter: ' . var_export($user, true));
             if (!empty($user['languages'])) {
                 $lang = $this->calibre()->getLanguageId($user['languages']);
@@ -309,9 +224,9 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
             $templatesDirName = basename($settings->templates_dir);
         }
         $root = $this->requester->getRootUrl();
-        $auth = $this->is_authenticated();
+        $auth = $this->requester->isAuthenticated();
         if ($settings->must_login) {
-            $adm = $this->is_admin();
+            $adm = $this->requester->isAdmin();
         } else {
             $adm = true;
         }    # the admin button should be always visible if no login is required
@@ -346,28 +261,6 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
     }
 
     /**
-     * Get session - depends on request
-     * @param ?Request $request
-     * @return Session|null
-     */
-    public function getSession($request = null)
-    {
-        $request ??= $this->request;
-        return $request?->getAttribute('session');
-    }
-
-    /**
-     * Get authentication tracker - depends on request
-     * @param ?Request $request
-     * @return Auth|null
-     */
-    public function getAuth($request = null)
-    {
-        $request ??= $this->request;
-        return $request?->getAttribute('auth');
-    }
-
-    /**
      * Set flash message for next request
      * @param  string   $key
      * @param  mixed    $value
@@ -376,7 +269,7 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
     public function setFlash($key, $value)
     {
         // @todo pass along $request or $session here?
-        $session = $this->getSession();
+        $session = $this->requester->getSession();
         if (empty($session)) {
             return;
         }
@@ -391,7 +284,7 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
     public function getFlash($key)
     {
         // @todo pass along $request or $session here?
-        $session = $this->getSession();
+        $session = $this->requester->getSession();
         if (empty($session)) {
             return;
         }

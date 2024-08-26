@@ -32,9 +32,8 @@ class ActionsWrapperStrategy implements InvocationStrategyInterface
             if (is_object($class) && $class instanceof DefaultActions) {
                 // set initial request and response in actions instance
                 $class->initialize($request, $response);
-                // callable can return void (old-style) or response (new-style)
+                // callable returns response (new-style) - returning void (old-style) is deprecated
                 $result = $callable(...array_values($routeArguments));
-                //$result ??= $class->response();
                 return $result;
             }
         }

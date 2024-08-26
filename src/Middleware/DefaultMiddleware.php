@@ -10,6 +10,8 @@
 
 namespace BicBucStriim\Middleware;
 
+use BicBucStriim\AppData\Settings;
+use BicBucStriim\Utilities\RequestUtil;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -19,6 +21,9 @@ use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
 class DefaultMiddleware implements \BicBucStriim\Traits\AppInterface, MiddlewareInterface
 {
     use \BicBucStriim\Traits\AppTrait;
+
+    /** @var RequestUtil */
+    protected $requester;
 
     /**
      * Initialize the configuration
@@ -37,6 +42,20 @@ class DefaultMiddleware implements \BicBucStriim\Traits\AppInterface, Middleware
      */
     public function process(Request $request, RequestHandler $handler): Response
     {
+        $this->setRequester($request);
         return $handler->handle($request);
+    }
+
+    /**
+     * Set middleware requester (with settings)
+     * @param Request $request
+     * @param ?Settings $settings
+     * @return RequestUtil
+     */
+    public function setRequester($request, $settings = null)
+    {
+        $settings ??= $this->settings();
+        $this->requester = new RequestUtil($request, $settings);
+        return $this->requester;
     }
 }
