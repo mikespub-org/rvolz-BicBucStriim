@@ -58,7 +58,7 @@ class LoginMiddleware extends DefaultMiddleware
             $message = (string) ob_get_clean();
             $message .= "Done: " . $e->getMessage();
             $responder = new ResponseUtil(null);
-            return $responder->mkError(500, $message);
+            return $responder->error(500, $message);
         }
         // $this->request is updated in is_authorized()
         $this->setCurrentLanguage($this->requester->request);
@@ -91,17 +91,17 @@ class LoginMiddleware extends DefaultMiddleware
             if (stripos($resource, '/opds') === 0) {
                 $this->log()->debug('login: unauthorized OPDS request');
                 $responder = new ResponseUtil(null);
-                return $responder->mkAuthenticate($this->realm);
+                return $responder->authenticate($this->realm);
             }
             if ($request->getMethod() != 'GET' && $this->requester->isXhr()) {
                 $this->log()->debug('login: unauthorized XMLHttpRequest = Ajax request');
                 $responder = new ResponseUtil(null);
-                return $responder->mkAuthenticate($this->realm);
+                return $responder->authenticate($this->realm);
             }
             $this->log()->debug('login: redirecting to login');
             // app->redirect not useable in middleware
             $responder = new ResponseUtil(null);
-            return $responder->mkRedirect($this->requester->getRootUrl() . '/login/');
+            return $responder->redirect($this->requester->getRootUrl() . '/login/');
         }
         if ($resource === '/login/') {
             // we need to initialize $this->setAuth() if we want to login in MainActions
@@ -121,7 +121,7 @@ class LoginMiddleware extends DefaultMiddleware
             if (!$this->is_static_resource($resource) && !$this->is_authorized($request)) {
                 $this->log()->debug('login: redirecting to login');
                 $responder = new ResponseUtil(null);
-                return $responder->mkRedirect($this->requester->getRootUrl() . '/login/');
+                return $responder->redirect($this->requester->getRootUrl() . '/login/');
             }
             return false;
         }

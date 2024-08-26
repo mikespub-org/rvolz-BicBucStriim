@@ -104,10 +104,10 @@ class ResponseUtil
      * @param  string   $message    The HTTP response body
      * @return Response
      */
-    public function mkAuthenticate($realm, $status = 401, $message = 'Please authenticate')
+    public function authenticate($realm, $status = 401, $message = 'Please authenticate')
     {
         $this->response = $this->response->withHeader('WWW-Authenticate', sprintf('Basic realm="%s"', $realm));
-        return $this->mkError($status, $message);
+        return $this->error($status, $message);
     }
 
     /**
@@ -116,7 +116,7 @@ class ResponseUtil
      * @param  string   $message    The HTTP response body
      * @return Response
      */
-    public function mkError($status, $message = '')
+    public function error($status, $message = '')
     {
         $emptyBody = static::getResponse()->getBody();
         $emptyBody->write($message);
@@ -130,7 +130,7 @@ class ResponseUtil
      * @param  int      $status     The HTTP redirect status code (optional)
      * @return Response
      */
-    public function mkRedirect($url, $status = 302)
+    public function redirect($url, $status = 302)
     {
         $this->response = $this->response->withStatus($status)->withHeader('Location', $url);
         return $this->response;
@@ -140,15 +140,27 @@ class ResponseUtil
      * Create and send a normal response
      * @param string $content
      * @param string $type
-     * @param int $status
+     * @param int $status (optional)
      * @return Response
      */
-    public function mkResponse($content, $type, $status = 200)
+    public function respond($content, $type, $status = 200)
     {
-        // Slim 2 framework will finalize response after slim call() and echo output in run()
+        // Slim framework will finalize response after slim call() and echo output in run()
         $this->response = $this->response->withStatus($status)->withHeader('Content-type', $type)->withHeader('Content-Length', (string) strlen($content));
         $this->response->getBody()->write($content);
         return $this->response;
+    }
+
+    /**
+     * Create and send an html response
+     * @param string $content
+     * @param string $type (optional)
+     * @param int $status (optional)
+     * @return Response
+     */
+    public function html($content, $type = 'text/html', $status = 200)
+    {
+        return $this->respond($content, $type, $status);
     }
 
     /**
@@ -159,10 +171,10 @@ class ResponseUtil
      * @param int $status (optional)
      * @return Response
      */
-    public function mkJsonResponse($data, $origin = null, $type = 'application/json', $status = 200)
+    public function json($data, $origin = null, $type = 'application/json', $status = 200)
     {
         $content = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PARTIAL_OUTPUT_ON_ERROR);
-        $response = $this->mkResponse($content, $type, $status);
+        $response = $this->respond($content, $type, $status);
         // Add Allow-Origin + Allow-Credentials to response for non-preflighted requests
         if (empty($origin)) {
             return $response;
@@ -176,11 +188,23 @@ class ResponseUtil
     }
 
     /**
+     * Create and send a plain text response
+     * @param string $content
+     * @param string $type (optional)
+     * @param int $status (optional)
+     * @return Response
+     */
+    public function plain($content, $type = 'text/plain', $status = 200)
+    {
+        return $this->respond($content, $type, $status);
+    }
+
+    /**
      * Create and send CORS options
      * @param string|false $origin
      * @return Response
      */
-    public function mkCorsOptions($origin)
+    public function cors($origin)
     {
         if (empty($origin)) {
             return $this->response;
@@ -197,11 +221,14 @@ class ResponseUtil
 
     /**
      * Create and send the typical OPDS response
+     * @param string $content
+     * @param string $type catalog, entry or search mime type as specified by OPDS generator
+     * @param int $status (optional)
      * @return Response
      */
-    public function mkOpdsResponse($content, $type, $status = 200)
+    public function opds($content, $type, $status = 200)
     {
-        return $this->mkResponse($content, $type, $status);
+        return $this->respond($content, $type, $status);
     }
 
     /**
@@ -211,7 +238,7 @@ class ResponseUtil
      * @param int $status
      * @return Response
      */
-    public function mkSendFile($filepath, $type, $status = 200)
+    public function file($filepath, $type, $status = 200)
     {
         $etag = '"' . md5((string) filemtime($filepath) . '-' . $filepath) . '"';
         $resp = $this->response->withStatus($status)->withHeader('Content-type', $type)->withHeader('Content-Length', (string) filesize($filepath))->withHeader('ETag', $etag);
@@ -228,7 +255,7 @@ class ResponseUtil
      * @param int $status
      * @return Response
      */
-    public function mkSendFileAsAttachment($filepath, $type, $filename, $status = 200)
+    public function download($filepath, $type, $filename, $status = 200)
     {
         //header("Content-Description: File Transfer");
         //header("Content-Transfer-Encoding: binary");

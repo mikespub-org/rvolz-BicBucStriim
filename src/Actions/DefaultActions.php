@@ -108,7 +108,7 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
     {
         $name ??= 'world';
         $answer = 'Hello, ' . $name . '!';
-        $this->responder->mkResponse($answer, 'text/plain');
+        $this->responder->respond($answer, 'text/plain');
     }
 
     /**
@@ -120,7 +120,7 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
     {
         $name ??= 'world';
         $answer = 'Hello, ' . $name . '!';
-        return $this->responder->mkResponse($answer, 'text/plain');
+        return $this->responder->respond($answer, 'text/plain');
     }
 
     /**
@@ -165,7 +165,7 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
         }
         // Add Allow-Origin + Allow-Credentials to response for non-preflighted requests
         $origin = $this->requester->getCorsOrigin();
-        return $this->responder->mkJsonResponse($data, $origin);
+        return $this->responder->json($data, $origin);
     }
 
     /**
@@ -183,7 +183,7 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
         // Slim 2 framework will replace data, render template and echo output via slim view display()
         $this->setTemplatesDir();
         $content = $this->twig()->render($template, $data);
-        return $this->responder->mkResponse($content, 'text/html');
+        return $this->responder->html($content);
     }
 
     /**
@@ -268,7 +268,6 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
      */
     public function setFlash($key, $value)
     {
-        // @todo pass along $request or $session here?
         $session = $this->requester->getSession();
         if (empty($session)) {
             return;
@@ -283,7 +282,6 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
      */
     public function getFlash($key)
     {
-        // @todo pass along $request or $session here?
         $session = $this->requester->getSession();
         if (empty($session)) {
             return;

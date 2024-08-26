@@ -36,7 +36,7 @@ class CalibreConfigMiddleware extends DefaultMiddleware
         if (!$this->check_calibre() && $resource != '/admin/configuration/') {
             // app->redirect not useable in middleware
             $responder = new ResponseUtil(null);
-            return $responder->mkRedirect($requester->getBasePath() . '/admin/configuration/');
+            return $responder->redirect($requester->getBasePath() . '/admin/configuration/');
         }
         return $handler->handle($request);
     }

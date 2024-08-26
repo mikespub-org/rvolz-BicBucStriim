@@ -100,7 +100,7 @@ class ApiActions extends DefaultActions
             'title' => $title,
             'routes' => $patterns,
         ];
-        return $this->responder->mkJsonResponse($data);
+        return $this->responder->json($data);
     }
 
     /**
@@ -110,7 +110,7 @@ class ApiActions extends DefaultActions
     public function openapi()
     {
         $data = $this->getOpenApi();
-        return $this->responder->mkJsonResponse($data);
+        return $this->responder->json($data);
     }
 
     /**
@@ -120,7 +120,7 @@ class ApiActions extends DefaultActions
     public function corsOptions($routes = '')
     {
         $origin = $this->requester->getCorsOrigin();
-        return $this->responder->mkCorsOptions($origin);
+        return $this->responder->cors($origin);
     }
 
     /**

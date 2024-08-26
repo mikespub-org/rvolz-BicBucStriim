@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Use responder and move mkResponse() etc. methods to ResponseUtil
 - Move request() and response() to DefaultActions
 - Use setRequester() in DefaultMiddleware
+- Rename mk*() methods in ResponseUtil
+- Replace $_FILES with requester->files()
 ### Removed
 - Drop deprecated methods for releases older than 3.5.0
 

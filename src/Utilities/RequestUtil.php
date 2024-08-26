@@ -63,6 +63,7 @@ class RequestUtil
     /**
      * Get param(s)
      * @param ?string $name
+     * @return mixed
      */
     public function get($name = null)
     {
@@ -76,6 +77,7 @@ class RequestUtil
     /**
      * Post param(s)
      * @param ?string $name
+     * @return mixed
      */
     public function post($name = null)
     {
@@ -84,6 +86,20 @@ class RequestUtil
             return $params;
         }
         return $params[$name] ?? null;
+    }
+
+    /**
+     * Files param(s)
+     * @param ?string $name
+     * @return array<mixed>|null
+     */
+    public function files($name = null)
+    {
+        $files = $this->request->getUploadedFiles();
+        if (empty($name)) {
+            return $files;
+        }
+        return $files[$name] ?? null;
     }
 
     /**
