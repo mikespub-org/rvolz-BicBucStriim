@@ -2,9 +2,7 @@
 
 use BicBucStriim\Calibre\CalibreFilter;
 
-/**
- * @covers \BicBucStriim\Calibre\CalibreFilter
- */
+#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\Calibre\CalibreFilter::class)]
 class CalibreFilterTest extends PHPUnit\Framework\TestCase
 {
     public function setUp(): void {}

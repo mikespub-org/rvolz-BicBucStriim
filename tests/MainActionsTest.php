@@ -6,12 +6,10 @@ use BicBucStriim\Utilities\TestHelper;
 use BicBucStriim\Utilities\Mailer;
 use Slim\Factory\AppFactory;
 
-/**
- * @covers \BicBucStriim\Actions\MainActions
- * @covers \BicBucStriim\Actions\DefaultActions
- * @covers \BicBucStriim\Utilities\TestHelper
- * @covers \BicBucStriim\Utilities\Mailer
- */
+#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\Actions\MainActions::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\Actions\DefaultActions::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\Utilities\TestHelper::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\Utilities\Mailer::class)]
 class MainActionsTest extends PHPUnit\Framework\TestCase
 {
     public static function getExpectedRoutes()
@@ -158,19 +156,15 @@ class MainActionsTest extends PHPUnit\Framework\TestCase
         }
     }
 
-    /**
-     * @runInSeparateProcess
-     */
+    #[\PHPUnit\Framework\Attributes\RunInSeparateProcess]
     public function testAppBootstrap(): void
     {
         $app = require(dirname(__DIR__) . '/config/bootstrap.php');
         $this->assertEquals(\Slim\App::class, $app::class);
     }
 
-    /**
-     * @runInSeparateProcess
-     * @depends testAppBootstrap
-     */
+    #[\PHPUnit\Framework\Attributes\Depends('testAppBootstrap')]
+    #[\PHPUnit\Framework\Attributes\RunInSeparateProcess]
     public function testAppMainRequest(): void
     {
         $app = TestHelper::getApp();
@@ -182,11 +176,9 @@ class MainActionsTest extends PHPUnit\Framework\TestCase
         $this->assertStringContainsString($expected, (string) $response->getBody());
     }
 
-    /**
-     * @dataProvider getExpectedRoutes
-     * @runInSeparateProcess
-     * @depends testAppBootstrap
-     */
+    #[\PHPUnit\Framework\Attributes\Depends('testAppBootstrap')]
+    #[\PHPUnit\Framework\Attributes\DataProvider('getExpectedRoutes')]
+    #[\PHPUnit\Framework\Attributes\RunInSeparateProcess]
     public function testAppGetRequest($input, $output, $methods, $pattern, ...$args): void
     {
         $this->assertGreaterThan(0, count($args));
@@ -208,9 +200,7 @@ class MainActionsTest extends PHPUnit\Framework\TestCase
         }
     }
 
-    /**
-     * @runInSeparateProcess
-     */
+    #[\PHPUnit\Framework\Attributes\RunInSeparateProcess]
     public function testMainAuthorNotes(): void
     {
         $app = TestHelper::getApp();
@@ -226,9 +216,7 @@ class MainActionsTest extends PHPUnit\Framework\TestCase
         $this->assertStringContainsString($expected, (string) $response->getBody());
     }
 
-    /**
-     * @runInSeparateProcess
-     */
+    #[\PHPUnit\Framework\Attributes\RunInSeparateProcess]
     public function testMainKindle(): void
     {
         $_SERVER['REQUEST_METHOD'] = 'POST';

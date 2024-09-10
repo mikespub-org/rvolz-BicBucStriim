@@ -3,17 +3,13 @@
 use BicBucStriim\Utilities\RequestUtil;
 use BicBucStriim\Utilities\TestHelper;
 
-/**
- * @covers \BicBucStriim\Actions\ApiActions
- * @covers \BicBucStriim\Actions\DefaultActions
- * @covers \BicBucStriim\Utilities\TestHelper
- */
+#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\Actions\ApiActions::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\Actions\DefaultActions::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\Utilities\TestHelper::class)]
 class ApiActionsTest extends PHPUnit\Framework\TestCase
 {
-    /**
-     * @runInSeparateProcess
-     * @preserveGlobalState disabled
-     */
+    #[\PHPUnit\Framework\Attributes\PreserveGlobalState(false)]
+    #[\PHPUnit\Framework\Attributes\RunInSeparateProcess]
     public function testApiHomeRequest(): void
     {
         $app = TestHelper::getAppWithApi();
@@ -25,10 +21,8 @@ class ApiActionsTest extends PHPUnit\Framework\TestCase
         $this->assertStringContainsString($expected, (string) $response->getBody());
     }
 
-    /**
-     * @runInSeparateProcess
-     * @preserveGlobalState disabled
-     */
+    #[\PHPUnit\Framework\Attributes\PreserveGlobalState(false)]
+    #[\PHPUnit\Framework\Attributes\RunInSeparateProcess]
     public function testApiRoutesRequest(): void
     {
         $app = TestHelper::getAppWithApi();
@@ -44,10 +38,8 @@ class ApiActionsTest extends PHPUnit\Framework\TestCase
         $this->assertArrayHasKey($expected, $result['routes']);
     }
 
-    /**
-     * @runInSeparateProcess
-     * @preserveGlobalState disabled
-     */
+    #[\PHPUnit\Framework\Attributes\PreserveGlobalState(false)]
+    #[\PHPUnit\Framework\Attributes\RunInSeparateProcess]
     public function testOpenApiRequest(): void
     {
         $app = TestHelper::getAppWithApi();
@@ -63,10 +55,8 @@ class ApiActionsTest extends PHPUnit\Framework\TestCase
         $this->assertArrayHasKey($expected, $result['paths']);
     }
 
-    /**
-     * @runInSeparateProcess
-     * @preserveGlobalState disabled
-     */
+    #[\PHPUnit\Framework\Attributes\PreserveGlobalState(false)]
+    #[\PHPUnit\Framework\Attributes\RunInSeparateProcess]
     public function testCorsOptionsRequest(): void
     {
         $app = TestHelper::getAppWithApi();
@@ -98,9 +88,9 @@ class ApiActionsTest extends PHPUnit\Framework\TestCase
      * Requesting main page with header 'Accept: application/json'
      * should return the template variables as json object instead
      * of the actual templated page output
-     * @runInSeparateProcess
-     * @preserveGlobalState disabled
      */
+    #[\PHPUnit\Framework\Attributes\PreserveGlobalState(false)]
+    #[\PHPUnit\Framework\Attributes\RunInSeparateProcess]
     public function testMainRequestWithHeader(): void
     {
         $app = TestHelper::getAppWithApi();
@@ -126,9 +116,9 @@ class ApiActionsTest extends PHPUnit\Framework\TestCase
     /**
      * Requesting main page with header 'Accept: application/json'
      * but without hasapi should return normal templated page output
-     * @runInSeparateProcess
-     * @preserveGlobalState disabled
      */
+    #[\PHPUnit\Framework\Attributes\PreserveGlobalState(false)]
+    #[\PHPUnit\Framework\Attributes\RunInSeparateProcess]
     public function testMainRequestWithoutHasApi(): void
     {
         $app = TestHelper::getAppWithApi(false);

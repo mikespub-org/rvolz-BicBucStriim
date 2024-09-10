@@ -3,9 +3,7 @@
 use BicBucStriim\Calibre\Bic;
 use BicBucStriim\Calibre\Calibre;
 
-/**
- * @covers \BicBucStriim\Calibre\Calibre
- */
+#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\Calibre\Calibre::class)]
 class CustomColumnsTest extends PHPUnit\Framework\TestCase
 {
     public const CDB1 = './tests/fixtures/metadata_empty.db';

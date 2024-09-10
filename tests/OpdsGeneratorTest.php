@@ -13,9 +13,7 @@ use BicBucStriim\Calibre\CalibreFilter;
 use BicBucStriim\Utilities\OpdsGenerator;
 use BicBucStriim\Utilities\L10n;
 
-/**
- * @covers \BicBucStriim\Utilities\OpdsGenerator
- */
+#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\Utilities\OpdsGenerator::class)]
 class OpdsGeneratorTest extends PHPUnit\Framework\TestCase
 {
     public const OPDS_RNG = './tests/fixtures/opds_catalog_1_1.rng';
@@ -61,7 +59,7 @@ class OpdsGeneratorTest extends PHPUnit\Framework\TestCase
     # Validation helper: validate relaxng
     public function opdsValidateSchema($feed)
     {
-        $res = system('cd ~/seblucas-cops/test;java -jar jing.jar ' . realpath(self::OPDS_RNG) . ' ' . realpath($feed));
+        $res = system('cd ~/seblucas-cops/tests;java -jar jing.jar ' . realpath(self::OPDS_RNG) . ' ' . realpath($feed));
         if ($res != '') {
             echo 'RelaxNG validation error: ' . $res;
             return false;
@@ -73,7 +71,7 @@ class OpdsGeneratorTest extends PHPUnit\Framework\TestCase
     # Validation helper: validate opds
     public function opdsValidate($feed, $version)
     {
-        $cmd = 'cd ~/seblucas-cops/test;java -jar OPDSValidator.jar -v' . $version . ' ' . realpath($feed);
+        $cmd = 'cd ~/seblucas-cops/tests;java -jar OPDSValidator.jar -v' . $version . ' ' . realpath($feed);
         $res = system($cmd);
         if ($res != '') {
             echo 'OPDS validation error: ' . $res;
@@ -90,7 +88,7 @@ class OpdsGeneratorTest extends PHPUnit\Framework\TestCase
         if (date_default_timezone_get() == 'UTC') {
             $offsetString = '+00:00'; // No need to calculate offset, as default timezone is already UTC
         } else {
-            $millis = strtotime($phpTime); // Convert time to milliseconds since 1970, using default timezone
+            $millis = strtotime((string) $phpTime); // Convert time to milliseconds since 1970, using default timezone
             $timezone = new DateTimeZone(date_default_timezone_get()); // Get default system timezone to create a new DateTimeZone object
             $offset = $timezone->getOffset(new DateTime($phpTime)); // Offset in seconds to UTC
             $offsetHours = round(abs($offset) / 3600);

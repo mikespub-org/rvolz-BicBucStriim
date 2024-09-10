@@ -5,11 +5,9 @@ use BicBucStriim\Utilities\RequestUtil;
 use BicBucStriim\Utilities\TestHelper;
 use Slim\Factory\AppFactory;
 
-/**
- * @covers \BicBucStriim\Actions\OpdsActions
- * @covers \BicBucStriim\Actions\DefaultActions
- * @covers \BicBucStriim\Utilities\TestHelper
- */
+#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\Actions\OpdsActions::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\Actions\DefaultActions::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\Utilities\TestHelper::class)]
 class OpdsActionsTest extends PHPUnit\Framework\TestCase
 {
     public static function getExpectedRoutes()
@@ -102,10 +100,8 @@ class OpdsActionsTest extends PHPUnit\Framework\TestCase
         }
     }
 
-    /**
-     * @dataProvider getExpectedRoutes
-     * @runInSeparateProcess
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('getExpectedRoutes')]
+    #[\PHPUnit\Framework\Attributes\RunInSeparateProcess]
     public function testAppGetRequest($input, $output, $methods, $pattern, ...$args): void
     {
         $this->assertGreaterThan(0, count($args));
@@ -114,7 +110,7 @@ class OpdsActionsTest extends PHPUnit\Framework\TestCase
 
             $seen = [];
             foreach ($input as $name => $value) {
-                if (str_contains($pattern, '{' . $name . '}')) {
+                if (str_contains((string) $pattern, '{' . $name . '}')) {
                     $seen[$name] = 1;
                 }
                 $pattern = str_replace('{' . $name . '}', (string) $value, $pattern);
@@ -143,9 +139,7 @@ class OpdsActionsTest extends PHPUnit\Framework\TestCase
         }
     }
 
-    /**
-     * @runInSeparateProcess
-     */
+    #[\PHPUnit\Framework\Attributes\RunInSeparateProcess]
     public function testOpdsSearchMissing(): void
     {
         $app = TestHelper::getApp();

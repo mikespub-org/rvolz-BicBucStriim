@@ -6,15 +6,13 @@ use BicBucStriim\Utilities\TestHelper;
 use BicBucStriim\Utilities\ActionsWrapperStrategy;
 use Slim\Factory\AppFactory;
 
-/**
- * @covers \BicBucStriim\Actions\DefaultActions
- * @covers \BicBucStriim\Traits\AppTrait
- * @covers \BicBucStriim\Utilities\ActionsCallableResolver
- * @covers \BicBucStriim\Utilities\ActionsWrapperStrategy
- * @covers \BicBucStriim\Utilities\RequestUtil
- * @covers \BicBucStriim\Utilities\ResponseUtil
- * @covers \BicBucStriim\Utilities\RouteUtil
- */
+#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\Actions\DefaultActions::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\Traits\AppTrait::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\Utilities\ActionsCallableResolver::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\Utilities\ActionsWrapperStrategy::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\Utilities\RequestUtil::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\Utilities\ResponseUtil::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\Utilities\RouteUtil::class)]
 class DefaultActionsTest extends PHPUnit\Framework\TestCase
 {
     public static function getExpectedRoutes()
@@ -75,10 +73,10 @@ class DefaultActionsTest extends PHPUnit\Framework\TestCase
         $app = TestHelper::getAppWithContainer();
         $self = new DefaultActions($app->getContainer());
         $self->initialize(null, null);
-        $callable = [$self, 'hello'];
+        $callable = $self->hello(...);
         $args = [];
         $result = $callable(...$args);
-        $this->assertEquals(\Nyholm\Psr7\Response::class, get_class($result));
+        $this->assertEquals(\Nyholm\Psr7\Response::class, $result::class);
         $this->assertEquals($expected, (string) $result->getBody());
     }
 
@@ -88,10 +86,10 @@ class DefaultActionsTest extends PHPUnit\Framework\TestCase
         $app = TestHelper::getAppWithContainer();
         $self = new DefaultActions($app->getContainer());
         $self->initialize(null, null);
-        $callable = [$self, 'hello'];
+        $callable = $self->hello(...);
         $args = ['name'];
         $result = $callable(...$args);
-        $this->assertEquals(\Nyholm\Psr7\Response::class, get_class($result));
+        $this->assertEquals(\Nyholm\Psr7\Response::class, $result::class);
         $this->assertEquals($expected, (string) $result->getBody());
     }
 

@@ -3,10 +3,8 @@
 use BicBucStriim\Calibre\Calibre;
 use BicBucStriim\Calibre\CalibreFilter;
 
-/**
- * @covers \BicBucStriim\Calibre\Calibre
- * @covers \BicBucStriim\Calibre\CalibreFilter
- */
+#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\Calibre\Calibre::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\Calibre\CalibreFilter::class)]
 class CalibreTest extends PHPUnit\Framework\TestCase
 {
     public const CDB1 = './tests/fixtures/metadata_empty.db';
@@ -416,7 +414,7 @@ class CalibreTest extends PHPUnit\Framework\TestCase
         $result = $this->calibre->titleCover(3);
         $this->assertEquals(0, $this->calibre->last_error);
         $this->assertNotNull($result);
-        $this->assertEquals('cover.jpg', basename($result));
+        $this->assertEquals('cover.jpg', basename((string) $result));
     }
 
     public function testTitleFile(): void

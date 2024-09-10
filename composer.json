@@ -19,7 +19,7 @@
         "michelf/php-markdown": "^2.0",
         "slim/slim": "^4.14",
         "phpmailer/phpmailer": "^6.9",
-        "twig/twig": "^3.11",
+        "twig/twig": "^3.14",
         "aura/auth": "^4.0",
         "aura/session": "^2.1",
         "gabordemooij/redbean": "^5.7",
@@ -39,7 +39,7 @@
     },
     "require-dev": {
         "alchemy/zippy": "^1.0",
-        "phpunit/phpunit": "^10.5"
+        "phpunit/phpunit": "^11.3"
     },
     "scripts": {
         "genl10n": "yarn genl10n",

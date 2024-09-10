@@ -2,9 +2,7 @@
 
 use BicBucStriim\Utilities\L10n;
 
-/**
- * @covers \BicBucStriim\Utilities\L10n
- */
+#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\Utilities\L10n::class)]
 class L10nTest extends PHPUnit\Framework\TestCase
 {
     public function setUp(): void {}

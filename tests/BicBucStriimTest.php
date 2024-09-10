@@ -8,10 +8,8 @@ use BicBucStriim\AppData\BicBucStriim;
 use BicBucStriim\AppData\DataConstants;
 use BicBucStriim\AppData\R;
 
-/**
- * @covers \BicBucStriim\AppData\BicBucStriim
- * @covers \BicBucStriim\Models\Calibrething
- */
+#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\AppData\BicBucStriim::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\Models\Calibrething::class)]
 class BicBucStriimTest extends PHPUnit\Framework\TestCase
 {
     public const SCHEMA = './data/schema.sql';

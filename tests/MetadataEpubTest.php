@@ -10,12 +10,10 @@ use BicBucStriim\Calibre\Tag;
 use BicBucStriim\Utilities\EPub;
 use BicBucStriim\Utilities\MetadataEpub;
 
-/**
- * @covers \BicBucStriim\Utilities\MetadataEpub
- * @covers \BicBucStriim\Utilities\EPub
- * @covers \BicBucStriim\Utilities\EPubDOMXPath
- * @covers \BicBucStriim\Utilities\EPubDOMElement
- */
+#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\Utilities\MetadataEpub::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\Utilities\EPub::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\Utilities\EPubDOMXPath::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\Utilities\EPubDOMElement::class)]
 class MetadataEpubTest extends PHPUnit\Framework\TestCase
 {
     public const DATA = './tests/data';
@@ -46,7 +44,7 @@ class MetadataEpubTest extends PHPUnit\Framework\TestCase
     {
         $conv2 = new EPub($bookFile);
         $imageData = $conv2->Cover();
-        $byteArray = unpack("C*", $imageData['data']);
+        $byteArray = unpack("C*", (string) $imageData['data']);
         $dsize = count($byteArray);
         $handle = fopen($imageFile, "r");
         $fsize = filesize($imageFile);

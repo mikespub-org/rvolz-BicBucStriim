@@ -7,11 +7,9 @@ use BicBucStriim\Utilities\CalibreUtil;
 use BicBucStriim\Utilities\RequestUtil;
 use BicBucStriim\Session\SessionFactory;
 
-/**
- * @covers \BicBucStriim\Utilities\UrlInfo
- * @covers \BicBucStriim\Utilities\CalibreUtil
- * @covers \BicBucStriim\Utilities\InputUtil
- */
+#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\Utilities\UrlInfo::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\Utilities\CalibreUtil::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\Utilities\InputUtil::class)]
 class UtilitiesTest extends PHPUnit\Framework\TestCase
 {
     public const FIXT = './tests/fixtures';

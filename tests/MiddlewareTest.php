@@ -7,17 +7,17 @@ use BicBucStriim\Utilities\TestHelper;
 
 /**
  * @todo test with/without login required + caching
- * @covers \BicBucStriim\Middleware\BasePathDetector
- * @covers \BicBucStriim\Middleware\BasePathMiddleware
- * @covers \BicBucStriim\Middleware\CachingMiddleware
- * @covers \BicBucStriim\Middleware\CalibreConfigMiddleware
- * @covers \BicBucStriim\Middleware\DefaultMiddleware
- * @covers \BicBucStriim\Middleware\LoginMiddleware
- * @covers \BicBucStriim\Middleware\OwnConfigMiddleware
- * @covers \BicBucStriim\Session\SessionFactory
- * @covers \BicBucStriim\Session\Session
- * @covers \BicBucStriim\Traits\AppTrait
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\Middleware\BasePathDetector::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\Middleware\BasePathMiddleware::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\Middleware\CachingMiddleware::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\Middleware\CalibreConfigMiddleware::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\Middleware\DefaultMiddleware::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\Middleware\LoginMiddleware::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\Middleware\OwnConfigMiddleware::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\Session\SessionFactory::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\Session\Session::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\Traits\AppTrait::class)]
 class MiddlewareTest extends PHPUnit\Framework\TestCase
 {
     public static function setUpBeforeClass(): void
@@ -83,9 +83,7 @@ class MiddlewareTest extends PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @runInSeparateProcess
-     */
+    #[\PHPUnit\Framework\Attributes\RunInSeparateProcess]
     public function testAppMainRequest(): void
     {
         $app = TestHelper::getApp();
@@ -97,11 +95,9 @@ class MiddlewareTest extends PHPUnit\Framework\TestCase
         $this->assertStringContainsString($expected, (string) $response->getBody());
     }
 
-    /**
-     * @dataProvider getExpectedRoutes
-     * @runInSeparateProcess
-     * @depends testAppMainRequest
-     */
+    #[\PHPUnit\Framework\Attributes\Depends('testAppMainRequest')]
+    #[\PHPUnit\Framework\Attributes\DataProvider('getExpectedRoutes')]
+    #[\PHPUnit\Framework\Attributes\RunInSeparateProcess]
     public function testAppGetRequest($input, $output, $methods, $pattern, ...$args): void
     {
         $this->assertGreaterThan(0, count($args));
@@ -127,9 +123,7 @@ class MiddlewareTest extends PHPUnit\Framework\TestCase
         }
     }
 
-    /**
-     * @dataProvider getExpectedRoutes
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('getExpectedRoutes')]
     public function testMustLoginNoAuth($input, $output, $methods, $pattern, ...$args): void
     {
         $this->assertGreaterThan(0, count($args));
@@ -156,22 +150,22 @@ class MiddlewareTest extends PHPUnit\Framework\TestCase
             $handler = TestHelper::getHandler($app, $expected);
 
             // Expect to be redirected here, except for login and static resources
-            $expected = ['Location' => '/usr/local/bin/login/'];
+            $expected = ['Location' => 'vendor/bin/login/'];
             $noRedirect = ['/login/', '/cover/', '/thumbnail/'];
             foreach ($noRedirect as $skip) {
-                if (str_contains($pattern, $skip)) {
+                if (str_contains((string) $pattern, $skip)) {
                     $expected = (string) $output;
                     break;
                 }
             }
             // Expect to get authentication error for /opds
-            if (str_contains($pattern, '/opds')) {
+            if (str_contains((string) $pattern, '/opds')) {
                 $expected = ['WWW-Authenticate' => 'Basic realm="BicBucStriim"'];
             }
 
             $middleware = new LoginMiddleware($app->getContainer(), $settings['appname'], []);
             $response = $middleware->process($request, $handler);
-            $this->assertEquals(\Nyholm\Psr7\Response::class, get_class($response));
+            $this->assertEquals(\Nyholm\Psr7\Response::class, $response::class);
             if (is_string($expected)) {
                 $this->assertStringContainsString($expected, (string) $response->getBody());
             } elseif (is_array($expected)) {
@@ -182,9 +176,7 @@ class MiddlewareTest extends PHPUnit\Framework\TestCase
         }
     }
 
-    /**
-     * @dataProvider getExpectedRoutes
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('getExpectedRoutes')]
     public function testMustLoginWithAuth($input, $output, $methods, $pattern, ...$args): void
     {
         $this->assertGreaterThan(0, count($args));
@@ -219,7 +211,7 @@ class MiddlewareTest extends PHPUnit\Framework\TestCase
             $middleware->expects($this->any())->method('is_authorized')->willReturn(true);
 
             $response = $middleware->process($request, $handler);
-            $this->assertEquals(\Nyholm\Psr7\Response::class, get_class($response));
+            $this->assertEquals(\Nyholm\Psr7\Response::class, $response::class);
             $this->assertStringContainsString($expected, (string) $response->getBody());
         }
     }
@@ -252,7 +244,7 @@ class MiddlewareTest extends PHPUnit\Framework\TestCase
         $handler = TestHelper::getHandler($app, $expected);
 
         $response = $middleware->process($request, $handler);
-        $this->assertEquals(\Nyholm\Psr7\Response::class, get_class($response));
+        $this->assertEquals(\Nyholm\Psr7\Response::class, $response::class);
         $this->assertStringContainsString($expected, (string) $response->getBody());
     }
 
@@ -283,9 +275,9 @@ class MiddlewareTest extends PHPUnit\Framework\TestCase
         $handler = TestHelper::getHandler($app, $expected);
 
         // Expect to be redirected here
-        $expected = ['Location' => '/usr/local/bin/login/'];
+        $expected = ['Location' => 'vendor/bin/login/'];
         $response = $middleware->process($request, $handler);
-        $this->assertEquals(\Nyholm\Psr7\Response::class, get_class($response));
+        $this->assertEquals(\Nyholm\Psr7\Response::class, $response::class);
         foreach ($expected as $header => $line) {
             $this->assertEquals($line, $response->getHeaderLine($header));
         }

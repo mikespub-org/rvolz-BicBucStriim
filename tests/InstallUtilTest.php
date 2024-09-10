@@ -11,9 +11,7 @@
 
 use BicBucStriim\Utilities\InstallUtil;
 
-/**
- * @covers \BicBucStriim\Utilities\InstallUtil
- */
+#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\Utilities\InstallUtil::class)]
 class InstallUtilTest extends PHPUnit\Framework\TestCase
 {
     public function setUp(): void {}

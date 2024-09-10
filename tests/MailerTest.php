@@ -2,9 +2,7 @@
 
 use BicBucStriim\Utilities\Mailer;
 
-/**
- * @covers \BicBucStriim\Utilities\Mailer
- */
+#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\Utilities\Mailer::class)]
 class MailerTest extends PHPUnit\Framework\TestCase
 {
     public const FIXT = './tests/fixtures';
@@ -19,9 +17,7 @@ class MailerTest extends PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @dataProvider mailProvider
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('mailProvider')]
     public function testSendMail($type, $method, $expected, $result): void
     {
         /** @var Mailer $mailer */

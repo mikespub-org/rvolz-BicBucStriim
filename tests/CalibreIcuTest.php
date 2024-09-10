@@ -6,10 +6,8 @@
 use BicBucStriim\Calibre\Calibre;
 use BicBucStriim\Calibre\CalibreFilter;
 
-/**
- * @covers \BicBucStriim\Calibre\Calibre
- * @covers \BicBucStriim\Calibre\CalibreFilter
- */
+#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\Calibre\Calibre::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\Calibre\CalibreFilter::class)]
 class CalibreIcuTest extends PHPUnit\Framework\TestCase
 {
     public const CDB4 = './tests/fixtures/lib4/metadata.db';
