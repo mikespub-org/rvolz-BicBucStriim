@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="BicBucStriim" default="dist">
+    <target name="clean" >
+        <delete>
+           <fileset dir=".">
+              <include name="bicbucstriim.zip" />
+              <include name="bicbucstriim-*.zip" />
+           </fileset>
+        </delete>
+    </target>
+
+
+    <!-- ============================================  -->
+    <!-- (DEFAULT)  Target: dist                       -->
+    <!-- ============================================  -->
+    <target name="dist" depends="clean">
+        <echo msg="Creating archive..." />
+        <property environment="env" />
+        <property name="bicbucstriim.release.filename" value="bicbucstriim.zip"/>
+        <if>
+            <isset property="env.TRAVIS_TAG" />
+            <then>
+                <property name="bicbucstriim.release.filename" value="bicbucstriim-${env.TRAVIS_TAG}.zip" override="true" />
+            </then>
+        </if>
+
+
+        <zip destfile="${bicbucstriim.release.filename}">
+            <fileset dir=".">
+                <include name="img/**" />
+                <include name="js/**" />
+                <include name="style/style.css" />
+                <include name="style/jquery/**" />
+                <include name="config/**" />
+                <include name="lang/**" />
+                <include name="src/**" />
+                <include name="vendor/**" />
+                <include name="templates/**" />
+                <include name="data/**" />
+                <include name="index.php" />
+                <include name="installcheck.php" />
+                <include name="composer.json" />
+                <include name="php.ini" />
+                <include name="favicon.ico" />
+                <include name="bbs-icon.png" />
+                <include name="CHANGELOG.md" />
+                <include name=".htaccess" />
+                <include name="NOTICE" />
+                <include name="LICENSE" />
+                <include name="README.md" />
+            </fileset>
+        </zip>
+
+        <echo msg="Files copied and compressed in build directory OK!" />
+    </target>
+</project>

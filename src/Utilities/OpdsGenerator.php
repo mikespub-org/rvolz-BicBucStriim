@@ -583,7 +583,7 @@ class OpdsGenerator
         $this->header(
             'opds_by_search1',
             'opds_by_search2',
-            '/opds/searchlist/' . $page . ':' . urlencode($search),
+            '/opds/searchlist/' . $page . ':' . rawurlencode($search),
             ': ' . $search
         );
         $this->acquisitionCatalogLink($this->bbs_root . '/opds/searchlist/' . $page . '/', 'self');
@@ -659,7 +659,7 @@ class OpdsGenerator
             if ($protected) {
                 $this->indirectDownloadLink($titleLink . '/showaccess/', $mt);
             } else {
-                $this->directDownloadLink($titleLink . '/file/' . urlencode($fname) . '.' . $ext, $mt);
+                $this->directDownloadLink($titleLink . '/file/' . rawurlencode($fname) . '.' . $ext, $mt);
             }
         }
         foreach ($entry['tags'] as $category) {

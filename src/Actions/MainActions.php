@@ -435,6 +435,7 @@ class MainActions extends DefaultActions
             return $this->responder->error(400, "Bad parameter");
         }
         // TODO check file parameter?
+        $file = basename($file);
 
         $details = $this->calibre()->titleDetails($settings['lang'], $id);
         if (is_null($details)) {
@@ -448,6 +449,10 @@ class MainActions extends DefaultActions
         }
 
         $real_bookpath = $this->calibre()->titleFile($id, $file);
+        if (!file_exists($real_bookpath)) {
+            $this->log()->warning("book: no file found for book " . $id . " " . $file);
+            return $this->mkNotFound();
+        }
         $contentType = CalibreUtil::titleMimeType($real_bookpath);
         if ($this->requester->isAuthenticated()) {
             $this->log()->info("book download by " . $this->requester->getUserName() . " for " . $real_bookpath .
@@ -498,6 +503,7 @@ class MainActions extends DefaultActions
             return $this->responder->error(400, "Bad parameter");
         }
         // TODO check file parameter?
+        $file = basename($file);
 
         $book = $this->calibre()->title($id);
 
@@ -526,6 +532,10 @@ class MainActions extends DefaultActions
         } else {
             $this->responder->deleteCookie(Settings::KINDLE_COOKIE);
             $bookpath = $this->calibre()->titleFile($id, $file);
+            if (!file_exists($bookpath)) {
+                $this->log()->warning("kindle: no file found for book " . $id . " " . $file);
+                return $this->mkNotFound();
+            }
             $this->log()->debug("kindle: requested file " . $bookpath);
             $mailer = $this->mailer();
             $send_success = 0;

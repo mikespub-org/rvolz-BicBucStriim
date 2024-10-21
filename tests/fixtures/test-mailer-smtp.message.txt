@@ -3,7 +3,7 @@ To: kindle@example.org
 From: bicbucstriim@example.org
 Subject: BicBucStriim
 Message-ID: <generated>
-X-Mailer: PHPMailer 6.9.1 (https://github.com/PHPMailer/PHPMailer)
+X-Mailer: PHPMailer version (https://github.com/PHPMailer/PHPMailer)
 MIME-Version: 1.0
 Content-Type: multipart/mixed;
  boundary="b1=_generated"

@@ -38,15 +38,18 @@ class MailerTest extends PHPUnit\Framework\TestCase
         $content = $mailer->getMessage();
         $pattern = [
             '/Message-ID: <.+>/',
-            '/Date: .+/',
+            // inconsistant \r\n or \n for Date: in PHPMailer 6.9.2 (compared to 6.9.1)
+            '/Date: [^\r\n]+/',
             '/ boundary="b1=_\w+"/',
             '/--b1=_\w+/',
+            '/X-Mailer: PHPMailer [\d.]+/',
         ];
         $replacement = [
             'Message-ID: <generated>',
             'Date: generated',
             ' boundary="b1=_generated"',
             '--b1=_generated',
+            'X-Mailer: PHPMailer version',
         ];
         $content = preg_replace($pattern, $replacement, $content);
         $template = file_get_contents(self::FIXT . '/test-mailer-' . $type . '.message.txt');

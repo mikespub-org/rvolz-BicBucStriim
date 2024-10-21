@@ -22,10 +22,8 @@ class CalibreUtil
      */
     public static function bookPath($cd, $bp, $file)
     {
-        try {
-            $path = $cd . '/' . $bp . '/' . $file;
-            $stat = stat($path);
-        } catch (Exception $e) {
+        $path = $cd . '/' . $bp . '/' . $file;
+        if (!file_exists($path)) {
             $p = explode("/", $bp);
             $path = $cd . '/' . ucwords($p[0]) . '/' . $p[1] . '/' . $file;
         }

@@ -171,7 +171,7 @@ class LoginMiddleware extends DefaultMiddleware
             $resume_service->resume($authTracker);
             // @todo this sets 'session' attribute on $this->request
             $this->requester->setSession($session);
-        } catch(\ErrorException $e) {
+        } catch (\ErrorException $e) {
             $this->log()->warning('login error: bad cookie data ' . var_export(get_class($e), true));
         }
         $this->log()->debug("after resume: " . $authTracker->getStatus());

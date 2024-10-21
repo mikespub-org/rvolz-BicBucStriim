@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [3.x.x] - 20xx-xx-xx
 ### Changed
 
+## [3.5.2] - 2024-10-21 Fix OPDS book download for Thorium
+### Added
+- Include composer.json in release *.zip for SynoCommunity package
+### Changed
+- Fix mailer tests for new phpmailer/phpmailer release (dev only)
+- Replace alchemy/zippy with phing for packaging (dev only)
+- Fix url encoding of files in OPDS feeds - see issue #4 by @Borogroves
+
 ## [3.5.1] - 2024-08-26 Use requester and responder in Actions & Middleware
 ### Changed
 - Use requester and move getAuth(), isAuthenticated() etc. methods to RequestUtil

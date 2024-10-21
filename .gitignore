@@ -31,3 +31,4 @@ bicbucstriim*.zip
 .phpunit.cache
 tests/coverage/
 rector.php
+behat.yml

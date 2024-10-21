@@ -38,12 +38,11 @@
         "symfony/cache": "^7.1"
     },
     "require-dev": {
-        "alchemy/zippy": "^1.0",
-        "phpunit/phpunit": "^11.3"
+        "phpunit/phpunit": "^11.4"
     },
     "scripts": {
         "genl10n": "yarn genl10n",
-        "package": "@php scripts/package.php"
+        "package": "phing"
     },
     "autoload": {
         "classmap": [

@@ -128,8 +128,8 @@ class OpdsGeneratorTest extends PHPUnit\Framework\TestCase
  <dc:language>deu</dc:language>
  <link href="/bbs/titles/2/thumbnail/" type="image/png" rel="http://opds-spec.org/image/thumbnail"/>
  <link href="/bbs/titles/2/cover/" type="image/jpeg" rel="http://opds-spec.org/image"/>
- <link href="/bbs/titles/2/file/Trutz+Simplex+-+Hans+Jakob+Christoffel+von+Grimmelshausen.epub" type="application/epub+zip" rel="http://opds-spec.org/acquisition"/>
- <link href="/bbs/titles/2/file/Trutz+Simplex+-+Hans+Jakob+Christoffel+von+Grimmelshausen.mobi" type="application/x-mobipocket-ebook" rel="http://opds-spec.org/acquisition"/>
+ <link href="/bbs/titles/2/file/Trutz%20Simplex%20-%20Hans%20Jakob%20Christoffel%20von%20Grimmelshausen.epub" type="application/epub+zip" rel="http://opds-spec.org/acquisition"/>
+ <link href="/bbs/titles/2/file/Trutz%20Simplex%20-%20Hans%20Jakob%20Christoffel%20von%20Grimmelshausen.mobi" type="application/x-mobipocket-ebook" rel="http://opds-spec.org/acquisition"/>
  <category term="Biografien &amp; Memoiren" label="Biografien &amp; Memoiren"/>
 </entry>
 ';

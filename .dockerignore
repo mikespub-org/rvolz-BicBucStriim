@@ -25,3 +25,5 @@ dist/
 work/
 public/
 rector.php
+build.xml
+behat.yml

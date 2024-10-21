@@ -90,10 +90,11 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
     /**
      * Hello function (example)
      * @param ?string $name
-     * @return void|Response
+     * @return Response
      */
     public function hello($name = null)
     {
+        // @deprecated 3.5.0 return response instead of void in actions
         //$this->helloVoid($name);
         return $this->helloResponse($name);
     }
