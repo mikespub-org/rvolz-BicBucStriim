@@ -1,5 +1,6 @@
 <?php
 
+use BicBucStriim\Actions\DefaultActions;
 use BicBucStriim\Middleware\GatekeeperMiddleware;
 use BicBucStriim\Utilities\RequestUtil;
 use BicBucStriim\Utilities\TestHelper;

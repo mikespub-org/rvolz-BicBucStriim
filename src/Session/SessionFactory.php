@@ -35,7 +35,7 @@ class SessionFactory extends \Aura\Session\SessionFactory
         $phpfunc = new Phpfunc();
         return new Session(
             new \Aura\Session\SegmentFactory(),
-            new CsrfTokenFactory(new Randval($phpfunc)),
+            new CsrfTokenFactory(new Randval()),
             $phpfunc,
             $cookies,
             $delete_cookie

@@ -55,8 +55,9 @@ class MetadataEpub
     public function __destruct()
     {
         $fname = $this->converter->file();
-        if (!is_null($fname) && file_exists($fname));
-        unlink($fname);
+        if (!is_null($fname) && file_exists($fname)) {
+            unlink($fname);
+        }
     }
 
     /**
