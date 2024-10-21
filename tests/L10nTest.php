@@ -1,8 +1,9 @@
 <?php
 
 use BicBucStriim\Utilities\L10n;
+use PHPUnit\Framework\Attributes\CoversClass;
 
-#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\Utilities\L10n::class)]
+#[CoversClass(L10n::class)]
 class L10nTest extends PHPUnit\Framework\TestCase
 {
     public function setUp(): void {}

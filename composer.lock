@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8c4a21373db7bde6aea28b2fbeba8595",
+    "content-hash": "5b7b68333f7502436ccbd881053ae3b7",
     "packages": [
         {
             "name": "8ctopus/apix-log",
@@ -150,48 +150,37 @@
         },
         {
             "name": "aura/session",
-            "version": "2.1.0",
+            "version": "4.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/auraphp/Aura.Session.git",
-                "reference": "7d2f7d41ad693970b5b6b83facca0961d3378883"
+                "reference": "413740aefe3b8416e173504d94e8dcef102483f7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/auraphp/Aura.Session/zipball/7d2f7d41ad693970b5b6b83facca0961d3378883",
-                "reference": "7d2f7d41ad693970b5b6b83facca0961d3378883",
+                "url": "https://api.github.com/repos/auraphp/Aura.Session/zipball/413740aefe3b8416e173504d94e8dcef102483f7",
+                "reference": "413740aefe3b8416e173504d94e8dcef102483f7",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.0"
+                "php": "^7.2 || ^8.0"
             },
             "require-dev": {
-                "aura/di": "~2.0"
+                "phpunit/phpunit": "^8.5"
             },
             "suggest": {
                 "ext-mcrypt": "Mcrypt generates the next best secure CSRF tokens.",
-                "ext-openssl": "OpenSSL generates the best secure CSRF tokens.",
-                "ircmaxell/random-lib": "A Library For Generating Secure Random Numbers",
-                "paragonie/random_compat": "PHP 5.x polyfill for random_bytes() and random_int() from PHP 7"
+                "ext-openssl": "OpenSSL generates the best secure CSRF tokens."
             },
             "type": "library",
-            "extra": {
-                "aura": {
-                    "type": "library",
-                    "config": {
-                        "common": "Aura\\Session\\_Config\\Common"
-                    }
-                }
-            },
             "autoload": {
                 "psr-4": {
-                    "Aura\\Session\\": "src/",
-                    "Aura\\Session\\_Config\\": "config/"
+                    "Aura\\Session\\": "src/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
-                "BSD-2-Clause"
+                "MIT"
             ],
             "authors": [
                 {
@@ -210,9 +199,9 @@
             ],
             "support": {
                 "issues": "https://github.com/auraphp/Aura.Session/issues",
-                "source": "https://github.com/auraphp/Aura.Session/tree/2.x"
+                "source": "https://github.com/auraphp/Aura.Session/tree/4.0.0"
             },
-            "time": "2016-10-03T20:28:32+00:00"
+            "time": "2024-05-28T05:40:03+00:00"
         },
         {
             "name": "dflydev/fig-cookies",

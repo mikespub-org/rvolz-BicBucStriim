@@ -2,17 +2,19 @@
 
 use BicBucStriim\Actions\DefaultActions;
 use BicBucStriim\Utilities\RequestUtil;
+use BicBucStriim\Utilities\ResponseUtil;
+use BicBucStriim\Utilities\RouteUtil;
 use BicBucStriim\Utilities\TestHelper;
 use BicBucStriim\Utilities\ActionsWrapperStrategy;
 use Slim\Factory\AppFactory;
+use PHPUnit\Framework\Attributes\CoversClass;
 
-#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\Actions\DefaultActions::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\Traits\AppTrait::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\Utilities\ActionsCallableResolver::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\Utilities\ActionsWrapperStrategy::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\Utilities\RequestUtil::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\Utilities\ResponseUtil::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\Utilities\RouteUtil::class)]
+#[CoversClass(DefaultActions::class)]
+#[CoversClass(\BicBucStriim\Traits\AppTrait::class)]
+#[CoversClass(ActionsWrapperStrategy::class)]
+#[CoversClass(RequestUtil::class)]
+#[CoversClass(ResponseUtil::class)]
+#[CoversClass(RouteUtil::class)]
 class DefaultActionsTest extends PHPUnit\Framework\TestCase
 {
     public static function getExpectedRoutes()

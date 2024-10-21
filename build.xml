@@ -38,6 +38,8 @@
                 <include name="vendor/**" />
                 <include name="templates/**" />
                 <include name="data/**" />
+                <exclude name="data/authors/*.png" />
+                <exclude name="data/titles/*.png" />
                 <include name="index.php" />
                 <include name="installcheck.php" />
                 <include name="composer.json" />

@@ -1,15 +1,17 @@
 <?php
 
+use BicBucStriim\Actions\DefaultActions;
 use BicBucStriim\Actions\MainActions;
 use BicBucStriim\Utilities\RequestUtil;
 use BicBucStriim\Utilities\TestHelper;
 use BicBucStriim\Utilities\Mailer;
 use Slim\Factory\AppFactory;
+use PHPUnit\Framework\Attributes\CoversClass;
 
-#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\Actions\MainActions::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\Actions\DefaultActions::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\Utilities\TestHelper::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\Utilities\Mailer::class)]
+#[CoversClass(MainActions::class)]
+#[CoversClass(DefaultActions::class)]
+#[CoversClass(TestHelper::class)]
+#[CoversClass(Mailer::class)]
 class MainActionsTest extends PHPUnit\Framework\TestCase
 {
     public static function getExpectedRoutes()

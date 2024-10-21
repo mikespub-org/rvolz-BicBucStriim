@@ -7,9 +7,11 @@ if (!defined('REDBEAN_MODEL_PREFIX')) {
 use BicBucStriim\AppData\BicBucStriim;
 use BicBucStriim\AppData\DataConstants;
 use BicBucStriim\AppData\R;
+use BicBucStriim\Models\Calibrething;
+use PHPUnit\Framework\Attributes\CoversClass;
 
-#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\AppData\BicBucStriim::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\Models\Calibrething::class)]
+#[CoversClass(BicBucStriim::class)]
+#[CoversClass(Calibrething::class)]
 class BicBucStriimTest extends PHPUnit\Framework\TestCase
 {
     public const SCHEMA = './data/schema.sql';

@@ -3,12 +3,13 @@
 use BicBucStriim\Middleware\GatekeeperMiddleware;
 use BicBucStriim\Utilities\RequestUtil;
 use BicBucStriim\Utilities\TestHelper;
+use PHPUnit\Framework\Attributes\CoversClass;
 
-#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\Actions\DefaultActions::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\Traits\AppTrait::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\Utilities\RequestUtil::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\Utilities\TestHelper::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\Middleware\GatekeeperMiddleware::class)]
+#[CoversClass(DefaultActions::class)]
+#[CoversClass(\BicBucStriim\Traits\AppTrait::class)]
+#[CoversClass(RequestUtil::class)]
+#[CoversClass(TestHelper::class)]
+#[CoversClass(GatekeeperMiddleware::class)]
 class GatekeeperTest extends PHPUnit\Framework\TestCase
 {
     public function testGatekeeper(): void

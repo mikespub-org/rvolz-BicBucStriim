@@ -1,23 +1,30 @@
 <?php
 
 use BicBucStriim\AppData\Settings;
+use BicBucStriim\Middleware\BasePathDetector;
+use BicBucStriim\Middleware\BasePathMiddleware;
+use BicBucStriim\Middleware\CalibreConfigMiddleware;
+use BicBucStriim\Middleware\CachingMiddleware;
+use BicBucStriim\Middleware\DefaultMiddleware;
 use BicBucStriim\Middleware\LoginMiddleware;
+use BicBucStriim\Middleware\OwnConfigMiddleware;
 use BicBucStriim\Utilities\RequestUtil;
 use BicBucStriim\Utilities\TestHelper;
+use PHPUnit\Framework\Attributes\CoversClass;
 
 /**
  * @todo test with/without login required + caching
  */
-#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\Middleware\BasePathDetector::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\Middleware\BasePathMiddleware::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\Middleware\CachingMiddleware::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\Middleware\CalibreConfigMiddleware::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\Middleware\DefaultMiddleware::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\Middleware\LoginMiddleware::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\Middleware\OwnConfigMiddleware::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\Session\SessionFactory::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\Session\Session::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\Traits\AppTrait::class)]
+#[CoversClass(BasePathDetector::class)]
+#[CoversClass(BasePathMiddleware::class)]
+#[CoversClass(CachingMiddleware::class)]
+#[CoversClass(CalibreConfigMiddleware::class)]
+#[CoversClass(DefaultMiddleware::class)]
+#[CoversClass(LoginMiddleware::class)]
+#[CoversClass(OwnConfigMiddleware::class)]
+#[CoversClass(\BicBucStriim\Session\SessionFactory::class)]
+#[CoversClass(\BicBucStriim\Session\Session::class)]
+#[CoversClass(\BicBucStriim\Traits\AppTrait::class)]
 class MiddlewareTest extends PHPUnit\Framework\TestCase
 {
     public static function setUpBeforeClass(): void
@@ -283,6 +290,8 @@ class MiddlewareTest extends PHPUnit\Framework\TestCase
         }
     }
 
+    #[\PHPUnit\Framework\Attributes\PreserveGlobalState(false)]
+    #[\PHPUnit\Framework\Attributes\RunInSeparateProcess]
     public function testIsAuthorizedWithPhpAuthTrue(): void
     {
         $app = TestHelper::getAppWithContainer();
@@ -305,6 +314,8 @@ class MiddlewareTest extends PHPUnit\Framework\TestCase
         unset($_SESSION[\Aura\Auth\Auth::class]);
     }
 
+    #[\PHPUnit\Framework\Attributes\PreserveGlobalState(false)]
+    #[\PHPUnit\Framework\Attributes\RunInSeparateProcess]
     public function testIsAuthorizedWithPhpAuthFalse(): void
     {
         $app = TestHelper::getAppWithContainer();
@@ -327,6 +338,8 @@ class MiddlewareTest extends PHPUnit\Framework\TestCase
         unset($_SESSION[\Aura\Auth\Auth::class]);
     }
 
+    #[\PHPUnit\Framework\Attributes\PreserveGlobalState(false)]
+    #[\PHPUnit\Framework\Attributes\RunInSeparateProcess]
     public function testIsAuthorizedWithHttpAuthTrue(): void
     {
         $app = TestHelper::getAppWithContainer();
@@ -349,6 +362,8 @@ class MiddlewareTest extends PHPUnit\Framework\TestCase
         unset($_SESSION[\Aura\Auth\Auth::class]);
     }
 
+    #[\PHPUnit\Framework\Attributes\PreserveGlobalState(false)]
+    #[\PHPUnit\Framework\Attributes\RunInSeparateProcess]
     public function testIsAuthorizedWithHttpAuthFalse(): void
     {
         $app = TestHelper::getAppWithContainer();

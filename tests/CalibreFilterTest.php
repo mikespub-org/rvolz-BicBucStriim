@@ -1,8 +1,9 @@
 <?php
 
 use BicBucStriim\Calibre\CalibreFilter;
+use PHPUnit\Framework\Attributes\CoversClass;
 
-#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\Calibre\CalibreFilter::class)]
+#[CoversClass(CalibreFilter::class)]
 class CalibreFilterTest extends PHPUnit\Framework\TestCase
 {
     public function setUp(): void {}

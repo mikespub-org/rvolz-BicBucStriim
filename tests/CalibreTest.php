@@ -2,9 +2,10 @@
 
 use BicBucStriim\Calibre\Calibre;
 use BicBucStriim\Calibre\CalibreFilter;
+use PHPUnit\Framework\Attributes\CoversClass;
 
-#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\Calibre\Calibre::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\Calibre\CalibreFilter::class)]
+#[CoversClass(Calibre::class)]
+#[CoversClass(CalibreFilter::class)]
 class CalibreTest extends PHPUnit\Framework\TestCase
 {
     public const CDB1 = './tests/fixtures/metadata_empty.db';

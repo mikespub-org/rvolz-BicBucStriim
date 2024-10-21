@@ -218,6 +218,7 @@ class LoginMiddleware extends DefaultMiddleware
     {
         $sessionFactory = new \BicBucStriim\Session\SessionFactory();
         $session = $sessionFactory->newInstance($request->getCookieParams());
+        // this can only happen once - see https://github.com/auraphp/Aura.Session/pull/80
         $session->setCookieParams(['path' => $basePath . '/']);
         return $session;
     }

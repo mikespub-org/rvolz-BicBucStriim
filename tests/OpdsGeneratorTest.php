@@ -12,8 +12,9 @@ use BicBucStriim\Calibre\Calibre;
 use BicBucStriim\Calibre\CalibreFilter;
 use BicBucStriim\Utilities\OpdsGenerator;
 use BicBucStriim\Utilities\L10n;
+use PHPUnit\Framework\Attributes\CoversClass;
 
-#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\Utilities\OpdsGenerator::class)]
+#[CoversClass(OpdsGenerator::class)]
 class OpdsGeneratorTest extends PHPUnit\Framework\TestCase
 {
     public const OPDS_RNG = './tests/fixtures/opds_catalog_1_1.rng';

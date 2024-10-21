@@ -8,12 +8,15 @@ use BicBucStriim\Calibre\Calibre;
 use BicBucStriim\Calibre\Author;
 use BicBucStriim\Calibre\Tag;
 use BicBucStriim\Utilities\EPub;
+use BicBucStriim\Utilities\EPubDOMElement;
+use BicBucStriim\Utilities\EPubDOMXPath;
 use BicBucStriim\Utilities\MetadataEpub;
+use PHPUnit\Framework\Attributes\CoversClass;
 
-#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\Utilities\MetadataEpub::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\Utilities\EPub::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\Utilities\EPubDOMXPath::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\Utilities\EPubDOMElement::class)]
+#[CoversClass(MetadataEpub::class)]
+#[CoversClass(EPub::class)]
+#[CoversClass(EPubDOMXPath::class)]
+#[CoversClass(EPubDOMElement::class)]
 class MetadataEpubTest extends PHPUnit\Framework\TestCase
 {
     public const DATA = './tests/data';

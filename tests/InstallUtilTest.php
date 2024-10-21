@@ -10,8 +10,9 @@
  */
 
 use BicBucStriim\Utilities\InstallUtil;
+use PHPUnit\Framework\Attributes\CoversClass;
 
-#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\Utilities\InstallUtil::class)]
+#[CoversClass(InstallUtil::class)]
 class InstallUtilTest extends PHPUnit\Framework\TestCase
 {
     public function setUp(): void {}

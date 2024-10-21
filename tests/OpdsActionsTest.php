@@ -1,13 +1,15 @@
 <?php
 
+use BicBucStriim\Actions\DefaultActions;
 use BicBucStriim\Actions\OpdsActions;
 use BicBucStriim\Utilities\RequestUtil;
 use BicBucStriim\Utilities\TestHelper;
 use Slim\Factory\AppFactory;
+use PHPUnit\Framework\Attributes\CoversClass;
 
-#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\Actions\OpdsActions::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\Actions\DefaultActions::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\Utilities\TestHelper::class)]
+#[CoversClass(OpdsActions::class)]
+#[CoversClass(DefaultActions::class)]
+#[CoversClass(TestHelper::class)]
 class OpdsActionsTest extends PHPUnit\Framework\TestCase
 {
     public static function getExpectedRoutes()

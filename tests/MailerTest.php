@@ -1,8 +1,9 @@
 <?php
 
 use BicBucStriim\Utilities\Mailer;
+use PHPUnit\Framework\Attributes\CoversClass;
 
-#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\Utilities\Mailer::class)]
+#[CoversClass(Mailer::class)]
 class MailerTest extends PHPUnit\Framework\TestCase
 {
     public const FIXT = './tests/fixtures';

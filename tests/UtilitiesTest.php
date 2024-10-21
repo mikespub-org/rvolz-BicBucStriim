@@ -6,10 +6,11 @@ use BicBucStriim\Utilities\UrlInfo;
 use BicBucStriim\Utilities\CalibreUtil;
 use BicBucStriim\Utilities\RequestUtil;
 use BicBucStriim\Session\SessionFactory;
+use PHPUnit\Framework\Attributes\CoversClass;
 
-#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\Utilities\UrlInfo::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\Utilities\CalibreUtil::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\Utilities\InputUtil::class)]
+#[CoversClass(UrlInfo::class)]
+#[CoversClass(CalibreUtil::class)]
+#[CoversClass(InputUtil::class)]
 class UtilitiesTest extends PHPUnit\Framework\TestCase
 {
     public const FIXT = './tests/fixtures';

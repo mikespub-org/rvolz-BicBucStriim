@@ -1,11 +1,14 @@
 <?php
 
+use BicBucStriim\Actions\ApiActions;
+use BicBucStriim\Actions\DefaultActions;
 use BicBucStriim\Utilities\RequestUtil;
 use BicBucStriim\Utilities\TestHelper;
+use PHPUnit\Framework\Attributes\CoversClass;
 
-#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\Actions\ApiActions::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\Actions\DefaultActions::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\Utilities\TestHelper::class)]
+#[CoversClass(ApiActions::class)]
+#[CoversClass(DefaultActions::class)]
+#[CoversClass(TestHelper::class)]
 class ApiActionsTest extends PHPUnit\Framework\TestCase
 {
     #[\PHPUnit\Framework\Attributes\PreserveGlobalState(false)]

@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [3.x.x] - 20xx-xx-xx
 ### Changed
+- Run tests in separate process for LoginMiddleware - see auraphp/Aura.Session#80
+- Migrate phpunit.xml.dist to phpunit 11.x format
+- Update aura/session package to recent release 4.0
 
 ## [3.5.2] - 2024-10-21 Fix OPDS book download for Thorium
 ### Added

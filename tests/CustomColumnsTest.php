@@ -1,9 +1,9 @@
 <?php
 
-use BicBucStriim\Calibre\Bic;
 use BicBucStriim\Calibre\Calibre;
+use PHPUnit\Framework\Attributes\CoversClass;
 
-#[\PHPUnit\Framework\Attributes\CoversClass(\BicBucStriim\Calibre\Calibre::class)]
+#[CoversClass(Calibre::class)]
 class CustomColumnsTest extends PHPUnit\Framework\TestCase
 {
     public const CDB1 = './tests/fixtures/metadata_empty.db';
