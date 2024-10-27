@@ -16,6 +16,7 @@
     "type": "project",
     "license": "MIT",
     "require": {
+        "php": ">=8.2",
         "michelf/php-markdown": "^2.0",
         "slim/slim": "^4.14",
         "phpmailer/phpmailer": "^6.9",
