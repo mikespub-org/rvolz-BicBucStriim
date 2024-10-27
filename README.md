@@ -4,8 +4,8 @@ BicBucStriim
 Forked Branches for PHP 8.x
 ---------------------------
 
- Release | Status | Branch | Back-end | Front-end | Upstream (archived) |
-|--------|--------|--------|----------|-----------|---------------------|
+| Release | Status | Branch | Back-end | Front-end | Upstream (archived) |
+|---------|--------|--------|----------|-----------|---------------------|
 | [v3.5.2](https://github.com/mikespub-org/rvolz-BicBucStriim/releases/tag/v3.5.2) | Production | [main](https://github.com/mikespub-org/rvolz-BicBucStriim/tree/main) | v3.x | - | [v1](https://github.com/rvolz/BicBucStriim/tree/v1) |
 | [v1.7.2](https://github.com/mikespub-org/rvolz-BicBucStriim/releases/tag/v1.7.2) | Maintenance | [v1.7.x](https://github.com/mikespub-org/rvolz-BicBucStriim/tree/v1.7.x) | v1.x | - | [v1](https://github.com/rvolz/BicBucStriim/tree/v1) |
 | - | Unused | [backend](https://github.com/mikespub-org/rvolz-BicBucStriim/tree/backend) | v2.x | - | [master](https://github.com/rvolz/BicBucStriim/tree/master) |
