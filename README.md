@@ -12,11 +12,12 @@ Forked Branches for PHP 8.x
 | - | Unfinished | [frontend](https://github.com/mikespub-org/rvolz-BicBucStriim/tree/frontend) | v2.x | v2.x | [BicBucStriim-352](https://github.com/rvolz/BicBucStriim/tree/BicBucStriim-352) |
 
 Note: the release packages `bicbucstriim-3.x.x-php8x.zip` include the vendor/ packages for a particular PHP version. If you have an older (supported) PHP version, you can download the `Source code (zip)` for that release, and run *composer* to update the dependencies:
-  ```
-  $ unzip bicbucstriim-3.x.x-php8x.zip -d bbs
-  $ cd bbs
-  $ composer update --no-dev -o
-  ```
+```
+$ wget -O bbs-3.x.x.zip https://github.com/mikespub-org/rvolz-BicBucStriim/archive/refs/tags/v3.x.x.zip
+$ unzip bbs-3.x.x.zip
+$ cd rvolz-BicBucStriim-3.x.x
+$ composer update --no-dev -o
+```
 
 Updated Framework since v3.0.x
 ------------------------------
