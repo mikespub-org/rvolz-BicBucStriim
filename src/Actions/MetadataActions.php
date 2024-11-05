@@ -50,6 +50,7 @@ class MetadataActions extends DefaultActions
             ['DELETE', '/authors/{id}/notes/', [$self, 'del_author_notes']],
             ['POST', '/authors/{id}/links/', [$self, 'new_author_link']],
             ['DELETE', '/authors/{id}/links/{link}/', [$self, 'del_author_link']],
+            ['GET', '/loader/{path:.*}', [$self, 'loader']],
         ];
     }
 
@@ -68,6 +69,7 @@ class MetadataActions extends DefaultActions
             return $this->responder->error(400, "Bad parameter");
         }
 
+        /** @var \Psr\Http\Message\UploadedFileInterface|null $file */
         $file = $this->requester->files('file');
         $root = $this->requester->getBasePath();
         if (empty($file)) {
@@ -76,36 +78,47 @@ class MetadataActions extends DefaultActions
             return $this->responder->redirect($root . '/authors/' . $id . '/0/');
         }
 
+        $name = $file->getClientFilename();
+        $type = $file->getClientMediaType();
+        $size = $file->getSize();
+        $error = $file->getError();
+
         $allowedExts = ["jpeg", "jpg", "png"];
         #$temp = explode(".", $file["name"]);
         #$extension = end($temp);
-        $extension = pathinfo($file["name"], PATHINFO_EXTENSION);
-        $this->log()->debug('edit_author_thm: ' . $file["name"]);
-        if ((($file["type"] == "image/jpeg")
-                || ($file["type"] == "image/jpg")
-                || ($file["type"] == "image/pjpeg")
-                || ($file["type"] == "image/x-png")
-                || ($file["type"] == "image/png"))
-            && ($file["size"] < 3145728)
+        $extension = pathinfo($name, PATHINFO_EXTENSION);
+        $this->log()->debug('edit_author_thm: ' . $name);
+        if ((($type == "image/jpeg")
+                || ($type == "image/jpg")
+                || ($type == "image/pjpeg")
+                || ($type == "image/x-png")
+                || ($type == "image/png"))
+            && ($size < 3145728)
             && in_array($extension, $allowedExts)
         ) {
-            $this->log()->debug('edit_author_thm: filetype ' . $file["type"] . ', size ' . $file["size"]);
-            if ($file["error"] > 0) {
-                $this->log()->debug('edit_author_thm: upload error ' . $file["error"]);
-                $this->setFlash('error', $this->getMessageString('author_thumbnail_upload_error1') . ': ' . $file["error"]);
-                return $this->responder->redirect($root . '/authors/' . $id . '/0/');
-            } else {
-                $this->log()->debug('edit_author_thm: upload ok, converting');
-                $author = $this->calibre()->author($id);
-                $created = $this->bbs()->editAuthorThumbnail($id, $author->name, $settings->thumb_gen_clipped, $file["tmp_name"], $file["type"]);
-                $this->log()->debug('edit_author_thm: converted, redirecting');
+            $this->log()->debug('edit_author_thm: filetype ' . $type . ', size ' . $size);
+            if ($error > 0) {
+                $this->log()->debug('edit_author_thm: upload error ' . $error);
+                $this->setFlash('error', $this->getMessageString('author_thumbnail_upload_error1') . ': ' . $error);
                 return $this->responder->redirect($root . '/authors/' . $id . '/0/');
             }
-        } else {
-            $this->log()->warning('edit_author_thm: Uploaded thumbnail too big or wrong type');
-            $this->setFlash('error', $this->getMessageString('author_thumbnail_upload_error2'));
+            try {
+                $tmpfile = tempnam(sys_get_temp_dir(), 'BBS');
+                $file->moveTo($tmpfile);
+            } catch (Exception $e) {
+                $this->log()->debug('edit_author_thm: moveTo error ' . $e->getMessage());
+                $this->setFlash('error', $this->getMessageString('author_thumbnail_upload_error1') . ': ' . $e->getMessage());
+                return $this->responder->redirect($root . '/authors/' . $id . '/0/');
+            }
+            $this->log()->debug('edit_author_thm: upload ok, converting');
+            $author = $this->calibre()->author($id);
+            $created = $this->bbs()->editAuthorThumbnail($id, $author->name, $settings->thumb_gen_clipped, $tmpfile, $type);
+            $this->log()->debug('edit_author_thm: converted, redirecting');
             return $this->responder->redirect($root . '/authors/' . $id . '/0/');
         }
+        $this->log()->warning('edit_author_thm: Uploaded thumbnail too big or wrong type');
+        $this->setFlash('error', $this->getMessageString('author_thumbnail_upload_error2'));
+        return $this->responder->redirect($root . '/authors/' . $id . '/0/');
     }
 
     /**
@@ -245,5 +258,21 @@ class MetadataActions extends DefaultActions
             $message = $this->getMessageString('admin_modify_error');
             return $this->responder->error(500, $message);
         }
+    }
+
+    /**
+     * EPub Loader -> GET /metadata/loader/{path:.*} (dev only)
+     * @return Response
+     */
+    public function loader($path)
+    {
+        if (!class_exists('\Marsender\EPubLoader\RequestHandler')) {
+            $this->log()->warning('loader: class does not exist');
+            $message = 'This action is available in developer mode only (without --no-dev option):' . "<br/>\n";
+            $message .= '$ composer install -o';
+            return $this->responder->error(400, $message);
+        }
+        $message = 'TODO';
+        return $this->responder->html($message);
     }
 }

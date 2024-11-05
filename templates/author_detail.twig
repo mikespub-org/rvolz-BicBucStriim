@@ -28,6 +28,11 @@
 		            		{{page.glob.l10n.author_links}}
 		            	</a>
 		            </li>
+		            <li>
+		            	<a href="{{page.rot}}/authors/{{ author.id }}/notes/">
+		            		{{page.glob.l10n.author_notes}}
+		            	</a>
+		            </li>
 		        </ul>
 		</div>
 		{% endif%}
@@ -61,6 +66,14 @@
 						</li>
 						{% endfor %}
 					</ul>
+				</div>
+				{% endif %}
+				{% if author.notes %}
+				<div id="notes" data-role="collapsible">
+					<h3>{{page.glob.l10n.author_notes}}</h3>
+					<section id="author-notes">
+						{{author.notes|raw}}
+					</section>
 				</div>
 				{% endif %}
 			</div>

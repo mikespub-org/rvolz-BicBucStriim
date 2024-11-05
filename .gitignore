@@ -27,6 +27,8 @@ vendor
 .php-cs-fixer.cache
 data/authors/*.png
 data/titles/*.png
+data/cache/
+!data/cache/.gitignore
 bicbucstriim*.zip
 .phpunit.cache
 tests/coverage/
