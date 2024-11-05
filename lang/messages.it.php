@@ -93,6 +93,7 @@ $messages = [
     'error' => 'Errore',
     'error_kindle_send' => 'Qualcosa è andato storto. Si prega di controllare l\'indirizzo di posta elettronica.',
     'error_no_access' => 'Non si dispone di sufficienti diritti di accesso.',
+    'extra' => 'Extra',
     'glob_dl_expl' => 'Se si condivide la rete con gli altri si può attivare una password di protezione per scaricare i libri. Se si possiede già una password di amministrazione è possibile utilizzarla, o semplicemente specificarne una nuova differente.',
     'glob_dl_legend' => 'Proteggere i downloads con una password',
     'glob_dl_pw1' => 'Password per downloads',

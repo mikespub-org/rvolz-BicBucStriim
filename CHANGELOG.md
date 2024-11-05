@@ -5,7 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [3.x.x] - 20xx-xx-xx
+### Added
+- Add ExtraActions class with EPub Loader under /extra/ (dev only)
 ### Changed
+- Fix uploading author thumbnail + show BBS author notes if any
 - Run tests in separate process for LoginMiddleware - see auraphp/Aura.Session#80
 - Migrate phpunit.xml.dist to phpunit 11.x format
 - Update aura/session package to recent release 4.0

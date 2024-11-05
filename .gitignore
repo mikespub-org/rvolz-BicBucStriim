@@ -32,5 +32,6 @@ data/cache/
 bicbucstriim*.zip
 .phpunit.cache
 tests/coverage/
+tests/cache
 rector.php
 behat.yml

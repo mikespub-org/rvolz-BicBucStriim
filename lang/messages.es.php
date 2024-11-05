@@ -104,6 +104,7 @@ $messages = [
     'error' => 'Error',
     'error_kindle_send' => 'Algo ha ido mal. Por favor revisa la dirección de correo.',
     'error_no_access' => 'No tiene permisos de acceso suficientes.',
+    'extra' => 'Extra',
     'glob_dl_expl' => 'Si estás compartiendo tu red con otros puedes activar la proteccion por contraseña para la descarga de libros. Si ya tienes una contraseña de administrador puedes reusarla, o simplemente especificar distinta y nueva.',
     'glob_dl_legend' => 'Proteger las descargas con una contraseña',
     'glob_dl_pw1' => 'Contraseña para descargas',

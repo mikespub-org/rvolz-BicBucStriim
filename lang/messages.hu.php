@@ -104,6 +104,7 @@ $messages = [
     'error' => 'Hiba',
     'error_kindle_send' => 'Valami hiba történt. Kérlek ellenőrizd az email címet.',
     'error_no_access' => 'Nem rendelkezel megfelelő hozzáférési jogokkal.',
+    'extra' => 'Extra',
     'glob_dl_expl' => 'Amennyiben másokkal is meg szeretnéd osztani a könyvet, aktiválódik a jelszavas letöltés védelem. Ha van admin jelszavad használhatod azt, vagy egyszerűen adj meg egy másik jelszót.',
     'glob_dl_legend' => 'Jelszóval védett letöltés',
     'glob_dl_pw1' => 'Jelszó a letöltéshez',

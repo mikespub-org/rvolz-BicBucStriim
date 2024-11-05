@@ -948,6 +948,15 @@ error:
   gl: Erro
   es: Error
   pl: Błąd
+extra:
+  hu: Extra
+  de: Extra
+  en: Extra
+  fr: Extra
+  it: Extra
+  gl: Extra
+  es: Extra
+  pl: Extra
 error_kindle_send:
   hu: Valami hiba történt. Kérlek ellenőrizd az email címet.
   de: Ein Fehler ist aufgetreten. Überprüfen Sie die E-Mail-Adresse.

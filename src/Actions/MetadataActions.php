@@ -50,7 +50,6 @@ class MetadataActions extends DefaultActions
             ['DELETE', '/authors/{id}/notes/', [$self, 'del_author_notes']],
             ['POST', '/authors/{id}/links/', [$self, 'new_author_link']],
             ['DELETE', '/authors/{id}/links/{link}/', [$self, 'del_author_link']],
-            ['GET', '/loader/{path:.*}', [$self, 'loader']],
         ];
     }
 
@@ -258,21 +257,5 @@ class MetadataActions extends DefaultActions
             $message = $this->getMessageString('admin_modify_error');
             return $this->responder->error(500, $message);
         }
-    }
-
-    /**
-     * EPub Loader -> GET /metadata/loader/{path:.*} (dev only)
-     * @return Response
-     */
-    public function loader($path)
-    {
-        if (!class_exists('\Marsender\EPubLoader\RequestHandler')) {
-            $this->log()->warning('loader: class does not exist');
-            $message = 'This action is available in developer mode only (without --no-dev option):' . "<br/>\n";
-            $message .= '$ composer install -o';
-            return $this->responder->error(400, $message);
-        }
-        $message = 'TODO';
-        return $this->responder->html($message);
     }
 }

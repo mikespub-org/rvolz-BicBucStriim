@@ -18,6 +18,7 @@ function getActions($settings)
         [AdminActions::class, '/admin'],
         [MetadataActions::class, '/metadata'],
         [OpdsActions::class, '/opds'],
+        [ExtraActions::class, '/extra'],
     ];
 }
 

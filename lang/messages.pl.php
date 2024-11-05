@@ -104,6 +104,7 @@ $messages = [
     'error' => 'Błąd',
     'error_kindle_send' => 'Coś poszło niezgodnie z planem. Sprawdź adres e-mail.',
     'error_no_access' => 'Nie masz wystarczających praw dostępu.',
+    'extra' => 'Extra',
     'glob_dl_expl' => 'Jeśli współdzielisz swoją sieć z innymi, możesz włączyć ochronę hasłem przy pobieraniu książek. Jeśli już masz hasło administratora możesz je użyć ponownie, albo utworzyć nowe, inne.',
     'glob_dl_legend' => 'Ochrona pobierania hasłem',
     'glob_dl_pw1' => 'Hasło pobierania',

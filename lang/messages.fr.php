@@ -111,6 +111,7 @@ $messages = [
     'error' => 'Erreur',
     'error_kindle_send' => 'Problème rencontré. Vérifiez l\'adresse e-mail.',
     'error_no_access' => 'Vous n\'avez pas les droits d\'accès suffisants.',
+    'extra' => 'Extra',
     'glob_dl_expl' => 'Si votre réseau est ouvert au public, vous pouvez activer un mot de passe pour protéger le téléchargement de vos livres. Si vous avez déjà un mot de passe administrateur, vous pouvez le réutiliser ou en définir un nouveau, différent.',
     'glob_dl_legend' => 'Protéger les téléchargements avec un mot de passe',
     'glob_dl_pw1' => 'Mot de passe pour les téléchargements',

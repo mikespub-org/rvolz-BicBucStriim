@@ -93,6 +93,7 @@ $messages = [
     'error' => 'Erro',
     'error_kindle_send' => 'Produciuse un erro. Verifica a configuración do correo.',
     'error_no_access' => 'Non tes permisos suficientes.',
+    'extra' => 'Extra',
     'glob_dl_expl' => 'Se compartillas a conexión de rede podes activar unha protección con contrasinal para a baixada de libros. Se xa ts un contrasinal de administración podes reutilizalo ou definir un novo.',
     'glob_dl_legend' => 'Protexer as baixadas con contrasinal',
     'glob_dl_pw1' => 'Contrasinal para as baixadas',

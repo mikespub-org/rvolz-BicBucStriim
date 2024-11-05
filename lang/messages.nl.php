@@ -29,6 +29,7 @@ $messages = [
     'dl30' => 'Meest recente',
     'download' => 'Download',
     'error' => 'Fout',
+    'extra' => 'Extra',
     'glob_dl_expl' => 'Wanneer u het netwerk met anderen deelt kunt u wachtwoordbescherming voor het downloaden van boeken activeren. Als u al een adminwachtwoord heeft u kunt u deze hergebruiken, of maak een apart wachtwoord aan voor downloads.',
     'glob_dl_legend' => 'Downloads beveiligen met een wachtwoord',
     'glob_dl_pw1' => 'Wachtwoord voor downloads',

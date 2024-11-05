@@ -111,6 +111,7 @@ $messages = [
     'error' => 'Error',
     'error_kindle_send' => 'Something went wrong. Please check the e-mail address.',
     'error_no_access' => 'You don\'t have sufficient access rights.',
+    'extra' => 'Extra',
     'glob_dl_expl' => 'If you are sharing your network with others you could activate a password protection for book downloads. If you already have an admin password you can reuse that, or simply specify a new, separate one.',
     'glob_dl_legend' => 'Protect downloads with a password',
     'glob_dl_pw1' => 'Password for downloads',

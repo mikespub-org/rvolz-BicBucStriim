@@ -111,6 +111,7 @@ $messages = [
     'error' => 'Fehler',
     'error_kindle_send' => 'Ein Fehler ist aufgetreten. Überprüfen Sie die E-Mail-Adresse.',
     'error_no_access' => 'Sie haben keine Zugangsberechtigung.',
+    'extra' => 'Extra',
     'glob_dl_expl' => 'Wenn sie ihr Netz mit anderen Benutzern teilen, können sie hier den Passwort-Schutz fürs Herunterladen der Bücher aktivieren. Falls sie schon ein Admin-Passwort vergeben haben, kann das auch fürs Herunerladen genutzt werden. Oder sie erstellen einfach ein neues, separates Passwort.',
     'glob_dl_legend' => 'Herunterladen per Passwort schützen',
     'glob_dl_pw1' => 'Passwort fürs Herunterladen',

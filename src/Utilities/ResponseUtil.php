@@ -279,6 +279,15 @@ class ResponseUtil
     }
 
     /**
+     * Already done - @todo see ExtraActions::loader()
+     * @return Response
+     */
+    public function done()
+    {
+        return $this->response;
+    }
+
+    /**
      * Create response from app response factory or Nyholm PSR-17 factory
      * @param ?\Slim\App $app
      * @return Response
