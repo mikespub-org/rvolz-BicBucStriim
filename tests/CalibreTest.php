@@ -10,7 +10,7 @@ class CalibreTest extends PHPUnit\Framework\TestCase
 {
     public const CDB1 = './tests/fixtures/metadata_empty.db';
     public const CDB2 = './tests/fixtures/lib2/metadata.db';
-    public const CDB3 = './tests/fixtures/lib3/metadata.db';
+    public const CDB3 = './tests/fixtures/metadata_error.db';
 
     /** @var ?Calibre */
     public $calibre;
@@ -56,7 +56,8 @@ class CalibreTest extends PHPUnit\Framework\TestCase
         $this->assertEquals(7, $result["titles"]);
         $this->assertEquals(6, $result["authors"]);
         $this->assertEquals(6, $result["tags"]);
-        $this->assertEquals(3, $result["series"]);
+        $this->assertEquals(4, $result["series"]);
+        $this->assertEquals(Calibre::USER_VERSION, $result["version"]);
     }
 
     public function testLibraryStatsTagFilter(): void
@@ -65,7 +66,8 @@ class CalibreTest extends PHPUnit\Framework\TestCase
         $this->assertEquals(6, $result["titles"]);
         $this->assertEquals(6, $result["authors"]);
         $this->assertEquals(6, $result["tags"]);
-        $this->assertEquals(3, $result["series"]);
+        $this->assertEquals(4, $result["series"]);
+        $this->assertEquals(Calibre::USER_VERSION, $result["version"]);
     }
 
     public function testLibraryStatsLanguageFilter(): void
@@ -74,7 +76,8 @@ class CalibreTest extends PHPUnit\Framework\TestCase
         $this->assertEquals(1, $result["titles"]);
         $this->assertEquals(6, $result["authors"]);
         $this->assertEquals(6, $result["tags"]);
-        $this->assertEquals(3, $result["series"]);
+        $this->assertEquals(4, $result["series"]);
+        $this->assertEquals(Calibre::USER_VERSION, $result["version"]);
     }
 
     public function testLibraryStatsLanguageAndTagFilter(): void
@@ -83,7 +86,8 @@ class CalibreTest extends PHPUnit\Framework\TestCase
         $this->assertEquals(1, $result["titles"]);
         $this->assertEquals(6, $result["authors"]);
         $this->assertEquals(6, $result["tags"]);
-        $this->assertEquals(3, $result["series"]);
+        $this->assertEquals(4, $result["series"]);
+        $this->assertEquals(Calibre::USER_VERSION, $result["version"]);
     }
 
     public function testLast30(): void
@@ -461,7 +465,7 @@ class CalibreTest extends PHPUnit\Framework\TestCase
         $this->assertEquals(0, $result0['page']);
         $this->assertEquals(2, $result0['pages']);
         $result1 = $this->calibre->seriesSlice(1, 2);
-        $this->assertEquals(1, count($result1['entries']));
+        $this->assertEquals(2, count($result1['entries']));
         $this->assertEquals(1, $result1['page']);
         $this->assertEquals(2, $result1['pages']);
     }
@@ -474,7 +478,7 @@ class CalibreTest extends PHPUnit\Framework\TestCase
         $this->assertEquals(0, $result0['page']);
         $this->assertEquals(2, $result0['pages']);
         $result1 = $this->calibre->seriesSlice(1, 2, 'I');
-        $this->assertEquals(1, count($result1['entries']));
+        $this->assertEquals(2, count($result1['entries']));
     }
 
     public function testSeriesDetailsSlice(): void
@@ -494,7 +498,7 @@ class CalibreTest extends PHPUnit\Framework\TestCase
     {
         $result = $this->calibre->seriesInitials();
         $this->assertEquals(0, $this->calibre->last_error);
-        $this->assertEquals(1, count($result));
+        $this->assertEquals(2, count($result));
         $this->assertEquals('S', $result[0]->initial);
         $this->assertEquals(3, $result[0]->ctr);
     }

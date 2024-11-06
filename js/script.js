@@ -22,6 +22,10 @@ $(document).on('pageinit', '#pauthor_detail', function() {
 	$('#author-mdlinks-panel').on('panelbeforeopen', function( event, ui ) {
 		$('#popupMenu').popup('close');
 	});
+	$('.author-mdnotes-panel').on('panelbeforeopen', function( event, ui ) {
+		// @todo remove #ui-state=dialog from history before editing+saving note and going back
+		$('#popupMenu').popup('close');
+	});
 
     $('div#flash').empty();
 

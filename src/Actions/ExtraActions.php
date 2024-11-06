@@ -58,11 +58,20 @@ class ExtraActions extends DefaultActions
                 'id' => 'loader',
                 'label' => 'BBS Loader',
                 'description' => 'Look up metadata about authors, books and series',
+                'external' => true,
             ];
+        }
+        $version = $this->calibre()->getUserVersion();
+        $required = $this->calibre()::USER_VERSION;
+        $flash = [];
+        if (!empty($version) && $version < $required) {
+            $flash['error'] = $this->getMessageString('database_upgrade') . ' ';
+            $flash['error'] .= sprintf($this->getMessageString('admin_new_version'), $required, $version);
         }
         return $this->render('extra.twig', [
             'page' => $this->mkPage('extra', 0, 2),
             'options' => $options,
+            'flash' => $flash,
         ]);
     }
 

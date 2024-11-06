@@ -181,10 +181,17 @@ class MainActions extends DefaultActions
         $books1 = $this->calibre()->last30Books($settings['lang'], $settings->page_size, $filter);
         $books = array_map([$this, 'checkThumbnail'], $books1);
         $stats = $this->calibre()->libraryStats($filter);
+        $outdated = '';
+        $version = $this->calibre()::USER_VERSION;
+        if (!empty($stats['version']) && $stats['version'] < $version) {
+            $outdated = sprintf($this->getMessageString('admin_new_version'), $version, $stats['version']);
+        }
         return $this->render('index_last30.twig', [
             'page' => $this->mkPage('dl30', 1, 1),
             'books' => $books,
-            'stats' => $stats]);
+            'stats' => $stats,
+            'outdated' => $outdated,
+        ]);
     }
 
     /**
@@ -638,6 +645,7 @@ class MainActions extends DefaultActions
         /** @var Author $author */
         $author = $tl['author'];
         $author->thumbnail = $this->bbs()->getAuthorThumbnail($id);
+        // Note: $author->note comes from Calibre DB
         $note = $this->bbs()->authorNote($id);
         if (!is_null($note)) {
             $author->notes_source = $note->ntext;
@@ -651,6 +659,7 @@ class MainActions extends DefaultActions
             $author->notes = null;
         }
 
+        // Note: $author->link comes from Calibre DB
         $author->links = $this->bbs()->authorLinks($id);
         return $this->render('author_detail.twig', [
             'page' => $this->mkPage('author_details', 3, 2),

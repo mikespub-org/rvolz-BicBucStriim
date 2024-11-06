@@ -17,6 +17,9 @@
     <li>{{stats.tags}} {{page.glob.l10n.tags}}</li>
     <li>{{stats.series}} {{page.glob.l10n.series}}</li>
 </ul>
+{% if outdated %}
+    <p>{{page.glob.l10n.database_upgrade}} {{ outdated }}</p>
+{% endif %}
 
 <h2>{{page.glob.l10n.dl30}}</h2>
 <ul data-role="listview">

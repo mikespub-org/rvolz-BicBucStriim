@@ -801,6 +801,10 @@ calibre_dir_expl:
   gl: Cartafol onde se atopa a libraría Calibre. Introduce a ruta por completo
   es: La ruta de tu librería de Calibre. Por favor introduce en nombre de ruta/directorio completo.
   pl: Ścieżka do twojej biblioteki Calibre. Podaj pełną ścieżkę.
+calibre_link:
+  en: Calibre Link
+calibre_notes:
+  en: Calibre Notes
 cancel:
   hu: Mégsem
   de: Abbrechen
@@ -869,6 +873,8 @@ custom_columns:
   gl: Datos personalizados de Calibre
   es: Datos personalizados de Calibre
   pl: Własne dane z Calibre
+database_upgrade:
+  en: 'Warning: the database version is out of date. Please open your library with a modern Calibre version (v6.15+) to upgrade.'
 date:
   hu: Dátum
   de: Datum
@@ -948,15 +954,6 @@ error:
   gl: Erro
   es: Error
   pl: Błąd
-extra:
-  hu: Extra
-  de: Extra
-  en: Extra
-  fr: Extra
-  it: Extra
-  gl: Extra
-  es: Extra
-  pl: Extra
 error_kindle_send:
   hu: Valami hiba történt. Kérlek ellenőrizd az email címet.
   de: Ein Fehler ist aufgetreten. Überprüfen Sie die E-Mail-Adresse.
@@ -975,6 +972,16 @@ error_no_access:
   gl: Non tes permisos suficientes.
   es: No tiene permisos de acceso suficientes.
   pl: Nie masz wystarczających praw dostępu.
+extra:
+  hu: Extra
+  de: Extra
+  en: Extra
+  fr: Extra
+  nl: Extra
+  it: Extra
+  gl: Extra
+  es: Extra
+  pl: Extra
 glob_dl_expl:
   hu: Amennyiben másokkal is meg szeretnéd osztani a könyvet, aktiválódik a jelszavas letöltés védelem. Ha van admin jelszavad használhatod azt, vagy egyszerűen adj meg egy másik jelszót.
   de: Wenn sie ihr Netz mit anderen Benutzern teilen, können sie hier den Passwort-Schutz

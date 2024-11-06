@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [3.x.x] - 20xx-xx-xx
 ### Added
+- Show Calibre link & notes as alternative to links & notes stored in BBS data.db
+- Add warning if database version is out of date - upgrade it with Calibre v6.15+
 - Add ExtraActions class with EPub Loader under /extra/ (dev only)
 ### Changed
 - Fix uploading author thumbnail + show BBS author notes if any

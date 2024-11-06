@@ -15,8 +15,16 @@ class ItemCount extends Item
 # Utiliy classes for Calibre DB items
 class Author extends Item
 {
-    public $sort;
+    public $id;
     public $name;
+    public $sort;
+    // book count
+    public $anzahl;
+    // from Calibre DB
+    public $link;
+    // from Calibre Notes DB
+    public $note;
+    // from BicBucStriim DB
     public $thumbnail;
     public $notes_source;
     public $notes;
@@ -49,12 +57,30 @@ class Language extends Item
     public $lang_code;
     public $key;
 }
-class Series extends Item {}
+class Series extends Item
+{
+    public $id;
+    public $name;
+    public $sort;
+    // book count
+    public $anzahl;
+    // from Calibre DB
+    public $link;
+    // from Calibre Notes DB
+    public $note;
+}
 class SeriesBook extends Item {}
 class Tag extends Item
 {
+    public $id;
     public $name;
     public $key;
+    // book count
+    public $anzahl;
+    // from Calibre DB
+    public $link;
+    // from Calibre Notes DB
+    public $note;
 }
 class TagBook extends Item {}
 class Identifier extends Item {}

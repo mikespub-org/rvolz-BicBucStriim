@@ -11,6 +11,9 @@ use PHPUnit\Framework\Attributes\CoversClass;
 #[CoversClass(TestHelper::class)]
 class ApiActionsTest extends PHPUnit\Framework\TestCase
 {
+    // @todo update when route count changes
+    public const ROUTE_COUNT = 60;
+
     #[\PHPUnit\Framework\Attributes\PreserveGlobalState(false)]
     #[\PHPUnit\Framework\Attributes\RunInSeparateProcess]
     public function testApiHomeRequest(): void
@@ -31,8 +34,7 @@ class ApiActionsTest extends PHPUnit\Framework\TestCase
         $app = TestHelper::getAppWithApi();
         $this->assertEquals(\Slim\App::class, $app::class);
 
-        // @todo update when route count changes
-        $expected = 57;
+        $expected = self::ROUTE_COUNT;
         $request = RequestUtil::getServerRequest('GET', '/api/routes');
         $response = $app->handle($request);
         $result = json_decode((string) $response->getBody(), true);
@@ -48,8 +50,7 @@ class ApiActionsTest extends PHPUnit\Framework\TestCase
         $app = TestHelper::getAppWithApi();
         $this->assertEquals(\Slim\App::class, $app::class);
 
-        // @todo update when route count changes
-        $expected = 57;
+        $expected = self::ROUTE_COUNT;
         $request = RequestUtil::getServerRequest('GET', '/api/openapi.json');
         $response = $app->handle($request);
         $result = json_decode((string) $response->getBody(), true);
@@ -99,7 +100,7 @@ class ApiActionsTest extends PHPUnit\Framework\TestCase
         $app = TestHelper::getAppWithApi();
         $this->assertEquals(\Slim\App::class, $app::class);
 
-        $expected = ['page', 'books', 'stats'];
+        $expected = ['page', 'books', 'stats', 'outdated'];
         $origin = 'https://remote.host';
         $request = RequestUtil::getServerRequest('GET', '/')->withHeader('Accept', 'application/json')->withHeader('Origin', $origin);
         $response = $app->handle($request);

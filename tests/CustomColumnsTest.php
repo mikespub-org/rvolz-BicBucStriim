@@ -8,7 +8,7 @@ class CustomColumnsTest extends PHPUnit\Framework\TestCase
 {
     public const CDB1 = './tests/fixtures/metadata_empty.db';
     public const CDB2 = './tests/fixtures/lib2/metadata.db';
-    public const CDB3 = './tests/fixtures/lib3/metadata.db';
+    public const CDB4 = './tests/fixtures/lib4/metadata.db';
 
     public const DB2 = './tests/fixtures/data2.db';
 

@@ -14,8 +14,18 @@ use PDO;
 use Locale;
 use Exception;
 
+/**
+ * Calibre DB
+ * @see https://github.com/kovidgoyal/calibre/blob/master/resources/metadata_sqlite.sql
+ */
 class Calibre
 {
+    # Calibre DB user version
+    public const USER_VERSION = 26;
+    # Calibre Notes DB file
+    public const NOTES_DB_FILE = '.calnotes/notes.db';
+    # Calibre Notes DB name
+    public const NOTES_DB_NAME = 'notes_db';
     # Thumbnail dimension (they are square)
     public const THUMB_RES = 160;
 
@@ -28,6 +38,10 @@ class Calibre
     public $calibre_dir = '';
     # calibre library file, last modified date
     public $calibre_last_modified;
+    # calibre user version
+    public $calibre_version = null;
+    # is there a calibre notes db
+    public $has_notes = false;
     # dir for generated thumbs
     protected $thumb_dir = '';
 
@@ -59,6 +73,16 @@ class Calibre
             //$this->calibre->setAttribute(1002, 'SET NAMES utf8');
             $this->calibre->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             $this->calibre->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+            $notes_db = realpath($this->calibre_dir . '/' . self::NOTES_DB_FILE);
+            if (!empty($notes_db) && is_readable($notes_db)) {
+                $sql = $this->mkAttachDatabase($notes_db, self::NOTES_DB_NAME);
+                try {
+                    $this->calibre->exec($sql);
+                    $this->has_notes = true;
+                } catch (Exception $e) {
+                    // ...
+                }
+            }
             $this->last_error = $this->calibre->errorCode();
         } else {
             $this->calibre = null;
@@ -89,6 +113,7 @@ class Calibre
         $stats["authors"] = $this->count($this->mkAuthorsCount($queryFilter, false), []);
         $stats["tags"] = $this->count($this->mkTagsCount($queryFilter, false), []);
         $stats["series"] = $this->count($this->mkSeriesCount($queryFilter, false), []);
+        $stats["version"] = $this->getUserVersion();
         return $stats;
     }
 
@@ -370,6 +395,24 @@ class Calibre
         return $count;
     }
 
+    private function mkUserVersion()
+    {
+        $sql = 'PRAGMA user_version';
+        return $sql;
+    }
+
+    /**
+     * Summary of mkAttachDatabase
+     * @param string $dbFileName
+     * @param string $attachDatabase
+     * @return string
+     */
+    private function mkAttachDatabase($dbFileName, $attachDatabase)
+    {
+        $sql = "ATTACH DATABASE '{$dbFileName}' AS {$attachDatabase};";
+        return $sql;
+    }
+
     /**
      * Return the number (int) of rows for a SQL COUNT Statement, e.g.
      * SELECT COUNT(*) FROM books;
@@ -388,6 +431,37 @@ class Calibre
         } else {
             return (int) $result;
         }
+    }
+
+    /**
+     * Return the Calibre DB user version
+     * @return int
+     */
+    public function getUserVersion()
+    {
+        $this->calibre_version ??= $this->count($this->mkUserVersion(), []);
+        return $this->calibre_version;
+    }
+
+    /**
+     * Get item notes from Calibre Notes DB
+     * @param string $colname table name
+     * @param integer $item item id
+     * @return string|false
+     */
+    public function getItemNotes($colname, $item)
+    {
+        if (!$this->has_notes) {
+            return false;
+        }
+        $sql = 'SELECT doc FROM ' . self::NOTES_DB_NAME . '.notes WHERE colname=:colname AND item=:item';
+        $params = ['colname' => $colname, 'item' => $item];
+        $stmt = $this->calibre->prepare($sql);
+        $stmt->execute($params);
+        $this->last_error = $stmt->errorCode();
+        $result = $stmt->fetchColumn();
+        $stmt->closeCursor();
+        return $result;
     }
 
     /**
@@ -553,6 +627,10 @@ class Calibre
         if (is_null($author)) {
             return null;
         }
+        // get author notes from Calibre Notes DB
+        if (empty($index)) {
+            $author->note = $this->getItemNotes('authors', $id);
+        }
         $slice = $this->findSliceFiltered(CalibreSearchType::AuthorBook, $index, $length, $filter, null, $id);
         $this->addBookDetails($lang, $slice['entries']);
         return ['author' => $author] + $slice;
@@ -679,6 +757,10 @@ class Calibre
         $tag = $this->findOne(Tag::class, 'SELECT * FROM tags WHERE id=:id', ['id' => $id]);
         if (is_null($tag)) {
             return null;
+        }
+        // get tag notes from Calibre Notes DB
+        if (empty($index)) {
+            $tag->note = $this->getItemNotes('tags', $id);
         }
         $slice = $this->findSliceFiltered(CalibreSearchType::TagBook, $index, $length, $filter, null, $id);
         $this->addBookDetails($lang, $slice['entries']);
@@ -1173,6 +1255,10 @@ class Calibre
         $series = $this->findOne(Series::class, 'SELECT * FROM series WHERE id=:id', ['id' => $id]);
         if (is_null($series)) {
             return null;
+        }
+        // get series notes from Calibre Notes DB
+        if (empty($index)) {
+            $series->note = $this->getItemNotes('series', $id);
         }
         $slice = $this->findSliceFiltered(CalibreSearchType::SeriesBook, $index, $length, $filter, null, $id);
         $this->addBookDetails($lang, $slice['entries']);
