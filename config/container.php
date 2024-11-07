@@ -11,10 +11,10 @@
 use Aura\Auth\Auth;
 use BicBucStriim\AppData\BicBucStriim;
 use BicBucStriim\AppData\Settings;
-use BicBucStriim\AppData\Thumbnails;
 use BicBucStriim\Calibre\Calibre;
 use BicBucStriim\Session\Session;
 use BicBucStriim\Utilities\Mailer;
+use BicBucStriim\Utilities\Thumbnails;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
@@ -60,8 +60,8 @@ $builder->addDefinitions([
     Thumbnails::class => function (ContainerInterface $c) {
         $dataDir = 'data';
         # Get Thumbnails utility class
-        $thumbnails = new Thumbnails($dataDir);
-        return $thumbnails;
+        $thumbs = new Thumbnails($dataDir);
+        return $thumbs;
     },
     Calibre::class => function (ContainerInterface $c) {
         # Setup the connection to the Calibre metadata db
