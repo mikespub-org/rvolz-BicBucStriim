@@ -24,7 +24,6 @@ use PHPUnit\Framework\Attributes\CoversClass;
 #[CoversClass(OwnConfigMiddleware::class)]
 #[CoversClass(\BicBucStriim\Session\SessionFactory::class)]
 #[CoversClass(\BicBucStriim\Session\Session::class)]
-#[CoversClass(\BicBucStriim\Traits\AppTrait::class)]
 class MiddlewareTest extends PHPUnit\Framework\TestCase
 {
     public static function setUpBeforeClass(): void

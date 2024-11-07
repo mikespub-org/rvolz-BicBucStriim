@@ -4,6 +4,7 @@ if (!defined('REDBEAN_MODEL_PREFIX')) {
     define('REDBEAN_MODEL_PREFIX', '\\BicBucStriim\\Models\\');
 }
 
+use BicBucStriim\AppData\AppAuthor;
 use BicBucStriim\AppData\BicBucStriim;
 use BicBucStriim\AppData\DataConstants;
 use BicBucStriim\Models\Calibrething;
@@ -13,6 +14,7 @@ use BicBucStriim\Models\Note;
 use BicBucStriim\Models\R;
 use PHPUnit\Framework\Attributes\CoversClass;
 
+#[CoversClass(AppAuthor::class)]
 #[CoversClass(BicBucStriim::class)]
 #[CoversClass(Calibrething::class)]
 #[CoversClass(Artefact::class)]

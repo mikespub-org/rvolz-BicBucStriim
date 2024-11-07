@@ -10,7 +10,6 @@ use Slim\Factory\AppFactory;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(DefaultActions::class)]
-#[CoversClass(\BicBucStriim\Traits\AppTrait::class)]
 #[CoversClass(ActionsWrapperStrategy::class)]
 #[CoversClass(RequestUtil::class)]
 #[CoversClass(ResponseUtil::class)]

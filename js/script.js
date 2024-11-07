@@ -201,7 +201,7 @@ $(document).on('pageinit', '#padmin_idtemplates', function() {
 		};
 		var root = $(this).data('proot');
 		var jh = $.ajax({
-			url: root+'/admin/idtemplates/'+template.name,
+			url: root+'/admin/idtemplates/'+template.name+'/',
 			type: 'PUT',
 			async: false,
 			data: template,
@@ -228,7 +228,7 @@ $(document).on('pageinit', '#padmin_idtemplates', function() {
 		var template = $(this).data('template');
 		var root = $(this).data('proot');
 		var jh = $.ajax({
-			url: root+'/admin/idtemplates/'+template,
+			url: root+'/admin/idtemplates/'+template+'/',
 			type: 'DELETE',
 			async: false,
 			success: function(data) {

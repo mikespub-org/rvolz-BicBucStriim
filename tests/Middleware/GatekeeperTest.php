@@ -7,7 +7,6 @@ use BicBucStriim\Utilities\TestHelper;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(DefaultActions::class)]
-#[CoversClass(\BicBucStriim\Traits\AppTrait::class)]
 #[CoversClass(RequestUtil::class)]
 #[CoversClass(TestHelper::class)]
 #[CoversClass(GatekeeperMiddleware::class)]

@@ -165,7 +165,7 @@ class AdminActions extends DefaultActions
             $ni = new IdUrlTemplate();
             $ni->name = $id2add;
             $ni->val = '';
-            $ni->label = '';
+            $ni->label = '(Calibre)';
             array_push($idtemplates, $ni);
         }
         $this->log()->debug('admin_get_idtemplates ' . json_encode($idtemplates));

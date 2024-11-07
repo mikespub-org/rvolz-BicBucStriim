@@ -13,6 +13,8 @@ use Slim\Routing\RouteContext;
  */
 class RequestUtil
 {
+    public const ADMIN_ROLE = 1;
+
     /** @var Request */
     protected $request;
     /** @var ?Settings */
@@ -160,7 +162,7 @@ class RequestUtil
     {
         if ($this->isAuthenticated()) {
             $user = $this->getAuth()->getUserData();
-            return (intval($user['role']) === 1);
+            return (intval($user['role']) === self::ADMIN_ROLE);
         } else {
             return false;
         }
@@ -299,9 +301,10 @@ class RequestUtil
      * Create server request from Nyholm PSR-17 factory
      * @param ?string $method
      * @param ?string $uri
+     * @param ?array<mixed> $params
      * @return Request
      */
-    public static function getServerRequest($method = null, $uri = null)
+    public static function getServerRequest($method = null, $uri = null, $params = null)
     {
         $psr17Factory = new \Nyholm\Psr7\Factory\Psr17Factory();
 
@@ -319,6 +322,15 @@ class RequestUtil
         if (!empty($uri)) {
             $uri = new \Nyholm\Psr7\Uri($uri);
             $serverRequest = $serverRequest->withUri($uri);
+        }
+        if (!empty($params)) {
+            if ($method === 'GET') {
+                $serverRequest = $serverRequest->withQueryParams($params);
+            } elseif ($method === 'POST') {
+                $serverRequest = $serverRequest->withParsedBody($params);
+            } else {
+                $serverRequest = $serverRequest->withAttribute('body', $params);
+            }
         }
         return $serverRequest;
     }

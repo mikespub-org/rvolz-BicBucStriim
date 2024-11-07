@@ -776,7 +776,8 @@ class MainActions extends DefaultActions
             'series' => $tl['series'],
             'books' => $books,
             'curpage' => $tl['page'],
-            'pages' => $tl['pages']]);
+            'pages' => $tl['pages'],
+            'isadmin' => $this->requester->isAdmin()]);
     }
 
 
