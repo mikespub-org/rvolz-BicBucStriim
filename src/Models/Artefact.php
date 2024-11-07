@@ -16,4 +16,19 @@ namespace BicBucStriim\Models;
  * @property mixed $atype
  * @property mixed $url
  */
-class Artefact extends Model {}
+class Artefact extends Model
+{
+    /**
+     * Summary of build
+     * @param mixed $atype
+     * @param mixed $url
+     * @return self
+     */
+    public static function build($atype, $url)
+    {
+        $artefact = self::cast(R::dispense('artefact'));
+        $artefact->atype = $atype;
+        $artefact->url = $url;
+        return $artefact;
+    }
+}

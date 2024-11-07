@@ -6,7 +6,12 @@ use PHPUnit\Framework\Attributes\CoversClass;
 #[CoversClass(Mailer::class)]
 class MailerTest extends PHPUnit\Framework\TestCase
 {
-    public const FIXT = './tests/fixtures';
+    public static $fixt;
+
+    public function setUp(): void
+    {
+        self::$fixt = dirname(__DIR__, 2) . '/tests/fixtures';
+    }
 
     public static function mailProvider()
     {
@@ -23,7 +28,7 @@ class MailerTest extends PHPUnit\Framework\TestCase
     {
         /** @var Mailer $mailer */
         $mailer = [$this, $method]();
-        $bookpath = self::FIXT . '/lib2/Gotthold Ephraim Lessing/Lob der Faulheit (1)/Lob der Faulheit - Gotthold Ephraim Lessing.epub';
+        $bookpath = self::$fixt . '/lib2/Gotthold Ephraim Lessing/Lob der Faulheit (1)/Lob der Faulheit - Gotthold Ephraim Lessing.epub';
         $subject = 'BicBucStriim';
         $recipient = 'kindle@example.org';
         $sender = 'bicbucstriim@example.org';
@@ -53,7 +58,7 @@ class MailerTest extends PHPUnit\Framework\TestCase
             'X-Mailer: PHPMailer version',
         ];
         $content = preg_replace($pattern, $replacement, $content);
-        $template = file_get_contents(self::FIXT . '/test-mailer-' . $type . '.message.txt');
+        $template = file_get_contents(self::$fixt . '/test-mailer-' . $type . '.message.txt');
         $this->assertEquals($template, $content);
     }
 

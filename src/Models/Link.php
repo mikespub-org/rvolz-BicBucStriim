@@ -17,4 +17,21 @@ namespace BicBucStriim\Models;
  * @property mixed $label
  * @property mixed $url
  */
-class Link extends Model {}
+class Link extends Model
+{
+    /**
+     * Summary of build
+     * @param mixed $ltype
+     * @param mixed $label
+     * @param mixed $url
+     * @return self
+     */
+    public static function build($ltype, $label, $url)
+    {
+        $link = self::cast(R::dispense('link'));
+        $link->ltype = $ltype;
+        $link->label = $label;
+        $link->url = $url;
+        return $link;
+    }
+}

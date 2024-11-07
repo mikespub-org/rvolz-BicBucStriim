@@ -11,14 +11,15 @@ use PHPUnit\Framework\Attributes\CoversClass;
 #[CoversClass(CalibreFilter::class)]
 class CalibreIcuTest extends PHPUnit\Framework\TestCase
 {
-    public const CDB4 = './tests/fixtures/lib4/metadata.db';
+    public static $cdb4;
 
     /** @var ?Calibre */
     public $calibre;
 
     public function setUp(): void
     {
-        $this->calibre = new Calibre(self::CDB4);
+        self::$cdb4 = dirname(__DIR__, 2) . '/tests/fixtures/lib4/metadata.db';
+        $this->calibre = new Calibre(self::$cdb4);
     }
 
     public function tearDown(): void

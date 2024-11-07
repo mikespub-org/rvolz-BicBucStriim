@@ -11,16 +11,13 @@ namespace BicBucStriim\AppData;
 
 class DataConstants
 {
-    // CalibreThing types
-    public const CALIBRE_AUTHOR_TYPE = 1;
-    public const CALIBRE_BOOK_TYPE = 2;
-
-    // Artefact types
-    public const AUTHOR_THUMBNAIL_ARTEFACT = 1;
-
-    // Link types
-    public const AUTHOR_LINK = 1;
-
-    // Note types
-    public const AUTHOR_NOTE = 1;
+    // Generic types (not all used)
+    public const ENTITY_TYPE = 0;
+    public const AUTHOR_TYPE = 1;
+    public const BOOK_TYPE = 2;
+    public const CUSTOM_TYPE = 3;
+    public const DATA_TYPE = 4;
+    public const PUBLISHER_TYPE = 5;
+    public const SERIES_TYPE = 6;
+    public const TAG_TYPE = 7;
 }

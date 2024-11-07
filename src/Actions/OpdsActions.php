@@ -424,7 +424,7 @@ class OpdsActions extends DefaultActions
 
     public function checkThumbnailOpds($record)
     {
-        $record['book']->thumbnail = $this->bbs()->isTitleThumbnailAvailable($record['book']->id);
+        $record['book']->thumbnail = $this->thumbs()->isTitleThumbnailAvailable($record['book']->id);
         return $record;
     }
 

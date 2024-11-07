@@ -26,8 +26,6 @@ class Calibre
     public const NOTES_DB_FILE = '.calnotes/notes.db';
     # Calibre Notes DB name
     public const NOTES_DB_NAME = 'notes_db';
-    # Thumbnail dimension (they are square)
-    public const THUMB_RES = 160;
 
     # last sqlite error
     public $last_error = 0;
@@ -41,9 +39,7 @@ class Calibre
     # calibre user version
     public $calibre_version = null;
     # is there a calibre notes db
-    public $has_notes = false;
-    # dir for generated thumbs
-    protected $thumb_dir = '';
+    public $hasNotes = false;
 
     /**
      * Check if the Calibre DB is readable
@@ -60,13 +56,11 @@ class Calibre
     /**
      * Open the Calibre DB.
      * @param string $calibrePath Complete path to Calibre library file
-     * @param string $thumbDir Directory name for thumbnail files
      */
-    public function __construct($calibrePath, $thumbDir = './data')
+    public function __construct($calibrePath)
     {
         $rp = realpath($calibrePath);
         $this->calibre_dir = dirname($rp);
-        $this->thumb_dir = $thumbDir;
         if (file_exists($rp) && is_readable($rp)) {
             $this->calibre_last_modified = filemtime($rp);
             $this->calibre = new PDO('sqlite:' . $rp, null, null, []);
@@ -78,7 +72,7 @@ class Calibre
                 $sql = $this->mkAttachDatabase($notes_db, self::NOTES_DB_NAME);
                 try {
                     $this->calibre->exec($sql);
-                    $this->has_notes = true;
+                    $this->hasNotes = true;
                 } catch (Exception $e) {
                     // ...
                 }
@@ -451,7 +445,7 @@ class Calibre
      */
     public function getItemNotes($colname, $item)
     {
-        if (!$this->has_notes) {
+        if (!$this->hasNotes) {
             return false;
         }
         $sql = 'SELECT doc FROM ' . self::NOTES_DB_NAME . '.notes WHERE colname=:colname AND item=:item';
@@ -719,6 +713,16 @@ class Calibre
     public function tags()
     {
         return $this->findPrepared(Tag::class, 'SELECT * FROM tags ORDER BY name', []);
+    }
+
+    /**
+     * Return just the pure tag information.
+     * @param integer $id Calibre ID for tag
+     * @return ?Tag    Calibre tag record
+     */
+    public function tag($id)
+    {
+        return $this->findOne(Tag::class, 'SELECT * FROM tags WHERE id=:id', ['id' => $id]);
     }
 
     /**
@@ -1237,6 +1241,16 @@ class Calibre
             $format = $formats[0];
         }
         return $format;
+    }
+
+    /**
+     * Return just the pure series information.
+     * @param integer $id Calibre ID for series
+     * @return ?Series    Calibre series record
+     */
+    public function series($id)
+    {
+        return $this->findOne(Series::class, 'SELECT * FROM series WHERE id=:id', ['id' => $id]);
     }
 
     /**

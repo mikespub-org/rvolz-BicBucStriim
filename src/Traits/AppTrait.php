@@ -14,6 +14,7 @@ use BicBucStriim\AppData\BicBucStriim;
 use BicBucStriim\AppData\Settings;
 use BicBucStriim\Calibre\Calibre;
 use BicBucStriim\Utilities\Mailer;
+use BicBucStriim\Utilities\Thumbnails;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Log\LoggerInterface;
 
@@ -81,6 +82,15 @@ trait AppTrait
     public function settings()
     {
         return $this->container(Settings::class);
+    }
+
+    /**
+     * Get thumbnails
+     * @return Thumbnails
+     */
+    public function thumbs()
+    {
+        return $this->container(Thumbnails::class);
     }
 
     /**

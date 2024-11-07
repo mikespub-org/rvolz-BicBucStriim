@@ -33,4 +33,4 @@ parameters:
 		-
 			message: "#^Call to protected method is_authorized\\(\\) of class BicBucStriim\\\\Middleware\\\\LoginMiddleware\\.$#"
 			count: 4
-			path: tests/MiddlewareTest.php
+			path: tests/Middleware/MiddlewareTest.php

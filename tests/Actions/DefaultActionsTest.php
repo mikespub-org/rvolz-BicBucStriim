@@ -29,7 +29,7 @@ class DefaultActionsTest extends PHPUnit\Framework\TestCase
     public function testGetRoutesWithSelf(): void
     {
         $expected = array_values($this->getExpectedRoutes());
-        $container = require dirname(__DIR__) . '/config/container.php';
+        $container = require dirname(__DIR__, 2) . '/config/container.php';
         $self = new DefaultActions($container);
         // replace '$self' in $expected with actual $self
         array_walk($expected, function (&$value) use ($self) {
@@ -97,7 +97,7 @@ class DefaultActionsTest extends PHPUnit\Framework\TestCase
 
     public function testHelloViaAppRequest(): void
     {
-        $container = require dirname(__DIR__) . '/config/container.php';
+        $container = require dirname(__DIR__, 2) . '/config/container.php';
         AppFactory::setContainer($container);
         $app = AppFactory::create();
         /**

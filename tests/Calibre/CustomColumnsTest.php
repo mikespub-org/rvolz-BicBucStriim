@@ -6,21 +6,29 @@ use PHPUnit\Framework\Attributes\CoversClass;
 #[CoversClass(Calibre::class)]
 class CustomColumnsTest extends PHPUnit\Framework\TestCase
 {
-    public const CDB1 = './tests/fixtures/metadata_empty.db';
-    public const CDB2 = './tests/fixtures/lib2/metadata.db';
-    public const CDB4 = './tests/fixtures/lib4/metadata.db';
+    public static $cdb1;
+    public static $cdb2;
+    public static $cdb4;
 
-    public const DB2 = './tests/fixtures/data2.db';
+    public static $db2;
 
-    public const DATA = './tests/data';
-    public const DATADB = './tests/data/data.db';
+    public static $data;
+    public static $datadb;
 
     /** @var ?Calibre */
     public $calibre;
 
     public function setUp(): void
     {
-        $this->calibre = new Calibre(self::CDB2);
+        self::$cdb1 = dirname(__DIR__, 2) . '/tests/fixtures/metadata_empty.db';
+        self::$cdb2 = dirname(__DIR__, 2) . '/tests/fixtures/lib2/metadata.db';
+        self::$cdb4 = dirname(__DIR__, 2) . '/tests/fixtures/lib4/metadata.db';
+
+        self::$db2 = dirname(__DIR__, 2) . '/tests/fixtures/data2.db';
+
+        self::$data = dirname(__DIR__, 2) . '/tests/data';
+        self::$datadb = dirname(__DIR__, 2) . '/tests/data/data.db';
+        $this->calibre = new Calibre(self::$cdb2);
     }
 
     public function tearDown(): void

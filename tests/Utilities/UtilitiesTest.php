@@ -13,7 +13,12 @@ use PHPUnit\Framework\Attributes\CoversClass;
 #[CoversClass(InputUtil::class)]
 class UtilitiesTest extends PHPUnit\Framework\TestCase
 {
-    public const FIXT = './tests/fixtures';
+    public static $fixt;
+
+    public function setUp(): void
+    {
+        self::$fixt = dirname(__DIR__, 2) . '/tests/fixtures';
+    }
 
     public function testConstructUrlInfoSimple(): void
     {
@@ -82,8 +87,8 @@ class UtilitiesTest extends PHPUnit\Framework\TestCase
         $this->assertEquals('application/x-mobipocket-ebook', CalibreUtil::titleMimeType('test.azw'));
         $this->assertEquals('application/vnd.amazon.ebook', CalibreUtil::titleMimeType('test.azw1'));
         $this->assertEquals('application/vnd.amazon.ebook', CalibreUtil::titleMimeType('test.azw2'));
-        $this->assertEquals('text/plain', CalibreUtil::titleMimeType(self::FIXT . '/test.unknown-format'));
-        $this->assertEquals('text/xml', CalibreUtil::titleMimeType(self::FIXT . '/atom.rng'));
+        $this->assertEquals('text/plain', CalibreUtil::titleMimeType(self::$fixt . '/test.unknown-format'));
+        $this->assertEquals('text/xml', CalibreUtil::titleMimeType(self::$fixt . '/atom.rng'));
     }
 
     public function testGetUserLang(): void

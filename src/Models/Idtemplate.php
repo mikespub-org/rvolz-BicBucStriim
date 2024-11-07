@@ -17,4 +17,21 @@ namespace BicBucStriim\Models;
  * @property mixed $val
  * @property mixed $label
  */
-class Idtemplate extends Model {}
+class Idtemplate extends Model
+{
+    /**
+     * Summary of build
+     * @param mixed $name
+     * @param mixed $val
+     * @param mixed $label
+     * @return self
+     */
+    public static function build($name, $val, $label)
+    {
+        $template = self::cast(R::dispense('idtemplate'));
+        $template->name = $name;
+        $template->val = $val;
+        $template->label = $label;
+        return $template;
+    }
+}

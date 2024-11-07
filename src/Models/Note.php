@@ -17,4 +17,22 @@ namespace BicBucStriim\Models;
  * @property mixed $mime
  * @property mixed $ntext
  */
-class Note extends Model {}
+class Note extends Model
+{
+    /**
+     * Summary of build
+     * @param mixed $ntype
+     * @param mixed $mime
+     * @param mixed $ntext
+     * @return self
+     */
+    public static function build($ntype, $mime, $ntext)
+    {
+        /** @var Note $note */
+        $note = self::cast(R::dispense('note'));
+        $note->ntype = $ntype;
+        $note->mime = $mime;
+        $note->ntext = $ntext;
+        return $note;
+    }
+}

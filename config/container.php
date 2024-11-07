@@ -11,6 +11,7 @@
 use Aura\Auth\Auth;
 use BicBucStriim\AppData\BicBucStriim;
 use BicBucStriim\AppData\Settings;
+use BicBucStriim\AppData\Thumbnails;
 use BicBucStriim\Calibre\Calibre;
 use BicBucStriim\Session\Session;
 use BicBucStriim\Utilities\Mailer;
@@ -55,6 +56,12 @@ $builder->addDefinitions([
             //$bbs->saveConfigs($this->knownConfigs);
         }
         return $bbs;
+    },
+    Thumbnails::class => function (ContainerInterface $c) {
+        $dataDir = 'data';
+        # Get Thumbnails utility class
+        $thumbnails = new Thumbnails($dataDir);
+        return $thumbnails;
     },
     Calibre::class => function (ContainerInterface $c) {
         # Setup the connection to the Calibre metadata db

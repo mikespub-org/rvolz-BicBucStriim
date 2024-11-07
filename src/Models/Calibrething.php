@@ -13,7 +13,8 @@ namespace BicBucStriim\Models;
 use BicBucStriim\AppData\DataConstants;
 
 /**
- * RedBeanPHP FUSE model for 'calibrething' bean with one-to-many relation of author with link, note and artefact
+ * RedBeanPHP FUSE model for 'calibrething' bean with one-to-many relation
+ * of Calibre entity (author, series, tag, ...) with link, note and artefact
  * See https://www.redbeanphp.com/index.php?p=/one_to_many
  * @property mixed $ownLinkList
  * @property mixed $ownNoteList
@@ -27,15 +28,38 @@ use BicBucStriim\AppData\DataConstants;
 class Calibrething extends Model
 {
     /**
-     * Return author links releated to this Calibre entitiy.
-     * @return array<Link> all available author links
+     * Summary of build
+     * @param mixed $ctype
+     * @param mixed $cid
+     * @param mixed $cname
+     * @return self
      */
-    public function getAuthorLinks()
+    public static function build($ctype, $cid, $cname)
     {
+        $calibreThing = self::cast(R::dispense('calibrething'));
+        $calibreThing->ctype = $ctype;
+        $calibreThing->cid = $cid;
+        $calibreThing->cname = $cname;
+        $calibreThing->ownArtefactList = [];
+        $calibreThing->ownLinkList = [];
+        $calibreThing->ownNoteList = [];
+        $calibreThing->refctr = 0;
+        return $calibreThing;
+    }
+
+    /**
+     * Return links releated to this Calibre entity.
+     * @param ?int $ltype link type (not actually needed at the moment)
+     * @return array<Link> all available links
+     */
+    public function getLinks($ltype = null)
+    {
+        // Unless/until we support different types of artefacts per entity, the default is the Calibre type
+        $ltype ??= $this->ctype;
         // Note: we cannot use $this->ownLinkList ?? [] directly here due to lazy loading
         $links = $this->ownLinkList;
-        return array_values(array_filter($links ?? [], function ($link) {
-            return($link->ltype == DataConstants::AUTHOR_LINK);
+        return array_values(array_filter($links ?? [], function ($link) use ($ltype) {
+            return ($link->ltype == $ltype);
         }));
     }
 
@@ -50,15 +74,18 @@ class Calibrething extends Model
     }
 
     /**
-     * Return the author note text related to this Calibre entitiy.
-     * @return ?Note 	text or null
+     * Return the note text related to this Calibre entity.
+     * @param ?int $ntype note type (not actually needed at the moment)
+     * @return ?Note text or null
      */
-    public function getAuthorNote()
+    public function getNote($ntype = null)
     {
+        // Unless/until we support different types of artefacts per entity, the default is the Calibre type
+        $ntype ??= $this->ctype;
         // Note: we cannot use $this->ownNoteList ?? [] directly here due to lazy loading
         $notes = $this->ownNoteList;
-        $notes = array_values(array_filter($notes ?? [], function ($note) {
-            return($note->ntype == DataConstants::AUTHOR_NOTE);
+        $notes = array_values(array_filter($notes ?? [], function ($note) use ($ntype) {
+            return($note->ntype == $ntype);
         }));
         if (empty($notes)) {
             return null;
@@ -78,15 +105,31 @@ class Calibrething extends Model
     }
 
     /**
-     * Return the author thumbnail file related to this Calibre entitiy.
-     * @return ?Artefact 	Path to thumbnail file or null
+     * Get thumbs config for this Calibre entity
+     * @return string[] array of [dir, prefix]
      */
-    public function getAuthorThumbnail()
+    public function getThumbsConfig()
     {
+        return match ((int) $this->ctype) {
+            DataConstants::AUTHOR_TYPE => ['authors', 'author_'],
+            DataConstants::SERIES_TYPE => ['series', 'series_'],
+            default => ['titles', 'thumb_'],
+        };
+    }
+
+    /**
+     * Return the thumbnail file related to this Calibre entity.
+     * @param ?int $atype artefact type (not actually needed at the moment)
+     * @return ?Artefact Path to thumbnail file or null
+     */
+    public function getThumbnail($atype = null)
+    {
+        // Unless/until we support different types of artefacts per entity, the default is the Calibre type
+        $atype ??= $this->ctype;
         // Note: we cannot use $this->ownArtefactList ?? [] directly here due to lazy loading
         $artefacts = $this->ownArtefactList;
-        $artefacts = array_values(array_filter($artefacts ?? [], function ($artefact) {
-            return($artefact->atype == DataConstants::AUTHOR_THUMBNAIL_ARTEFACT);
+        $artefacts = array_values(array_filter($artefacts ?? [], function ($artefact) use ($atype) {
+            return ($artefact->atype == $atype);
         }));
         if (empty($artefacts)) {
             return null;

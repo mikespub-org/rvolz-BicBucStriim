@@ -416,7 +416,7 @@ class MainActions extends DefaultActions
 
         if ($book->has_cover) {
             $cover = $this->calibre()->titleCover($id);
-            $thumb = $this->bbs()->titleThumbnail($id, $cover, $settings->thumb_gen_clipped);
+            $thumb = $this->thumbs()->titleThumbnail($id, $cover, $settings->thumb_gen_clipped);
             $this->log()->debug('thumbnail: thumb found ' . $thumb);
             $has_cover = true;
         }
@@ -600,7 +600,7 @@ class MainActions extends DefaultActions
         }
 
         foreach ($tl['entries'] as $author) {
-            $author->thumbnail = $this->bbs()->getAuthorThumbnail($author->id);
+            $author->thumbnail = $this->bbs()->author($author->id)->getThumbnail();
             if ($author->thumbnail) {
                 $this->log()->debug('authorsSlice thumbnail ' . var_export($author->thumbnail->url, true));
             }
@@ -644,7 +644,7 @@ class MainActions extends DefaultActions
 
         /** @var Author $author */
         $author = $tl['author'];
-        $author->thumbnail = $this->bbs()->getAuthorThumbnail($id);
+        $author->thumbnail = $this->bbs()->author($id)->getThumbnail();
         // Note: $author->note comes from Calibre DB
         $note = $this->bbs()->authorNote($id);
         if (!is_null($note)) {
@@ -660,7 +660,7 @@ class MainActions extends DefaultActions
         }
 
         // Note: $author->link comes from Calibre DB
-        $author->links = $this->bbs()->authorLinks($id);
+        $author->links = $this->bbs()->author($id)->getLinks();
         return $this->render('author_detail.twig', [
             'page' => $this->mkPage('author_details', 3, 2),
             'url' => 'authors/' . $id,
@@ -850,7 +850,7 @@ class MainActions extends DefaultActions
 
     public function checkThumbnail($book)
     {
-        $book->thumbnail = $this->bbs()->isTitleThumbnailAvailable($book->id);
+        $book->thumbnail = $this->thumbs()->isTitleThumbnailAvailable($book->id);
         return $book;
     }
 

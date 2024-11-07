@@ -8,16 +8,19 @@ use PHPUnit\Framework\Attributes\CoversClass;
 #[CoversClass(CalibreFilter::class)]
 class CalibreTest extends PHPUnit\Framework\TestCase
 {
-    public const CDB1 = './tests/fixtures/metadata_empty.db';
-    public const CDB2 = './tests/fixtures/lib2/metadata.db';
-    public const CDB3 = './tests/fixtures/metadata_error.db';
+    public static $cdb1;
+    public static $cdb2;
+    public static $cdb3;
 
     /** @var ?Calibre */
     public $calibre;
 
     public function setUp(): void
     {
-        $this->calibre = new Calibre(self::CDB2);
+        self::$cdb1 = dirname(__DIR__, 2) . '/tests/fixtures/metadata_empty.db';
+        self::$cdb2 = dirname(__DIR__, 2) . '/tests/fixtures/lib2/metadata.db';
+        self::$cdb3 = dirname(__DIR__, 2) . '/tests/fixtures/metadata_error.db';
+        $this->calibre = new Calibre(self::$cdb2);
     }
 
     public function tearDown(): void
@@ -33,7 +36,7 @@ class CalibreTest extends PHPUnit\Framework\TestCase
 
     public function testOpenCalibreNotExistingDb(): void
     {
-        $this->calibre = new Calibre(self::CDB3);
+        $this->calibre = new Calibre(self::$cdb3);
         $this->assertFalse($this->calibre->libraryOk());
         $this->assertEquals(0, $this->calibre->last_error);
     }

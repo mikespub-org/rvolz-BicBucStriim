@@ -22,4 +22,21 @@ namespace BicBucStriim\Models;
 class User extends Model
 {
     protected $_filterProps = ['email', 'password'];
+
+    /**
+     * Summary of build
+     * @param mixed $username
+     * @param mixed $password
+     * @return self
+     */
+    public static function build($username, $password)
+    {
+        $user = self::cast(R::dispense('user'));
+        $user->username = $username;
+        $user->password = $password;
+        $user->tags = null;
+        $user->languages = null;
+        $user->role = 0;
+        return $user;
+    }
 }

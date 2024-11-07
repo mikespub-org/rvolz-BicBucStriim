@@ -462,7 +462,7 @@ class AdminActions extends DefaultActions
             if ($req_calibre_dir != $settings->calibre_dir) {
                 if (!Calibre::checkForCalibre($req_calibre_dir)) {
                     array_push($errors, 1);
-                } elseif ($this->bbs()->clearThumbnails()) {
+                } elseif ($this->thumbs()->clearThumbnails()) {
                     $this->log()->info('admin_change: Lib changed, deleted existing thumbnails.');
                 } else {
                     $this->log()->info('admin_change: Lib changed, deletion of existing thumbnails failed.');
@@ -483,7 +483,7 @@ class AdminActions extends DefaultActions
         if ($req_configs[Settings::THUMB_GEN_CLIPPED] != $settings->thumb_gen_clipped) {
             $this->log()->info('admin_change: Thumbnail generation method changed. Existing Thumbnails will be deleted.');
             # Delete old thumbnails if necessary
-            if ($this->bbs()->clearThumbnails()) {
+            if ($this->thumbs()->clearThumbnails()) {
                 $this->log()->info('admin_change: Deleted exisiting thumbnails.');
             } else {
                 $this->log()->info('admin_change: Deletion of exisiting thumbnails failed.');

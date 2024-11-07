@@ -50,6 +50,10 @@ class MetadataActions extends DefaultActions
             ['DELETE', '/authors/{id}/notes/', [$self, 'del_author_notes']],
             ['POST', '/authors/{id}/links/', [$self, 'new_author_link']],
             ['DELETE', '/authors/{id}/links/{link}/', [$self, 'del_author_link']],
+            ['POST', '/series/{id}/notes/', [$self, 'edit_series_notes']],
+            ['DELETE', '/series/{id}/notes/', [$self, 'del_series_notes']],
+            ['POST', '/series/{id}/links/', [$self, 'new_series_link']],
+            ['DELETE', '/series/{id}/links/{link}/', [$self, 'del_series_link']],
         ];
     }
 
@@ -110,8 +114,9 @@ class MetadataActions extends DefaultActions
                 return $this->responder->redirect($root . '/authors/' . $id . '/0/');
             }
             $this->log()->debug('edit_author_thm: upload ok, converting');
+            // we need the author name to create the calibre entity if needed
             $author = $this->calibre()->author($id);
-            $created = $this->bbs()->editAuthorThumbnail($id, $author->name, $settings->thumb_gen_clipped, $tmpfile, $type);
+            $created = $this->bbs()->author($id, $author->name)->editThumbnail($settings->thumb_gen_clipped, $tmpfile, $type);
             $this->log()->debug('edit_author_thm: converted, redirecting');
             return $this->responder->redirect($root . '/authors/' . $id . '/0/');
         }
@@ -133,7 +138,7 @@ class MetadataActions extends DefaultActions
         }
 
         $this->log()->debug('del_author_thm: ' . $id);
-        $del = $this->bbs()->deleteAuthorThumbnail($id);
+        $del = $this->bbs()->author($id)->deleteThumbnail();
         if ($del) {
             $msg = $this->getMessageString('admin_modified');
             $data = ['msg' => $msg];
@@ -162,8 +167,9 @@ class MetadataActions extends DefaultActions
         try {
             $markdownParser = new MarkdownExtra();
             $html = $markdownParser->transform($note_data['ntext']);
+            // we need the author name to create the calibre entity if needed
             $author = $this->calibre()->author($id);
-            $note = $this->bbs()->editAuthorNote($id, $author->name, $note_data['mime'], $note_data['ntext']);
+            $note = $this->bbs()->author($id, $author->name)->editNote($note_data['mime'], $note_data['ntext']);
         } catch (Exception $e) {
             $this->log()->error('edit_author_notes: error for editing note ' . var_export($note_data, true));
             $this->log()->error('edit_author_notes: exception ' . $e->getMessage());
@@ -195,7 +201,7 @@ class MetadataActions extends DefaultActions
         }
 
         $this->log()->debug('del_author_notes: ' . $id);
-        $del = $this->bbs()->deleteAuthorNote($id);
+        $del = $this->bbs()->author($id)->deleteNote();
         if ($del) {
             $msg = $this->getMessageString('admin_modified');
             $data = ['msg' => $msg];
@@ -220,10 +226,11 @@ class MetadataActions extends DefaultActions
 
         $link_data = $this->requester->post();
         $this->log()->debug('new_author_link: ' . var_export($link_data, true));
+        // we need the author name to create the calibre entity if needed
         $author = $this->calibre()->author($id);
         $link = null;
         if (!is_null($author)) {
-            $link = $this->bbs()->addAuthorLink($id, $author->name, $link_data['label'], $link_data['url']);
+            $link = $this->bbs()->author($id, $author->name)->addLink($link_data['label'], $link_data['url']);
         }
         if (!is_null($link)) {
             $msg = $this->getMessageString('admin_modified');
@@ -248,7 +255,124 @@ class MetadataActions extends DefaultActions
         }
 
         $this->log()->debug('del_author_link: author ' . $id . ', link ' . $link);
-        $ret = $this->bbs()->deleteAuthorLink($id, $link);
+        $ret = $this->bbs()->author($id)->deleteLink($link);
+        if ($ret) {
+            $msg = $this->getMessageString('admin_modified');
+            $data = ['msg' => $msg];
+            return $this->responder->json($data);
+        } else {
+            $message = $this->getMessageString('admin_modify_error');
+            return $this->responder->error(500, $message);
+        }
+    }
+
+    /**
+     * Edit the notes about the series -> POST /metadata/series/{id}/notes/ JSON
+     * @return Response
+     */
+    public function edit_series_notes($id)
+    {
+        // parameter checking
+        if (!is_numeric($id)) {
+            $this->log()->warning('edit_series_notes: invalid series id ' . $id);
+            return $this->responder->error(400, "Bad parameter");
+        }
+
+        $this->log()->debug('edit_series_notes: ' . $id);
+        $note_data = $this->requester->post();
+        $this->log()->debug('edit_series_notes: note ' . var_export($note_data, true));
+        try {
+            $markdownParser = new MarkdownExtra();
+            $html = $markdownParser->transform($note_data['ntext']);
+            // we need the series name to create the calibre entity if needed
+            $series = $this->calibre()->series($id);
+            $note = $this->bbs()->series($id, $series->name)->editNote($note_data['mime'], $note_data['ntext']);
+        } catch (Exception $e) {
+            $this->log()->error('edit_series_notes: error for editing note ' . var_export($note_data, true));
+            $this->log()->error('edit_series_notes: exception ' . $e->getMessage());
+            $html = null;
+            $note = null;
+        }
+        if (!is_null($note)) {
+            $msg = $this->getMessageString('admin_modified');
+            $note2 = $note->unbox()->getProperties();
+            $note2['html'] = $html;
+            $data = ['note' => $note2, 'msg' => $msg];
+            return $this->responder->json($data);
+        } else {
+            $message = $this->getMessageString('admin_modify_error');
+            return $this->responder->error(500, $message);
+        }
+    }
+
+    /**
+     * Delete notes about the series -> DELETE /metadata/series/{id}/notes/ JSON
+     * @return Response
+     */
+    public function del_series_notes($id)
+    {
+        // parameter checking
+        if (!is_numeric($id)) {
+            $this->log()->warning('del_series_notes: invalid series id ' . $id);
+            return $this->responder->error(400, "Bad parameter");
+        }
+
+        $this->log()->debug('del_series_notes: ' . $id);
+        $del = $this->bbs()->series($id)->deleteNote();
+        if ($del) {
+            $msg = $this->getMessageString('admin_modified');
+            $data = ['msg' => $msg];
+            return $this->responder->json($data);
+        } else {
+            $message = $this->getMessageString('admin_modify_error');
+            return $this->responder->error(500, $message);
+        }
+    }
+
+    /**
+     * Add a new series link -> POST /metadata/series/{id}/links JSON
+     * @return Response
+     */
+    public function new_series_link($id)
+    {
+        // parameter checking
+        if (!is_numeric($id)) {
+            $this->log()->warning('new_series_link: invalid series id ' . $id);
+            return $this->responder->error(400, "Bad parameter");
+        }
+
+        $link_data = $this->requester->post();
+        $this->log()->debug('new_series_link: ' . var_export($link_data, true));
+        // we need the series name to create the calibre entity if needed
+        $series = $this->calibre()->series($id);
+        $link = null;
+        if (!is_null($series)) {
+            $link = $this->bbs()->series($id, $series->name)->addLink($link_data['label'], $link_data['url']);
+        }
+        if (!is_null($link)) {
+            $msg = $this->getMessageString('admin_modified');
+            $data = ['link' => $link->unbox()->getProperties(), 'msg' => $msg];
+            return $this->responder->json($data);
+        } else {
+            $message = $this->getMessageString('admin_modify_error');
+            return $this->responder->error(500, $message);
+        }
+    }
+
+    /**
+     * Delete an series link -> DELETE /metadata/series/{id}/links/{link}/ JSON
+     * @return Response
+     */
+    public function del_series_link($id, $link)
+    {
+        // parameter checking
+        if (!is_numeric($id) || !is_numeric($link)) {
+            $this->log()->warning('del_series_link: invalid series id ' . $id . ' or link id ' . $link);
+            return $this->responder->error(400, "Bad parameter");
+        }
+
+        $this->log()->debug('del_series_link: series ' . $id . ', link ' . $link);
+        $ret = $this->bbs()->series($id)->deleteLink($link);
         if ($ret) {
             $msg = $this->getMessageString('admin_modified');
             $data = ['msg' => $msg];

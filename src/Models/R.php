@@ -1,6 +1,6 @@
 <?php
 
-namespace BicBucStriim\AppData;
+namespace BicBucStriim\Models;
 
 class R extends \RedBeanPHP\Facade
 {
