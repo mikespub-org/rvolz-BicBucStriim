@@ -26,6 +26,21 @@ class Thumbnails
     public $titlesDir = '';
     # dir for generated author thumbs
     public $authorsDir = '';
+    # dir for generated series thumbs - @todo
+    public $seriesDir = '';
+
+    /**
+     * Get thumbnail configuration for a Calibre entity type
+     * @param int $type
+     * @return array{0: string, 1: string}
+     */
+    public static function getConfig($type)
+    {
+        if (!isset(self::CONFIG[$type])) {
+            return self::CONFIG[DataConstants::BOOK_TYPE];
+        }
+        return self::CONFIG[$type];
+    }
 
     /**
      * Summary of __construct

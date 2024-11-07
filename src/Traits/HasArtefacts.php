@@ -14,6 +14,7 @@ use BicBucStriim\Models\Artefact;
 use BicBucStriim\Models\Calibrething;
 use BicBucStriim\Models\R;
 use BicBucStriim\Utilities\ImageUtil;
+use BicBucStriim\Utilities\Thumbnails;
 
 trait HasArtefacts
 {
@@ -56,7 +57,7 @@ trait HasArtefacts
             $this->dataDir = realpath('data');
         }
         // change directory & prefix depending on $calibreType
-        [$thumbsDir, $prefix] = $calibreThing->getThumbsConfig();
+        [$thumbsDir, $prefix] = Thumbnails::getConfig($calibreThing->ctype);
         $fname = $this->dataDir . '/' . $thumbsDir . '/' . $prefix . $calibreThing->id . '_thm.png';
         if (file_exists($fname)) {
             unlink($fname);
@@ -64,6 +65,11 @@ trait HasArtefacts
 
         $created = ImageUtil::createThumbnail($file, $png, $fname, $clipped);
 
+        // @todo use relative url for thumbnails
+        $baseDir = dirname(__DIR__, 2);
+        if (str_starts_with($fname, $baseDir)) {
+            $fname = '.' . substr($fname, strlen($baseDir));
+        }
         $artefact = $calibreThing->getThumbnail();
         if (is_null($artefact)) {
             // Unless/until we support different types of artefacts per entity, the default is the Calibre type

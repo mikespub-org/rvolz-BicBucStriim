@@ -10,8 +10,6 @@
 
 namespace BicBucStriim\Models;
 
-use BicBucStriim\AppData\DataConstants;
-
 /**
  * RedBeanPHP FUSE model for 'calibrething' bean with one-to-many relation
  * of Calibre entity (author, series, tag, ...) with link, note and artefact
@@ -102,19 +100,6 @@ class Calibrething extends Model
     public function deleteNote($noteId)
     {
         unset($this->bean->ownNoteList[$noteId]);
-    }
-
-    /**
-     * Get thumbs config for this Calibre entity
-     * @return string[] array of [dir, prefix]
-     */
-    public function getThumbsConfig()
-    {
-        return match ((int) $this->ctype) {
-            DataConstants::AUTHOR_TYPE => ['authors', 'author_'],
-            DataConstants::SERIES_TYPE => ['series', 'series_'],
-            default => ['titles', 'thumb_'],
-        };
     }
 
     /**
