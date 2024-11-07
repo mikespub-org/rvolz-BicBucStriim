@@ -190,6 +190,20 @@ class ApiActions extends DefaultActions
                     ]);
                 }
             }
+            // add optional query param for path in loader for Swagger UI
+            if ($path == '/extra/loader') {
+                $name = 'path';
+                $schema = [
+                    "type" => "string",
+                ];
+                $required = false;
+                array_push($params, [
+                    "name" => $param,
+                    "in" => "query",
+                    "required" => $required,
+                    "schema" => $schema,
+                ]);
+            }
             $result["paths"][$path] ??= [];
             foreach ($methods as $method) {
                 $method = strtolower($method);

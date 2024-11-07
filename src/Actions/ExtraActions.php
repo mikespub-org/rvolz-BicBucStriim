@@ -124,6 +124,11 @@ class ExtraActions extends DefaultActions
         }
         */
 
+        // add optional query param for path in loader for Swagger UI
+        if ($this->requester->isJsonApi() && empty($path) && !empty($this->requester->get('path'))) {
+            $path = $this->requester->get('path');
+        }
+
         // Format: {action}/{dbNum:\\d+}/{authorId:\\w+}/{urlPath:.*}
         $path .= '///';
         [$action, $dbNum, $authorId, $urlPath] = explode('/', $path, 4);
@@ -153,6 +158,11 @@ class ExtraActions extends DefaultActions
             if ($handler->isDone()) {
                 return $this->responder->done();
             }
+        }
+
+        // render a json response if hasapi with Accept header - see DefaultActions::render()
+        if ($this->requester->isJsonApi()) {
+            return $this->renderJson($result);
         }
 
         // handle the result yourself or let epub-loader generate the output
