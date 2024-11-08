@@ -83,7 +83,7 @@ class AuthorsTest extends PHPUnit\Framework\TestCase
         $result = $artefacts[1];
         $this->assertNotNull($result);
         $this->assertEquals(DataConstants::AUTHOR_TYPE, $result->atype);
-        $this->assertEquals(self::$data . '/authors/author_1_thm.png', $result->url);
+        $this->assertEquals('./tests/data/authors/author_1_thm.png', $result->url);
     }
 
     public function testGetAuthorThumbnail(): void
@@ -93,7 +93,7 @@ class AuthorsTest extends PHPUnit\Framework\TestCase
         $result = $this->bbs->getAuthorThumbnail(1);
         $this->assertNotNull($result);
         $this->assertEquals(DataConstants::AUTHOR_TYPE, $result->atype);
-        $this->assertEquals(self::$data . '/authors/author_1_thm.png', $result->url);
+        $this->assertEquals('./tests/data/authors/author_1_thm.png', $result->url);
         $result = $this->bbs->author(2)->getThumbnail();
         $this->assertNotNull($result);
     }

@@ -16,7 +16,7 @@ use BicBucStriim\Models\R;
 use BicBucStriim\Utilities\ImageUtil;
 use BicBucStriim\Utilities\Thumbnails;
 
-trait HasArtefacts
+trait CanAddArtefact
 {
     # dir for bbs db
     public $dataDir = '';

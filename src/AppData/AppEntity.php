@@ -15,9 +15,10 @@ use BicBucStriim\Models\Calibrething;
 use BicBucStriim\Models\Link;
 use BicBucStriim\Models\Note;
 use BicBucStriim\Traits\HasCalibrething;
-use BicBucStriim\Traits\HasArtefacts;
-use BicBucStriim\Traits\HasLinks;
-use BicBucStriim\Traits\HasNotes;
+use BicBucStriim\Traits\CanAddArtefact;
+use BicBucStriim\Traits\CanAddLink;
+use BicBucStriim\Traits\CanAddNote;
+use BicBucStriim\Utilities\ImageUtil;
 
 /**
  * Add thumbnail, links & note to Calibre entities in BBS DB
@@ -25,9 +26,9 @@ use BicBucStriim\Traits\HasNotes;
 class AppEntity
 {
     use HasCalibrething;
-    use HasArtefacts;
-    use HasLinks;
-    use HasNotes;
+    use CanAddArtefact;
+    use CanAddLink;
+    use CanAddNote;
 
     public const CALIBRE_TYPE = DataConstants::ENTITY_TYPE;
 
@@ -74,6 +75,18 @@ class AppEntity
     public function editThumbnail($clipped, $file, $mime)
     {
         return $this->editCalibreThumbnail($this->calibreThing, $clipped, $file, $mime);
+    }
+
+    /**
+     * Download image and set thumbnail for this Calibre entity
+     * @param string    $imageUrl   image to download
+     * @param bool|int 	$clipped 	true = image should be clipped, else stuffed
+     * @return bool
+     */
+    public function setImage($imageUrl, $clipped)
+    {
+        [$file, $mime] = ImageUtil::downloadImage($imageUrl);
+        return $this->editThumbnail($clipped, $file, $mime);
     }
 
     /**

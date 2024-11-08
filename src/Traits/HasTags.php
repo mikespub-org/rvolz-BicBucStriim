@@ -11,16 +11,14 @@
 namespace BicBucStriim\Traits;
 
 use BicBucStriim\AppData\AppTag;
+use BicBucStriim\AppData\DataConstants;
 use BicBucStriim\Models\Calibrething;
 
 trait HasTags
 {
     use HasCalibrething;
-    use HasArtefacts;
-    use HasLinks;
-    use HasNotes;
 
-    public const TAG_TYPE = 7;
+    public const TAG_TYPE = DataConstants::TAG_TYPE;
 
     /**
      * Find Calibre tag or add reference to it

@@ -15,7 +15,7 @@ use BicBucStriim\Models\Link;
 use BicBucStriim\Models\R;
 use Exception;
 
-trait HasLinks
+trait CanAddLink
 {
     /**
      * Return all links defined for a Calibre entity.

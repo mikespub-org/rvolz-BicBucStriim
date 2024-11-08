@@ -117,4 +117,33 @@ class ImageUtil
         imagefilledrectangle($img, 0, 0, $width, $height, $backgr);
         return $img;
     }
+
+    /**
+     * Download image, save to tmpFile and get mimeType
+     * @param string $imageUrl
+     * @return array{0: string, 1: string}
+     */
+    public static function downloadImage($imageUrl)
+    {
+        $imageData = file_get_contents($imageUrl);
+        $tmpFile = tempnam(sys_get_temp_dir(), 'BBS');
+        file_put_contents($tmpFile, $imageData);
+
+        $mimeType = '';
+        if (function_exists('mime_content_type')) {
+            $mimeType = mime_content_type($tmpFile);
+        } elseif (function_exists('finfo_file')) {
+            $finfo = finfo_open(FILEINFO_MIME);
+            $mimeType = finfo_file($finfo, $tmpFile);
+            finfo_close($finfo);
+        }
+        if (empty($mimeType) || !str_starts_with($mimeType, 'image/')) {
+            $extension = pathinfo($imageUrl, PATHINFO_EXTENSION);
+            if (in_array($extension, ['jpg', 'jpeg', 'png'])) {
+                $mimeType = 'image/' . $extension;
+            }
+        }
+
+        return [$tmpFile, $mimeType];
+    }
 }

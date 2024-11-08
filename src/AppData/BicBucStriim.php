@@ -12,6 +12,7 @@ namespace BicBucStriim\AppData;
 
 use BicBucStriim\Models\R;
 use BicBucStriim\Traits\HasAuthors;
+use BicBucStriim\Traits\HasBooks;
 use BicBucStriim\Traits\HasConfigs;
 use BicBucStriim\Traits\HasIdTemplates;
 use BicBucStriim\Traits\HasSeries;
@@ -26,6 +27,7 @@ class BicBucStriim
     use HasIdTemplates;
     use HasAuthors;
     use HasSeries;
+    use HasBooks;
     use HasTags;
 
     # Name to the bbs db

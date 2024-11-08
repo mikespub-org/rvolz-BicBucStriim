@@ -118,6 +118,17 @@ class RequestUtil
     }
 
     /**
+     * Set query params
+     * @param array<mixed> $params
+     * @return Request
+     */
+    public function setParams($params)
+    {
+        $this->request = $this->request->withQueryParams($params);
+        return $this->request;
+    }
+
+    /**
      * Get session
      * @return Session|null
      */

@@ -14,7 +14,7 @@ use BicBucStriim\Models\Calibrething;
 use BicBucStriim\Models\Note;
 use BicBucStriim\Models\R;
 
-trait HasNotes
+trait CanAddNote
 {
     /**
      * Get the note text for a Calibre entity.

@@ -11,23 +11,20 @@
 namespace BicBucStriim\Traits;
 
 use BicBucStriim\AppData\AppAuthor;
+use BicBucStriim\AppData\DataConstants;
 use BicBucStriim\Models\Artefact;
 use BicBucStriim\Models\Calibrething;
 use BicBucStriim\Models\Link;
 use BicBucStriim\Models\Note;
-use BicBucStriim\Traits\HasArtefacts;
-use BicBucStriim\Traits\HasCalibrething;
-use BicBucStriim\Traits\HasLinks;
-use BicBucStriim\Traits\HasNotes;
 
 trait HasAuthors
 {
     use HasCalibrething;
-    use HasArtefacts;
-    use HasLinks;
-    use HasNotes;
+    use CanAddArtefact;
+    use CanAddLink;
+    use CanAddNote;
 
-    public const AUTHOR_TYPE = 1;
+    public const AUTHOR_TYPE = DataConstants::AUTHOR_TYPE;
 
     /**
      * Find Calibre author or add reference to it

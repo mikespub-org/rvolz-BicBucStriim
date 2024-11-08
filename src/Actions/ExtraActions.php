@@ -13,6 +13,9 @@ namespace BicBucStriim\Actions;
 use BicBucStriim\Utilities\RouteUtil;
 use Marsender\EPubLoader\RequestHandler;
 use Marsender\EPubLoader\App\ExtraActions as LoaderActions;
+use Marsender\EPubLoader\Models\AuthorInfo;
+use Marsender\EPubLoader\Models\BookInfo;
+use Marsender\EPubLoader\Models\SeriesInfo;
 use Psr\Http\Message\ResponseInterface as Response;
 
 /*********************************************************************
@@ -124,6 +127,15 @@ class ExtraActions extends DefaultActions
         }
         */
 
+        /**
+         * Define callbacks to update information here
+         */
+        $gConfig['callbacks'] = [
+            'setAuthorInfo' => $this->setAuthorInfo(...),
+            'setSeriesInfo' => $this->setSeriesInfo(...),
+            'setBookInfo' => $this->setBookInfo(...),
+        ];
+
         // add optional query param for path in loader for Swagger UI
         if ($this->requester->isJsonApi() && empty($path) && !empty($this->requester->get('path'))) {
             $path = $this->requester->get('path');
@@ -150,6 +162,9 @@ class ExtraActions extends DefaultActions
         $urlPath = trim($urlPath, '/');
         $urlParams['urlPath'] ??= $urlPath;
 
+        // update requester with query params
+        $this->requester->setParams($urlParams);
+
         // you can define extra actions for your app - see example.php
         $handler = new RequestHandler($gConfig, LoaderActions::class, $cacheDir);
         $result = $handler->request($action, $dbNum, $urlParams, $urlPath);
@@ -173,5 +188,119 @@ class ExtraActions extends DefaultActions
 
         $output = $handler->output($result, $templateDir, $template);
         return $this->responder->html($output);
+    }
+
+    /**
+     * Callback function for Loader to set author info here
+     * @param int $authorId
+     * @param AuthorInfo $authorInfo
+     * @return bool
+     */
+    public function setAuthorInfo($authorId, $authorInfo)
+    {
+        $author = $this->calibre()->author($authorId);
+        $settings = $this->settings();
+
+        $result = true;
+        if (!empty($authorInfo->image) && str_starts_with($authorInfo->image, 'https://')) {
+            $image = $this->bbs()->author($authorId, $author->name)->setImage($authorInfo->image, $settings->thumb_gen_clipped);
+            $result = $result && ($image ? true : false);
+        }
+        if (!empty($authorInfo->link) && str_starts_with($authorInfo->link, 'https://')) {
+            $link = $this->bbs()->author($authorId, $author->name)->addLink($authorInfo->source, $authorInfo->link);
+            $result = $result && ($link ? true : false);
+        }
+        if (!empty($authorInfo->note) && !empty($authorInfo->note->doc)) {
+            $root = $this->requester->getRootUrl();
+            $dbNum = $this->requester->get('dbNum');
+            $urlPrefix = $root . '/extra/loader/resource/' . $dbNum;
+            $content = $authorInfo->note->parseHtml($urlPrefix);
+            $mimeType = 'text/html';
+            $note = $this->bbs()->author($authorId, $author->name)->editNote($mimeType, $content);
+            $result = $result && ($note ? true : false);
+        }
+        if (!empty($authorInfo->books)) {
+            // ...
+        }
+        if (!empty($authorInfo->series)) {
+            // ...
+        }
+        return $result;
+    }
+
+    /**
+     * Callback function for Loader to set series info here
+     * @param int $seriesId
+     * @param SeriesInfo $seriesInfo
+     * @return bool
+     */
+    public function setSeriesInfo($seriesId, $seriesInfo)
+    {
+        $series = $this->calibre()->series($seriesId);
+        $settings = $this->settings();
+
+        $result = true;
+        if (!empty($seriesInfo->image) && str_starts_with($seriesInfo->image, 'https://')) {
+            $image = $this->bbs()->series($seriesId, $series->name)->setImage($seriesInfo->image, $settings->thumb_gen_clipped);
+            $result = $result && ($image ? true : false);
+        }
+        if (!empty($seriesInfo->link) && str_starts_with($seriesInfo->link, 'https://')) {
+            $link = $this->bbs()->series($seriesId, $series->name)->addLink($seriesInfo->source, $seriesInfo->link);
+            $result = $result && ($link ? true : false);
+        }
+        if (!empty($seriesInfo->note) && !empty($seriesInfo->note->doc)) {
+            $root = $this->requester->getRootUrl();
+            $dbNum = $this->requester->get('dbNum');
+            $urlPrefix = $root . '/extra/loader/resource/' . $dbNum;
+            $content = $seriesInfo->note->parseHtml($urlPrefix);
+            $mimeType = 'text/html';
+            $note = $this->bbs()->series($seriesId, $series->name)->editNote($mimeType, $content);
+            $result = $result && ($note ? true : false);
+        }
+        if (!empty($seriesInfo->books)) {
+            // ...
+        }
+        if (!empty($seriesInfo->authors)) {
+            // ...
+        }
+        return $result;
+    }
+
+    /**
+     * Callback function for Loader to set book info here
+     * @param int $bookId
+     * @param BookInfo $bookInfo
+     * @return bool
+     */
+    public function setBookInfo($bookId, $bookInfo)
+    {
+        $book = $this->calibre()->title($bookId);
+        $settings = $this->settings();
+
+        $result = true;
+        if (!empty($bookInfo->cover) && str_starts_with($bookInfo->cover, 'https://')) {
+            $image = $this->bbs()->book($bookId, $book->title)->setImage($bookInfo->cover, $settings->thumb_gen_clipped);
+            $result = $result && ($image ? true : false);
+        }
+        if (!empty($bookInfo->uri) && str_starts_with($bookInfo->uri, 'https://')) {
+            $link = $this->bbs()->book($bookId, $book->title)->addLink($bookInfo->source, $bookInfo->uri);
+            $result = $result && ($link ? true : false);
+        }
+        if (!empty($bookInfo->description)) {
+            $content = $bookInfo->description;
+            $mimeType = 'text/html';
+            $note = $this->bbs()->book($bookId, $book->title)->editNote($mimeType, $content);
+            $result = $result && ($note ? true : false);
+        }
+        if (!empty($bookInfo->identifiers)) {
+            // ...
+        }
+        if (!empty($bookInfo->authors)) {
+            // ...
+        }
+        if (!empty($bookInfo->series)) {
+            // ...
+        }
+        return $result;
     }
 }

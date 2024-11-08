@@ -11,16 +11,14 @@
 namespace BicBucStriim\Traits;
 
 use BicBucStriim\AppData\AppSeries;
+use BicBucStriim\AppData\DataConstants;
 use BicBucStriim\Models\Calibrething;
 
 trait HasSeries
 {
     use HasCalibrething;
-    use HasArtefacts;
-    use HasLinks;
-    use HasNotes;
 
-    public const SERIES_TYPE = 6;
+    public const SERIES_TYPE = DataConstants::SERIES_TYPE;
 
     /**
      * Find Calibre series or add reference to it
