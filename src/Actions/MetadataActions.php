@@ -116,7 +116,7 @@ class MetadataActions extends DefaultActions
             $this->log()->debug('edit_author_thm: upload ok, converting');
             // we need the author name to create the calibre entity if needed
             $author = $this->calibre()->author($id);
-            $created = $this->bbs()->author($id, $author->name)->editThumbnail($settings->thumb_gen_clipped, $tmpfile, $type);
+            $artefact = $this->bbs()->author($id, $author->name)->editThumbnail($settings->thumb_gen_clipped, $tmpfile, $type);
             $this->log()->debug('edit_author_thm: converted, redirecting');
             return $this->responder->redirect($root . '/authors/' . $id . '/0/');
         }

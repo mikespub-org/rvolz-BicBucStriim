@@ -79,7 +79,7 @@ trait HasAuthors
      * @param string 	$file 		File name of the input image
      * @param string 	$mime 		Mime type of the image
      * @deprecated 3.5.5 use bbs()->author($authorId, $authorName)->editThumbnail($clipped, $file, $mime)
-     * @return 			bool file name of the thumbnail image, or null
+     * @return ?Artefact artefact with file name of the thumbnail image, or null
      */
     public function editAuthorThumbnail($authorId, $authorName, $clipped, $file, $mime)
     {

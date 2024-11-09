@@ -10,11 +10,13 @@
 
 namespace BicBucStriim\Traits;
 
+use BicBucStriim\AppData\DataConstants;
 use BicBucStriim\Models\Artefact;
 use BicBucStriim\Models\Calibrething;
 use BicBucStriim\Models\R;
 use BicBucStriim\Utilities\ImageUtil;
 use BicBucStriim\Utilities\Thumbnails;
+use Throwable;
 
 trait CanAddArtefact
 {
@@ -41,7 +43,7 @@ trait CanAddArtefact
      * @param bool|int 	$clipped 	true = image should be clipped, else stuffed
      * @param string 	$file 		File name of the input image
      * @param string 	$mime 		Mime type of the image
-     * @return 			bool file name of the thumbnail image, or null
+     * @return ?Artefact artefact with file name of the thumbnail image, or null
      */
     public function editCalibreThumbnail($calibreThing, $clipped, $file, $mime)
     {
@@ -58,12 +60,26 @@ trait CanAddArtefact
         }
         // change directory & prefix depending on $calibreType
         [$thumbsDir, $prefix] = Thumbnails::getConfig($calibreThing->ctype);
-        $fname = $this->dataDir . '/' . $thumbsDir . '/' . $prefix . $calibreThing->id . '_thm.png';
+        if ($calibreThing->ctype == DataConstants::BOOK_TYPE) {
+            // @see Thumbnails::titleThumbnail() - using calibre id + different format
+            $fname = $this->dataDir . '/' . $thumbsDir . '/' . $prefix . $calibreThing->cid . '.png';
+        } else {
+            $fname = $this->dataDir . '/' . $thumbsDir . '/' . $prefix . $calibreThing->id . '_thm.png';
+        }
         if (file_exists($fname)) {
             unlink($fname);
         }
 
-        $created = ImageUtil::createThumbnail($file, $png, $fname, $clipped);
+        try {
+            $created = ImageUtil::createThumbnail($file, $png, $fname, $clipped);
+        } catch (Throwable $e) {
+            copy($file, $fname . '.err');
+            echo $e->getMessage();
+            $created = false;
+        }
+        if (!$created) {
+            return null;
+        }
 
         // @todo use relative url for thumbnails
         $baseDir = dirname(__DIR__, 2);
@@ -77,8 +93,11 @@ trait CanAddArtefact
             $calibreThing->addArtefact($artefact);
             $calibreThing->refctr += 1;
             R::store($calibreThing);
+        } else {
+            $artefact->url = $fname;
+            R::store($artefact);
         }
-        return $created;
+        return $artefact;
     }
 
     /**

@@ -125,9 +125,22 @@ class ImageUtil
      */
     public static function downloadImage($imageUrl)
     {
-        $imageData = file_get_contents($imageUrl);
+        $context = stream_context_create([
+            'http' => [
+                'follow_location' => true,
+                'timeout' => 20,
+                'user_agent' => 'EPubLoader/3.5 (https://github.com/mikespub-org/epub-loader)',
+            ],
+        ]);
+        $imageData = file_get_contents($imageUrl, false, $context);
+        if ($imageData === false) {
+            //var_dump($http_response_header);
+            return ['', ''];
+        }
         $tmpFile = tempnam(sys_get_temp_dir(), 'BBS');
-        file_put_contents($tmpFile, $imageData);
+        if (!file_put_contents($tmpFile, $imageData)) {
+            return ['', ''];
+        }
 
         $mimeType = '';
         if (function_exists('mime_content_type')) {

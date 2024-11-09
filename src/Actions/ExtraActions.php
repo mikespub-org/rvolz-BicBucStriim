@@ -199,15 +199,26 @@ class ExtraActions extends DefaultActions
     public function setAuthorInfo($authorId, $authorInfo)
     {
         $author = $this->calibre()->author($authorId);
+        $appentity = $this->bbs()->author($authorId, $author->name);
         $settings = $this->settings();
+        $clipped = $settings->thumb_gen_clipped;
 
         $result = true;
-        if (!empty($authorInfo->image) && str_starts_with($authorInfo->image, 'https://')) {
-            $image = $this->bbs()->author($authorId, $author->name)->setImage($authorInfo->image, $settings->thumb_gen_clipped);
+        if (!empty($authorInfo->image) && str_starts_with($authorInfo->image, 'http')) {
+            $image = $appentity->setImage($authorInfo->image, $clipped);
             $result = $result && ($image ? true : false);
         }
-        if (!empty($authorInfo->link) && str_starts_with($authorInfo->link, 'https://')) {
-            $link = $this->bbs()->author($authorId, $author->name)->addLink($authorInfo->source, $authorInfo->link);
+        if (!empty($authorInfo->link) && str_starts_with($authorInfo->link, 'http')) {
+            // check for duplicate links
+            $links = array_filter($appentity->getLinks(), function ($link) use ($authorInfo) {
+                return $link->url == $authorInfo->link;
+            });
+            if (empty($links)) {
+                $label = $authorInfo->source . ' Link';
+                $link = $appentity->addLink($label, $authorInfo->link);
+            } else {
+                $link = true;
+            }
             $result = $result && ($link ? true : false);
         }
         if (!empty($authorInfo->note) && !empty($authorInfo->note->doc)) {
@@ -216,7 +227,7 @@ class ExtraActions extends DefaultActions
             $urlPrefix = $root . '/extra/loader/resource/' . $dbNum;
             $content = $authorInfo->note->parseHtml($urlPrefix);
             $mimeType = 'text/html';
-            $note = $this->bbs()->author($authorId, $author->name)->editNote($mimeType, $content);
+            $note = $appentity->editNote($mimeType, $content);
             $result = $result && ($note ? true : false);
         }
         if (!empty($authorInfo->books)) {
@@ -237,15 +248,26 @@ class ExtraActions extends DefaultActions
     public function setSeriesInfo($seriesId, $seriesInfo)
     {
         $series = $this->calibre()->series($seriesId);
+        $appentity = $this->bbs()->series($seriesId, $series->name);
         $settings = $this->settings();
+        $clipped = $settings->thumb_gen_clipped;
 
         $result = true;
-        if (!empty($seriesInfo->image) && str_starts_with($seriesInfo->image, 'https://')) {
-            $image = $this->bbs()->series($seriesId, $series->name)->setImage($seriesInfo->image, $settings->thumb_gen_clipped);
+        if (!empty($seriesInfo->image) && str_starts_with($seriesInfo->image, 'http')) {
+            $image = $appentity->setImage($seriesInfo->image, $clipped);
             $result = $result && ($image ? true : false);
         }
-        if (!empty($seriesInfo->link) && str_starts_with($seriesInfo->link, 'https://')) {
-            $link = $this->bbs()->series($seriesId, $series->name)->addLink($seriesInfo->source, $seriesInfo->link);
+        if (!empty($seriesInfo->link) && str_starts_with($seriesInfo->link, 'http')) {
+            // check for duplicate links
+            $links = array_filter($appentity->getLinks(), function ($link) use ($seriesInfo) {
+                return $link->url == $seriesInfo->link;
+            });
+            if (empty($links)) {
+                $label = $seriesInfo->source . ' Link';
+                $link = $appentity->addLink($label, $seriesInfo->link);
+            } else {
+                $link = true;
+            }
             $result = $result && ($link ? true : false);
         }
         if (!empty($seriesInfo->note) && !empty($seriesInfo->note->doc)) {
@@ -254,7 +276,7 @@ class ExtraActions extends DefaultActions
             $urlPrefix = $root . '/extra/loader/resource/' . $dbNum;
             $content = $seriesInfo->note->parseHtml($urlPrefix);
             $mimeType = 'text/html';
-            $note = $this->bbs()->series($seriesId, $series->name)->editNote($mimeType, $content);
+            $note = $appentity->editNote($mimeType, $content);
             $result = $result && ($note ? true : false);
         }
         if (!empty($seriesInfo->books)) {
@@ -275,21 +297,32 @@ class ExtraActions extends DefaultActions
     public function setBookInfo($bookId, $bookInfo)
     {
         $book = $this->calibre()->title($bookId);
+        $appentity = $this->bbs()->book($bookId, $book->title);
         $settings = $this->settings();
+        $clipped = $settings->thumb_gen_clipped;
 
         $result = true;
-        if (!empty($bookInfo->cover) && str_starts_with($bookInfo->cover, 'https://')) {
-            $image = $this->bbs()->book($bookId, $book->title)->setImage($bookInfo->cover, $settings->thumb_gen_clipped);
+        if (!empty($bookInfo->cover) && str_starts_with($bookInfo->cover, 'http')) {
+            $image = $appentity->setImage($bookInfo->cover, $clipped);
             $result = $result && ($image ? true : false);
         }
-        if (!empty($bookInfo->uri) && str_starts_with($bookInfo->uri, 'https://')) {
-            $link = $this->bbs()->book($bookId, $book->title)->addLink($bookInfo->source, $bookInfo->uri);
+        if (!empty($bookInfo->uri) && str_starts_with($bookInfo->uri, 'http')) {
+            // check for duplicate links
+            $links = array_filter($appentity->getLinks(), function ($link) use ($bookInfo) {
+                return $link->url == $bookInfo->uri;
+            });
+            if (empty($links)) {
+                $label = $bookInfo->source . ' Link';
+                $link = $appentity->addLink($label, $bookInfo->uri);
+            } else {
+                $link = true;
+            }
             $result = $result && ($link ? true : false);
         }
         if (!empty($bookInfo->description)) {
             $content = $bookInfo->description;
             $mimeType = 'text/html';
-            $note = $this->bbs()->book($bookId, $book->title)->editNote($mimeType, $content);
+            $note = $appentity->editNote($mimeType, $content);
             $result = $result && ($note ? true : false);
         }
         if (!empty($bookInfo->identifiers)) {

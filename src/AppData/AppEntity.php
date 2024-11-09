@@ -70,7 +70,7 @@ class AppEntity
      * @param bool|int 	$clipped 	true = image should be clipped, else stuffed
      * @param string 	$file 		File name of the input image
      * @param string 	$mime 		Mime type of the image
-     * @return 			bool file name of the thumbnail image, or null
+     * @return ?Artefact artefact with file name of the thumbnail image, or null
      */
     public function editThumbnail($clipped, $file, $mime)
     {
@@ -81,11 +81,14 @@ class AppEntity
      * Download image and set thumbnail for this Calibre entity
      * @param string    $imageUrl   image to download
      * @param bool|int 	$clipped 	true = image should be clipped, else stuffed
-     * @return bool
+     * @return ?Artefact artefact with file name of the thumbnail image, or null
      */
     public function setImage($imageUrl, $clipped)
     {
         [$file, $mime] = ImageUtil::downloadImage($imageUrl);
+        if (empty($file)) {
+            return null;
+        }
         return $this->editThumbnail($clipped, $file, $mime);
     }
 

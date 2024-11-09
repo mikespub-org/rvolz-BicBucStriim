@@ -73,7 +73,7 @@ class AuthorsTest extends PHPUnit\Framework\TestCase
 
     public function testEditAuthorThumbnail(): void
     {
-        $this->assertTrue($this->bbs->editAuthorThumbnail(1, 'Author Name', true, 'tests/fixtures/author1.jpg', 'image/jpeg'));
+        $this->assertNotNull($this->bbs->editAuthorThumbnail(1, 'Author Name', true, 'tests/fixtures/author1.jpg', 'image/jpeg'));
         $this->assertTrue(file_exists(self::$data . '/authors/author_1_thm.png'));
         $result2 = $this->bbs->getCalibreAuthor(1);
         $this->assertEquals('Author Name', $result2->cname);
@@ -88,8 +88,8 @@ class AuthorsTest extends PHPUnit\Framework\TestCase
 
     public function testGetAuthorThumbnail(): void
     {
-        $this->assertTrue($this->bbs->editAuthorThumbnail(1, 'Author Name', true, 'tests/fixtures/author1.jpg', 'image/jpeg'));
-        $this->assertTrue($this->bbs->author(2, 'Author Name')->editThumbnail(true, 'tests/fixtures/author1.jpg', 'image/jpeg'));
+        $this->assertNotNull($this->bbs->editAuthorThumbnail(1, 'Author Name', true, 'tests/fixtures/author1.jpg', 'image/jpeg'));
+        $this->assertNotNull($this->bbs->author(2, 'Author Name')->editThumbnail(true, 'tests/fixtures/author1.jpg', 'image/jpeg'));
         $result = $this->bbs->getAuthorThumbnail(1);
         $this->assertNotNull($result);
         $this->assertEquals(DataConstants::AUTHOR_TYPE, $result->atype);
@@ -100,12 +100,12 @@ class AuthorsTest extends PHPUnit\Framework\TestCase
 
     public function testDeleteAuthorThumbnail(): void
     {
-        $this->assertTrue($this->bbs->editAuthorThumbnail(1, 'Author Name', true, 'tests/fixtures/author1.jpg', 'image/jpeg'));
+        $this->assertNotNull($this->bbs->editAuthorThumbnail(1, 'Author Name', true, 'tests/fixtures/author1.jpg', 'image/jpeg'));
         $this->assertNotNull($this->bbs->getAuthorThumbnail(1));
         $this->assertTrue($this->bbs->deleteAuthorThumbnail(1));
         $this->assertFalse(file_exists(self::$data . '/authors/author_1_thm.png'));
         $this->assertNull($this->bbs->getAuthorThumbnail(1));
-        $this->assertTrue($this->bbs->author(2, 'Author Name')->editThumbnail(true, 'tests/fixtures/author1.jpg', 'image/jpeg'));
+        $this->assertNotNull($this->bbs->author(2, 'Author Name')->editThumbnail(true, 'tests/fixtures/author1.jpg', 'image/jpeg'));
         $this->assertNotNull($this->bbs->author(2)->getThumbnail());
         $this->assertTrue($this->bbs->author(2)->deleteThumbnail());
         $this->assertNull($this->bbs->author(2)->getThumbnail());

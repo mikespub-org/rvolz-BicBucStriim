@@ -2475,16 +2475,16 @@
         },
         {
             "name": "mikespub/epub-loader",
-            "version": "3.5.3",
+            "version": "3.5.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mikespub-org/epub-loader.git",
-                "reference": "483362716c66c8b990966df1620406493ae82e3c"
+                "reference": "2ae3fee98b660e27f077d5520b7785b1ae9f4a3c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mikespub-org/epub-loader/zipball/483362716c66c8b990966df1620406493ae82e3c",
-                "reference": "483362716c66c8b990966df1620406493ae82e3c",
+                "url": "https://api.github.com/repos/mikespub-org/epub-loader/zipball/2ae3fee98b660e27f077d5520b7785b1ae9f4a3c",
+                "reference": "2ae3fee98b660e27f077d5520b7785b1ae9f4a3c",
                 "shasum": ""
             },
             "require": {
@@ -2531,9 +2531,9 @@
             "description": "epub-loader is a utility resource for ebooks",
             "support": {
                 "issues": "https://github.com/mikespub-org/epub-loader/issues",
-                "source": "https://github.com/mikespub-org/epub-loader/tree/3.5.3"
+                "source": "https://github.com/mikespub-org/epub-loader/tree/3.5.4"
             },
-            "time": "2024-11-08T20:20:10+00:00"
+            "time": "2024-11-09T00:16:52+00:00"
         },
         {
             "name": "mikespub/php-epub-meta",
