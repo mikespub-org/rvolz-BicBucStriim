@@ -22,119 +22,119 @@ class MainActionsTest extends PHPUnit\Framework\TestCase
             //    method(s), path, ...middleware(s), callable with '$self' string
             //],
             // for html output specify the expected content text
-            'main' => [
+            'main-home' => [
                 [], '<h2>Most recent</h2>',
                 'GET', '/', ['$self', 'main'],
             ],
-            'show_login' => [
+            'main-login' => [
                 [], '<title>BicBucStriim :: Login</title>',
                 'GET', '/login/', ['$self', 'show_login'],
             ],
-            'perform_login' => [
+            'main-login-post' => [
                 [], 'hello',
                 'POST', '/login/', ['$self', 'perform_login'],
             ],
-            'logout' => [
+            'main-logout' => [
                 [], '<title>BicBucStriim :: Logout</title>',
                 'GET', '/logout/', ['$self', 'logout'],
             ],
-            'authorNotes' => [
+            'main-author-note' => [
                 ['id' => 5], 'You don&#039;t have sufficient access rights.',
                 'GET', '/authors/{id}/notes/', '$gatekeeper', ['$self', 'authorNotes'],
             ],
-            //'authorNotesEdit' => [
-            //    ['id' => 5], 'hello',
-            //    'POST', '/authors/{id}/notes/', '$gatekeeper', ['$self', 'authorNotesEdit']
-            //],
-            'authorDetailsSlice' => [
+            'main-author-v1' => [
                 ['id' => 5, 'page' => 0], '<title>BicBucStriim :: Author Details</title>',
                 'GET', '/authors/{id}/{page}/', ['$self', 'authorDetailsSlice'],
             ],
-            'authorsSlice' => [
+            'main-authors-v1' => [
                 ['page' => 0], '<title>BicBucStriim :: Authors</title>',
                 'GET', '/authorslist/{page}/', ['$self', 'authorsSlice'],
             ],
-            'globalSearch' => [
+            'main-search' => [
                 [], '<title>BicBucStriim :: Search</title>',
                 'GET', '/search/', ['$self', 'globalSearch'],
             ],
-            'seriesDetailsSlice' => [
+            'main-serie-v1' => [
                 ['id' => 1, 'page' => 0], '<title>BicBucStriim :: Series Details</title>',
                 'GET', '/series/{id}/{page}/', ['$self', 'seriesDetailsSlice'],
             ],
-            'seriesSlice' => [
+            'main-series-v1' => [
                 ['page' => 0], '<title>BicBucStriim :: Series</title>',
                 'GET', '/serieslist/{page}/', ['$self', 'seriesSlice'],
             ],
-            'tagDetailsSlice' => [
+            'main-tag-v1' => [
                 ['id' => 3, 'page' => 0], '<title>BicBucStriim :: Tag Details</title>',
                 'GET', '/tags/{id}/{page}/', ['$self', 'tagDetailsSlice'],
             ],
-            'tagsSlice' => [
+            'main-tags-v1' => [
                 ['page' => 0], '<title>BicBucStriim :: Tags</title>',
                 'GET', '/tagslist/{page}/', ['$self', 'tagsSlice'],
             ],
-            'title' => [
+            'main-title' => [
                 ['id' => 7], '<title>BicBucStriim :: Book Details</title>',
                 'GET', '/titles/{id}/', ['$self', 'title'],
             ],
             // for file output specify the expected content size
-            'cover' => [
+            'main-cover-v1' => [
                 ['id' => 7], 168310,
                 'GET', '/titles/{id}/cover/', ['$self', 'cover'],
             ],
-            'book' => [
+            'main-book' => [
                 ['id' => 7, 'file' => 'The%20Stones%20of%20Venice%2C%20Volume%20II%20-%20John%20Ruskin.epub'], 10198,
                 'GET', '/titles/{id}/file/{file}', ['$self', 'book'],
             ],
-            'kindle' => [
+            'main-kindle' => [
                 ['id' => 7, 'file' => 'The%20Stones%20of%20Venice%2C%20Volume%20II%20-%20John%20Ruskin.epub'], 'hello',
                 'POST', '/titles/{id}/kindle/{file}', ['$self', 'kindle'],
             ],
-            'thumbnail' => [
+            'main-thumbnail-v1' => [
                 ['id' => 7], 51232,
                 'GET', '/titles/{id}/thumbnail/', ['$self', 'thumbnail'],
             ],
-            'titlesSlice' => [
+            'main-titles-v1' => [
                 ['page' => 0], '<title>BicBucStriim :: Books</title>',
                 'GET', '/titleslist/{page}/', ['$self', 'titlesSlice'],
             ],
             // temporary routes for the tailwind templates (= based on the v2.x frontend)
-            'authorsSlice2' => [
+            'main-authors-v2' => [
                 [], '<title>BicBucStriim :: Authors</title>',
                 'GET', '/authors/', ['$self', 'authorsSlice'],
             ],
-            'authorDetailsSlice2' => [
+            'main-author-v2' => [
                 ['id' => 5], '<title>BicBucStriim :: Author Details</title>',
                 'GET', '/authors/{id}/', ['$self', 'authorDetailsSlice'],
             ],
-            'seriesSlice2' => [
+            'main-series-v2' => [
                 [], '<title>BicBucStriim :: Series</title>',
                 'GET', '/series/', ['$self', 'seriesSlice'],
             ],
-            'seriesDetailsSlice2' => [
+            'main-serie-v2' => [
                 ['id' => 1], '<title>BicBucStriim :: Series Details</title>',
                 'GET', '/series/{id}/', ['$self', 'seriesDetailsSlice'],
             ],
-            'tagsSlice2' => [
+            'main-tags-v2' => [
                 [], '<title>BicBucStriim :: Tags</title>',
                 'GET', '/tags/', ['$self', 'tagsSlice'],
             ],
-            'tagDetailsSlice2' => [
+            'main-tag-v2' => [
                 ['id' => 3], '<title>BicBucStriim :: Tag Details</title>',
                 'GET', '/tags/{id}/', ['$self', 'tagDetailsSlice'],
             ],
-            'titlesSlice2' => [
+            'main-titles-v2' => [
                 [], '<title>BicBucStriim :: Books</title>',
                 'GET', '/titles/', ['$self', 'titlesSlice'],
             ],
-            'cover2' => [
+            'main-cover-v2' => [
                 ['id' => 7], 168310,
                 'GET', '/static/covers/{id}/', ['$self', 'cover'],
             ],
-            'thumbnail2' => [
+            'main-thumbnail-v2' => [
                 ['id' => 7], 51232,
                 'GET', '/static/titlethumbs/{id}/', ['$self', 'thumbnail'],
+            ],
+            'params-scope-type' => [
+                ['scope' => 'authors', 'type' => 'initials'], '"data": [',
+                'GET', '/params/{scope}/{type}/', ['$self', 'getTailwindParams'],
             ],
             // for redirect etc. specify the expected header(s)
         ];
@@ -148,12 +148,15 @@ class MainActionsTest extends PHPUnit\Framework\TestCase
         $routeCollector = $app->getRouteCollector();
         $routes = $routeCollector->getRoutes();
         $this->assertEquals(count($expected), count($routes));
+        $names = [];
         $patterns = [];
         foreach ($routes as $route) {
+            $names[] = $route->getName();
             $patterns[] = $route->getPattern();
         }
         // path is now shifted to index 3
-        foreach ($expected as $routeInfo) {
+        foreach ($expected as $name => $routeInfo) {
+            $this->assertEquals(true, in_array($name, $names));
             $this->assertEquals(true, in_array($routeInfo[3], $patterns));
         }
     }

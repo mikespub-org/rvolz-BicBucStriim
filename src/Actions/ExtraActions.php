@@ -28,7 +28,6 @@ class ExtraActions extends DefaultActions
      */
     public static function addRoutes($app, $prefix = '/extra', $gatekeeper = null)
     {
-        //$self = new self($app);
         $self = static::class;
         $routes = static::getRoutes($self, $gatekeeper);
         // use $gatekeeper for all actions in this group
@@ -46,10 +45,10 @@ class ExtraActions extends DefaultActions
     public static function getRoutes($self, $gatekeeper = null)
     {
         return [
-            // method(s), path, ...middleware(s), callable
-            ['GET', '/loader/{path:.*}', [$self, 'loader']],
-            ['GET', '/loader', [$self, 'loader']],
-            ['GET', '/', [$self, 'extra']],
+            // name => method(s), path, ...middleware(s), callable
+            'extra-loader-path' => ['GET', '/loader/{path:.*}', [$self, 'loader']],
+            'extra-loader' => ['GET', '/loader', [$self, 'loader']],
+            'extra' => ['GET', '/', [$self, 'extra']],
         ];
     }
 
@@ -72,7 +71,7 @@ class ExtraActions extends DefaultActions
             $flash['error'] .= sprintf($this->getMessageString('admin_new_version'), $required, $version);
         }
         return $this->render('extra.twig', [
-            'page' => $this->mkPage('extra', 0, 2),
+            'page' => $this->buildPage('extra', 0, 2),
             'options' => $options,
             'flash' => $flash,
         ]);
@@ -205,7 +204,7 @@ class ExtraActions extends DefaultActions
 
         $result = true;
         if (!empty($authorInfo->image) && str_starts_with($authorInfo->image, 'http')) {
-            $image = $appentity->setImage($authorInfo->image, $clipped);
+            $image = $appentity->saveThumbnail($authorInfo->image, $clipped);
             $result = $result && ($image ? true : false);
         }
         if (!empty($authorInfo->link) && str_starts_with($authorInfo->link, 'http')) {
@@ -254,7 +253,7 @@ class ExtraActions extends DefaultActions
 
         $result = true;
         if (!empty($seriesInfo->image) && str_starts_with($seriesInfo->image, 'http')) {
-            $image = $appentity->setImage($seriesInfo->image, $clipped);
+            $image = $appentity->saveThumbnail($seriesInfo->image, $clipped);
             $result = $result && ($image ? true : false);
         }
         if (!empty($seriesInfo->link) && str_starts_with($seriesInfo->link, 'http')) {
@@ -303,7 +302,7 @@ class ExtraActions extends DefaultActions
 
         $result = true;
         if (!empty($bookInfo->cover) && str_starts_with($bookInfo->cover, 'http')) {
-            $image = $appentity->setImage($bookInfo->cover, $clipped);
+            $image = $appentity->saveThumbnail($bookInfo->cover, $clipped);
             $result = $result && ($image ? true : false);
         }
         if (!empty($bookInfo->uri) && str_starts_with($bookInfo->uri, 'http')) {

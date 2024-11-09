@@ -141,22 +141,22 @@ class AdminActionsTest extends PHPUnit\Framework\TestCase
     #[\PHPUnit\Framework\Attributes\RunInSeparateProcess]
     public function testModifyIdTemplate(): void
     {
-        $this->fail('DB freezes up');
         $app = TestHelper::getApp();
         $request = RequestUtil::getServerRequest('PUT', '/admin/idtemplates/test1/');
         $request = $request->withHeader('PHP_AUTH_USER', 'admin')->withHeader('PHP_AUTH_PW', 'admin');
         $request = $request->withParsedBody([
             'name' => 'test1',
-            'val' => 'testval',
+            'url' => 'testval',
             'label' => 'testlabel',
         ]);
 
-        $expected = '{"msg":"Admin modified"}';
+        $expected = '"msg": "Changes applied"';
         $response = $app->handle($request);
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertStringContainsString($expected, (string) $response->getBody());
     }
 
+    #[\PHPUnit\Framework\Attributes\Depends('testModifyIdTemplate')]
     #[\PHPUnit\Framework\Attributes\RunInSeparateProcess]
     public function testClearIdTemplate(): void
     {
@@ -164,9 +164,9 @@ class AdminActionsTest extends PHPUnit\Framework\TestCase
         $request = RequestUtil::getServerRequest('DELETE', '/admin/idtemplates/test1/');
         $request = $request->withHeader('PHP_AUTH_USER', 'admin')->withHeader('PHP_AUTH_PW', 'admin');
 
-        $expected = 'Error while applying changes';
+        $expected = '"msg": "Changes applied"';
         $response = $app->handle($request);
-        $this->assertEquals(404, $response->getStatusCode());
+        $this->assertEquals(200, $response->getStatusCode());
         $this->assertStringContainsString($expected, (string) $response->getBody());
     }
 
@@ -183,6 +183,7 @@ class AdminActionsTest extends PHPUnit\Framework\TestCase
         $this->assertStringContainsString($expected, (string) $response->getBody());
     }
 
+    #[\PHPUnit\Framework\Attributes\Depends('testGetSmtpConfig')]
     #[\PHPUnit\Framework\Attributes\RunInSeparateProcess]
     public function testChangeSmtpConfig(): void
     {

@@ -21,13 +21,13 @@ class DefaultActionsTest extends PHPUnit\Framework\TestCase
         return [
             // 'name' => [method(s), path, ...middleware(s), callable] with '$self' string
             'hello' => ['GET', '/', ['$self', 'hello']],
-            'hello_name' => ['GET', '/{name}', ['$self', 'hello']],
+            'hello-name' => ['GET', '/{name}', ['$self', 'hello']],
         ];
     }
 
     public function testGetRoutesWithSelf(): void
     {
-        $expected = array_values($this->getExpectedRoutes());
+        $expected = $this->getExpectedRoutes();
         $container = require dirname(__DIR__, 2) . '/config/container.php';
         $self = new DefaultActions($container);
         // replace '$self' in $expected with actual $self
@@ -40,7 +40,7 @@ class DefaultActionsTest extends PHPUnit\Framework\TestCase
 
     public function testGetRoutesWithStatic(): void
     {
-        $expected = array_values($this->getExpectedRoutes());
+        $expected = $this->getExpectedRoutes();
         //$app = AppFactory::create();
         $self = DefaultActions::class;
         // replace '$self' in $expected with actual $self

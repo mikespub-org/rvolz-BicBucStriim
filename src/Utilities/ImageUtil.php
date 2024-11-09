@@ -125,6 +125,7 @@ class ImageUtil
      */
     public static function downloadImage($imageUrl)
     {
+        // @see https://foundation.wikimedia.org/wiki/Policy:User-Agent_policy
         $context = stream_context_create([
             'http' => [
                 'follow_location' => true,

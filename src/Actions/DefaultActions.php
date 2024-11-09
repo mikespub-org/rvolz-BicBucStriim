@@ -41,12 +41,16 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
      */
     public static function addRoutes($app, $prefix = null, $gatekeeper = null)
     {
-        // Slim 2 framework uses callable - we need $app instance
-        //$self = new self($app);
         // Slim 4 framework uses its own CallableResolver if this is a class string, *before* invocation strategy
         $self = static::class;
         $routes = static::getRoutes($self, $gatekeeper);
-        RouteUtil::mapRoutes($app, $routes);
+        if (!empty($prefix)) {
+            $app->group($prefix, function (\Slim\Routing\RouteCollectorProxy $group) use ($routes) {
+                RouteUtil::mapRoutes($group, $routes);
+            });
+        } else {
+            RouteUtil::mapRoutes($app, $routes);
+        }
     }
 
     /**
@@ -58,9 +62,9 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
     public static function getRoutes($self, $gatekeeper = null)
     {
         return [
-            // method(s), path, ...middleware(s), callable
-            ['GET', '/', [$self, 'hello']],
-            ['GET', '/{name}', [$self, 'hello']],
+            // name => method(s), path, ...middleware(s), callable
+            'hello' => ['GET', '/', [$self, 'hello']],
+            'hello-name' => ['GET', '/{name}', [$self, 'hello']],
         ];
     }
 
@@ -94,22 +98,7 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
      */
     public function hello($name = null)
     {
-        // @deprecated 3.5.0 return response instead of void in actions
-        //$this->helloVoid($name);
         return $this->helloResponse($name);
-    }
-
-    /**
-     * Hello function (example) - old-style = returning void
-     * @param ?string $name
-     * @deprecated 3.5.0 return response instead of void in actions
-     * @return void
-     */
-    public function helloVoid($name = null)
-    {
-        $name ??= 'world';
-        $answer = 'Hello, ' . $name . '!';
-        $this->responder->respond($answer, 'text/plain');
     }
 
     /**
@@ -210,7 +199,7 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
     /**
      * Utility function to fill the page array
      */
-    public function mkPage($messageId = '', $menu = 0, $level = 0)
+    public function buildPage($messageId = '', $menu = 0, $level = 0)
     {
         $settings = $this->settings();
 

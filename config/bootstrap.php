@@ -12,7 +12,6 @@ use Psr\Cache\CacheItemPoolInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Slim\Factory\AppFactory;
 use BicBucStriim\AppData\Settings;
-//use BicBucStriim\Utilities\ActionsCallableResolver;
 use BicBucStriim\Utilities\ActionsWrapperStrategy;
 use Slim\Interfaces\RouteCollectorInterface;
 
@@ -31,10 +30,6 @@ $container = require(__DIR__ . '/container.php');
 
 // Set container to create App with on AppFactory
 AppFactory::setContainer($container);
-
-// Override default callable resolver for actions
-//$callableResolver = new ActionsCallableResolver($container);
-//AppFactory::setCallableResolver($callableResolver);
 
 # Init app
 $app = AppFactory::create();
@@ -65,7 +60,6 @@ $app->getContainer()->set(RouteCollectorInterface::class, fn() => $app->getRoute
  */
 $routeCollector = $app->getRouteCollector();
 $routeCollector->setDefaultInvocationStrategy(new ActionsWrapperStrategy());
-//$callableResolver = $app->getCallableResolver();
 
 # Init middleware
 $middleware = require(__DIR__ . '/middleware.php');

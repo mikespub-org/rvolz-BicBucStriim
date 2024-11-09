@@ -22,23 +22,24 @@
                     isOpen() { return this.show === true },
                 {% if page.menu == 2 %}
                     {% if sort == 'byReverseDate' %}
-                        url: '/params/titles/years/',
+                        url: '{{page.rot}}/params/titles/years/',
                     {% else %}
-                        url: '/params/titles/initials/',
+                        url: '{{page.rot}}/params/titles/initials/',
                     {% endif %}
                 {% elseif page.menu == 3 %}
-                    url: '/params/authors/initials/',
+                    url: '{{page.rot}}/params/authors/initials/',
                 {% elseif page.menu == 4 %}
-                    url: '/params/tags/initials/',
+                    url: '{{page.rot}}/params/tags/initials/',
                 {% else %}
-                    url: '/params/series/initials/',
+                    url: '{{page.rot}}/params/series/initials/',
                 {% endif %}
                 }
             }
         </script>
         <script type="application/javascript">
             async function visit4Jump(val) {
-                urlP = "{{page.rot}}/{{url}}/?jumpTarget=";
+                {# @todo remove curpage when url points to v2 instead of v1 #}
+                urlP = "{{page.rot}}/{{url}}/{{curpage}}/?jumpTarget=";
                 urlS = "{% if search is not empty %}&search={{search}}&options={{search_options}}{% endif %}"
                 url = urlP+val+urlS
                 Turbolinks.visit(url+'&sort={{ sort }}', { action: "replace" });
@@ -71,7 +72,7 @@
             <button class="nav-link rounded-r-md"
                     @mouseenter.once="
                         $fetch(url)
-                        .then(t => initialsData = t.data.data)
+                        .then(t => initialsData = t.data)
                         .then($watch('selectedInitial', () => {visit4Jump(selectedInitial)}))
                         "
                     @click="open"

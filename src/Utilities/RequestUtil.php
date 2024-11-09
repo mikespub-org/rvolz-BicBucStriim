@@ -44,17 +44,6 @@ class RequestUtil
     }
 
     /**
-     * See https://github.com/slimphp/Slim/blob/2.x/Slim/Http/Request.php#L166
-     * Is this an AJAX request?
-     * @deprecated 3.5.0 use isXhr() instead - see slim/http
-     * @return bool
-     */
-    public function isAjax()
-    {
-        return $this->isXhr();
-    }
-
-    /**
      * See https://github.com/slimphp/Slim/blob/2.x/Slim/Http/Request.php#L181
      * See https://github.com/slimphp/Slim-Http/blob/master/src/ServerRequest.php#L765
      */
@@ -337,7 +326,7 @@ class RequestUtil
         if (!empty($params)) {
             if ($method === 'GET') {
                 $serverRequest = $serverRequest->withQueryParams($params);
-            } elseif ($method === 'POST') {
+            } elseif ($method === 'POST' || $method === 'PUT') {
                 $serverRequest = $serverRequest->withParsedBody($params);
             } else {
                 $serverRequest = $serverRequest->withAttribute('body', $params);

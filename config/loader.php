@@ -17,12 +17,6 @@ $gConfig['endpoint'] = $_SERVER['SCRIPT_NAME'] ?? null;
 $gConfig['app_name'] = 'EPub Loader';
 
 /**
- * Application version
- * @deprecated 3.5.1 see Config::VERSION
- */
-//$gConfig['version'] = '3.5';
-
-/**
  * Admin email
  */
 $gConfig['admin_email'] = '';
@@ -56,12 +50,6 @@ $gConfig['cache_dir'] = dirname(__DIR__) . '/tests/cache';
 $gConfig['databases'] = [];
 $gConfig['databases'][] = ['name' => 'Test Library 2', 'db_path' => dirname(__DIR__) . '/tests/fixtures/lib2', 'epub_path' => '.'];
 $gConfig['databases'][] = ['name' => 'Test Library 4', 'db_path' => dirname(__DIR__) . '/tests/fixtures/lib4', 'epub_path' => '.'];
-
-/**
- * Available actions
- * @deprecated 3.3.0 use action groups instead
- */
-$gConfig['actions'] = [];
 
 /**
  * Available action groups

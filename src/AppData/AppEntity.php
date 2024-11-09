@@ -83,7 +83,7 @@ class AppEntity
      * @param bool|int 	$clipped 	true = image should be clipped, else stuffed
      * @return ?Artefact artefact with file name of the thumbnail image, or null
      */
-    public function setImage($imageUrl, $clipped)
+    public function saveThumbnail($imageUrl, $clipped)
     {
         [$file, $mime] = ImageUtil::downloadImage($imageUrl);
         if (empty($file)) {

@@ -20,64 +20,64 @@ class OpdsActionsTest extends PHPUnit\Framework\TestCase
             //    method(s), path, ...middleware(s), callable with '$self' string
             //],
             // for html output specify the expected content text
-            'opdsRoot' => [
+            'opds-home' => [
                 [], '<title>BicBucStriim Root Catalog</title>',
                 'GET', '/opds/', ['$self', 'opdsRoot'],
             ],
-            'opdsNewest' => [
+            'opds-newest' => [
                 [], '<title>By Newest</title>',
                 'GET', '/opds/newest/', ['$self', 'opdsNewest'],
             ],
-            'opdsByTitle' => [
+            'opds-title-page' => [
                 ['page' => 0], '<title>By Title</title>',
                 'GET', '/opds/titleslist/{page}/', ['$self', 'opdsByTitle'],
             ],
-            'opdsByAuthorInitial' => [
+            'opds-author-initials' => [
                 [], '<title>By Author</title>',
                 'GET', '/opds/authorslist/', ['$self', 'opdsByAuthorInitial'],
             ],
-            'opdsByAuthorNamesForInitial' => [
+            'opds-author-names' => [
                 ['initial' => 'R'], '<title>All Authors for &quot;R&quot;</title>',
                 'GET', '/opds/authorslist/{initial}/', ['$self', 'opdsByAuthorNamesForInitial'],
             ],
-            'opdsByAuthor' => [
+            'opds-author-page' => [
                 ['initial' => 'R', 'id' => 9, 'page' => 0], '<title>All books by &quot;Rainer Maria Rilke&quot;</title>',
                 'GET', '/opds/authorslist/{initial}/{id}/{page}/', ['$self', 'opdsByAuthor'],
             ],
-            'opdsByTagInitial' => [
+            'opds-tag-initials' => [
                 [], '<title>By Tag</title>',
                 'GET', '/opds/tagslist/', ['$self', 'opdsByTagInitial'],
             ],
-            'opdsByTagNamesForInitial' => [
+            'opds-tag-names' => [
                 ['initial' => 'A'], '<title>All tags for &quot;A&quot;</title>',
                 'GET', '/opds/tagslist/{initial}/', ['$self', 'opdsByTagNamesForInitial'],
             ],
-            'opdsByTag' => [
+            'opds-tag-page' => [
                 ['initial' => 'A', 'id' => 21, 'page' => 0], '<title>All books for tag &quot;Architecture&quot;</title>',
                 'GET', '/opds/tagslist/{initial}/{id}/{page}/', ['$self', 'opdsByTag'],
             ],
-            'opdsBySeriesInitial' => [
+            'opds-series-initials' => [
                 [], '<title>By Series</title>',
                 'GET', '/opds/serieslist/', ['$self', 'opdsBySeriesInitial'],
             ],
-            'opdsBySeriesNamesForInitial' => [
+            'opds-series-names' => [
                 ['initial' => 'S'], '<title>All series for &quot;S&quot;</title>',
                 'GET', '/opds/serieslist/{initial}/', ['$self', 'opdsBySeriesNamesForInitial'],
             ],
-            'opdsBySeries' => [
+            'opds-series-page' => [
                 ['initial' => 'S', 'id' => 1, 'page' => 0], '<title>All books for series &quot;Serie Grimmelshausen&quot;</title>',
                 'GET', '/opds/serieslist/{initial}/{id}/{page}/', ['$self', 'opdsBySeries'],
             ],
-            'opdsSearchDescriptor' => [
+            'opds-opensearch' => [
                 [], '<OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/">',
                 'GET', '/opds/opensearch.xml', ['$self', 'opdsSearchDescriptor'],
             ],
-            'opdsBySearch' => [
+            'opds-search-page' => [
                 ['page' => 0, 'search' => 'der'], '<title>By Search: der</title>',
                 'GET', '/opds/searchlist/{page}/', ['$self', 'opdsBySearch'],
             ],
             // for redirect etc. specify the expected header(s)
-            'opdsLogout' => [
+            'opds-logout' => [
                 [], ['WWW-Authenticate' => 'Basic realm="BicBucStriim"'],
                 'GET', '/opds/logout/', ['$self', 'opdsLogout'],
             ],

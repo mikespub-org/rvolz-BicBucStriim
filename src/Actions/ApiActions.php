@@ -27,14 +27,13 @@ class ApiActions extends DefaultActions
      */
     public static function addRoutes($app, $prefix = '/api', $gatekeeper = null)
     {
-        //$self = new self($app);
         $self = static::class;
         $routes = static::getRoutes($self, $gatekeeper);
         $app->group($prefix, function (\Slim\Routing\RouteCollectorProxy $group) use ($routes) {
             RouteUtil::mapRoutes($group, $routes);
         });
         // return CORS options for any route(s)
-        //['OPTIONS', '/{routes:.*}', [$self, 'corsOptions']],
+        //'corsOptions' => ['OPTIONS', '/{routes:.*}', [$self, 'corsOptions']],
         $app->map(['OPTIONS'], '/{routes:.*}', [$self, 'corsOptions']);
     }
 
@@ -47,10 +46,10 @@ class ApiActions extends DefaultActions
     public static function getRoutes($self, $gatekeeper = null)
     {
         return [
-            // method(s), path, ...middleware(s), callable
-            ['GET', '/', [$self, 'home']],
-            ['GET', '/routes', [$self, 'routes']],
-            ['GET', '/openapi.json', [$self, 'openapi']],
+            // name => method(s), path, ...middleware(s), callable
+            'api-home' => ['GET', '/', [$self, 'home']],
+            'api-routes' => ['GET', '/routes', [$self, 'routes']],
+            'api-openapi' => ['GET', '/openapi.json', [$self, 'openapi']],
         ];
     }
 

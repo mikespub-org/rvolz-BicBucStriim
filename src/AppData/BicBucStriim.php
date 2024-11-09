@@ -91,16 +91,12 @@ class BicBucStriim
      */
     public function createDataDb($dataPath = 'data/data.db')
     {
-        $schema = file($this->dataDir . '/schema.sql');
+        $schema = file_get_contents($this->dataDir . '/schema.sql');
         $this->mydb = new PDO('sqlite:' . $dataPath, null, null, []);
         //$this->mydb->setAttribute(1002, 'SET NAMES utf8');
         $this->mydb->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $this->mydb->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
-        for ($i = 0; $i < count($schema); $i++) {
-            if (strpos($schema[$i], '--') == false) {
-                $this->mydb->exec($schema[$i]);
-            }
-        }
+        $this->mydb->exec($schema);
         $mdp = password_hash('admin', PASSWORD_BCRYPT);
         $this->mydb->exec('insert into user (username, password, role) values ("admin", "' . $mdp . '",1)');
         $this->mydb->exec('insert into config (name, val) values ("db_version", "3")');

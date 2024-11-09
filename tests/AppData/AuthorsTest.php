@@ -73,7 +73,7 @@ class AuthorsTest extends PHPUnit\Framework\TestCase
 
     public function testEditAuthorThumbnail(): void
     {
-        $this->assertNotNull($this->bbs->editAuthorThumbnail(1, 'Author Name', true, 'tests/fixtures/author1.jpg', 'image/jpeg'));
+        $this->assertNotNull($this->bbs->author(1, 'Author Name')->editThumbnail(true, 'tests/fixtures/author1.jpg', 'image/jpeg'));
         $this->assertTrue(file_exists(self::$data . '/authors/author_1_thm.png'));
         $result2 = $this->bbs->getCalibreAuthor(1);
         $this->assertEquals('Author Name', $result2->cname);
@@ -88,9 +88,9 @@ class AuthorsTest extends PHPUnit\Framework\TestCase
 
     public function testGetAuthorThumbnail(): void
     {
-        $this->assertNotNull($this->bbs->editAuthorThumbnail(1, 'Author Name', true, 'tests/fixtures/author1.jpg', 'image/jpeg'));
+        $this->assertNotNull($this->bbs->author(1, 'Author Name')->editThumbnail(true, 'tests/fixtures/author1.jpg', 'image/jpeg'));
         $this->assertNotNull($this->bbs->author(2, 'Author Name')->editThumbnail(true, 'tests/fixtures/author1.jpg', 'image/jpeg'));
-        $result = $this->bbs->getAuthorThumbnail(1);
+        $result = $this->bbs->authorThumbnail(1);
         $this->assertNotNull($result);
         $this->assertEquals(DataConstants::AUTHOR_TYPE, $result->atype);
         $this->assertEquals('./tests/data/authors/author_1_thm.png', $result->url);
@@ -100,11 +100,11 @@ class AuthorsTest extends PHPUnit\Framework\TestCase
 
     public function testDeleteAuthorThumbnail(): void
     {
-        $this->assertNotNull($this->bbs->editAuthorThumbnail(1, 'Author Name', true, 'tests/fixtures/author1.jpg', 'image/jpeg'));
-        $this->assertNotNull($this->bbs->getAuthorThumbnail(1));
-        $this->assertTrue($this->bbs->deleteAuthorThumbnail(1));
+        $this->assertNotNull($this->bbs->author(1, 'Author Name')->editThumbnail(true, 'tests/fixtures/author1.jpg', 'image/jpeg'));
+        $this->assertNotNull($this->bbs->authorThumbnail(1));
+        $this->assertTrue($this->bbs->author(1)->deleteThumbnail());
         $this->assertFalse(file_exists(self::$data . '/authors/author_1_thm.png'));
-        $this->assertNull($this->bbs->getAuthorThumbnail(1));
+        $this->assertNull($this->bbs->authorThumbnail(1));
         $this->assertNotNull($this->bbs->author(2, 'Author Name')->editThumbnail(true, 'tests/fixtures/author1.jpg', 'image/jpeg'));
         $this->assertNotNull($this->bbs->author(2)->getThumbnail());
         $this->assertTrue($this->bbs->author(2)->deleteThumbnail());
@@ -118,7 +118,7 @@ class AuthorsTest extends PHPUnit\Framework\TestCase
     {
         $this->assertEquals(0, count($this->bbs->authorLinks(1)));
         $this->bbs->author(2, 'Author 1')->addLink('google', 'http://google.com/1');
-        $this->bbs->addAuthorLink(1, 'Author 2', 'amazon', 'http://amazon.com/2');
+        $this->bbs->author(1, 'Author 2')->addLink('amazon', 'http://amazon.com/2');
         $links = $this->bbs->authorLinks(1);
         $this->assertEquals(2, R::count('link'));
         $this->assertEquals(1, count($links));
@@ -132,7 +132,7 @@ class AuthorsTest extends PHPUnit\Framework\TestCase
         $this->assertEquals('google', $links[0]->label);
         $this->assertEquals('http://google.com/1', $links[0]->url);
         $this->assertEquals(1, $links[0]->id);
-        $this->assertTrue($this->bbs->deleteAuthorLink(1, 2));
+        $this->assertTrue($this->bbs->author(1)->deleteLink(2));
         $this->assertEquals(0, count($this->bbs->authorLinks(1)));
         $this->assertEquals(1, R::count('link'));
         $this->assertTrue($this->bbs->author(2)->deleteLink(1));
@@ -143,8 +143,8 @@ class AuthorsTest extends PHPUnit\Framework\TestCase
     public function testAuthorNote(): void
     {
         $this->assertNull($this->bbs->authorNote(1));
-        $this->bbs->editAuthorNote(2, 'Author 1', 'text/plain', 'Goodbye, goodbye!');
-        $this->bbs->editAuthorNote(1, 'Author 2', 'text/plain', 'Hello again!');
+        $this->bbs->author(2, 'Author 1')->editNote('text/plain', 'Goodbye, goodbye!');
+        $this->bbs->author(1, 'Author 2')->editNote('text/plain', 'Hello again!');
         $this->assertEquals(2, R::count('note'));
         $note = $this->bbs->authorNote(1);
         $this->assertNotNull($note);
@@ -152,10 +152,10 @@ class AuthorsTest extends PHPUnit\Framework\TestCase
         $this->assertEquals('text/plain', $note->mime);
         $this->assertEquals('Hello again!', $note->ntext);
         $this->assertEquals(2, $note->id);
-        $note = $this->bbs->editAuthorNote(1, 'Author 2', 'text/markdown', '*Hello again!*');
+        $note = $this->bbs->author(1, 'Author 2')->editNote('text/markdown', '*Hello again!*');
         $this->assertEquals('text/markdown', $note->mime);
         $this->assertEquals('*Hello again!*', $note->ntext);
-        $this->assertTrue($this->bbs->deleteAuthorNote(1));
+        $this->assertTrue($this->bbs->author(1)->deleteNote());
         $this->assertEquals(1, R::count('note'));
     }
 }

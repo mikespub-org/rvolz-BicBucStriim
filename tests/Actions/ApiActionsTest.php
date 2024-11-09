@@ -12,7 +12,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 class ApiActionsTest extends PHPUnit\Framework\TestCase
 {
     // @todo update when route count changes
-    public const ROUTE_COUNT = 63;
+    public const ROUTE_COUNT = 64;
 
     #[\PHPUnit\Framework\Attributes\PreserveGlobalState(false)]
     #[\PHPUnit\Framework\Attributes\RunInSeparateProcess]

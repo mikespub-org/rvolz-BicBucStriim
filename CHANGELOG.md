@@ -6,14 +6,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [3.x.x] - 20xx-xx-xx
 ### Added
+- Support callback from EPub Loader to set author, book or series info in BBS data.db
 - Show Calibre link & notes as alternative to links & notes stored in BBS data.db
-- Add warning if database version is out of date - upgrade it with Calibre v6.15+
+- Add warning if Calibre DB version is out of date - upgrade it with Calibre v6.15+
 - Add ExtraActions class with EPub Loader under /extra/ (dev only)
 ### Changed
+- Rename actions methods to camelCase and add route names
+- Fix updating id templates in admin + add admin action tests
+- Refactor AppData classes with entities and traits
 - Fix uploading author thumbnail + show BBS author notes if any
 - Run tests in separate process for LoginMiddleware - see auraphp/Aura.Session#80
 - Migrate phpunit.xml.dist to phpunit 11.x format
 - Update aura/session package to recent release 4.0
+### Removed
+- Drop deprecated methods for releases older than 3.6.0
+- Clean up ActionsCallableResolver deprecated since 3.4.1
 
 ## [3.5.2] - 2024-10-21 Fix OPDS book download for Thorium
 ### Added

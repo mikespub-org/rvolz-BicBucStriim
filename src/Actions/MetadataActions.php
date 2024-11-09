@@ -25,7 +25,6 @@ class MetadataActions extends DefaultActions
      */
     public static function addRoutes($app, $prefix = '/metadata', $gatekeeper = null)
     {
-        //$self = new self($app);
         $self = static::class;
         $routes = static::getRoutes($self, $gatekeeper);
         // use $gatekeeper for all actions in this group
@@ -43,17 +42,17 @@ class MetadataActions extends DefaultActions
     public static function getRoutes($self, $gatekeeper = null)
     {
         return [
-            // method(s), path, ...middleware(s), callable
-            ['POST', '/authors/{id}/thumbnail/', [$self, 'edit_author_thm']],
-            ['DELETE', '/authors/{id}/thumbnail/', [$self, 'del_author_thm']],
-            ['POST', '/authors/{id}/notes/', [$self, 'edit_author_notes']],
-            ['DELETE', '/authors/{id}/notes/', [$self, 'del_author_notes']],
-            ['POST', '/authors/{id}/links/', [$self, 'new_author_link']],
-            ['DELETE', '/authors/{id}/links/{link}/', [$self, 'del_author_link']],
-            ['POST', '/series/{id}/notes/', [$self, 'edit_series_notes']],
-            ['DELETE', '/series/{id}/notes/', [$self, 'del_series_notes']],
-            ['POST', '/series/{id}/links/', [$self, 'new_series_link']],
-            ['DELETE', '/series/{id}/links/{link}/', [$self, 'del_series_link']],
+            // name => method(s), path, ...middleware(s), callable
+            'meta-author-thumb-post' => ['POST', '/authors/{id}/thumbnail/', [$self, 'editAuthorThumbnail']],
+            'meta-author-thumb-delete' => ['DELETE', '/authors/{id}/thumbnail/', [$self, 'delAuthorThumbnail']],
+            'meta-author-note-post' => ['POST', '/authors/{id}/notes/', [$self, 'editAuthorNote']],
+            'meta-author-note-delete' => ['DELETE', '/authors/{id}/notes/', [$self, 'delAuthorNote']],
+            'meta-author-link-post' => ['POST', '/authors/{id}/links/', [$self, 'newAuthorLink']],
+            'meta-author-link-delete' => ['DELETE', '/authors/{id}/links/{link}/', [$self, 'delAuthorLink']],
+            'meta-series-note-post' => ['POST', '/series/{id}/notes/', [$self, 'editSeriesNotes']],
+            'meta-series-note-delete' => ['DELETE', '/series/{id}/notes/', [$self, 'delSeriesNotes']],
+            'meta-series-link-post' => ['POST', '/series/{id}/links/', [$self, 'newSeriesLink']],
+            'meta-series-link-delete' => ['DELETE', '/series/{id}/links/{link}/', [$self, 'delSeriesLink']],
         ];
     }
 
@@ -62,13 +61,13 @@ class MetadataActions extends DefaultActions
      * Works only with JPG/PNG, max. size 3MB
      * @return Response
      */
-    public function edit_author_thm($id)
+    public function editAuthorThumbnail($id)
     {
         $settings = $this->settings();
 
         // parameter checking
         if (!is_numeric($id)) {
-            $this->log()->warning('edit_author_thm: invalid author id ' . $id);
+            $this->log()->warning('editAuthorThumbnail: invalid author id ' . $id);
             return $this->responder->error(400, "Bad parameter");
         }
 
@@ -76,7 +75,7 @@ class MetadataActions extends DefaultActions
         $file = $this->requester->files('file');
         $root = $this->requester->getBasePath();
         if (empty($file)) {
-            $this->log()->debug('edit_author_thm: upload error ' . 'file is empty');
+            $this->log()->debug('editAuthorThumbnail: upload error ' . 'file is empty');
             $this->setFlash('error', $this->getMessageString('author_thumbnail_upload_error1') . ': ' . 'file is empty');
             return $this->responder->redirect($root . '/authors/' . $id . '/0/');
         }
@@ -90,7 +89,7 @@ class MetadataActions extends DefaultActions
         #$temp = explode(".", $file["name"]);
         #$extension = end($temp);
         $extension = pathinfo($name, PATHINFO_EXTENSION);
-        $this->log()->debug('edit_author_thm: ' . $name);
+        $this->log()->debug('editAuthorThumbnail: ' . $name);
         if ((($type == "image/jpeg")
                 || ($type == "image/jpg")
                 || ($type == "image/pjpeg")
@@ -99,9 +98,9 @@ class MetadataActions extends DefaultActions
             && ($size < 3145728)
             && in_array($extension, $allowedExts)
         ) {
-            $this->log()->debug('edit_author_thm: filetype ' . $type . ', size ' . $size);
+            $this->log()->debug('editAuthorThumbnail: filetype ' . $type . ', size ' . $size);
             if ($error > 0) {
-                $this->log()->debug('edit_author_thm: upload error ' . $error);
+                $this->log()->debug('editAuthorThumbnail: upload error ' . $error);
                 $this->setFlash('error', $this->getMessageString('author_thumbnail_upload_error1') . ': ' . $error);
                 return $this->responder->redirect($root . '/authors/' . $id . '/0/');
             }
@@ -109,18 +108,18 @@ class MetadataActions extends DefaultActions
                 $tmpfile = tempnam(sys_get_temp_dir(), 'BBS');
                 $file->moveTo($tmpfile);
             } catch (Exception $e) {
-                $this->log()->debug('edit_author_thm: moveTo error ' . $e->getMessage());
+                $this->log()->debug('editAuthorThumbnail: moveTo error ' . $e->getMessage());
                 $this->setFlash('error', $this->getMessageString('author_thumbnail_upload_error1') . ': ' . $e->getMessage());
                 return $this->responder->redirect($root . '/authors/' . $id . '/0/');
             }
-            $this->log()->debug('edit_author_thm: upload ok, converting');
+            $this->log()->debug('editAuthorThumbnail: upload ok, converting');
             // we need the author name to create the calibre entity if needed
             $author = $this->calibre()->author($id);
             $artefact = $this->bbs()->author($id, $author->name)->editThumbnail($settings->thumb_gen_clipped, $tmpfile, $type);
-            $this->log()->debug('edit_author_thm: converted, redirecting');
+            $this->log()->debug('editAuthorThumbnail: converted, redirecting');
             return $this->responder->redirect($root . '/authors/' . $id . '/0/');
         }
-        $this->log()->warning('edit_author_thm: Uploaded thumbnail too big or wrong type');
+        $this->log()->warning('editAuthorThumbnail: Uploaded thumbnail too big or wrong type');
         $this->setFlash('error', $this->getMessageString('author_thumbnail_upload_error2'));
         return $this->responder->redirect($root . '/authors/' . $id . '/0/');
     }
@@ -129,15 +128,15 @@ class MetadataActions extends DefaultActions
      * Delete the author's thumbnail -> DELETE /metadata/authors/{id}/thumbnail/ JSON
      * @return Response
      */
-    public function del_author_thm($id)
+    public function delAuthorThumbnail($id)
     {
         // parameter checking
         if (!is_numeric($id)) {
-            $this->log()->warning('del_author_thm: invalid author id ' . $id);
+            $this->log()->warning('delAuthorThumbnail: invalid author id ' . $id);
             return $this->responder->error(400, "Bad parameter");
         }
 
-        $this->log()->debug('del_author_thm: ' . $id);
+        $this->log()->debug('delAuthorThumbnail: ' . $id);
         $del = $this->bbs()->author($id)->deleteThumbnail();
         if ($del) {
             $msg = $this->getMessageString('admin_modified');
@@ -153,17 +152,17 @@ class MetadataActions extends DefaultActions
      * Edit the notes about the author -> POST /metadata/authors/{id}/notes/ JSON
      * @return Response
      */
-    public function edit_author_notes($id)
+    public function editAuthorNote($id)
     {
         // parameter checking
         if (!is_numeric($id)) {
-            $this->log()->warning('edit_author_notes: invalid author id ' . $id);
+            $this->log()->warning('editAuthorNote: invalid author id ' . $id);
             return $this->responder->error(400, "Bad parameter");
         }
 
-        $this->log()->debug('edit_author_notes: ' . $id);
+        $this->log()->debug('editAuthorNote: ' . $id);
         $note_data = $this->requester->post();
-        $this->log()->debug('edit_author_notes: note ' . var_export($note_data, true));
+        $this->log()->debug('editAuthorNote: note ' . var_export($note_data, true));
         try {
             $markdownParser = new MarkdownExtra();
             $html = $markdownParser->transform($note_data['ntext']);
@@ -171,8 +170,8 @@ class MetadataActions extends DefaultActions
             $author = $this->calibre()->author($id);
             $note = $this->bbs()->author($id, $author->name)->editNote($note_data['mime'], $note_data['ntext']);
         } catch (Exception $e) {
-            $this->log()->error('edit_author_notes: error for editing note ' . var_export($note_data, true));
-            $this->log()->error('edit_author_notes: exception ' . $e->getMessage());
+            $this->log()->error('editAuthorNote: error for editing note ' . var_export($note_data, true));
+            $this->log()->error('editAuthorNote: exception ' . $e->getMessage());
             $html = null;
             $note = null;
         }
@@ -192,15 +191,15 @@ class MetadataActions extends DefaultActions
      * Delete notes about the author -> DELETE /metadata/authors/{id}/notes/ JSON
      * @return Response
      */
-    public function del_author_notes($id)
+    public function delAuthorNote($id)
     {
         // parameter checking
         if (!is_numeric($id)) {
-            $this->log()->warning('del_author_notes: invalid author id ' . $id);
+            $this->log()->warning('delAuthorNote: invalid author id ' . $id);
             return $this->responder->error(400, "Bad parameter");
         }
 
-        $this->log()->debug('del_author_notes: ' . $id);
+        $this->log()->debug('delAuthorNote: ' . $id);
         $del = $this->bbs()->author($id)->deleteNote();
         if ($del) {
             $msg = $this->getMessageString('admin_modified');
@@ -216,16 +215,16 @@ class MetadataActions extends DefaultActions
      * Add a new author link -> POST /metadata/authors/{id}/links JSON
      * @return Response
      */
-    public function new_author_link($id)
+    public function newAuthorLink($id)
     {
         // parameter checking
         if (!is_numeric($id)) {
-            $this->log()->warning('new_author_link: invalid author id ' . $id);
+            $this->log()->warning('newAuthorLink: invalid author id ' . $id);
             return $this->responder->error(400, "Bad parameter");
         }
 
         $link_data = $this->requester->post();
-        $this->log()->debug('new_author_link: ' . var_export($link_data, true));
+        $this->log()->debug('newAuthorLink: ' . var_export($link_data, true));
         // we need the author name to create the calibre entity if needed
         $author = $this->calibre()->author($id);
         $link = null;
@@ -246,15 +245,15 @@ class MetadataActions extends DefaultActions
      * Delete an author link -> DELETE /metadata/authors/{id}/links/{link}/ JSON
      * @return Response
      */
-    public function del_author_link($id, $link)
+    public function delAuthorLink($id, $link)
     {
         // parameter checking
         if (!is_numeric($id) || !is_numeric($link)) {
-            $this->log()->warning('del_author_link: invalid author id ' . $id . ' or link id ' . $link);
+            $this->log()->warning('delAuthorLink: invalid author id ' . $id . ' or link id ' . $link);
             return $this->responder->error(400, "Bad parameter");
         }
 
-        $this->log()->debug('del_author_link: author ' . $id . ', link ' . $link);
+        $this->log()->debug('delAuthorLink: author ' . $id . ', link ' . $link);
         $ret = $this->bbs()->author($id)->deleteLink($link);
         if ($ret) {
             $msg = $this->getMessageString('admin_modified');
@@ -270,17 +269,17 @@ class MetadataActions extends DefaultActions
      * Edit the notes about the series -> POST /metadata/series/{id}/notes/ JSON
      * @return Response
      */
-    public function edit_series_notes($id)
+    public function editSeriesNotes($id)
     {
         // parameter checking
         if (!is_numeric($id)) {
-            $this->log()->warning('edit_series_notes: invalid series id ' . $id);
+            $this->log()->warning('editSeriesNotes: invalid series id ' . $id);
             return $this->responder->error(400, "Bad parameter");
         }
 
-        $this->log()->debug('edit_series_notes: ' . $id);
+        $this->log()->debug('editSeriesNotes: ' . $id);
         $note_data = $this->requester->post();
-        $this->log()->debug('edit_series_notes: note ' . var_export($note_data, true));
+        $this->log()->debug('editSeriesNotes: note ' . var_export($note_data, true));
         try {
             $markdownParser = new MarkdownExtra();
             $html = $markdownParser->transform($note_data['ntext']);
@@ -288,8 +287,8 @@ class MetadataActions extends DefaultActions
             $series = $this->calibre()->series($id);
             $note = $this->bbs()->series($id, $series->name)->editNote($note_data['mime'], $note_data['ntext']);
         } catch (Exception $e) {
-            $this->log()->error('edit_series_notes: error for editing note ' . var_export($note_data, true));
-            $this->log()->error('edit_series_notes: exception ' . $e->getMessage());
+            $this->log()->error('editSeriesNotes: error for editing note ' . var_export($note_data, true));
+            $this->log()->error('editSeriesNotes: exception ' . $e->getMessage());
             $html = null;
             $note = null;
         }
@@ -309,15 +308,15 @@ class MetadataActions extends DefaultActions
      * Delete notes about the series -> DELETE /metadata/series/{id}/notes/ JSON
      * @return Response
      */
-    public function del_series_notes($id)
+    public function delSeriesNotes($id)
     {
         // parameter checking
         if (!is_numeric($id)) {
-            $this->log()->warning('del_series_notes: invalid series id ' . $id);
+            $this->log()->warning('delSeriesNotes: invalid series id ' . $id);
             return $this->responder->error(400, "Bad parameter");
         }
 
-        $this->log()->debug('del_series_notes: ' . $id);
+        $this->log()->debug('delSeriesNotes: ' . $id);
         $del = $this->bbs()->series($id)->deleteNote();
         if ($del) {
             $msg = $this->getMessageString('admin_modified');
@@ -333,16 +332,16 @@ class MetadataActions extends DefaultActions
      * Add a new series link -> POST /metadata/series/{id}/links JSON
      * @return Response
      */
-    public function new_series_link($id)
+    public function newSeriesLink($id)
     {
         // parameter checking
         if (!is_numeric($id)) {
-            $this->log()->warning('new_series_link: invalid series id ' . $id);
+            $this->log()->warning('newSeriesLink: invalid series id ' . $id);
             return $this->responder->error(400, "Bad parameter");
         }
 
         $link_data = $this->requester->post();
-        $this->log()->debug('new_series_link: ' . var_export($link_data, true));
+        $this->log()->debug('newSeriesLink: ' . var_export($link_data, true));
         // we need the series name to create the calibre entity if needed
         $series = $this->calibre()->series($id);
         $link = null;
@@ -363,15 +362,15 @@ class MetadataActions extends DefaultActions
      * Delete an series link -> DELETE /metadata/series/{id}/links/{link}/ JSON
      * @return Response
      */
-    public function del_series_link($id, $link)
+    public function delSeriesLink($id, $link)
     {
         // parameter checking
         if (!is_numeric($id) || !is_numeric($link)) {
-            $this->log()->warning('del_series_link: invalid series id ' . $id . ' or link id ' . $link);
+            $this->log()->warning('delSeriesLink: invalid series id ' . $id . ' or link id ' . $link);
             return $this->responder->error(400, "Bad parameter");
         }
 
-        $this->log()->debug('del_series_link: series ' . $id . ', link ' . $link);
+        $this->log()->debug('delSeriesLink: series ' . $id . ', link ' . $link);
         $ret = $this->bbs()->series($id)->deleteLink($link);
         if ($ret) {
             $msg = $this->getMessageString('admin_modified');

@@ -32,9 +32,7 @@ class MainActions extends DefaultActions
      */
     public static function addRoutes($app, $prefix = null, $gatekeeper = null)
     {
-        //$self = new self($app);
         $self = static::class;
-        //$app->notFound([$self, 'myNotFound']);
         $routes = static::getRoutes($self, $gatekeeper);
         RouteUtil::mapRoutes($app, $routes);
     }
@@ -48,37 +46,38 @@ class MainActions extends DefaultActions
     public static function getRoutes($self, $gatekeeper = null)
     {
         return [
-            // method(s), path, ...middleware(s), callable
-            ['GET', '/', [$self, 'main']],
-            ['GET', '/login/', [$self, 'show_login']],
-            ['POST', '/login/', [$self, 'perform_login']],
-            ['GET', '/logout/', [$self, 'logout']],
-            // use $gatekeeper for individual routes here
-            ['GET', '/authors/{id}/notes/', $gatekeeper, [$self, 'authorNotes']],
-            //['POST', '/authors/{id}/notes/', $gatekeeper, [$self, 'authorNotesEdit']],
-            ['GET', '/authors/{id}/{page}/', [$self, 'authorDetailsSlice']],
-            ['GET', '/authorslist/{page}/', [$self, 'authorsSlice']],
-            ['GET', '/search/', [$self, 'globalSearch']],
-            ['GET', '/series/{id}/{page}/', [$self, 'seriesDetailsSlice']],
-            ['GET', '/serieslist/{page}/', [$self, 'seriesSlice']],
-            ['GET', '/tags/{id}/{page}/', [$self, 'tagDetailsSlice']],
-            ['GET', '/tagslist/{page}/', [$self, 'tagsSlice']],
-            ['GET', '/titles/{id}/', [$self, 'title']],
-            ['GET', '/titles/{id}/cover/', [$self, 'cover']],
-            ['GET', '/titles/{id}/file/{file}', [$self, 'book']],
-            ['POST', '/titles/{id}/kindle/{file}', [$self, 'kindle']],
-            ['GET', '/titles/{id}/thumbnail/', [$self, 'thumbnail']],
-            ['GET', '/titleslist/{page}/', [$self, 'titlesSlice']],
+            // name => method(s), path, ...middleware(s), callable
+            'main-home' => ['GET', '/', [$self, 'main']],
+            'main-login' => ['GET', '/login/', [$self, 'showLogin']],
+            'main-login-post' => ['POST', '/login/', [$self, 'performLogin']],
+            'main-logout' => ['GET', '/logout/', [$self, 'logout']],
+            // use $gatekeeper for individual routes here - @todo move to MetadataActions?
+            'main-author-note' => ['GET', '/authors/{id}/notes/', $gatekeeper, [$self, 'authorNotes']],
+            'main-author-v1' => ['GET', '/authors/{id}/{page}/', [$self, 'authorDetailsSlice']],
+            'main-authors-v1' => ['GET', '/authorslist/{page}/', [$self, 'authorsSlice']],
+            'main-search' => ['GET', '/search/', [$self, 'globalSearch']],
+            'main-serie-v1' => ['GET', '/series/{id}/{page}/', [$self, 'seriesDetailsSlice']],
+            'main-series-v1' => ['GET', '/serieslist/{page}/', [$self, 'seriesSlice']],
+            'main-tag-v1' => ['GET', '/tags/{id}/{page}/', [$self, 'tagDetailsSlice']],
+            'main-tags-v1' => ['GET', '/tagslist/{page}/', [$self, 'tagsSlice']],
+            'main-title' => ['GET', '/titles/{id}/', [$self, 'title']],
+            'main-cover-v1' => ['GET', '/titles/{id}/cover/', [$self, 'cover']],
+            'main-book' => ['GET', '/titles/{id}/file/{file}', [$self, 'book']],
+            'main-kindle' => ['POST', '/titles/{id}/kindle/{file}', [$self, 'kindle']],
+            'main-thumbnail-v1' => ['GET', '/titles/{id}/thumbnail/', [$self, 'thumbnail']],
+            'main-titles-v1' => ['GET', '/titleslist/{page}/', [$self, 'titlesSlice']],
             // temporary routes for the tailwind templates (= based on the v2.x frontend)
-            ['GET', '/authors/', [$self, 'authorsSlice']],
-            ['GET', '/authors/{id}/', [$self, 'authorDetailsSlice']],
-            ['GET', '/series/', [$self, 'seriesSlice']],
-            ['GET', '/series/{id}/', [$self, 'seriesDetailsSlice']],
-            ['GET', '/tags/', [$self, 'tagsSlice']],
-            ['GET', '/tags/{id}/', [$self, 'tagDetailsSlice']],
-            ['GET', '/titles/', [$self, 'titlesSlice']],
-            ['GET', '/static/covers/{id}/', [$self, 'cover']],
-            ['GET', '/static/titlethumbs/{id}/', [$self, 'thumbnail']],
+            'main-authors-v2' => ['GET', '/authors/', [$self, 'authorsSlice']],
+            'main-author-v2' => ['GET', '/authors/{id}/', [$self, 'authorDetailsSlice']],
+            'main-series-v2' => ['GET', '/series/', [$self, 'seriesSlice']],
+            'main-serie-v2' => ['GET', '/series/{id}/', [$self, 'seriesDetailsSlice']],
+            'main-tags-v2' => ['GET', '/tags/', [$self, 'tagsSlice']],
+            'main-tag-v2' => ['GET', '/tags/{id}/', [$self, 'tagDetailsSlice']],
+            'main-titles-v2' => ['GET', '/titles/', [$self, 'titlesSlice']],
+            'main-cover-v2' => ['GET', '/static/covers/{id}/', [$self, 'cover']],
+            'main-thumbnail-v2' => ['GET', '/static/titlethumbs/{id}/', [$self, 'thumbnail']],
+            // @todo handle jumpTarget for author/series/tag slice if we want to support this
+            'params-scope-type' => ['GET', '/params/{scope}/{type}/', [$self, 'getTailwindParams']],
         ];
     }
 
@@ -86,10 +85,10 @@ class MainActions extends DefaultActions
      * 404 Not Found page for invalid URLs
      * @return Response
      */
-    public function mkNotFound()
+    public function notFound()
     {
         return $this->render('error.twig', [
-            'page' => $this->mkPage('not_found1'),
+            'page' => $this->buildPage('not_found1'),
             'title' => $this->getMessageString('not_found1'),
             'error' => $this->getMessageString('not_found2')]);
     }
@@ -98,14 +97,14 @@ class MainActions extends DefaultActions
      * Show login page
      * @return Response
      */
-    public function show_login()
+    public function showLogin()
     {
         if ($this->requester->isAuthenticated()) {
             $this->log()->info('user is already logged in : ' . $this->requester->getUserName());
             return $this->responder->redirect($this->requester->getBasePath() . '/');
         } else {
             return $this->render('login.twig', [
-                'page' => $this->mkPage('login')]);
+                'page' => $this->buildPage('login')]);
         }
     }
 
@@ -113,7 +112,7 @@ class MainActions extends DefaultActions
      * Perform login page
      * @return Response
      */
-    public function perform_login()
+    public function performLogin()
     {
         $login_data = $this->requester->post();
         $this->log()->debug('login: ' . var_export($login_data, true));
@@ -122,7 +121,7 @@ class MainActions extends DefaultActions
             $upw = $login_data['password'];
             if (empty($uname) || empty($upw)) {
                 return $this->render('login.twig', [
-                    'page' => $this->mkPage('login')]);
+                    'page' => $this->buildPage('login')]);
             } else {
                 try {
                     $this->container('login_service')->login($this->requester->getAuth(), ['username' => $uname, 'password' => $upw]);
@@ -137,11 +136,11 @@ class MainActions extends DefaultActions
                 }
                 $this->log()->error('error logging in user : ' . $login_data['username']);
                 return $this->render('login.twig', [
-                    'page' => $this->mkPage('login')]);
+                    'page' => $this->buildPage('login')]);
             }
         } else {
             return $this->render('login.twig', [
-                'page' => $this->mkPage('login')]);
+                'page' => $this->buildPage('login')]);
         }
     }
 
@@ -162,7 +161,7 @@ class MainActions extends DefaultActions
             }
         }
         return $this->render('logout.twig', [
-            'page' => $this->mkPage('logout')]);
+            'page' => $this->buildPage('logout')]);
     }
 
     /*********************************************************************
@@ -187,7 +186,7 @@ class MainActions extends DefaultActions
             $outdated = sprintf($this->getMessageString('admin_new_version'), $version, $stats['version']);
         }
         return $this->render('index_last30.twig', [
-            'page' => $this->mkPage('dl30', 1, 1),
+            'page' => $this->buildPage('dl30', 1, 1),
             'books' => $books,
             'stats' => $stats,
             'outdated' => $outdated,
@@ -216,7 +215,7 @@ class MainActions extends DefaultActions
         $tls = $this->calibre()->seriesSlice(0, $settings->page_size, trim($search));
         $tls_books = array_map([$this, 'checkThumbnail'], $tls['entries']);
         return $this->render('global_search.twig', [
-            'page' => $this->mkPage('pagination_search', 0),
+            'page' => $this->buildPage('pagination_search', 0),
             'books' => $tlb_books,
             'books_total' => $tlb['total'] == -1 ? 0 : $tlb['total'],
             'more_books' => ($tlb['total'] > $settings->page_size),
@@ -275,7 +274,7 @@ class MainActions extends DefaultActions
 
         $books = array_map([$this, 'checkThumbnail'], $tl['entries']);
         return $this->render('titles.twig', [
-            'page' => $this->mkPage('titles', 2, 1),
+            'page' => $this->buildPage('titles', 2, 1),
             'url' => 'titleslist',
             'books' => $books,
             'curpage' => $tl['page'],
@@ -288,7 +287,7 @@ class MainActions extends DefaultActions
      * Creates a human readable filesize string
      * @return string
      */
-    public function human_filesize($bytes, $decimals = 0)
+    public function humanFilesize($bytes, $decimals = 0)
     {
         $size = ['B','KB','MB','GB','TB','PB','EB','ZB','YB'];
         $factor = floor((strlen($bytes) - 1) / 3);
@@ -305,7 +304,7 @@ class MainActions extends DefaultActions
 
         // Add filter for human readable filesize
         $filter = new TwigFilter('hfsize', function ($string) {
-            return $this->human_filesize($string);
+            return $this->humanFilesize($string);
         });
         $this->twig()->addFilter($filter);
 
@@ -318,12 +317,12 @@ class MainActions extends DefaultActions
         $details = $this->calibre()->titleDetails($settings['lang'], $id);
         if (is_null($details)) {
             $this->log()->warning("title: book not found: " . $id);
-            return $this->mkNotFound();
+            return $this->notFound();
         }
         // for people trying to circumvent filtering by direct access
-        if ($this->title_forbidden($details)) {
+        if ($this->titleForbidden($details)) {
             $this->log()->warning("title: requested book not allowed for user: " . $id);
-            return $this->mkNotFound();
+            return $this->notFound();
         }
         // Show ID links only if there are templates and ID data
         $idtemplates = $this->bbs()->idTemplates();
@@ -340,7 +339,7 @@ class MainActions extends DefaultActions
         $this->log()->debug('titleDetails custom columns: ' . count($details['custom']));
         return $this->render(
             'title_detail.twig',
-            ['page' => $this->mkPage('book_details', 2, 2),
+            ['page' => $this->buildPage('book_details', 2, 2),
                 'book' => $details['book'],
                 'authors' => $details['authors'],
                 'series' => $details['series'],
@@ -447,18 +446,18 @@ class MainActions extends DefaultActions
         $details = $this->calibre()->titleDetails($settings['lang'], $id);
         if (is_null($details)) {
             $this->log()->warning("book: no book found for " . $id);
-            return $this->mkNotFound();
+            return $this->notFound();
         }
         // for people trying to circumvent filtering by direct access
-        if ($this->title_forbidden($details)) {
+        if ($this->titleForbidden($details)) {
             $this->log()->warning("book: requested book not allowed for user: " . $id);
-            return $this->mkNotFound();
+            return $this->notFound();
         }
 
         $real_bookpath = $this->calibre()->titleFile($id, $file);
         if (!file_exists($real_bookpath)) {
             $this->log()->warning("book: no file found for book " . $id . " " . $file);
-            return $this->mkNotFound();
+            return $this->notFound();
         }
         $contentType = CalibreUtil::titleMimeType($real_bookpath);
         if ($this->requester->isAuthenticated()) {
@@ -516,7 +515,7 @@ class MainActions extends DefaultActions
 
         if (is_null($book)) {
             $this->log()->debug("kindle: book not found: " . $id);
-            return $this->mkNotFound();
+            return $this->notFound();
         }
 
         $details = $this->calibre()->titleDetails($settings['lang'], $id);
@@ -541,7 +540,7 @@ class MainActions extends DefaultActions
             $bookpath = $this->calibre()->titleFile($id, $file);
             if (!file_exists($bookpath)) {
                 $this->log()->warning("kindle: no file found for book " . $id . " " . $file);
-                return $this->mkNotFound();
+                return $this->notFound();
             }
             $this->log()->debug("kindle: requested file " . $bookpath);
             $mailer = $this->mailer();
@@ -592,6 +591,8 @@ class MainActions extends DefaultActions
             return $this->responder->error(400, "Bad parameter");
         }
 
+        // @todo handle jumpTarget = initial chosen with alpine.js in tailwind/navbar_list.twig
+
         $search = $this->requester->get('search');
         if (isset($search)) {
             $tl = $this->calibre()->authorsSlice($page, $settings->page_size, trim($search));
@@ -606,7 +607,7 @@ class MainActions extends DefaultActions
             }
         }
         return $this->render('authors.twig', [
-            'page' => $this->mkPage('authors', 3, 1),
+            'page' => $this->buildPage('authors', 3, 1),
             'url' => 'authorslist',
             'authors' => $tl['entries'],
             'curpage' => $tl['page'],
@@ -636,7 +637,7 @@ class MainActions extends DefaultActions
         $tl = $this->calibre()->authorDetailsSlice($settings['lang'], $id, $page, $settings->page_size, $filter);
         if (is_null($tl)) {
             $this->log()->debug('no author ' . $id);
-            return $this->mkNotFound();
+            return $this->notFound();
         }
         $books = array_map([$this, 'checkThumbnail'], $tl['entries']);
 
@@ -662,7 +663,7 @@ class MainActions extends DefaultActions
         // Note: $author->link comes from Calibre DB
         $author->links = $this->bbs()->author($id)->getLinks();
         return $this->render('author_detail.twig', [
-            'page' => $this->mkPage('author_details', 3, 2),
+            'page' => $this->buildPage('author_details', 3, 2),
             'url' => 'authors/' . $id,
             'author' => $author,
             'books' => $books,
@@ -691,7 +692,7 @@ class MainActions extends DefaultActions
         $author = $this->calibre()->author($id);
         if (is_null($author)) {
             $this->log()->debug('authorNotes: author id not found ' . $id);
-            return $this->mkNotFound();
+            return $this->notFound();
         }
         $note = $this->bbs()->authorNote($id);
         if (!is_null($note)) {
@@ -706,7 +707,7 @@ class MainActions extends DefaultActions
             $author->notes = null;
         }
         return $this->render('author_notes.twig', [
-            'page' => $this->mkPage('author_notes', 3, 2),
+            'page' => $this->buildPage('author_notes', 3, 2),
             'url' => 'authors/' . $id,
             'author' => $author,
             'isadmin' => $this->requester->isAdmin()]);
@@ -737,7 +738,7 @@ class MainActions extends DefaultActions
         }
         $this->log()->debug('seriesSlice ended');
         return $this->render('series.twig', [
-            'page' => $this->mkPage('series', 5, 1),
+            'page' => $this->buildPage('series', 5, 1),
             'url' => 'serieslist',
             'series' => $tl['entries'],
             'curpage' => $tl['page'],
@@ -767,11 +768,11 @@ class MainActions extends DefaultActions
         $tl = $this->calibre()->seriesDetailsSlice($settings['lang'], $id, $page, $settings->page_size, $filter);
         if (is_null($tl)) {
             $this->log()->debug('seriesDetailsSlice: no series ' . $id);
-            return $this->mkNotFound();
+            return $this->notFound();
         }
         $books = array_map([$this, 'checkThumbnail'], $tl['entries']);
         return $this->render('series_detail.twig', [
-            'page' => $this->mkPage('series_details', 5, 2),
+            'page' => $this->buildPage('series_details', 5, 2),
             'url' => 'series/' . $id,
             'series' => $tl['series'],
             'books' => $books,
@@ -803,7 +804,7 @@ class MainActions extends DefaultActions
             $tl = $this->calibre()->tagsSlice($page, $settings->page_size);
         }
         return $this->render('tags.twig', [
-            'page' => $this->mkPage('tags', 4, 1),
+            'page' => $this->buildPage('tags', 4, 1),
             'url' => 'tagslist',
             'tags' => $tl['entries'],
             'curpage' => $tl['page'],
@@ -833,16 +834,56 @@ class MainActions extends DefaultActions
         $tl = $this->calibre()->tagDetailsSlice($settings['lang'], $id, $page, $settings->page_size, $filter);
         if (is_null($tl)) {
             $this->log()->debug('no tag ' . $id);
-            return $this->mkNotFound();
+            return $this->notFound();
         }
         $books = array_map([$this, 'checkThumbnail'], $tl['entries']);
         return $this->render('tag_detail.twig', [
-            'page' => $this->mkPage('tag_details', 4, 2),
+            'page' => $this->buildPage('tag_details', 4, 2),
             'url' => 'tags/' . $id,
             'tag' => $tl['tag'],
             'books' => $books,
             'curpage' => $tl['page'],
             'pages' => $tl['pages']]);
+    }
+
+    /**
+     * Get params for tailwind/navbar_list.twig template -> /params/{scope}/{type}/
+     * @param string $scope
+     * @param string $type
+     * @return Response
+     */
+    public function getTailwindParams($scope, $type = 'initials')
+    {
+        switch ($scope) {
+            case 'authors':
+                $initials = $this->calibre()->authorsInitials();
+                // align result format with expected format in template
+                $data = array_map(function ($initial) {
+                    return $initial->initial;
+                }, $initials);
+                return $this->responder->json(['data' => $data]);
+            case 'series':
+                $initials = $this->calibre()->seriesInitials();
+                // align result format with expected format in template
+                $data = array_map(function ($initial) {
+                    return $initial->initial;
+                }, $initials);
+                return $this->responder->json(['data' => $data]);
+            case 'tags':
+                $initials = $this->calibre()->tagsInitials();
+                // align result format with expected format in template
+                $data = array_map(function ($initial) {
+                    return $initial->initial;
+                }, $initials);
+                return $this->responder->json(['data' => $data]);
+            case 'titles':
+                // @todo add methods from v2 to Calibre to get these params?
+                if ($type == 'year') {
+                    return $this->responder->error(400, "Bad parameter");
+                }
+                return $this->responder->error(400, "Bad parameter");
+        }
+        return $this->responder->error(400, "Bad parameter");
     }
 
     /*********************************************************************
@@ -860,7 +901,7 @@ class MainActions extends DefaultActions
      * @param array $book_details  output of BicBucStriim::title_details()
      * @return  bool      true if the title is not availble for the user, else false
      */
-    public function title_forbidden($book_details)
+    public function titleForbidden($book_details)
     {
         if (!$this->requester->isAuthenticated()) {
             return false;

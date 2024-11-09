@@ -14,8 +14,8 @@ class ExtraActionsTest extends TestCase
     {
         return [
             // 'name' => [method(s), path, ...middleware(s), callable] with '$self' string
-            'loader_path' => ['GET', '/extra/loader/{path:.*}', ['$self', 'loader']],
-            'loader' => ['GET', '/extra/loader', ['$self', 'loader']],
+            'extra-loader-path' => ['GET', '/extra/loader/{path:.*}', ['$self', 'loader']],
+            'extra-loader' => ['GET', '/extra/loader', ['$self', 'loader']],
             'extra' => ['GET', '/extra/', ['$self', 'extra']],
         ];
     }

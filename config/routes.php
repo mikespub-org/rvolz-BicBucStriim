@@ -31,5 +31,9 @@ return function ($app, $settings, $gatekeeper) {
     if (!empty($settings['globalSettings']['hasapi'])) {
         $class = ApiActions::class;
         $class::addRoutes($app, '/api', $gatekeeper);
+    } else {
+        // fall back on hello world
+        $class = DefaultActions::class;
+        $class::addRoutes($app, '/api');
     }
 };

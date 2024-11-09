@@ -30,7 +30,6 @@ class AdminActions extends DefaultActions
      */
     public static function addRoutes($app, $prefix = '/admin', $gatekeeper = null)
     {
-        //$self = new self($app);
         $self = static::class;
         $routes = static::getRoutes($self, $gatekeeper);
         // use $gatekeeper for all actions in this group
@@ -48,21 +47,21 @@ class AdminActions extends DefaultActions
     public static function getRoutes($self, $gatekeeper = null)
     {
         return [
-            // method(s), path, ...middleware(s), callable
-            ['GET', '/', [$self, 'admin']],
-            ['GET', '/configuration/', [$self, 'configuration']],
-            ['POST', '/configuration/', [$self, 'change_json']],
-            ['GET', '/idtemplates/', [$self, 'get_idtemplates']],
-            ['PUT', '/idtemplates/{id}/', [$self, 'modify_idtemplate']],
-            ['DELETE', '/idtemplates/{id}/', [$self, 'clear_idtemplate']],
-            ['GET', '/mail/', [$self, 'get_smtp_config']],
-            ['PUT', '/mail/', [$self, 'change_smtp_config']],
-            ['GET', '/users/', [$self, 'get_users']],
-            ['POST', '/users/', [$self, 'add_user']],
-            ['GET', '/users/{id}/', [$self, 'get_user']],
-            ['PUT', '/users/{id}/', [$self, 'modify_user']],
-            ['DELETE', '/users/{id}/', [$self, 'delete_user']],
-            ['GET', '/version/', [$self, 'check_version']],
+            // name => method(s), path, ...middleware(s), callable
+            'admin-home' => ['GET', '/', [$self, 'admin']],
+            'admin-config' => ['GET', '/configuration/', [$self, 'configuration']],
+            'admin-config-post' => ['POST', '/configuration/', [$self, 'changeJson']],
+            'admin-idtemplates' => ['GET', '/idtemplates/', [$self, 'getIdTemplates']],
+            'admin-idtemplate-put' => ['PUT', '/idtemplates/{id}/', [$self, 'modifyIdTemplate']],
+            'admin-idtemplate-delete' => ['DELETE', '/idtemplates/{id}/', [$self, 'clearIdTemplate']],
+            'admin-smtp-config' => ['GET', '/mail/', [$self, 'getSmtpConfig']],
+            'admin-smtp-config-put' => ['PUT', '/mail/', [$self, 'changeSmtpConfig']],
+            'admin-users' => ['GET', '/users/', [$self, 'getUsers']],
+            'admin-users-post' => ['POST', '/users/', [$self, 'addUser']],
+            'admin-user' => ['GET', '/users/{id}/', [$self, 'getUser']],
+            'admin-user-put' => ['PUT', '/users/{id}/', [$self, 'modifyUser']],
+            'admin-user-delete' => ['DELETE', '/users/{id}/', [$self, 'deleteUser']],
+            'admin-check-version' => ['GET', '/version/', [$self, 'checkVersion']],
         ];
     }
 
@@ -73,11 +72,11 @@ class AdminActions extends DefaultActions
     public function admin()
     {
         return $this->render('admin.twig', [
-            'page' => $this->mkPage('admin', 0, 1),
+            'page' => $this->buildPage('admin', 0, 1),
             'isadmin' => $this->requester->isAdmin()]);
     }
 
-    public function mkMailers()
+    public function buildMailers()
     {
         $e0 = new ConfigMailer();
         $e0->key = Mailer::SMTP;
@@ -91,7 +90,7 @@ class AdminActions extends DefaultActions
         return [$e0, $e1, $e2];
     }
 
-    public function mkTemplatesDirs()
+    public function buildTemplatesDirs()
     {
         $e = new ConfigTemplatesDir();
         $e->key = '';
@@ -108,7 +107,7 @@ class AdminActions extends DefaultActions
         return $options;
     }
 
-    public function mkTitleTimeSortOptions()
+    public function buildTitleTimeSortOptions()
     {
         $e0 = new ConfigTtsOption();
         $e0->key = Settings::TITLE_TIME_SORT_TIMESTAMP;
@@ -129,10 +128,10 @@ class AdminActions extends DefaultActions
     public function configuration()
     {
         return $this->render('admin_configuration.twig', [
-            'page' => $this->mkPage('admin', 0, 2),
-            'mailers' => $this->mkMailers(),
-            'ttss' => $this->mkTitleTimeSortOptions(),
-            'templates_dirs' => $this->mkTemplatesDirs(),
+            'page' => $this->buildPage('admin', 0, 2),
+            'mailers' => $this->buildMailers(),
+            'ttss' => $this->buildTitleTimeSortOptions(),
+            'templates_dirs' => $this->buildTemplatesDirs(),
             'isadmin' => $this->requester->isAdmin()]);
     }
 
@@ -140,7 +139,7 @@ class AdminActions extends DefaultActions
      * Generate the ID templates page -> GET /admin/idtemplates/
      * @return Response
      */
-    public function get_idtemplates()
+    public function getIdTemplates()
     {
         $idtemplates = $this->bbs()->idTemplates();
         $idtypes = $this->calibre()->idTypes();
@@ -168,9 +167,9 @@ class AdminActions extends DefaultActions
             $ni->label = '(Calibre)';
             array_push($idtemplates, $ni);
         }
-        $this->log()->debug('admin_get_idtemplates ' . json_encode($idtemplates));
+        $this->log()->debug('admin_getIdTemplates ' . json_encode($idtemplates));
         return $this->render('admin_idtemplates.twig', [
-            'page' => $this->mkPage('admin_idtemplates', 0, 2),
+            'page' => $this->buildPage('admin_idtemplates', 0, 2),
             'templates' => $idtemplates,
             'isadmin' => $this->requester->isAdmin()]);
     }
@@ -179,16 +178,16 @@ class AdminActions extends DefaultActions
      * Modify an ID template page -> PUT /admin/idtemplates/{id}/
      * @return Response
      */
-    public function modify_idtemplate($id)
+    public function modifyIdTemplate($id)
     {
         // parameter checking
         if (!preg_match('/^\w+$/u', $id)) {
-            $this->log()->warning('admin_modify_idtemplate: invalid template id ' . $id);
+            $this->log()->warning('admin_modifyIdTemplate: invalid template id ' . $id);
             return $this->responder->error(400, "Invalid ID for template: " . $id);
         }
 
         $template_data = $this->requester->post();
-        $this->log()->debug('admin_modify_idtemplate: ' . var_export($template_data, true));
+        $this->log()->debug('admin_modifyIdTemplate: ' . var_export($template_data, true));
         try {
             $template = $this->bbs()->idTemplate($id);
             if (is_null($template)) {
@@ -197,8 +196,8 @@ class AdminActions extends DefaultActions
                 $ntemplate = $this->bbs()->changeIdTemplate($id, $template_data['url'], $template_data['label']);
             }
         } catch (Exception $e) {
-            $this->log()->error('admin_modify_idtemplate: error while adding template' . var_export($template_data, true));
-            $this->log()->error('admin_modify_idtemplate: exception ' . $e->getMessage());
+            $this->log()->error('admin_modifyIdTemplate: error while adding template' . var_export($template_data, true));
+            $this->log()->error('admin_modifyIdTemplate: exception ' . $e->getMessage());
             $ntemplate = null;
         }
         if (!is_null($ntemplate)) {
@@ -209,22 +208,22 @@ class AdminActions extends DefaultActions
             $message = $this->getMessageString('admin_modify_error');
             return $this->responder->error(500, $message);
         }
-        #$this->log()->debug('admin_modify_idtemplate 2: '.var_export($ntemplate, true));
+        #$this->log()->debug('admin_modifyIdTemplate 2: '.var_export($ntemplate, true));
     }
 
     /**
      * Clear an ID template page -> DELETE /admin/idtemplates/{id}/
      * @return Response
      */
-    public function clear_idtemplate($id)
+    public function clearIdTemplate($id)
     {
         // parameter checking
         if (!preg_match('/^\w+$/u', $id)) {
-            $this->log()->warning('admin_clear_idtemplate: invalid template id ' . $id);
+            $this->log()->warning('admin_clearIdTemplate: invalid template id ' . $id);
             return $this->responder->error(400, "Invalid ID for template: " . $id);
         }
 
-        $this->log()->debug('admin_clear_idtemplate: ' . var_export($id, true));
+        $this->log()->debug('admin_clearIdTemplate: ' . var_export($id, true));
         $success = $this->bbs()->deleteIdTemplate($id);
         if ($success) {
             $msg = $this->getMessageString('admin_modified');
@@ -240,7 +239,7 @@ class AdminActions extends DefaultActions
      * Generate the SMTP configuration page -> GET /admin/mail/
      * @return Response
      */
-    public function get_smtp_config()
+    public function getSmtpConfig()
     {
         $settings = $this->settings();
         $mail = [
@@ -251,13 +250,13 @@ class AdminActions extends DefaultActions
             'smtpenc' => $settings[Settings::SMTP_ENCRYPTION],
         ];
         return $this->render('admin_mail.twig', [
-            'page' => $this->mkPage('admin_mail', 0, 2),
+            'page' => $this->buildPage('admin_mail', 0, 2),
             'mail' => $mail,
-            'encryptions' => $this->mkEncryptions(),
+            'encryptions' => $this->buildEncryptions(),
             'isadmin' => $this->requester->isAdmin()]);
     }
 
-    public function mkEncryptions()
+    public function buildEncryptions()
     {
         $e0 = new Encryption();
         $e0->key = 0;
@@ -275,10 +274,10 @@ class AdminActions extends DefaultActions
      * Change the SMTP configuration -> PUT /admin/mail/
      * @return Response
      */
-    public function change_smtp_config()
+    public function changeSmtpConfig()
     {
         $mail_data = $this->requester->post();
-        $this->log()->debug('admin_change_smtp_configuration: ' . var_export($mail_data, true));
+        $this->log()->debug('admin_changeSmtpConfiguration: ' . var_export($mail_data, true));
         $mail_config = [
             Settings::SMTP_USER => $mail_data['username'],
             Settings::SMTP_PASSWORD => $mail_data['password'],
@@ -288,9 +287,9 @@ class AdminActions extends DefaultActions
         ];
         $this->bbs()->saveConfigs($mail_config);
         return $this->render('admin_mail.twig', [
-            'page' => $this->mkPage('admin_smtp', 0, 2),
+            'page' => $this->buildPage('admin_smtp', 0, 2),
             'mail' => $mail_data,
-            'encryptions' => $this->mkEncryptions(),
+            'encryptions' => $this->buildEncryptions(),
             'isadmin' => $this->requester->isAdmin()]);
     }
 
@@ -299,11 +298,11 @@ class AdminActions extends DefaultActions
      * Generate the users overview page -> GET /admin/users/
      * @return Response
      */
-    public function get_users()
+    public function getUsers()
     {
         $users = $this->bbs()->users();
         return $this->render('admin_users.twig', [
-            'page' => $this->mkPage('admin_users', 0, 2),
+            'page' => $this->buildPage('admin_users', 0, 2),
             'users' => $users,
             'isadmin' => $this->requester->isAdmin()]);
     }
@@ -313,11 +312,11 @@ class AdminActions extends DefaultActions
      * Generate the single user page -> GET /admin/users/{id}/
      * @return Response
      */
-    public function get_user($id)
+    public function getUser($id)
     {
         // parameter checking
         if (!is_numeric($id)) {
-            $this->log()->warning('admin_get_user: invalid user id ' . $id);
+            $this->log()->warning('admin_getUser: invalid user id ' . $id);
             return $this->responder->error(400, "Bad parameter");
         }
 
@@ -338,9 +337,9 @@ class AdminActions extends DefaultActions
         $nt->name = $this->getMessageString('admin_no_selection');
         $nt->key = '';
         array_unshift($tags, $nt);
-        $this->log()->debug('admin_get_user: ' . json_encode($user));
+        $this->log()->debug('admin_getUser: ' . json_encode($user));
         return $this->render('admin_user.twig', [
-            'page' => $this->mkPage('admin_users', 0, 3),
+            'page' => $this->buildPage('admin_users', 0, 3),
             'user' => $user,
             'languages' => $languages,
             'tags' => $tags,
@@ -351,15 +350,15 @@ class AdminActions extends DefaultActions
      * Add a user -> POST /admin/users/ (JSON)
      * @return Response
      */
-    public function add_user()
+    public function addUser()
     {
         $user_data = $this->requester->post();
-        $this->log()->debug('admin_add_user: ' . var_export($user_data, true));
+        $this->log()->debug('admin_addUser: ' . var_export($user_data, true));
         try {
             $user = $this->bbs()->addUser($user_data['username'], $user_data['password']);
         } catch (Exception $e) {
-            $this->log()->error('admin_add_user: error for adding user ' . var_export($user_data, true));
-            $this->log()->error('admin_add_user: exception ' . $e->getMessage());
+            $this->log()->error('admin_addUser: error for adding user ' . var_export($user_data, true));
+            $this->log()->error('admin_addUser: exception ' . $e->getMessage());
             $user = null;
         }
         if (isset($user)) {
@@ -376,15 +375,15 @@ class AdminActions extends DefaultActions
      * Delete a user -> DELETE /admin/users/{id}/ (JSON)
      * @return Response
      */
-    public function delete_user($id)
+    public function deleteUser($id)
     {
         // parameter checking
         if (!is_numeric($id)) {
-            $this->log()->warning('admin_delete_user: invalid user id ' . $id);
+            $this->log()->warning('admin_deleteUser: invalid user id ' . $id);
             return $this->responder->error(400, "Bad parameter");
         }
 
-        $this->log()->debug('admin_delete_user: ' . var_export($id, true));
+        $this->log()->debug('admin_deleteUser: ' . var_export($id, true));
         $success = $this->bbs()->deleteUser($id);
         if ($success) {
             $msg = $this->getMessageString('admin_modified');
@@ -400,16 +399,16 @@ class AdminActions extends DefaultActions
      * Modify a user -> PUT /admin/users/{id}/ (JSON)
      * @return Response
      */
-    public function modify_user($id)
+    public function modifyUser($id)
     {
         // parameter checking
         if (!is_numeric($id)) {
-            $this->log()->warning('admin_modify_user: invalid user id ' . $id);
+            $this->log()->warning('admin_modifyUser: invalid user id ' . $id);
             return $this->responder->error(400, "Bad parameter");
         }
 
         $user_data = $this->requester->post();
-        $this->log()->debug('admin_modify_user: ' . var_export($user_data, true));
+        $this->log()->debug('admin_modifyUser: ' . var_export($user_data, true));
         $user = $this->bbs()->changeUser(
             $id,
             $user_data['password'],
@@ -417,7 +416,7 @@ class AdminActions extends DefaultActions
             $user_data['tags'],
             $user_data['role']
         );
-        $this->log()->debug('admin_modify_user: ' . json_encode($user));
+        $this->log()->debug('admin_modifyUser: ' . json_encode($user));
         if (isset($user)) {
             $msg = $this->getMessageString('admin_modified');
             $data = ['user' => $user->unbox()->getProperties(), 'msg' => $msg];
@@ -433,7 +432,7 @@ class AdminActions extends DefaultActions
      * Processes changes in the admin page -> POST /admin/configuration/
      * @return Response
      */
-    public function change_json()
+    public function changeJson()
     {
         $settings = $this->settings();
         $this->log()->debug('admin_change: started');
@@ -441,7 +440,7 @@ class AdminActions extends DefaultActions
         if (!$this->requester->isAdmin()) {
             $this->log()->warning('admin_change: no admin permission');
             return $this->render('admin_configuration.twig', [
-                'page' => $this->mkPage('admin'),
+                'page' => $this->buildPage('admin'),
                 'messages' => [$this->getMessageString('invalid_password')],
                 'isadmin' => false]);
         }
@@ -453,7 +452,7 @@ class AdminActions extends DefaultActions
 
         ## Check for consistency - calibre directory
         # Calibre dir is still empty and no change in sight --> error
-        if (!$this->has_valid_calibre_dir() && empty($req_configs[Settings::CALIBRE_DIR])) {
+        if (!$this->hasValidCalibreDir() && empty($req_configs[Settings::CALIBRE_DIR])) {
             array_push($errors, 1);
         }
         # Calibre dir changed, check it for existence, delete thumbnails of old calibre library
@@ -502,7 +501,7 @@ class AdminActions extends DefaultActions
         if (count($errors) > 0) {
             $this->log()->error('admin_change: ended with error ' . var_export($errors, true));
             return $this->render('admin_configuration.twig', [
-                'page' => $this->mkPage('admin'),
+                'page' => $this->buildPage('admin'),
                 'isadmin' => true,
                 'errors' => $errors]);
         } else {
@@ -522,11 +521,11 @@ class AdminActions extends DefaultActions
             }
             $this->log()->debug('admin_change: ended');
             return $this->render('admin_configuration.twig', [
-                'page' => $this->mkPage('admin', 0, 2),
+                'page' => $this->buildPage('admin', 0, 2),
                 'messages' => [$this->getMessageString('changes_saved')],
-                'mailers' => $this->mkMailers(),
-                'ttss' => $this->mkTitleTimeSortOptions(),
-                'templates_dirs' => $this->mkTemplatesDirs(),
+                'mailers' => $this->buildMailers(),
+                'ttss' => $this->buildTitleTimeSortOptions(),
+                'templates_dirs' => $this->buildTemplatesDirs(),
                 'isadmin' => true,
             ]);
         }
@@ -536,7 +535,7 @@ class AdminActions extends DefaultActions
      * Get the new version info and compare it to our version -> GET /admin/version/
      * @return Response
      */
-    public function check_version()
+    public function checkVersion()
     {
         $settings = $this->settings();
         $versionAnswer = [];
@@ -564,7 +563,7 @@ class AdminActions extends DefaultActions
             }
         }
         return $this->render('admin_version.twig', [
-            'page' => $this->mkPage('admin_check_version', 0, 2),
+            'page' => $this->buildPage('admin_check_version', 0, 2),
             'versionClass' => $versionClass,
             'versionAnswer' => $versionAnswer,
             'isadmin' => true,
@@ -579,7 +578,7 @@ class AdminActions extends DefaultActions
      * Is there a valid - existing - Calibre directory?
      * @return boolean    true if available
      */
-    public function has_valid_calibre_dir()
+    public function hasValidCalibreDir()
     {
         $settings = $this->settings();
         return (!empty($settings->calibre_dir) &&

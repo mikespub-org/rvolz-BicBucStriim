@@ -24,7 +24,6 @@ class OpdsActions extends DefaultActions
      */
     public static function addRoutes($app, $prefix = '/opds', $gatekeeper = null)
     {
-        //$self = new self($app);
         $self = static::class;
         $routes = static::getRoutes($self, $gatekeeper);
         $app->group($prefix, function (\Slim\Routing\RouteCollectorProxy $group) use ($routes) {
@@ -41,27 +40,22 @@ class OpdsActions extends DefaultActions
     public static function getRoutes($self, $gatekeeper = null)
     {
         return [
-            // method(s), path, ...middleware(s), callable
-            ['GET', '/', [$self, 'opdsRoot']],
-            ['GET', '/newest/', [$self, 'opdsNewest']],
-            ['GET', '/titleslist/{page}/', [$self, 'opdsByTitle']],
-            ['GET', '/authorslist/', [$self, 'opdsByAuthorInitial']],
-            ['GET', '/authorslist/{initial}/', [$self, 'opdsByAuthorNamesForInitial']],
-            ['GET', '/authorslist/{initial}/{id}/{page}/', [$self, 'opdsByAuthor']],
-            ['GET', '/tagslist/', [$self, 'opdsByTagInitial']],
-            ['GET', '/tagslist/{initial}/', [$self, 'opdsByTagNamesForInitial']],
-            ['GET', '/tagslist/{initial}/{id}/{page}/', [$self, 'opdsByTag']],
-            ['GET', '/serieslist/', [$self, 'opdsBySeriesInitial']],
-            ['GET', '/serieslist/{initial}/', [$self, 'opdsBySeriesNamesForInitial']],
-            ['GET', '/serieslist/{initial}/{id}/{page}/', [$self, 'opdsBySeries']],
-            ['GET', '/opensearch.xml', [$self, 'opdsSearchDescriptor']],
-            ['GET', '/searchlist/{page}/', [$self, 'opdsBySearch']],
-            // @todo either split off titles actions and call here, or adapt partialAcquisitionEntry() in OPDS Generator
-            //['GET', '/titles/{id}/', [$self, 'title']],
-            //['GET', '/titles/{id}/cover/', [$self, 'cover']],
-            //['GET', '/titles/{id}/file/{file}', [$self, 'book']],
-            //['GET', '/titles/{id}/thumbnail/', [$self, 'thumbnail']],
-            ['GET', '/logout/', [$self, 'opdsLogout']],
+            // name => method(s), path, ...middleware(s), callable
+            'opds-home' => ['GET', '/', [$self, 'opdsRoot']],
+            'opds-newest' => ['GET', '/newest/', [$self, 'opdsNewest']],
+            'opds-title-page' => ['GET', '/titleslist/{page}/', [$self, 'opdsByTitle']],
+            'opds-author-initials' => ['GET', '/authorslist/', [$self, 'opdsByAuthorInitial']],
+            'opds-author-names' => ['GET', '/authorslist/{initial}/', [$self, 'opdsByAuthorNamesForInitial']],
+            'opds-author-page' => ['GET', '/authorslist/{initial}/{id}/{page}/', [$self, 'opdsByAuthor']],
+            'opds-tag-initials' => ['GET', '/tagslist/', [$self, 'opdsByTagInitial']],
+            'opds-tag-names' => ['GET', '/tagslist/{initial}/', [$self, 'opdsByTagNamesForInitial']],
+            'opds-tag-page' => ['GET', '/tagslist/{initial}/{id}/{page}/', [$self, 'opdsByTag']],
+            'opds-series-initials' => ['GET', '/serieslist/', [$self, 'opdsBySeriesInitial']],
+            'opds-series-names' => ['GET', '/serieslist/{initial}/', [$self, 'opdsBySeriesNamesForInitial']],
+            'opds-series-page' => ['GET', '/serieslist/{initial}/{id}/{page}/', [$self, 'opdsBySeries']],
+            'opds-opensearch' => ['GET', '/opensearch.xml', [$self, 'opdsSearchDescriptor']],
+            'opds-search-page' => ['GET', '/searchlist/{page}/', [$self, 'opdsBySearch']],
+            'opds-logout' => ['GET', '/logout/', [$self, 'opdsLogout']],
         ];
     }
 
@@ -71,7 +65,7 @@ class OpdsActions extends DefaultActions
      */
     public function opdsRoot()
     {
-        $gen = $this->mkOpdsGenerator();
+        $gen = $this->getOpdsGenerator();
         $cat = $gen->rootCatalog(null);
         return $this->responder->opds($cat, OpdsGenerator::OPDS_MIME_NAV);
     }
@@ -98,7 +92,7 @@ class OpdsActions extends DefaultActions
             }
         }
         $books = array_map([$this, 'checkThumbnailOpds'], $books1);
-        $gen = $this->mkOpdsGenerator();
+        $gen = $this->getOpdsGenerator();
         $cat = $gen->newestCatalog(null, $books, false);
         return $this->responder->opds($cat, OpdsGenerator::OPDS_MIME_ACQ);
     }
@@ -131,7 +125,7 @@ class OpdsActions extends DefaultActions
         }
         $books1 = $this->calibre()->titleDetailsFilteredOpds($tl['entries']);
         $books = array_map([$this, 'checkThumbnailOpds'], $books1);
-        $gen = $this->mkOpdsGenerator();
+        $gen = $this->getOpdsGenerator();
         $cat = $gen->titlesCatalog(
             null,
             $books,
@@ -150,7 +144,7 @@ class OpdsActions extends DefaultActions
     public function opdsByAuthorInitial()
     {
         $initials = $this->calibre()->authorsInitials();
-        $gen = $this->mkOpdsGenerator();
+        $gen = $this->getOpdsGenerator();
         $cat = $gen->authorsRootCatalog(null, $initials);
         return $this->responder->opds($cat, OpdsGenerator::OPDS_MIME_NAV);
     }
@@ -169,7 +163,7 @@ class OpdsActions extends DefaultActions
         }
 
         $authors = $this->calibre()->authorsNamesForInitial($initial);
-        $gen = $this->mkOpdsGenerator();
+        $gen = $this->getOpdsGenerator();
         $cat = $gen->authorsNamesForInitialCatalog(null, $authors, $initial);
         return $this->responder->opds($cat, OpdsGenerator::OPDS_MIME_NAV);
     }
@@ -197,7 +191,7 @@ class OpdsActions extends DefaultActions
         $books1 = $this->calibre()->titleDetailsFilteredOpds($tl['entries']);
         $books = array_map([$this, 'checkThumbnailOpds'], $books1);
         $this->log()->debug('opdsByAuthor 2 ' . var_export($books, true));
-        $gen = $this->mkOpdsGenerator();
+        $gen = $this->getOpdsGenerator();
         $cat = $gen->booksForAuthorCatalog(
             null,
             $books,
@@ -218,7 +212,7 @@ class OpdsActions extends DefaultActions
     public function opdsByTagInitial()
     {
         $initials = $this->calibre()->tagsInitials();
-        $gen = $this->mkOpdsGenerator();
+        $gen = $this->getOpdsGenerator();
         $cat = $gen->tagsRootCatalog(null, $initials);
         return $this->responder->opds($cat, OpdsGenerator::OPDS_MIME_NAV);
     }
@@ -237,7 +231,7 @@ class OpdsActions extends DefaultActions
         }
 
         $tags = $this->calibre()->tagsNamesForInitial($initial);
-        $gen = $this->mkOpdsGenerator();
+        $gen = $this->getOpdsGenerator();
         $cat = $gen->tagsNamesForInitialCatalog(null, $tags, $initial);
         return $this->responder->opds($cat, OpdsGenerator::OPDS_MIME_NAV);
     }
@@ -263,7 +257,7 @@ class OpdsActions extends DefaultActions
         $tl = $this->calibre()->tagDetailsSlice($settings['lang'], $id, $page, $settings->page_size, $filter);
         $books1 = $this->calibre()->titleDetailsFilteredOpds($tl['entries']);
         $books = array_map([$this, 'checkThumbnailOpds'], $books1);
-        $gen = $this->mkOpdsGenerator();
+        $gen = $this->getOpdsGenerator();
         $cat = $gen->booksForTagCatalog(
             null,
             $books,
@@ -284,7 +278,7 @@ class OpdsActions extends DefaultActions
     public function opdsBySeriesInitial()
     {
         $initials = $this->calibre()->seriesInitials();
-        $gen = $this->mkOpdsGenerator();
+        $gen = $this->getOpdsGenerator();
         $cat = $gen->seriesRootCatalog(null, $initials);
         return $this->responder->opds($cat, OpdsGenerator::OPDS_MIME_NAV);
     }
@@ -303,7 +297,7 @@ class OpdsActions extends DefaultActions
         }
 
         $tags = $this->calibre()->seriesNamesForInitial($initial);
-        $gen = $this->mkOpdsGenerator();
+        $gen = $this->getOpdsGenerator();
         $cat = $gen->seriesNamesForInitialCatalog(null, $tags, $initial);
         return $this->responder->opds($cat, OpdsGenerator::OPDS_MIME_NAV);
     }
@@ -329,7 +323,7 @@ class OpdsActions extends DefaultActions
         $tl = $this->calibre()->seriesDetailsSlice($settings['lang'], $id, $page, $settings->page_size, $filter);
         $books1 = $this->calibre()->titleDetailsFilteredOpds($tl['entries']);
         $books = array_map([$this, 'checkThumbnailOpds'], $books1);
-        $gen = $this->mkOpdsGenerator();
+        $gen = $this->getOpdsGenerator();
         $cat = $gen->booksForSeriesCatalog(
             null,
             $books,
@@ -349,7 +343,7 @@ class OpdsActions extends DefaultActions
      */
     public function opdsSearchDescriptor()
     {
-        $gen = $this->mkOpdsGenerator();
+        $gen = $this->getOpdsGenerator();
         $cat = $gen->searchDescriptor(null, '/opds/searchlist/0/');
         return $this->responder->opds($cat, OpdsGenerator::OPENSEARCH_MIME);
     }
@@ -381,7 +375,7 @@ class OpdsActions extends DefaultActions
         $tl = $this->calibre()->titlesSlice($settings['lang'], $page, $settings->page_size, $filter, $search);
         $books1 = $this->calibre()->titleDetailsFilteredOpds($tl['entries']);
         $books = array_map([$this, 'checkThumbnailOpds'], $books1);
-        $gen = $this->mkOpdsGenerator();
+        $gen = $this->getOpdsGenerator();
         $cat = $gen->searchCatalog(
             null,
             $books,
@@ -432,7 +426,7 @@ class OpdsActions extends DefaultActions
      * Initialize the OPDS generator
      * @return OpdsGenerator
      */
-    public function mkOpdsGenerator()
+    public function getOpdsGenerator()
     {
         $settings = $this->settings();
 
