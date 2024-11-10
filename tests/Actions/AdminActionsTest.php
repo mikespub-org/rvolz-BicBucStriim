@@ -2,7 +2,6 @@
 
 use BicBucStriim\Actions\AdminActions;
 use BicBucStriim\AppData\BicBucStriim;
-use BicBucStriim\Utilities\RequestUtil;
 use BicBucStriim\Utilities\TestHelper;
 use PHPUnit\Framework\Attributes\CoversClass;
 
@@ -13,10 +12,9 @@ class AdminActionsTest extends PHPUnit\Framework\TestCase
     public function testGetUsers(): void
     {
         $app = TestHelper::getApp();
-        $request = RequestUtil::getServerRequest('GET', '/admin/users/');
-        $request = $request->withHeader('PHP_AUTH_USER', 'admin')->withHeader('PHP_AUTH_PW', 'admin');
+        $request = TestHelper::getAuthRequest('GET', '/admin/users/');
 
-        $expected = '<form action="./admin/users/" method="post" id="newuserform"';
+        $expected = '<div data-role="page" data-title="BicBucStriim :: Users" id="padmin_users" data-ajax="true">';
         $response = $app->handle($request);
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertStringContainsString($expected, (string) $response->getBody());
@@ -26,10 +24,9 @@ class AdminActionsTest extends PHPUnit\Framework\TestCase
     public function testGetUser(): void
     {
         $app = TestHelper::getApp();
-        $request = RequestUtil::getServerRequest('GET', '/admin/users/1/');
-        $request = $request->withHeader('PHP_AUTH_USER', 'admin')->withHeader('PHP_AUTH_PW', 'admin');
+        $request = TestHelper::getAuthRequest('GET', '/admin/users/1/');
 
-        $expected = '<form action="./admin/users/1/" method="put" id="userform"';
+        $expected = '<div data-role="page" data-title="BicBucStriim :: Users" id="padmin_user" data-ajax="false">';
         $response = $app->handle($request);
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertStringContainsString($expected, (string) $response->getBody());
@@ -39,8 +36,7 @@ class AdminActionsTest extends PHPUnit\Framework\TestCase
     public function testGetUserInvalidId(): void
     {
         $app = TestHelper::getApp();
-        $request = RequestUtil::getServerRequest('GET', '/admin/users/abc/');
-        $request = $request->withHeader('PHP_AUTH_USER', 'admin')->withHeader('PHP_AUTH_PW', 'admin');
+        $request = TestHelper::getAuthRequest('GET', '/admin/users/abc/');
 
         $expected = 400;
         $response = $app->handle($request);
@@ -60,8 +56,7 @@ class AdminActionsTest extends PHPUnit\Framework\TestCase
             }
         }
 
-        $request = RequestUtil::getServerRequest('POST', '/admin/users/', ['username' => 'testuser', 'password' => 'testpassword']);
-        $request = $request->withHeader('PHP_AUTH_USER', 'admin')->withHeader('PHP_AUTH_PW', 'admin');
+        $request = TestHelper::getAuthRequest('POST', '/admin/users/', ['username' => 'testuser', 'password' => 'testpassword']);
 
         $expected = 'Changes applied';
         $response = $app->handle($request);
@@ -75,8 +70,7 @@ class AdminActionsTest extends PHPUnit\Framework\TestCase
     public function testAddUserInvalid(): void
     {
         $app = TestHelper::getApp();
-        $request = RequestUtil::getServerRequest('POST', '/admin/users/', ['username' => '', 'password' => 'testpassword']);
-        $request = $request->withHeader('PHP_AUTH_USER', 'admin')->withHeader('PHP_AUTH_PW', 'admin');
+        $request = TestHelper::getAuthRequest('POST', '/admin/users/', ['username' => '', 'password' => 'testpassword']);
 
         $expected = 'Error while applying changes';
         $response = $app->handle($request);
@@ -87,8 +81,7 @@ class AdminActionsTest extends PHPUnit\Framework\TestCase
     public function testAddUserException(): void
     {
         $app = TestHelper::getApp();
-        $request = RequestUtil::getServerRequest('POST', '/admin/users/', ['username' => 'testuser', 'password' => 'testpassword']);
-        $request = $request->withHeader('PHP_AUTH_USER', 'admin')->withHeader('PHP_AUTH_PW', 'admin');
+        $request = TestHelper::getAuthRequest('POST', '/admin/users/', ['username' => 'testuser', 'password' => 'testpassword']);
 
         $mock = $this->createMock(BicBucStriim::class);
         $mock->method('addUser')->willThrowException(new Exception('Test exception'));
@@ -103,10 +96,9 @@ class AdminActionsTest extends PHPUnit\Framework\TestCase
     public function testAdmin(): void
     {
         $app = TestHelper::getApp();
-        $request = RequestUtil::getServerRequest('GET', '/admin/');
-        $request = $request->withHeader('PHP_AUTH_USER', 'admin')->withHeader('PHP_AUTH_PW', 'admin');
+        $request = TestHelper::getAuthRequest('GET', '/admin/');
 
-        $expected = '<a href="./admin/configuration/">';
+        $expected = '<div data-role="page" data-title="BicBucStriim :: Configuration" id="padmin">';
         $response = $app->handle($request);
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertStringContainsString($expected, (string) $response->getBody());
@@ -116,10 +108,9 @@ class AdminActionsTest extends PHPUnit\Framework\TestCase
     public function testConfiguration(): void
     {
         $app = TestHelper::getApp();
-        $request = RequestUtil::getServerRequest('GET', '/admin/configuration/');
-        $request = $request->withHeader('PHP_AUTH_USER', 'admin')->withHeader('PHP_AUTH_PW', 'admin');
+        $request = TestHelper::getAuthRequest('GET', '/admin/configuration/');
 
-        $expected = '<form action="./admin/configuration/" method="post" id="adminform">';
+        $expected = '<div data-role="page" data-title="BicBucStriim :: Configuration" id="padmin_configuration" data-ajax="false">';
         $response = $app->handle($request);
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertStringContainsString($expected, (string) $response->getBody());
@@ -129,8 +120,7 @@ class AdminActionsTest extends PHPUnit\Framework\TestCase
     public function testGetIdTemplates(): void
     {
         $app = TestHelper::getApp();
-        $request = RequestUtil::getServerRequest('GET', '/admin/idtemplates/');
-        $request = $request->withHeader('PHP_AUTH_USER', 'admin')->withHeader('PHP_AUTH_PW', 'admin');
+        $request = TestHelper::getAuthRequest('GET', '/admin/idtemplates/');
 
         $expected = 'Enter URLs with the replacement parameter';
         $response = $app->handle($request);
@@ -142,8 +132,7 @@ class AdminActionsTest extends PHPUnit\Framework\TestCase
     public function testModifyIdTemplate(): void
     {
         $app = TestHelper::getApp();
-        $request = RequestUtil::getServerRequest('PUT', '/admin/idtemplates/test1/');
-        $request = $request->withHeader('PHP_AUTH_USER', 'admin')->withHeader('PHP_AUTH_PW', 'admin');
+        $request = TestHelper::getAuthRequest('PUT', '/admin/idtemplates/test1/');
         $request = $request->withParsedBody([
             'name' => 'test1',
             'url' => 'testval',
@@ -161,8 +150,7 @@ class AdminActionsTest extends PHPUnit\Framework\TestCase
     public function testClearIdTemplate(): void
     {
         $app = TestHelper::getApp();
-        $request = RequestUtil::getServerRequest('DELETE', '/admin/idtemplates/test1/');
-        $request = $request->withHeader('PHP_AUTH_USER', 'admin')->withHeader('PHP_AUTH_PW', 'admin');
+        $request = TestHelper::getAuthRequest('DELETE', '/admin/idtemplates/test1/');
 
         $expected = '"msg": "Changes applied"';
         $response = $app->handle($request);
@@ -174,8 +162,7 @@ class AdminActionsTest extends PHPUnit\Framework\TestCase
     public function testGetSmtpConfig(): void
     {
         $app = TestHelper::getApp();
-        $request = RequestUtil::getServerRequest('GET', '/admin/mail/');
-        $request = $request->withHeader('PHP_AUTH_USER', 'admin')->withHeader('PHP_AUTH_PW', 'admin');
+        $request = TestHelper::getAuthRequest('GET', '/admin/mail/');
 
         $expected = '<title>BicBucStriim :: Mail configuration</title>';
         $response = $app->handle($request);
@@ -188,8 +175,7 @@ class AdminActionsTest extends PHPUnit\Framework\TestCase
     public function testChangeSmtpConfig(): void
     {
         $app = TestHelper::getApp();
-        $request = RequestUtil::getServerRequest('PUT', '/admin/mail/');
-        $request = $request->withHeader('PHP_AUTH_USER', 'admin')->withHeader('PHP_AUTH_PW', 'admin');
+        $request = TestHelper::getAuthRequest('PUT', '/admin/mail/');
         $request = $request->withParsedBody([
             'username' => 'testuser',
             'password' => 'testpassword',

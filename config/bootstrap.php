@@ -15,7 +15,9 @@ use BicBucStriim\AppData\Settings;
 use BicBucStriim\Utilities\ActionsWrapperStrategy;
 use Slim\Interfaces\RouteCollectorInterface;
 
-define('REDBEAN_MODEL_PREFIX', '\\BicBucStriim\\Models\\');
+if (!defined('REDBEAN_MODEL_PREFIX')) {
+    define('REDBEAN_MODEL_PREFIX', '\\BicBucStriim\\Models\\');
+}
 
 # The session gc lifetime needs to be at least as high as the Aura.Auth idle ttl, which defaults to 3600
 ini_set('session.gc_maxlifetime', 3600);

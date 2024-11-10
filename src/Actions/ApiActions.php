@@ -19,13 +19,15 @@ use Slim\Interfaces\RouteCollectorInterface;
  ********************************************************************/
 class ApiActions extends DefaultActions
 {
+    public const PREFIX = '/api';
+
     /** @var ?RouteCollectorInterface */
     protected $routeCollector;
 
     /**
      * Add routes for API actions
      */
-    public static function addRoutes($app, $prefix = '/api', $gatekeeper = null)
+    public static function addRoutes($app, $prefix = self::PREFIX, $gatekeeper = null)
     {
         $self = static::class;
         $routes = static::getRoutes($self, $gatekeeper);
@@ -39,7 +41,7 @@ class ApiActions extends DefaultActions
 
     /**
      * Get routes for API actions
-     * @param self|string $self
+     * @param self|class-string $self
      * @param ?object $gatekeeper (optional)
      * @return array<mixed> list of [method(s), path, ...middleware(s), callable] for each action
      */

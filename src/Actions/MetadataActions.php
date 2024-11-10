@@ -20,10 +20,12 @@ use Exception;
  ********************************************************************/
 class MetadataActions extends DefaultActions
 {
+    public const PREFIX = '/metadata';
+
     /**
      * Add routes for metadata actions
      */
-    public static function addRoutes($app, $prefix = '/metadata', $gatekeeper = null)
+    public static function addRoutes($app, $prefix = self::PREFIX, $gatekeeper = null)
     {
         $self = static::class;
         $routes = static::getRoutes($self, $gatekeeper);
@@ -35,7 +37,7 @@ class MetadataActions extends DefaultActions
 
     /**
      * Get routes for metadata actions
-     * @param self|string $self
+     * @param self|class-string $self
      * @param ?object $gatekeeper (optional)
      * @return array<mixed> list of [method(s), path, ...middleware(s), callable] for each action
      */
@@ -43,17 +45,38 @@ class MetadataActions extends DefaultActions
     {
         return [
             // name => method(s), path, ...middleware(s), callable
+            'meta-author-thumb' => ['GET', '/authors/{id}/thumbnail/', [$self, 'getAuthorThumbnail']],
             'meta-author-thumb-post' => ['POST', '/authors/{id}/thumbnail/', [$self, 'editAuthorThumbnail']],
             'meta-author-thumb-delete' => ['DELETE', '/authors/{id}/thumbnail/', [$self, 'delAuthorThumbnail']],
+            'meta-author-note' => ['GET', '/authors/{id}/notes/', [$self, 'getAuthorNote']],
             'meta-author-note-post' => ['POST', '/authors/{id}/notes/', [$self, 'editAuthorNote']],
             'meta-author-note-delete' => ['DELETE', '/authors/{id}/notes/', [$self, 'delAuthorNote']],
+            'meta-author-links' => ['GET', '/authors/{id}/links/', [$self, 'getAuthorLinks']],
             'meta-author-link-post' => ['POST', '/authors/{id}/links/', [$self, 'newAuthorLink']],
             'meta-author-link-delete' => ['DELETE', '/authors/{id}/links/{link}/', [$self, 'delAuthorLink']],
+            'meta-series-note' => ['GET', '/series/{id}/notes/', [$self, 'getSeriesNote']],
             'meta-series-note-post' => ['POST', '/series/{id}/notes/', [$self, 'editSeriesNotes']],
             'meta-series-note-delete' => ['DELETE', '/series/{id}/notes/', [$self, 'delSeriesNotes']],
+            'meta-series-links' => ['GET', '/series/{id}/links/', [$self, 'getSeriesLinks']],
             'meta-series-link-post' => ['POST', '/series/{id}/links/', [$self, 'newSeriesLink']],
             'meta-series-link-delete' => ['DELETE', '/series/{id}/links/{link}/', [$self, 'delSeriesLink']],
         ];
+    }
+
+    /**
+     * Get the author's thumbnail -> GET /metadata/authors/{id}/thumbnail/ JSON
+     * @return Response
+     */
+    public function getAuthorThumbnail($id)
+    {
+        // parameter checking
+        if (!is_numeric($id)) {
+            $this->log()->warning('getAuthorThumbnail: invalid author id ' . $id);
+            return $this->responder->error(400, "Bad parameter");
+        }
+        $this->log()->debug('getAuthorThumbnail: ' . $id);
+        $thumb = $this->bbs()->author($id)->getThumbnail();
+        return $this->responder->json(['data' => $thumb]);
     }
 
     /**
@@ -68,6 +91,12 @@ class MetadataActions extends DefaultActions
         // parameter checking
         if (!is_numeric($id)) {
             $this->log()->warning('editAuthorThumbnail: invalid author id ' . $id);
+            return $this->responder->error(400, "Bad parameter");
+        }
+        // we need the author name to create the calibre entity if needed
+        $author = $this->calibre()->author($id);
+        if (empty($author) || empty($author->name)) {
+            $this->log()->warning('editAuthorThumbnail: unknown author id ' . $id);
             return $this->responder->error(400, "Bad parameter");
         }
 
@@ -113,8 +142,6 @@ class MetadataActions extends DefaultActions
                 return $this->responder->redirect($root . '/authors/' . $id . '/0/');
             }
             $this->log()->debug('editAuthorThumbnail: upload ok, converting');
-            // we need the author name to create the calibre entity if needed
-            $author = $this->calibre()->author($id);
             $artefact = $this->bbs()->author($id, $author->name)->editThumbnail($settings->thumb_gen_clipped, $tmpfile, $type);
             $this->log()->debug('editAuthorThumbnail: converted, redirecting');
             return $this->responder->redirect($root . '/authors/' . $id . '/0/');
@@ -149,6 +176,22 @@ class MetadataActions extends DefaultActions
     }
 
     /**
+     * Get the author's note -> GET /metadata/authors/{id}/notes/ JSON
+     * @return Response
+     */
+    public function getAuthorNote($id)
+    {
+        // parameter checking
+        if (!is_numeric($id)) {
+            $this->log()->warning('getAuthorNote: invalid author id ' . $id);
+            return $this->responder->error(400, "Bad parameter");
+        }
+        $this->log()->debug('getAuthorNote: ' . $id);
+        $note = $this->bbs()->author($id)->getNote();
+        return $this->responder->json(['data' => $note]);
+    }
+
+    /**
      * Edit the notes about the author -> POST /metadata/authors/{id}/notes/ JSON
      * @return Response
      */
@@ -159,6 +202,12 @@ class MetadataActions extends DefaultActions
             $this->log()->warning('editAuthorNote: invalid author id ' . $id);
             return $this->responder->error(400, "Bad parameter");
         }
+        // we need the author name to create the calibre entity if needed
+        $author = $this->calibre()->author($id);
+        if (empty($author) || empty($author->name)) {
+            $this->log()->warning('editAuthorNote: unknown author id ' . $id);
+            return $this->responder->error(400, "Bad parameter");
+        }
 
         $this->log()->debug('editAuthorNote: ' . $id);
         $note_data = $this->requester->post();
@@ -166,8 +215,6 @@ class MetadataActions extends DefaultActions
         try {
             $markdownParser = new MarkdownExtra();
             $html = $markdownParser->transform($note_data['ntext']);
-            // we need the author name to create the calibre entity if needed
-            $author = $this->calibre()->author($id);
             $note = $this->bbs()->author($id, $author->name)->editNote($note_data['mime'], $note_data['ntext']);
         } catch (Exception $e) {
             $this->log()->error('editAuthorNote: error for editing note ' . var_export($note_data, true));
@@ -212,6 +259,22 @@ class MetadataActions extends DefaultActions
     }
 
     /**
+     * Get the author's links -> GET /metadata/authors/{id}/links/ JSON
+     * @return Response
+     */
+    public function getAuthorLinks($id)
+    {
+        // parameter checking
+        if (!is_numeric($id)) {
+            $this->log()->warning('getAuthorLinks: invalid author id ' . $id);
+            return $this->responder->error(400, "Bad parameter");
+        }
+        $this->log()->debug('getAuthorLinks: ' . $id);
+        $links = $this->bbs()->author($id)->getLinks();
+        return $this->responder->json(['data' => $links]);
+    }
+
+    /**
      * Add a new author link -> POST /metadata/authors/{id}/links JSON
      * @return Response
      */
@@ -222,15 +285,16 @@ class MetadataActions extends DefaultActions
             $this->log()->warning('newAuthorLink: invalid author id ' . $id);
             return $this->responder->error(400, "Bad parameter");
         }
+        // we need the author name to create the calibre entity if needed
+        $author = $this->calibre()->author($id);
+        if (empty($author) || empty($author->name)) {
+            $this->log()->warning('newAuthorLink: unknown author id ' . $id);
+            return $this->responder->error(400, "Bad parameter");
+        }
 
         $link_data = $this->requester->post();
         $this->log()->debug('newAuthorLink: ' . var_export($link_data, true));
-        // we need the author name to create the calibre entity if needed
-        $author = $this->calibre()->author($id);
-        $link = null;
-        if (!is_null($author)) {
-            $link = $this->bbs()->author($id, $author->name)->addLink($link_data['label'], $link_data['url']);
-        }
+        $link = $this->bbs()->author($id, $author->name)->addLink($link_data['label'], $link_data['url']);
         if (!is_null($link)) {
             $msg = $this->getMessageString('admin_modified');
             $data = ['link' => $link->unbox()->getProperties(), 'msg' => $msg];
@@ -266,6 +330,22 @@ class MetadataActions extends DefaultActions
     }
 
     /**
+     * Get the series note -> GET /metadata/authors/{id}/notes/ JSON
+     * @return Response
+     */
+    public function getSeriesNote($id)
+    {
+        // parameter checking
+        if (!is_numeric($id)) {
+            $this->log()->warning('getSeriesNote: invalid series id ' . $id);
+            return $this->responder->error(400, "Bad parameter");
+        }
+        $this->log()->debug('getSeriesNote: ' . $id);
+        $note = $this->bbs()->series($id)->getNote();
+        return $this->responder->json(['data' => $note]);
+    }
+
+    /**
      * Edit the notes about the series -> POST /metadata/series/{id}/notes/ JSON
      * @return Response
      */
@@ -276,6 +356,12 @@ class MetadataActions extends DefaultActions
             $this->log()->warning('editSeriesNotes: invalid series id ' . $id);
             return $this->responder->error(400, "Bad parameter");
         }
+        // we need the series name to create the calibre entity if needed
+        $series = $this->calibre()->series($id);
+        if (empty($series) || empty($series->name)) {
+            $this->log()->warning('editSeriesNotes: unknown series id ' . $id);
+            return $this->responder->error(400, "Bad parameter");
+        }
 
         $this->log()->debug('editSeriesNotes: ' . $id);
         $note_data = $this->requester->post();
@@ -283,8 +369,6 @@ class MetadataActions extends DefaultActions
         try {
             $markdownParser = new MarkdownExtra();
             $html = $markdownParser->transform($note_data['ntext']);
-            // we need the series name to create the calibre entity if needed
-            $series = $this->calibre()->series($id);
             $note = $this->bbs()->series($id, $series->name)->editNote($note_data['mime'], $note_data['ntext']);
         } catch (Exception $e) {
             $this->log()->error('editSeriesNotes: error for editing note ' . var_export($note_data, true));
@@ -329,6 +413,22 @@ class MetadataActions extends DefaultActions
     }
 
     /**
+     * Get the series links -> GET /metadata/series/{id}/links/ JSON
+     * @return Response
+     */
+    public function getSeriesLinks($id)
+    {
+        // parameter checking
+        if (!is_numeric($id)) {
+            $this->log()->warning('getSeriesLinks: invalid series id ' . $id);
+            return $this->responder->error(400, "Bad parameter");
+        }
+        $this->log()->debug('getSeriesLinks: ' . $id);
+        $links = $this->bbs()->series($id)->getLinks();
+        return $this->responder->json(['data' => $links]);
+    }
+
+    /**
      * Add a new series link -> POST /metadata/series/{id}/links JSON
      * @return Response
      */
@@ -339,15 +439,16 @@ class MetadataActions extends DefaultActions
             $this->log()->warning('newSeriesLink: invalid series id ' . $id);
             return $this->responder->error(400, "Bad parameter");
         }
+        // we need the series name to create the calibre entity if needed
+        $series = $this->calibre()->series($id);
+        if (empty($series) || empty($series->name)) {
+            $this->log()->warning('newSeriesLink: unknown series id ' . $id);
+            return $this->responder->error(400, "Bad parameter");
+        }
 
         $link_data = $this->requester->post();
         $this->log()->debug('newSeriesLink: ' . var_export($link_data, true));
-        // we need the series name to create the calibre entity if needed
-        $series = $this->calibre()->series($id);
-        $link = null;
-        if (!is_null($series)) {
-            $link = $this->bbs()->series($id, $series->name)->addLink($link_data['label'], $link_data['url']);
-        }
+        $link = $this->bbs()->series($id, $series->name)->addLink($link_data['label'], $link_data['url']);
         if (!is_null($link)) {
             $msg = $this->getMessageString('admin_modified');
             $data = ['link' => $link->unbox()->getProperties(), 'msg' => $msg];

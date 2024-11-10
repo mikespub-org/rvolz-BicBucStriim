@@ -10,16 +10,18 @@
 
 namespace BicBucStriim\Actions;
 
-function getActions($settings)
-{
-    return [
-        // classname, prefix
-        [MainActions::class, null],
-        [AdminActions::class, '/admin'],
-        [MetadataActions::class, '/metadata'],
-        [OpdsActions::class, '/opds'],
-        [ExtraActions::class, '/extra'],
-    ];
+if (!function_exists('\BicBucStriim\Actions\getActions')) {
+    function getActions($settings)
+    {
+        return [
+            // classname, prefix
+            [MainActions::class, null],
+            [AdminActions::class, '/admin'],
+            [MetadataActions::class, '/metadata'],
+            [OpdsActions::class, '/opds'],
+            [ExtraActions::class, '/extra'],
+        ];
+    }
 }
 
 ###### Init routes for production

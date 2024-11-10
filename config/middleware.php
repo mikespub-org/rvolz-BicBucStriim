@@ -10,13 +10,15 @@
 
 namespace BicBucStriim\Middleware;
 
-function getMiddlewareInstances($container, $settings)
-{
-    return [
-        new CalibreConfigMiddleware($container),
-        new LoginMiddleware($container, $settings['appname'], ['js', 'img', 'style', 'static']),
-        new OwnConfigMiddleware($container, $settings['knownConfigs']),
-    ];
+if (!function_exists('\BicBucStriim\Middleware\getMiddlewareInstances')) {
+    function getMiddlewareInstances($container, $settings)
+    {
+        return [
+            new CalibreConfigMiddleware($container),
+            new LoginMiddleware($container, $settings['appname'], ['js', 'img', 'style', 'static']),
+            new OwnConfigMiddleware($container, $settings['knownConfigs']),
+        ];
+    }
 }
 
 return function ($app, $settings) {

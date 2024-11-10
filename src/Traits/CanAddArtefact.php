@@ -39,7 +39,7 @@ trait CanAddArtefact
     /**
      * Change the thumbnail image for a Calibre entity.
      *
-     * @param Calibrething $calibreThing
+     * @param ?Calibrething $calibreThing
      * @param bool|int 	$clipped 	true = image should be clipped, else stuffed
      * @param string 	$file 		File name of the input image
      * @param string 	$mime 		Mime type of the image
@@ -47,6 +47,9 @@ trait CanAddArtefact
      */
     public function editCalibreThumbnail($calibreThing, $clipped, $file, $mime)
     {
+        if (is_null($calibreThing)) {
+            return null;
+        }
         if (($mime == 'image/jpeg')
         || ($mime == "image/jpg")
         || ($mime == "image/pjpeg")) {

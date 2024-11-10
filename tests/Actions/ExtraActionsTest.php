@@ -14,9 +14,9 @@ class ExtraActionsTest extends TestCase
     {
         return [
             // 'name' => [method(s), path, ...middleware(s), callable] with '$self' string
-            'extra-loader-path' => ['GET', '/extra/loader/{path:.*}', ['$self', 'loader']],
-            'extra-loader' => ['GET', '/extra/loader', ['$self', 'loader']],
-            'extra' => ['GET', '/extra/', ['$self', 'extra']],
+            'extra-loader-path' => ['GET', '/loader/{path:.*}', ['$self', 'loader']],
+            'extra-loader' => ['GET', '/loader', ['$self', 'loader']],
+            'extra' => ['GET', '/', ['$self', 'extra']],
         ];
     }
 
@@ -33,7 +33,8 @@ class ExtraActionsTest extends TestCase
             $patterns[] = $route->getPattern();
         }
         foreach ($expected as $routeInfo) {
-            $this->assertEquals(true, in_array($routeInfo[1], $patterns));
+            $path = ExtraActions::PREFIX . $routeInfo[1];
+            $this->assertEquals(true, in_array($path, $patterns));
         }
     }
 
@@ -52,12 +53,7 @@ class ExtraActionsTest extends TestCase
     public function testExtraRequest(): void
     {
         $app = TestHelper::getApp();
-        $request = RequestUtil::getServerRequest('GET', '/extra/');
-        $userData = [
-            'role' => 1,
-        ];
-        $auth = TestHelper::getAuth($request, $userData);
-        $request = $request->withAttribute('auth', $auth);
+        $request = TestHelper::getAuthRequest('GET', '/extra/');
 
         $expected = '<title>BicBucStriim :: Extra</title>';
         $response = $app->handle($request);
@@ -68,12 +64,7 @@ class ExtraActionsTest extends TestCase
     public function testLoaderRequest(): void
     {
         $app = TestHelper::getApp();
-        $request = RequestUtil::getServerRequest('GET', '/extra/loader');
-        $userData = [
-            'role' => 1,
-        ];
-        $auth = TestHelper::getAuth($request, $userData);
-        $request = $request->withAttribute('auth', $auth);
+        $request = TestHelper::getAuthRequest('GET', '/extra/loader');
 
         $expected = '<title>BBS Loader</title>';
         $response = $app->handle($request);
@@ -84,12 +75,7 @@ class ExtraActionsTest extends TestCase
     public function testLoaderPathRequest(): void
     {
         $app = TestHelper::getApp();
-        $request = RequestUtil::getServerRequest('GET', '/extra/loader/books/0/5');
-        $userData = [
-            'role' => 1,
-        ];
-        $auth = TestHelper::getAuth($request, $userData);
-        $request = $request->withAttribute('auth', $auth);
+        $request = TestHelper::getAuthRequest('GET', '/extra/loader/books/0/5');
 
         $expected = 'Die Glücksritter';
         $response = $app->handle($request);

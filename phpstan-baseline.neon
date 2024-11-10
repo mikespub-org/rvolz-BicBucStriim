@@ -6,29 +6,9 @@ parameters:
 			path: config/bootstrap.php
 
 		-
-			message: "#^Call to an undefined method Psr\\\\Container\\\\ContainerInterface\\:\\:set\\(\\)\\.$#"
-			count: 1
-			path: src/Actions/DefaultActions.php
-
-		-
 			message: "#^Call to an undefined method Twig\\\\Loader\\\\LoaderInterface\\:\\:prependPath\\(\\)\\.$#"
 			count: 1
 			path: src/Actions/DefaultActions.php
-
-		-
-			message: "#^Call to an undefined method Psr\\\\Container\\\\ContainerInterface\\:\\:set\\(\\)\\.$#"
-			count: 1
-			path: src/Middleware/CachingMiddleware.php
-
-		-
-			message: "#^Call to an undefined method Psr\\\\Container\\\\ContainerInterface\\:\\:set\\(\\)\\.$#"
-			count: 1
-			path: src/Middleware/DefaultMiddleware.php
-
-		-
-			message: "#^Call to an undefined method Psr\\\\Container\\\\ContainerInterface\\:\\:set\\(\\)\\.$#"
-			count: 3
-			path: src/Utilities/TestHelper.php
 
 		-
 			message: "#^Call to protected method is_authorized\\(\\) of class BicBucStriim\\\\Middleware\\\\LoginMiddleware\\.$#"

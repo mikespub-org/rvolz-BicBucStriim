@@ -32,13 +32,16 @@ trait CanAddLink
 
     /**
      * Add a link for a Calibre entity.
-     * @param Calibrething $calibreThing
+     * @param ?Calibrething $calibreThing
      * @param string 	$label 		link label
      * @param string 	$url 		link url
-     * @return Link     created link
+     * @return ?Link     created link
      */
     public function addCalibreLink($calibreThing, $label, $url)
     {
+        if (is_null($calibreThing)) {
+            return null;
+        }
         // Unless/until we support different types of links per entity, the default is the Calibre type
         $link = Link::build($calibreThing->ctype, $label, $url);
         $calibreThing->addLink($link);
@@ -58,8 +61,10 @@ trait CanAddLink
         if (is_null($calibreThing)) {
             return false;
         }
+        // refresh link list first
+        $links = $calibreThing->getLinks();
         try {
-            $link = $calibreThing->ownLinkList[$linkId];
+            $link = $calibreThing->ownLinkList[$linkId] ?? null;
         } catch (Exception $e) {
             $link = null;
         }

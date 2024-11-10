@@ -19,10 +19,12 @@ use Psr\Http\Message\ResponseInterface as Response;
  ********************************************************************/
 class OpdsActions extends DefaultActions
 {
+    public const PREFIX = '/opds';
+
     /**
      * Add routes for OPDS actions
      */
-    public static function addRoutes($app, $prefix = '/opds', $gatekeeper = null)
+    public static function addRoutes($app, $prefix = self::PREFIX, $gatekeeper = null)
     {
         $self = static::class;
         $routes = static::getRoutes($self, $gatekeeper);
@@ -33,7 +35,7 @@ class OpdsActions extends DefaultActions
 
     /**
      * Get routes for OPDS actions
-     * @param self|string $self
+     * @param self|class-string $self
      * @param ?object $gatekeeper (optional)
      * @return array<mixed> list of [method(s), path, ...middleware(s), callable] for each action
      */

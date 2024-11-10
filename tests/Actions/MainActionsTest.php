@@ -209,12 +209,7 @@ class MainActionsTest extends PHPUnit\Framework\TestCase
     public function testMainAuthorNotes(): void
     {
         $app = TestHelper::getApp();
-        $request = RequestUtil::getServerRequest('GET', '/authors/5/notes/');
-        $userData = [
-            'role' => 1,
-        ];
-        $auth = TestHelper::getAuth($request, $userData);
-        $request = $request->withAttribute('auth', $auth);
+        $request = TestHelper::getAuthRequest('GET', '/authors/5/notes/');
 
         $expected = '<title>BicBucStriim :: Notes</title>';
         $response = $app->handle($request);

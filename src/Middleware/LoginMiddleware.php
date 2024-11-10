@@ -77,7 +77,7 @@ class LoginMiddleware extends DefaultMiddleware
         $resource = $this->requester->getPathInfo();
         $this->log()->debug('login resource: ' . $resource);
         if ($settings->must_login == 1) {
-            if ($this->is_static_resource($resource)) {
+            if ($this->is_static_resource(resource: $resource)) {
                 return false;
             }
             // we need to initialize $this->setAuth() here to identify the user
@@ -162,6 +162,10 @@ class LoginMiddleware extends DefaultMiddleware
      */
     protected function is_authorized(Request $request)
     {
+        // pre-authenticated request e.g. for AdminActionsTest
+        if ($this->requester->getAuth()?->isValid()) {
+            return true;
+        }
         $session = $this->makeSession($request, $this->requester->getBasePath());
         $authTracker = $this->makeAuthTracker($request, $session, $this->bbs()->mydb);
         // @todo this sets 'auth' attribute on $this->request

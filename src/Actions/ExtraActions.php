@@ -23,10 +23,12 @@ use Psr\Http\Message\ResponseInterface as Response;
  ********************************************************************/
 class ExtraActions extends DefaultActions
 {
+    public const PREFIX = '/extra';
+
     /**
      * Add routes for extra actions
      */
-    public static function addRoutes($app, $prefix = '/extra', $gatekeeper = null)
+    public static function addRoutes($app, $prefix = self::PREFIX, $gatekeeper = null)
     {
         $self = static::class;
         $routes = static::getRoutes($self, $gatekeeper);
@@ -38,7 +40,7 @@ class ExtraActions extends DefaultActions
 
     /**
      * Get routes for extra actions
-     * @param self|string $self
+     * @param self|class-string $self
      * @param ?object $gatekeeper (optional)
      * @return array<mixed> list of [method(s), path, ...middleware(s), callable] for each action
      */

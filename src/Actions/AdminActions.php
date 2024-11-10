@@ -25,10 +25,12 @@ use Exception;
  ********************************************************************/
 class AdminActions extends DefaultActions
 {
+    public const PREFIX = '/admin';
+
     /**
      * Add routes for admin actions
      */
-    public static function addRoutes($app, $prefix = '/admin', $gatekeeper = null)
+    public static function addRoutes($app, $prefix = self::PREFIX, $gatekeeper = null)
     {
         $self = static::class;
         $routes = static::getRoutes($self, $gatekeeper);
@@ -40,7 +42,7 @@ class AdminActions extends DefaultActions
 
     /**
      * Get routes for admin actions
-     * @param self|string $self
+     * @param self|class-string $self
      * @param ?object $gatekeeper (optional)
      * @return array<mixed> list of [method(s), path, ...middleware(s), callable] for each action
      */

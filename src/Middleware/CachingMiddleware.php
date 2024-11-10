@@ -56,7 +56,9 @@ class CachingMiddleware extends CacheMiddleware
         $resource = $requester->getPathInfo();
         foreach ($this->resources as $noCacheResource) {
             if (str_starts_with($resource, $noCacheResource)) {
-                session_cache_limiter('nocache');
+                if (session_status() !== PHP_SESSION_ACTIVE) {
+                    session_cache_limiter('nocache');
+                }
                 $this->log()->debug('caching_middleware: caching disabled for ' . $resource);
                 break;
             }

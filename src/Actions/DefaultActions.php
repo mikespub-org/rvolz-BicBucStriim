@@ -24,6 +24,8 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
 {
     use \BicBucStriim\Traits\AppTrait;
 
+    public const PREFIX = null;
+
     /** @var RequestUtil|null */
     protected $requester = null;
     /** @var ResponseUtil|null */
@@ -39,7 +41,7 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
      * @param ?object $gatekeeper (optional)
      * @return void
      */
-    public static function addRoutes($app, $prefix = null, $gatekeeper = null)
+    public static function addRoutes($app, $prefix = self::PREFIX, $gatekeeper = null)
     {
         // Slim 4 framework uses its own CallableResolver if this is a class string, *before* invocation strategy
         $self = static::class;
@@ -55,7 +57,7 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
 
     /**
      * Get routes for default actions
-     * @param self|string $self
+     * @param self|class-string $self
      * @param ?object $gatekeeper (optional)
      * @return array<mixed> list of [method(s), path, ...middleware(s), callable] for each action
      */

@@ -27,10 +27,12 @@ use Twig\TwigFilter;
  ********************************************************************/
 class MainActions extends DefaultActions
 {
+    public const PREFIX = null;
+
     /**
      * Add routes for main actions
      */
-    public static function addRoutes($app, $prefix = null, $gatekeeper = null)
+    public static function addRoutes($app, $prefix = self::PREFIX, $gatekeeper = null)
     {
         $self = static::class;
         $routes = static::getRoutes($self, $gatekeeper);
@@ -39,7 +41,7 @@ class MainActions extends DefaultActions
 
     /**
      * Get routes for main actions
-     * @param self|string $self
+     * @param self|class-string $self
      * @param ?object $gatekeeper (optional)
      * @return array<mixed> list of [method(s), path, ...middleware(s), callable] for each action
      */

@@ -31,13 +31,16 @@ trait CanAddNote
 
     /**
      * Set the note text for a Calibre entity.
-     * @param Calibrething $calibreThing
+     * @param ?Calibrething $calibreThing
      * @param string 	$mime 		mime type for the note's content
      * @param string 	$noteText	note content
-     * @return Note 	created/edited note
+     * @return ?Note 	created/edited note
      */
     public function editCalibreNote($calibreThing, $mime, $noteText)
     {
+        if (is_null($calibreThing)) {
+            return null;
+        }
         $note = $calibreThing->getNote();
         if (is_null($note)) {
             // Unless/until we support different types of notes per entity, the default is the Calibre type

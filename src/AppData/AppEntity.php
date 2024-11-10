@@ -118,7 +118,7 @@ class AppEntity
      * Add a link for a Calibre entity.
      * @param string 	$label 	link label
      * @param string 	$url 	link url
-     * @return Link 	created author link
+     * @return ?Link 	created author link
      */
     public function addLink($label, $url)
     {
@@ -148,7 +148,7 @@ class AppEntity
      * Set the note text for a Calibre entity.
      * @param string 	$mime 		mime type for the note's content
      * @param string 	$noteText	note content
-     * @return Note 	created/edited note
+     * @return ?Note 	created/edited note
      */
     public function editNote($mime, $noteText)
     {
