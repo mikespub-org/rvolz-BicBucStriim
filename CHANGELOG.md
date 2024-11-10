@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [3.x.x] - 20xx-xx-xx
+
+## [3.6.2] - 2024-11-10 Refactor, add extra actions + show Calibre links/notes
 ### Added
 - Support callback from EPub Loader to set author, book or series info in BBS data.db
 - Show Calibre link & notes as alternative to links & notes stored in BBS data.db
