@@ -7,7 +7,7 @@
 	<header>
 			<h1>{{ book.title }}</h1> 												
 			<p>					
-				{{ book.pubdate | date("Y") }}	{{ language }}
+				{% if book.pubdate %}{{ book.pubdate|date("Y") }}{% endif %}	{{ language }}
 			</p>
 			<p class="ui-state-error">{{ flash.error }}</p>	
 	</header>		

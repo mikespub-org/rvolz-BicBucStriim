@@ -17,8 +17,7 @@
 					{{ book.title }}
 				</p>
 				<p>
-					{% set pb = book.pubdate|date("Y") %}
-					{% if pb != "0101" %}{{ pb }}{% else%}&nbsp;{% endif %}
+					{% if book.update %}{{ book.pubdate|date("Y") }}{% else%}&nbsp;{% endif %}
 				</p>
 				<p class="font-medium text-cyan-600 truncate">
 					{{book.author_sort}}

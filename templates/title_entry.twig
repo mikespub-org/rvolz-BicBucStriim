@@ -8,7 +8,7 @@
 		
 		<h3>
 			{% if series %}{{book.series_index}} - {% endif %}
-			{{ book.title }} ({{ book.pubdate|date("Y") }})
+			{{ book.title }} {% if book.pubdate %}({{ book.pubdate|date("Y") }}){% endif %}
 		</h3>
 		<p>{{book.author_sort}} {{book.addInfo}}</p>
 	</a>

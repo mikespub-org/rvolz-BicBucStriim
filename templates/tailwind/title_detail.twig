@@ -6,8 +6,7 @@
 		<header>
 			<h1 class="text-2xl">{{ book.title }}</h1>
 			<p>
-				{% set pb = book.pubdate|date("Y") %}
-				{% if pb != "0101" %} {{ pb }} {% endif %}
+				{% if book.update %} {{ book.pubdate|date("Y") }} {% endif %}
 				{{ language }}
 			</p>
 		</header>
