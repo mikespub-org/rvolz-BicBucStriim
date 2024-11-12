@@ -1,0 +1,32 @@
+{% extends 'main.twig' %}
+
+{% block pid %}id="pextra"{%endblock%}
+
+{% block headerlinks %}{% endblock %}
+
+{% block content %}
+	{% include "flash_messages.twig" %}
+	<ul data-role="listview">
+		{% for option in options %}
+			{% if option.external %}
+			<li data-icon="action">
+				<a rel="external" target="_blank" href="{{page.rot}}/extra/{{option.id}}/">
+					<h3>
+						{{ option.label }}
+					</h3>
+					<p>{{ option.description }}</p>
+				</a>
+			</li>
+			{% else %}
+			<li>
+				<a href="{{page.rot}}/extra/{{option.id}}/">
+					<h3>
+						{{ option.label }}
+					</h3>
+					<p>{{ option.description }}</p>
+				</a>
+			</li>
+			{% endif %}
+		{% endfor %}
+	</ul>
+{% endblock %}

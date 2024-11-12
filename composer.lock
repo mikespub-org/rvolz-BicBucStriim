@@ -312,16 +312,16 @@
         },
         {
             "name": "laravel/serializable-closure",
-            "version": "v1.3.5",
+            "version": "v1.3.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/serializable-closure.git",
-                "reference": "1dc4a3dbfa2b7628a3114e43e32120cce7cdda9c"
+                "reference": "f865a58ea3a0107c336b7045104c75243fa59d96"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/serializable-closure/zipball/1dc4a3dbfa2b7628a3114e43e32120cce7cdda9c",
-                "reference": "1dc4a3dbfa2b7628a3114e43e32120cce7cdda9c",
+                "url": "https://api.github.com/repos/laravel/serializable-closure/zipball/f865a58ea3a0107c336b7045104c75243fa59d96",
+                "reference": "f865a58ea3a0107c336b7045104c75243fa59d96",
                 "shasum": ""
             },
             "require": {
@@ -369,7 +369,7 @@
                 "issues": "https://github.com/laravel/serializable-closure/issues",
                 "source": "https://github.com/laravel/serializable-closure"
             },
-            "time": "2024-09-23T13:33:08+00:00"
+            "time": "2024-11-11T17:06:04+00:00"
         },
         {
             "name": "michelf/php-markdown",
@@ -2203,16 +2203,16 @@
     "packages-dev": [
         {
             "name": "illuminate/collections",
-            "version": "v11.30.0",
+            "version": "v11.31.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/collections.git",
-                "reference": "2d99ccbb19e34450508ff3ab2f62ba90aa2e9793"
+                "reference": "4fdef06e35aac0239d76033a2bad0ddb921226e8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/illuminate/collections/zipball/2d99ccbb19e34450508ff3ab2f62ba90aa2e9793",
-                "reference": "2d99ccbb19e34450508ff3ab2f62ba90aa2e9793",
+                "url": "https://api.github.com/repos/illuminate/collections/zipball/4fdef06e35aac0239d76033a2bad0ddb921226e8",
+                "reference": "4fdef06e35aac0239d76033a2bad0ddb921226e8",
                 "shasum": ""
             },
             "require": {
@@ -2254,11 +2254,11 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2024-10-10T19:23:07+00:00"
+            "time": "2024-11-08T03:05:25+00:00"
         },
         {
             "name": "illuminate/conditionable",
-            "version": "v11.30.0",
+            "version": "v11.31.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/conditionable.git",
@@ -2304,7 +2304,7 @@
         },
         {
             "name": "illuminate/contracts",
-            "version": "v11.30.0",
+            "version": "v11.31.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/contracts.git",
@@ -2352,7 +2352,7 @@
         },
         {
             "name": "illuminate/macroable",
-            "version": "v11.30.0",
+            "version": "v11.31.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/macroable.git",
@@ -2475,16 +2475,16 @@
         },
         {
             "name": "mikespub/epub-loader",
-            "version": "3.5.4",
+            "version": "3.5.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mikespub-org/epub-loader.git",
-                "reference": "2ae3fee98b660e27f077d5520b7785b1ae9f4a3c"
+                "reference": "39b75a2368ec523bd00e38a755d825437a2dfdbc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mikespub-org/epub-loader/zipball/2ae3fee98b660e27f077d5520b7785b1ae9f4a3c",
-                "reference": "2ae3fee98b660e27f077d5520b7785b1ae9f4a3c",
+                "url": "https://api.github.com/repos/mikespub-org/epub-loader/zipball/39b75a2368ec523bd00e38a755d825437a2dfdbc",
+                "reference": "39b75a2368ec523bd00e38a755d825437a2dfdbc",
                 "shasum": ""
             },
             "require": {
@@ -2531,22 +2531,22 @@
             "description": "epub-loader is a utility resource for ebooks",
             "support": {
                 "issues": "https://github.com/mikespub-org/epub-loader/issues",
-                "source": "https://github.com/mikespub-org/epub-loader/tree/3.5.4"
+                "source": "https://github.com/mikespub-org/epub-loader/tree/3.5.6"
             },
-            "time": "2024-11-09T00:16:52+00:00"
+            "time": "2024-11-12T17:48:35+00:00"
         },
         {
             "name": "mikespub/php-epub-meta",
-            "version": "3.3.1",
+            "version": "3.3.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mikespub-org/php-epub-meta.git",
-                "reference": "348f904d88857b7d81448eaa29586c74d3740361"
+                "reference": "de9269e919d6796825f6f342d1ba6accf072db1d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mikespub-org/php-epub-meta/zipball/348f904d88857b7d81448eaa29586c74d3740361",
-                "reference": "348f904d88857b7d81448eaa29586c74d3740361",
+                "url": "https://api.github.com/repos/mikespub-org/php-epub-meta/zipball/de9269e919d6796825f6f342d1ba6accf072db1d",
+                "reference": "de9269e919d6796825f6f342d1ba6accf072db1d",
                 "shasum": ""
             },
             "require": {
@@ -2603,22 +2603,22 @@
             ],
             "support": {
                 "issues": "https://github.com/mikespub-org/php-epub-meta/issues",
-                "source": "https://github.com/mikespub-org/php-epub-meta/tree/3.3.1"
+                "source": "https://github.com/mikespub-org/php-epub-meta/tree/3.3.2"
             },
-            "time": "2024-10-27T17:27:13+00:00"
+            "time": "2024-11-10T16:08:32+00:00"
         },
         {
             "name": "mikespub/survos-wikidata",
-            "version": "5.2",
+            "version": "5.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mikespub-org/survos-wikidata.git",
-                "reference": "f7a4c4dd2ae15b8c212233c7c667fcfc16d43ae8"
+                "reference": "70bd3f1aa88f32b2956785b4cc3c226b00425d58"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mikespub-org/survos-wikidata/zipball/f7a4c4dd2ae15b8c212233c7c667fcfc16d43ae8",
-                "reference": "f7a4c4dd2ae15b8c212233c7c667fcfc16d43ae8",
+                "url": "https://api.github.com/repos/mikespub-org/survos-wikidata/zipball/70bd3f1aa88f32b2956785b4cc3c226b00425d58",
+                "reference": "70bd3f1aa88f32b2956785b4cc3c226b00425d58",
                 "shasum": ""
             },
             "require": {
@@ -2666,7 +2666,7 @@
                 "wikidata"
             ],
             "support": {
-                "source": "https://github.com/mikespub-org/survos-wikidata/tree/5.2"
+                "source": "https://github.com/mikespub-org/survos-wikidata/tree/5.2.1"
             },
             "funding": [
                 {
@@ -2678,7 +2678,7 @@
                     "type": "custom"
                 }
             ],
-            "time": "2024-10-27T17:34:55+00:00"
+            "time": "2024-11-10T16:13:18+00:00"
         },
         {
             "name": "myclabs/deep-copy",

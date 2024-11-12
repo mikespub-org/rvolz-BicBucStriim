@@ -59,11 +59,16 @@ $gConfig['groups'] = [];
 $gConfig['groups']['Import'] = [
     //'db_load' => 'Create Calibre database with available epub files',
     //'csv_import' => 'Import CSV records into new Calibre database',
-    //'json_import' => 'Import JSON files from Lookup into new Calibre database',
+    //'json_import' => 'Import JSON records into new Calibre database',
+    //'cache_load' => 'Load JSON files from Lookup cache into new Calibre database',
 ];
 $gConfig['groups']['Export'] = [
     'csv_export' => 'Export CSV records with available epub files',
     'csv_dump' => 'Dump CSV records from Calibre database',
+    'json_export' => 'Export JSON records with available epub files',
+    'json_dump' => 'Dump JSON records from Calibre database',
+    // if configured by calling application
+    'callback' => 'Export metadata cache info via callbacks',
 ];
 $gConfig['groups']['Lookup'] = [
     'authors' => 'Authors in database',

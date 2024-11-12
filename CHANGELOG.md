@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [3.x.x] - 20xx-xx-xx
 
+## [3.6.3] - 20xx-11-12 Add dark default theme + deal with empty book pubdates
+### Added
+- Dark default theme as "darksoha" templates - from .zip file in issue #8 created by @sohanev
+### Changed
+- Update epub loader config to align with latest version 3.5.6
+- Deal with empty book.pubdate in templates - see issue #6 by @sohanev
+
 ## [3.6.2] - 2024-11-10 Refactor, add extra actions + show Calibre links/notes
 ### Added
 - Support callback from EPub Loader to set author, book or series info in BBS data.db

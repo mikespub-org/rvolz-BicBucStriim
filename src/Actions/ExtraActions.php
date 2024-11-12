@@ -132,9 +132,9 @@ class ExtraActions extends DefaultActions
          * Define callbacks to update information here
          */
         $gConfig['callbacks'] = [
-            'setAuthorInfo' => $this->setAuthorInfo(...),
-            'setSeriesInfo' => $this->setSeriesInfo(...),
-            'setBookInfo' => $this->setBookInfo(...),
+            'setAuthorInfo' => [$this, 'setAuthorInfo'],  // $this->setAuthorInfo(...),
+            'setSeriesInfo' => [$this, 'setSeriesInfo'],  // $this->setSeriesInfo(...),
+            'setBookInfo' => [$this, 'setBookInfo'],  // $this->setBookInfo(...),
         ];
 
         // add optional query param for path in loader for Swagger UI

@@ -1,0 +1,14 @@
+{% extends 'main.twig' %}
+
+{% block pid %}id="logout"{%endblock%}
+
+{% block headerlinks %}{% endblock %}
+
+{% block content %}
+<header>
+	<h1>{{page.glob.l10n.logout}}</h1>	
+</header>  
+<p>
+{{page.glob.l10n.logout_expl}}:  <a href="{{page.rot}}/login/">{{page.glob.l10n.login}}</a>.
+</p>
+{% endblock %}
