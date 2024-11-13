@@ -1,10 +1,17 @@
 {
   "scripts": {
     "genl10n": "node scripts/genl10n.js assets/l10n/messages.yml lang",
-    "package": "node scripts/package.js"
+    "modernizr": "yarn exec modernizr -c assets/modernizr-config.json -d js/libs/modernizr-custom.min.js"
   },
   "devDependencies": {
     "read-yaml": "^1.1.0"
   },
-  "packageManager": "yarn@4.5.1"
+  "packageManager": "yarn@4.5.1",
+  "dependencies": {
+    "jquery": "2.1.4",
+    "jquery-mobile": "^1.5.0-alpha.1",
+    "jquery.loadtemplate": "^1.5.10",
+    "js-cookie": "^3.0.5",
+    "modernizr": "^3.13.1"
+  }
 }

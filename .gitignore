@@ -35,3 +35,4 @@ tests/coverage/
 tests/cache
 rector.php
 behat.yml
+yarn.lock

@@ -1,0 +1,40 @@
+{
+  "minify": true,
+  "options": [
+    "domPrefixes",
+    "prefixes",
+    "hasEvent",
+    "mq",
+    "testAllProps",
+    "testProp",
+    "testStyles",
+    "html5shiv",
+    "setClasses"
+  ],
+  "feature-detects": [
+    "test/hashchange",
+    "test/history",
+    "test/input",
+    "test/inputtypes",
+    "test/css/animations",
+    "test/css/backgroundsize",
+    "test/css/borderimage",
+    "test/css/borderradius",
+    "test/css/boxshadow",
+    "test/css/columns",
+    "test/css/flexbox",
+    "test/css/flexboxlegacy",
+    "test/css/fontface",
+    "test/css/generatedcontent",
+    "test/css/gradients",
+    "test/css/hsla",
+    "test/css/multiplebgs",
+    "test/css/opacity",
+    "test/css/reflections",
+    "test/css/rgba",
+    "test/css/textshadow",
+    "test/css/transforms",
+    "test/css/transforms3d",
+    "test/css/transitions"
+  ]
+}

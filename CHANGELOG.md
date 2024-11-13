@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [3.x.x] - 20xx-xx-xx
+### Changed
+- Document javascript library versions in package.json (info only)
 
 ## [3.6.3] - 2024-11-12 Add dark default theme + deal with empty book pubdates
 ### Added
