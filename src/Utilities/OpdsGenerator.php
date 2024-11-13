@@ -59,6 +59,7 @@ class OpdsGenerator
             'opds_root_subtitle',
             '/opds/'
         );
+        $this->searchLink();
         $this->navigationCatalogLink($this->bbs_root . '/opds/', 'self');
         $this->navigationCatalogLink($this->bbs_root . '/opds/', 'start');
         # Subcatalogs
@@ -586,6 +587,7 @@ class OpdsGenerator
             '/opds/searchlist/' . $page . ':' . rawurlencode($search),
             ': ' . $search
         );
+        $this->searchLink();
         $this->acquisitionCatalogLink($this->bbs_root . '/opds/searchlist/' . $page . '/', 'self');
         $this->navigationCatalogLink($this->bbs_root . '/opds/', 'start');
         $this->navigationCatalogLink($this->bbs_root . '/opds/', 'up');

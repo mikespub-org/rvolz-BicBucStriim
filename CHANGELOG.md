@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [3.x.x] - 20xx-xx-xx
 
-## [3.6.3] - 20xx-11-12 Add dark default theme + deal with empty book pubdates
+## [3.6.3] - 2024-11-12 Add dark default theme + deal with empty book pubdates
 ### Added
 - Dark default theme as "darksoha" templates - from .zip file in issue #8 created by @sohanev
 ### Changed
