@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Adapted from https://github.com/selective-php/basepath
  */

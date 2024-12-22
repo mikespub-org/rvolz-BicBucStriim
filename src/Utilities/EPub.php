@@ -1,4 +1,5 @@
 <?php
+
 /**
  * PHP EPub Meta library
  *

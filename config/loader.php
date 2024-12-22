@@ -1,4 +1,5 @@
 <?php
+
 /**
  * EPub Loader config for ExtraActions::loader()
  * @see https://github.com/mikespub-org/epub-loader

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * BicBucStriim config for production mode
  *

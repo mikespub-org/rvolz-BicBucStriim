@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Calibre DB items using PDO::FETCH_CLASS
  */
