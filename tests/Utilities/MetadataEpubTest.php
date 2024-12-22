@@ -1,4 +1,5 @@
 <?php
+
 /**
  * EPUB metadata converter test suite.
  *

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * OPDS Generator test suite.
  *

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Test our workaround to search for items with non-ascii names
  */
