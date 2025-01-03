@@ -7,7 +7,8 @@ RUN apk add --no-cache \
     php83-apcu \
     php83-pdo_sqlite \
     php83-sqlite3 \
-    php83-sodium
+    php83-sodium \
+    php83-zip
 
 # Install composer from the official image
 COPY --from=composer /usr/bin/composer /usr/bin/composer
