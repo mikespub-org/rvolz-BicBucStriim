@@ -83,7 +83,7 @@ class Calibrething extends Model
         // Note: we cannot use $this->ownNoteList ?? [] directly here due to lazy loading
         $notes = $this->ownNoteList;
         $notes = array_values(array_filter($notes ?? [], function ($note) use ($ntype) {
-            return($note->ntype == $ntype);
+            return $note->ntype == $ntype;
         }));
         if (empty($notes)) {
             return null;

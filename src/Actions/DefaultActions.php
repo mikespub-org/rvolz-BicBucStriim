@@ -280,13 +280,13 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
     /**
      * Get flash from previous request
      * @param  string   $key
-     * @return void|mixed
+     * @return mixed
      */
     public function getFlash($key)
     {
         $session = $this->requester->getSession();
         if (empty($session)) {
-            return;
+            return null;
         }
         return $session->getLocalSegment()->getFlash($key);
     }
