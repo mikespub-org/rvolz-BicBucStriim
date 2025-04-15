@@ -721,8 +721,7 @@ class OpdsGenerator
         #$this->xmlw->writeElement('icon',$this->bbs_root.'/favicon.ico');
         $this->xmlw->startElement('author');
         $this->xmlw->writeElement('name', 'BicBucStriim ' . $this->bbs_version);
-        # TODO: textmulch url for feed uri
-        $this->xmlw->writeElement('uri', 'http://rvolz.github.com/BicBucStriim');
+        $this->xmlw->writeElement('uri', 'https://github.com/mikespub-org/rvolz-BicBucStriim');
         $this->xmlw->endElement();
         #$this->xmlw->writeElement('id', $this->bbs_root.$id);
         $this->xmlw->writeElement('id', 'urn:bbs:calibre:' . $id);

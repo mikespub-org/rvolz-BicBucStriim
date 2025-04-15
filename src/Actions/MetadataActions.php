@@ -73,7 +73,7 @@ class MetadataActions extends DefaultActions
         // parameter checking
         if (!is_numeric($id)) {
             $this->log()->warning('getAuthorThumbnail: invalid author id ' . $id);
-            return $this->responder->error(400, "Bad parameter");
+            return $this->badParameter();
         }
         $this->log()->debug('getAuthorThumbnail: ' . $id);
         $thumb = $this->bbs()->author($id)->getThumbnail();
@@ -92,13 +92,13 @@ class MetadataActions extends DefaultActions
         // parameter checking
         if (!is_numeric($id)) {
             $this->log()->warning('editAuthorThumbnail: invalid author id ' . $id);
-            return $this->responder->error(400, "Bad parameter");
+            return $this->badParameter();
         }
         // we need the author name to create the calibre entity if needed
         $author = $this->calibre()->author($id);
         if (empty($author) || empty($author->name)) {
             $this->log()->warning('editAuthorThumbnail: unknown author id ' . $id);
-            return $this->responder->error(400, "Bad parameter");
+            return $this->badParameter();
         }
 
         /** @var \Psr\Http\Message\UploadedFileInterface|null $file */
@@ -161,7 +161,7 @@ class MetadataActions extends DefaultActions
         // parameter checking
         if (!is_numeric($id)) {
             $this->log()->warning('delAuthorThumbnail: invalid author id ' . $id);
-            return $this->responder->error(400, "Bad parameter");
+            return $this->badParameter();
         }
 
         $this->log()->debug('delAuthorThumbnail: ' . $id);
@@ -185,7 +185,7 @@ class MetadataActions extends DefaultActions
         // parameter checking
         if (!is_numeric($id)) {
             $this->log()->warning('getAuthorNote: invalid author id ' . $id);
-            return $this->responder->error(400, "Bad parameter");
+            return $this->badParameter();
         }
         $this->log()->debug('getAuthorNote: ' . $id);
         $note = $this->bbs()->author($id)->getNote();
@@ -201,13 +201,13 @@ class MetadataActions extends DefaultActions
         // parameter checking
         if (!is_numeric($id)) {
             $this->log()->warning('editAuthorNote: invalid author id ' . $id);
-            return $this->responder->error(400, "Bad parameter");
+            return $this->badParameter();
         }
         // we need the author name to create the calibre entity if needed
         $author = $this->calibre()->author($id);
         if (empty($author) || empty($author->name)) {
             $this->log()->warning('editAuthorNote: unknown author id ' . $id);
-            return $this->responder->error(400, "Bad parameter");
+            return $this->badParameter();
         }
 
         $this->log()->debug('editAuthorNote: ' . $id);
@@ -244,7 +244,7 @@ class MetadataActions extends DefaultActions
         // parameter checking
         if (!is_numeric($id)) {
             $this->log()->warning('delAuthorNote: invalid author id ' . $id);
-            return $this->responder->error(400, "Bad parameter");
+            return $this->badParameter();
         }
 
         $this->log()->debug('delAuthorNote: ' . $id);
@@ -268,7 +268,7 @@ class MetadataActions extends DefaultActions
         // parameter checking
         if (!is_numeric($id)) {
             $this->log()->warning('getAuthorLinks: invalid author id ' . $id);
-            return $this->responder->error(400, "Bad parameter");
+            return $this->badParameter();
         }
         $this->log()->debug('getAuthorLinks: ' . $id);
         $links = $this->bbs()->author($id)->getLinks();
@@ -284,13 +284,13 @@ class MetadataActions extends DefaultActions
         // parameter checking
         if (!is_numeric($id)) {
             $this->log()->warning('newAuthorLink: invalid author id ' . $id);
-            return $this->responder->error(400, "Bad parameter");
+            return $this->badParameter();
         }
         // we need the author name to create the calibre entity if needed
         $author = $this->calibre()->author($id);
         if (empty($author) || empty($author->name)) {
             $this->log()->warning('newAuthorLink: unknown author id ' . $id);
-            return $this->responder->error(400, "Bad parameter");
+            return $this->badParameter();
         }
 
         $link_data = $this->requester->post();
@@ -315,7 +315,7 @@ class MetadataActions extends DefaultActions
         // parameter checking
         if (!is_numeric($id) || !is_numeric($link)) {
             $this->log()->warning('delAuthorLink: invalid author id ' . $id . ' or link id ' . $link);
-            return $this->responder->error(400, "Bad parameter");
+            return $this->badParameter();
         }
 
         $this->log()->debug('delAuthorLink: author ' . $id . ', link ' . $link);
@@ -339,7 +339,7 @@ class MetadataActions extends DefaultActions
         // parameter checking
         if (!is_numeric($id)) {
             $this->log()->warning('getSeriesNote: invalid series id ' . $id);
-            return $this->responder->error(400, "Bad parameter");
+            return $this->badParameter();
         }
         $this->log()->debug('getSeriesNote: ' . $id);
         $note = $this->bbs()->series($id)->getNote();
@@ -355,13 +355,13 @@ class MetadataActions extends DefaultActions
         // parameter checking
         if (!is_numeric($id)) {
             $this->log()->warning('editSeriesNotes: invalid series id ' . $id);
-            return $this->responder->error(400, "Bad parameter");
+            return $this->badParameter();
         }
         // we need the series name to create the calibre entity if needed
         $series = $this->calibre()->series($id);
         if (empty($series) || empty($series->name)) {
             $this->log()->warning('editSeriesNotes: unknown series id ' . $id);
-            return $this->responder->error(400, "Bad parameter");
+            return $this->badParameter();
         }
 
         $this->log()->debug('editSeriesNotes: ' . $id);
@@ -398,7 +398,7 @@ class MetadataActions extends DefaultActions
         // parameter checking
         if (!is_numeric($id)) {
             $this->log()->warning('delSeriesNotes: invalid series id ' . $id);
-            return $this->responder->error(400, "Bad parameter");
+            return $this->badParameter();
         }
 
         $this->log()->debug('delSeriesNotes: ' . $id);
@@ -422,7 +422,7 @@ class MetadataActions extends DefaultActions
         // parameter checking
         if (!is_numeric($id)) {
             $this->log()->warning('getSeriesLinks: invalid series id ' . $id);
-            return $this->responder->error(400, "Bad parameter");
+            return $this->badParameter();
         }
         $this->log()->debug('getSeriesLinks: ' . $id);
         $links = $this->bbs()->series($id)->getLinks();
@@ -438,13 +438,13 @@ class MetadataActions extends DefaultActions
         // parameter checking
         if (!is_numeric($id)) {
             $this->log()->warning('newSeriesLink: invalid series id ' . $id);
-            return $this->responder->error(400, "Bad parameter");
+            return $this->badParameter();
         }
         // we need the series name to create the calibre entity if needed
         $series = $this->calibre()->series($id);
         if (empty($series) || empty($series->name)) {
             $this->log()->warning('newSeriesLink: unknown series id ' . $id);
-            return $this->responder->error(400, "Bad parameter");
+            return $this->badParameter();
         }
 
         $link_data = $this->requester->post();
@@ -469,7 +469,7 @@ class MetadataActions extends DefaultActions
         // parameter checking
         if (!is_numeric($id) || !is_numeric($link)) {
             $this->log()->warning('delSeriesLink: invalid series id ' . $id . ' or link id ' . $link);
-            return $this->responder->error(400, "Bad parameter");
+            return $this->badParameter();
         }
 
         $this->log()->debug('delSeriesLink: series ' . $id . ', link ' . $link);

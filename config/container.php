@@ -32,7 +32,7 @@ $builder = new \DI\ContainerBuilder();
 //$builder->useAttributes(false);
 $builder->addDefinitions([
     // Application settings
-    'settings' => fn() => require(__DIR__ . '/settings.php'),
+    'settings' => fn() => require __DIR__ . '/settings.php',
     LoggerInterface::class => function (ContainerInterface $c) {
         # Add null logger - see https://github.com/8ctopus/apix-log
         return new \BicBucStriim\Utilities\Logger();

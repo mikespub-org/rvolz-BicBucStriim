@@ -62,7 +62,7 @@ trait CanAddLink
             return false;
         }
         // refresh link list first
-        $links = $calibreThing->getLinks();
+        $this->getCalibreLinks($calibreThing);
         try {
             $link = $calibreThing->ownLinkList[$linkId] ?? null;
         } catch (Exception $e) {

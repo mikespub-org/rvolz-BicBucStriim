@@ -117,7 +117,7 @@ class ApiActions extends DefaultActions
 
     /**
      * Send CORS options
-     * @return Response;
+     * @return Response
      */
     public function corsOptions($routes = '')
     {

@@ -303,12 +303,7 @@ class MiddlewareTest extends PHPUnit\Framework\TestCase
         $middleware = new LoginMiddleware($app->getContainer(), $settings['appname'], []);
         $middleware->setRequester($request, $settings);
 
-        // test protected method using closure bind & call or use reflection
-        $isAuthorized = function ($request) {
-            /** @var LoginMiddleware $this */
-            return $this->is_authorized($request);
-        };
-        $result = $isAuthorized->call($middleware, $request);
+        $result = $middleware->is_authorized($request);
         $this->assertTrue($result);
         unset($_SESSION[\Aura\Auth\Auth::class]);
     }
@@ -327,12 +322,7 @@ class MiddlewareTest extends PHPUnit\Framework\TestCase
         $middleware = new LoginMiddleware($app->getContainer(), $settings['appname'], []);
         $middleware->setRequester($request, $settings);
 
-        // test protected method using closure bind & call or use reflection
-        $isAuthorized = function ($request) {
-            /** @var LoginMiddleware $this */
-            return $this->is_authorized($request);
-        };
-        $result = $isAuthorized->call($middleware, $request);
+        $result = $middleware->is_authorized($request);
         $this->assertFalse($result);
         unset($_SESSION[\Aura\Auth\Auth::class]);
     }
@@ -351,12 +341,7 @@ class MiddlewareTest extends PHPUnit\Framework\TestCase
         $middleware = new LoginMiddleware($app->getContainer(), $settings['appname'], []);
         $middleware->setRequester($request, $settings);
 
-        // test protected method using closure bind & call or use reflection
-        $isAuthorized = function ($request) {
-            /** @var LoginMiddleware $this */
-            return $this->is_authorized($request);
-        };
-        $result = $isAuthorized->call($middleware, $request);
+        $result = $middleware->is_authorized($request);
         $this->assertTrue($result);
         unset($_SESSION[\Aura\Auth\Auth::class]);
     }
@@ -375,12 +360,7 @@ class MiddlewareTest extends PHPUnit\Framework\TestCase
         $middleware = new LoginMiddleware($app->getContainer(), $settings['appname'], []);
         $middleware->setRequester($request, $settings);
 
-        // test protected method using closure bind & call or use reflection
-        $isAuthorized = function ($request) {
-            /** @var LoginMiddleware $this */
-            return $this->is_authorized($request);
-        };
-        $result = $isAuthorized->call($middleware, $request);
+        $result = $middleware->is_authorized($request);
         $this->assertFalse($result);
         unset($_SESSION[\Aura\Auth\Auth::class]);
     }

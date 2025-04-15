@@ -110,6 +110,6 @@ class BicBucStriim
      */
     public function dbOk()
     {
-        return (!is_null($this->mydb));
+        return !is_null($this->mydb);
     }
 }

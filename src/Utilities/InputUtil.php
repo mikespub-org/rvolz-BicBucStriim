@@ -63,6 +63,6 @@ class InputUtil
      */
     public static function isEMailValid($mail)
     {
-        return (filter_var($mail, FILTER_VALIDATE_EMAIL) !== false);
+        return filter_var($mail, FILTER_VALIDATE_EMAIL) !== false;
     }
 }

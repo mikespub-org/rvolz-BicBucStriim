@@ -53,7 +53,7 @@ function has_sqlite()
 
 function fw($file)
 {
-    return (file_exists($file) && is_writeable($file));
+    return file_exists($file) && is_writeable($file);
 }
 
 function get_gd_version()

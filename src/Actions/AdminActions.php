@@ -320,7 +320,7 @@ class AdminActions extends DefaultActions
         // parameter checking
         if (!is_numeric($id)) {
             $this->log()->warning('admin_getUser: invalid user id ' . $id);
-            return $this->responder->error(400, "Bad parameter");
+            return $this->badParameter();
         }
 
         $user = $this->bbs()->user($id);
@@ -383,7 +383,7 @@ class AdminActions extends DefaultActions
         // parameter checking
         if (!is_numeric($id)) {
             $this->log()->warning('admin_deleteUser: invalid user id ' . $id);
-            return $this->responder->error(400, "Bad parameter");
+            return $this->badParameter();
         }
 
         $this->log()->debug('admin_deleteUser: ' . var_export($id, true));
@@ -407,7 +407,7 @@ class AdminActions extends DefaultActions
         // parameter checking
         if (!is_numeric($id)) {
             $this->log()->warning('admin_modifyUser: invalid user id ' . $id);
-            return $this->responder->error(400, "Bad parameter");
+            return $this->badParameter();
         }
 
         $user_data = $this->requester->post();
@@ -584,7 +584,7 @@ class AdminActions extends DefaultActions
     public function hasValidCalibreDir()
     {
         $settings = $this->settings();
-        return (!empty($settings->calibre_dir) &&
-            Calibre::checkForCalibre($settings->calibre_dir));
+        return !empty($settings->calibre_dir) &&
+            Calibre::checkForCalibre($settings->calibre_dir);
     }
 }

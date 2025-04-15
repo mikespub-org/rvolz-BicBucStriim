@@ -164,7 +164,7 @@ class MainActionsTest extends PHPUnit\Framework\TestCase
     #[\PHPUnit\Framework\Attributes\RunInSeparateProcess]
     public function testAppBootstrap(): void
     {
-        $app = require(dirname(__DIR__, 2) . '/config/bootstrap.php');
+        $app = require dirname(__DIR__, 2) . '/config/bootstrap.php';
         $this->assertEquals(\Slim\App::class, $app::class);
     }
 

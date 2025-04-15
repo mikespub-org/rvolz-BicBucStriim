@@ -8,9 +8,9 @@
  *
  */
 
-require 'vendor/autoload.php';
+require_once 'vendor/autoload.php';
 
 # Init app and routes
-$app = require(__DIR__ . '/config/bootstrap.php');
+$app = require __DIR__ . '/config/bootstrap.php';
 
 $app->run();

@@ -90,7 +90,7 @@ class Calibre
      */
     public function libraryOk()
     {
-        return (!is_null($this->calibre));
+        return !is_null($this->calibre);
     }
 
     /**

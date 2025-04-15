@@ -52,7 +52,7 @@ class UrlInfo
 
     public function is_valid()
     {
-        return (!empty($this->host));
+        return !empty($this->host);
     }
 
     /**

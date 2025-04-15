@@ -1,16 +1,13 @@
 parameters:
 	ignoreErrors:
 		-
-			message: "#^Call to an undefined method Psr\\\\Container\\\\ContainerInterface\\:\\:set\\(\\)\\.$#"
+			message: '#^Call to an undefined method Psr\\Container\\ContainerInterface\:\:set\(\)\.$#'
+			identifier: method.notFound
 			count: 3
 			path: config/bootstrap.php
 
 		-
-			message: "#^Call to an undefined method Twig\\\\Loader\\\\LoaderInterface\\:\\:prependPath\\(\\)\\.$#"
+			message: '#^Call to an undefined method Twig\\Loader\\LoaderInterface\:\:prependPath\(\)\.$#'
+			identifier: method.notFound
 			count: 1
 			path: src/Actions/DefaultActions.php
-
-		-
-			message: "#^Call to protected method is_authorized\\(\\) of class BicBucStriim\\\\Middleware\\\\LoginMiddleware\\.$#"
-			count: 4
-			path: tests/Middleware/MiddlewareTest.php

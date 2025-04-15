@@ -57,7 +57,7 @@ class Calibrething extends Model
         // Note: we cannot use $this->ownLinkList ?? [] directly here due to lazy loading
         $links = $this->ownLinkList;
         return array_values(array_filter($links ?? [], function ($link) use ($ltype) {
-            return ($link->ltype == $ltype);
+            return $link->ltype == $ltype;
         }));
     }
 
@@ -114,7 +114,7 @@ class Calibrething extends Model
         // Note: we cannot use $this->ownArtefactList ?? [] directly here due to lazy loading
         $artefacts = $this->ownArtefactList;
         $artefacts = array_values(array_filter($artefacts ?? [], function ($artefact) use ($atype) {
-            return ($artefact->atype == $atype);
+            return $artefact->atype == $atype;
         }));
         if (empty($artefacts)) {
             return null;

@@ -116,7 +116,7 @@ class OpdsActions extends DefaultActions
         // parameter checking
         if (!is_numeric($page)) {
             $this->log()->warning('opdsByTitle: invalid page id ' . $page);
-            return $this->responder->error(400, "Bad parameter");
+            return $this->badParameter();
         }
 
         $filter = $this->getFilter();
@@ -162,7 +162,7 @@ class OpdsActions extends DefaultActions
         // parameter checking
         if (!(ctype_upper($initial))) {
             $this->log()->warning('opdsByAuthorNamesForInitial: invalid initial ' . $initial);
-            return $this->responder->error(400, "Bad parameter");
+            return $this->badParameter();
         }
 
         $authors = $this->calibre()->authorsNamesForInitial($initial);
@@ -185,7 +185,7 @@ class OpdsActions extends DefaultActions
         // parameter checking
         if (!is_numeric($id) || !is_numeric($page)) {
             $this->log()->warning('opdsByAuthor: invalid author id ' . $id . ' or page id ' . $page);
-            return $this->responder->error(400, "Bad parameter");
+            return $this->badParameter();
         }
 
         $filter = $this->getFilter();
@@ -230,7 +230,7 @@ class OpdsActions extends DefaultActions
         // parameter checking
         if (!(ctype_upper($initial))) {
             $this->log()->warning('opdsByTagNamesForInitial: invalid initial ' . $initial);
-            return $this->responder->error(400, "Bad parameter");
+            return $this->badParameter();
         }
 
         $tags = $this->calibre()->tagsNamesForInitial($initial);
@@ -253,7 +253,7 @@ class OpdsActions extends DefaultActions
         // parameter checking
         if (!is_numeric($id) || !is_numeric($page)) {
             $this->log()->warning('opdsByTag: invalid tag id ' . $id . ' or page id ' . $page);
-            return $this->responder->error(400, "Bad parameter");
+            return $this->badParameter();
         }
 
         $filter = $this->getFilter();
@@ -296,7 +296,7 @@ class OpdsActions extends DefaultActions
         // parameter checking
         if (!($initial == 'all' || ctype_upper($initial))) {
             $this->log()->warning('opdsBySeriesNamesForInitial: invalid initial ' . $initial);
-            return $this->responder->error(400, "Bad parameter");
+            return $this->badParameter();
         }
 
         $tags = $this->calibre()->seriesNamesForInitial($initial);
@@ -319,7 +319,7 @@ class OpdsActions extends DefaultActions
         // parameter checking
         if (!is_numeric($id) || !is_numeric($page)) {
             $this->log()->warning('opdsBySeries: invalid series id ' . $id . ' or page id ' . $page);
-            return $this->responder->error(400, "Bad parameter");
+            return $this->badParameter();
         }
 
         $filter = $this->getFilter();
@@ -365,7 +365,7 @@ class OpdsActions extends DefaultActions
         // parameter checking
         if (!is_numeric($page)) {
             $this->log()->warning('opdsBySearch: invalid page id ' . $page);
-            return $this->responder->error(400, "Bad parameter");
+            return $this->badParameter();
         }
 
         $search = $this->requester->get('search');

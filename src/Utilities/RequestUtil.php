@@ -162,7 +162,7 @@ class RequestUtil
     {
         if ($this->isAuthenticated()) {
             $user = $this->getAuth()->getUserData();
-            return (intval($user['role']) === self::ADMIN_ROLE);
+            return intval($user['role']) === self::ADMIN_ROLE;
         } else {
             return false;
         }

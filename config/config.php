@@ -15,9 +15,9 @@
 return function ($app, $settings) {
     $settings['mode'] ??= 'production';
     $configfunc = match ($settings['mode']) {
-        'development' => require(__DIR__ . '/config.dev.php'),
-        'debug' => require(__DIR__ . '/config.debug.php'),
-        default => require(__DIR__ . '/config.prod.php'),
+        'development' => require __DIR__ . '/config.dev.php',
+        'debug' => require __DIR__ . '/config.debug.php',
+        default => require __DIR__ . '/config.prod.php',
     };
     $configfunc($app, $settings['appname'], $settings['appversion']);
 };

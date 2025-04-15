@@ -43,7 +43,7 @@ class CalibreUtil
      */
     public static function stringStartsWith($haystack, $needle)
     {
-        return (stripos($haystack, $needle) === 0);
+        return stripos($haystack, $needle) === 0;
     }
 
     /**

@@ -53,9 +53,8 @@ class OwnConfigMiddleware extends DefaultMiddleware
                 $requester->getBasePath() .
                 '/installcheck.php">installcheck.php</a> to check for errors.');
         } elseif ($config_status == static::STATUS_OLD) {
-            // TODO Redirect to an update script in the future
             $responder = new ResponseUtil(null);
-            return $responder->error(500, 'Old configuration database detected. Please refer to the <a href="http://projekte.textmulch.de/bicbucstriim/#upgrading">upgrade documentation</a> for more information.');
+            return $responder->error(500, 'Old configuration database detected. Please refer to the <a href="https://github.com/mikespub-org/rvolz-BicBucStriim#upgrading">upgrade documentation</a> for more information.');
         } else {
             return $handler->handle($request);
         }

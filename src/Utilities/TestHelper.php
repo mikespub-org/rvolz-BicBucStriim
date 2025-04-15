@@ -22,7 +22,7 @@ class TestHelper
      */
     public static function getApp($login = 0)
     {
-        $app = require(static::baseDir() . '/config/bootstrap.php');
+        $app = require static::baseDir() . '/config/bootstrap.php';
         $settings = $app->getContainer()->get(Settings::class);
         // will be overridden by own config middleware
         $settings->must_login = $login;
@@ -37,7 +37,7 @@ class TestHelper
     {
         // we need to set this before bootstrap to get api routes
         putenv("BBS_HAS_API=$hasapi");
-        $app = require(static::baseDir() . '/config/bootstrap.php');
+        $app = require static::baseDir() . '/config/bootstrap.php';
         $settings = $app->getContainer()->get(Settings::class);
         $settings['hasapi'] = $hasapi;
         $settings->must_login = 0;
@@ -51,11 +51,11 @@ class TestHelper
      */
     public static function getAppWithContainer()
     {
-        $container = require(static::baseDir() . '/config/container.php');
+        $container = require static::baseDir() . '/config/container.php';
         AppFactory::setContainer($container);
         /** @var \Slim\App<\DI\Container> $app */
         $app = AppFactory::create();
-        $settings = require(static::baseDir() . '/config/settings.php');
+        $settings = require static::baseDir() . '/config/settings.php';
         // set by LoginMiddleware based on request in normal operation
         $settings['globalSettings']['l10n'] = new \BicBucStriim\Utilities\L10n('en');
         $app->getContainer()->set(Settings::class, $settings['globalSettings']);

@@ -26,10 +26,10 @@ ini_set('session.gc_maxlifetime', 3600);
 //error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT);
 
 # Get app settings
-$settings = require(__DIR__ . '/settings.php');
+$settings = require __DIR__ . '/settings.php';
 
 # Get container
-$container = require(__DIR__ . '/container.php');
+$container = require __DIR__ . '/container.php';
 
 // Set container to create App with on AppFactory
 AppFactory::setContainer($container);
@@ -44,7 +44,7 @@ if (isset($settings['basepath'])) {
 //$callableResolver->setApp($app);
 
 # Configure app for mode
-$config = require(__DIR__ . '/config.php');
+$config = require __DIR__ . '/config.php';
 $config($app, $settings);
 
 # Store $globalSettings in container for everything
@@ -65,7 +65,7 @@ $routeCollector = $app->getRouteCollector();
 $routeCollector->setDefaultInvocationStrategy(new ActionsWrapperStrategy());
 
 # Init middleware
-$middleware = require(__DIR__ . '/middleware.php');
+$middleware = require __DIR__ . '/middleware.php';
 $middleware($app, $settings);
 
 # Last in first out
@@ -95,7 +95,7 @@ $app->addErrorMiddleware($displayErrorDetails, true, true);
 $gatekeeper = new \BicBucStriim\Middleware\GatekeeperMiddleware($app->getContainer());
 
 # Init routes
-$routes = require(__DIR__ . '/routes.php');
+$routes = require __DIR__ . '/routes.php';
 $routes($app, $settings, $gatekeeper);
 
 return $app;

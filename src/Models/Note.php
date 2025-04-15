@@ -28,7 +28,6 @@ class Note extends Model
      */
     public static function build($ntype, $mime, $ntext)
     {
-        /** @var Note $note */
         $note = self::cast(R::dispense('note'));
         $note->ntype = $ntype;
         $note->mime = $mime;

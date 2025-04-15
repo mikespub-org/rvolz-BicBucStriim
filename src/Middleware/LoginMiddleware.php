@@ -161,7 +161,7 @@ class LoginMiddleware extends DefaultMiddleware
      * @param Request $request HTTP request
      * @return bool true if authorized else false
      */
-    protected function is_authorized(Request $request)
+    public function is_authorized(Request $request)
     {
         // pre-authenticated request e.g. for AdminActionsTest
         if ($this->requester->getAuth()?->isValid()) {

@@ -200,6 +200,15 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
     }
 
     /**
+     * 400 Bad parameter response for invalid parameters
+     * @return Response
+     */
+    public function badParameter()
+    {
+        return $this->responder->error(400, "Bad parameter");
+    }
+
+    /**
      * Utility function to fill the page array
      */
     public function buildPage($messageId = '', $menu = 0, $level = 0)

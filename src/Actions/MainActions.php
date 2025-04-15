@@ -245,7 +245,7 @@ class MainActions extends DefaultActions
         // parameter checking
         if (!is_numeric($page)) {
             $this->log()->warning('titlesSlice: invalid page id ' . $page);
-            return $this->responder->error(400, "Bad parameter");
+            return $this->badParameter();
         }
 
         $filter = $this->getFilter();
@@ -314,7 +314,7 @@ class MainActions extends DefaultActions
         // parameter checking
         if (!is_numeric($id)) {
             $this->log()->warning('title: invalid title id ' . $id);
-            return $this->responder->error(400, "Bad parameter");
+            return $this->badParameter();
         }
 
         $details = $this->calibre()->titleDetails($settings['lang'], $id);
@@ -371,7 +371,7 @@ class MainActions extends DefaultActions
         // parameter checking
         if (!is_numeric($id)) {
             $this->log()->warning('cover: invalid title id ' . $id);
-            return $this->responder->error(400, "Bad parameter");
+            return $this->badParameter();
         }
 
         $has_cover = false;
@@ -405,7 +405,7 @@ class MainActions extends DefaultActions
         // parameter checking
         if (!is_numeric($id)) {
             $this->log()->warning('thumbnail: invalid title id ' . $id);
-            return $this->responder->error(400, "Bad parameter");
+            return $this->badParameter();
         }
 
         $this->log()->debug('thumbnail: ' . $id);
@@ -441,7 +441,7 @@ class MainActions extends DefaultActions
         // parameter checking
         if (!is_numeric($id)) {
             $this->log()->warning('book: invalid title id ' . $id);
-            return $this->responder->error(400, "Bad parameter");
+            return $this->badParameter();
         }
         // TODO check file parameter?
         $file = basename($file);
@@ -509,7 +509,7 @@ class MainActions extends DefaultActions
         // parameter checking
         if (!is_numeric($id)) {
             $this->log()->warning('kindle: invalid title id ' . $id);
-            return $this->responder->error(400, "Bad parameter");
+            return $this->badParameter();
         }
         // TODO check file parameter?
         $file = basename($file);
@@ -591,7 +591,7 @@ class MainActions extends DefaultActions
         // parameter checking
         if (!is_numeric($page)) {
             $this->log()->warning('authorsSlice: invalid page id ' . $page);
-            return $this->responder->error(400, "Bad parameter");
+            return $this->badParameter();
         }
 
         // @todo handle jumpTarget = initial chosen with alpine.js in tailwind/navbar_list.twig
@@ -633,7 +633,7 @@ class MainActions extends DefaultActions
         // parameter checking
         if (!is_numeric($id) || !is_numeric($page)) {
             $this->log()->warning('authorDetailsSlice: invalid author id ' . $id . ' or page id ' . $page);
-            return $this->responder->error(400, "Bad parameter");
+            return $this->badParameter();
         }
 
         $filter = $this->getFilter();
@@ -688,7 +688,7 @@ class MainActions extends DefaultActions
         // parameter checking
         if (!is_numeric($id)) {
             $this->log()->warning('authorNotes: invalid author id ' . $id);
-            return $this->responder->error(400, "Bad parameter");
+            return $this->badParameter();
         }
 
         /** @var ?Author $author */
@@ -729,7 +729,7 @@ class MainActions extends DefaultActions
         // parameter checking
         if (!is_numeric($page)) {
             $this->log()->warning('seriesSlice: invalid series index ' . $page);
-            return $this->responder->error(400, "Bad parameter");
+            return $this->badParameter();
         }
 
         $search = $this->requester->get('search');
@@ -764,7 +764,7 @@ class MainActions extends DefaultActions
         // parameter checking
         if (!is_numeric($id) || !is_numeric($page)) {
             $this->log()->warning('seriesDetailsSlice: invalid series id ' . $id . ' or page id ' . $page);
-            return $this->responder->error(400, "Bad parameter");
+            return $this->badParameter();
         }
 
         $filter = $this->getFilter();
@@ -797,7 +797,7 @@ class MainActions extends DefaultActions
         // parameter checking
         if (!is_numeric($page)) {
             $this->log()->warning('tagsSlice: invalid page id ' . $page);
-            return $this->responder->error(400, "Bad parameter");
+            return $this->badParameter();
         }
 
         $search = $this->requester->get('search');
@@ -830,7 +830,7 @@ class MainActions extends DefaultActions
         // parameter checking
         if (!is_numeric($id) || !is_numeric($page)) {
             $this->log()->warning('tagsDetailsSlice: invalid tag id ' . $id . ' or page id ' . $page);
-            return $this->responder->error(400, "Bad parameter");
+            return $this->badParameter();
         }
 
         $filter = $this->getFilter();
@@ -882,11 +882,12 @@ class MainActions extends DefaultActions
             case 'titles':
                 // @todo add methods from v2 to Calibre to get these params?
                 if ($type == 'year') {
-                    return $this->responder->error(400, "Bad parameter");
+                    return $this->badParameter();
                 }
-                return $this->responder->error(400, "Bad parameter");
+                return $this->badParameter();
+            default:
+                return $this->badParameter();
         }
-        return $this->responder->error(400, "Bad parameter");
     }
 
     /*********************************************************************
