@@ -1,6 +1,8 @@
 {% extends 'main.twig' %}
 
 {% block headerlinks %}
+    <meta property="og:type" content="book">
+    <meta property="og:site_name" content="{{ page.title }}">
     <meta property="og:title" content="{{ book.title }}">
     <meta property="og:description" content="{{ authors[0].name }}">
 	{% if book.thumbnail%}
