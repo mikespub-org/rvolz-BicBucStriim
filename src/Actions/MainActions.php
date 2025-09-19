@@ -356,6 +356,7 @@ class MainActions extends DefaultActions
                 'id_templates' => $id_tmpls,
                 'kindle_format' => $kindle_format,
                 'kindle_from_email' => $settings->kindle_from_email,
+                'base_url' => $this->requester->getRootUrl(true),
                 'protect_dl' => false]
         );
     }
