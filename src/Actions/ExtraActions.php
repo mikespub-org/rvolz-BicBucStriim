@@ -184,6 +184,10 @@ class ExtraActions extends DefaultActions
 
         // handle the result yourself or let epub-loader generate the output
         $result = array_merge($gConfig, $result);
+
+        // add static url for style
+        $result['static'] ??= $root . '/vendor/mikespub/epub-loader/static';
+
         //$templateDir = 'templates/loader';  // if you want to use custom templates
         $templateDir = $gConfig['template_dir'] ?? null;
         $template = null;
