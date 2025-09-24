@@ -13,5 +13,5 @@ services:
       - BBS_DEBUG_MODE=0
       - BBS_HAS_API=1
     volumes:
-      - ./data:/app/data
-      - ./config:/app/config
+      - ./data:/var/www/html/data
+      - ./config:/var/www/html/config

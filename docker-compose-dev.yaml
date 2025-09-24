@@ -3,7 +3,7 @@ services:
     image: mikespub/rvolz-bicbucstriim:dev
     build:
       context: . 
-      dockerfile: docker/Dockerfile.php83
+      dockerfile: docker/Dockerfile.php84
       target: dev-envs
     ports:
       - '8080:80'

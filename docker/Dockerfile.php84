@@ -1,4 +1,4 @@
-FROM webdevops/php-nginx:8.3-alpine AS build
+FROM webdevops/php-nginx:8.4 AS build
 COPY . /app
 RUN composer install --no-dev -o -d /app
 # Change database owner and group to uid=1000(application) gid=1000(application)
