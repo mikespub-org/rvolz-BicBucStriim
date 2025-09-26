@@ -22,10 +22,6 @@ class ActionResolver
 {
     /** @var ActionRegistry */
     private $registry;
-    /** @var ?Container */
-    private $container;
-    /** @var array<class-string, DefaultActions> */
-    private $instances = [];
 
     /**
      * Summary of __construct
@@ -35,7 +31,6 @@ class ActionResolver
     public function __construct(ActionRegistry $registry, Container $container = null)
     {
         $this->registry = $registry;
-        $this->container = $container;
     }
 
     /**
@@ -49,25 +44,13 @@ class ActionResolver
      */
     public function resolve($class, $method, $request, $response = null, array $args = []): mixed
     {
-        // Use the registry to get the instance
-        //$instance = $this->registry->getInstance($class);
-        $instance = $this->instances[$class] ?? $this->instances[$class] = $this->createInstance($class);
+        // Use the registry to get the singleton instance
+        $instance = $this->registry->getInstance($class);
 
         // Initialize the instance with the request and response
         $instance->initialize($request, $response);
 
         // Call the method on the instance with the arguments
         return $instance->$method(...$args);
-    }
-
-    /**
-     * Summary of createInstance
-     * @param class-string $class
-     * @return DefaultActions
-     */
-    public function createInstance($class): object
-    {
-        // Single creation point for better control - @todo: add dependency injection
-        return new $class($this->container);
     }
 }

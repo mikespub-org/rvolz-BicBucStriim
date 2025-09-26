@@ -13,7 +13,9 @@ namespace BicBucStriim\Actions;
 
 use BicBucStriim\Utilities\RequestUtil;
 use BicBucStriim\Utilities\ResponseUtil;
+use BicBucStriim\Framework\ContainerAdapter;
 use BicBucStriim\Utilities\RouteUtil;
+use BicBucStriim\Framework\RendererInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -31,6 +33,9 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
     protected $requester = null;
     /** @var ResponseUtil|null */
     protected $responder = null;
+
+    /** @var RendererInterface */
+    protected $renderer;
 
     /** @var string|null */
     protected $templatesDir = null;
@@ -76,7 +81,13 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
      */
     public function __construct(ContainerInterface $container)
     {
+        // Ensure the container is always our adapter, which provides the non-standard set() method.
+        // This makes the Action class self-sufficient and independent of how it was instantiated.
+        if (!($container instanceof ContainerAdapter)) {
+            $container = new ContainerAdapter($container);
+        }
         $this->container = $container;
+        // @todo set renderer to TwigRenderer in the future
     }
 
     /**
@@ -175,6 +186,7 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
         }
         // Slim 2 framework will replace data, render template and echo output via slim view display()
         $this->setTemplatesDir();
+        // @todo use renderer->render instead of twig()->render in the future
         $content = $this->twig()->render($template, $data);
         return $this->responder->html($content);
     }

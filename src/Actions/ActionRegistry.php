@@ -11,6 +11,8 @@
 
 namespace BicBucStriim\Actions;
 
+use Psr\Container\ContainerInterface as Container;
+
 /*********************************************************************
  * Action registry (framework agnostic)
  ********************************************************************/
@@ -19,8 +21,20 @@ class ActionRegistry
     /** @var array<class-string> */
     private $actions = [];
     /** @var array<class-string, DefaultActions> */
-    private $instances = [];
+    private $instances;
+    /** @var ?\Psr\Container\ContainerInterface */
+    private $container;
     private $routeMap = [];
+
+    /**
+     * Summary of __construct
+     * @param ?\Psr\Container\ContainerInterface $container
+     */
+    public function __construct(Container $container = null)
+    {
+        $this->container = $container;
+        $this->instances = [];
+    }
 
     /**
      * Summary of register
@@ -29,8 +43,10 @@ class ActionRegistry
      */
     public function register($actionClass)
     {
-        // Store action class
-        $this->actions[] = $actionClass;
+        // Store action class only if not already present to avoid duplicates
+        if (!in_array($actionClass, $this->actions, true)) {
+            $this->actions[] = $actionClass;
+        }
     }
 
     /**
@@ -41,7 +57,9 @@ class ActionRegistry
     public function getInstance($actionClass): object
     {
         if (!isset($this->instances[$actionClass])) {
-            $this->instances[$actionClass] = new $actionClass();
+            // Wrap the real container in our adapter to provide a stable interface
+            $containerAdapter = new \BicBucStriim\Framework\ContainerAdapter($this->container);
+            $this->instances[$actionClass] = new $actionClass($containerAdapter);
         }
         return $this->instances[$actionClass];
     }
@@ -66,12 +84,19 @@ class ActionRegistry
     {
         // Load routes only when needed
         foreach ($this->getActionClasses() as $actionClass) {
-            if (method_exists($actionClass, 'getRoutes')) {
-                // @todo handle $gatekeeper
-                $this->routeMap = array_merge(
-                    $this->routeMap,
-                    $actionClass::getRoutes($actionClass)
-                );
+            if (!method_exists($actionClass, 'getRoutes')) {
+                continue;
+            }
+            // @todo handle $gatekeeper
+            $prefix = $actionClass::PREFIX;
+            $routes = $actionClass::getRoutes($actionClass);
+
+            foreach ($routes as $name => $routeInfo) {
+                if (!empty($prefix)) {
+                    // Prepend the action's prefix to the route path
+                    $routeInfo[1] = rtrim($prefix, '/') . $routeInfo[1];
+                }
+                $this->routeMap[$name] = $routeInfo;
             }
         }
     }
@@ -82,14 +107,6 @@ class ActionRegistry
      */
     public function getActionClasses(): array
     {
-        //return $this->actions;
-        // Could be cached in production
-        return [
-            MainActions::class,
-            AdminActions::class,
-            MetadataActions::class,
-            OpdsActions::class,
-            ExtraActions::class,
-        ];
+        return $this->actions;
     }
 }

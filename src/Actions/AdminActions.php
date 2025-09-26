@@ -584,7 +584,7 @@ class AdminActions extends DefaultActions
     public function hasValidCalibreDir()
     {
         $settings = $this->settings();
-        return !empty($settings->calibre_dir) &&
-            Calibre::checkForCalibre($settings->calibre_dir);
+        return !empty($settings->calibre_dir)
+            && Calibre::checkForCalibre($settings->calibre_dir);
     }
 }

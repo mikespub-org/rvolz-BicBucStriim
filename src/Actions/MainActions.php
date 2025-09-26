@@ -465,11 +465,11 @@ class MainActions extends DefaultActions
         }
         $contentType = CalibreUtil::titleMimeType($real_bookpath);
         if ($this->requester->isAuthenticated()) {
-            $this->log()->info("book download by " . $this->requester->getUserName() . " for " . $real_bookpath .
-                " with metadata update = " . $settings->metadata_update);
+            $this->log()->info("book download by " . $this->requester->getUserName() . " for " . $real_bookpath
+                . " with metadata update = " . $settings->metadata_update);
         } else {
-            $this->log()->info("book download for " . $real_bookpath .
-                " with metadata update = " . $settings->metadata_update);
+            $this->log()->info("book download for " . $real_bookpath
+                . " with metadata update = " . $settings->metadata_update);
         }
         if ($contentType == CalibreUtil::MIME_EPUB && $settings->metadata_update) {
             if ($details['book']->has_cover == 1) {

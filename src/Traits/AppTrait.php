@@ -16,6 +16,7 @@ use BicBucStriim\AppData\Settings;
 use BicBucStriim\Calibre\Calibre;
 use BicBucStriim\Utilities\Mailer;
 use BicBucStriim\Utilities\Thumbnails;
+use BicBucStriim\Framework\ContainerAdapter;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Log\LoggerInterface;
 
@@ -116,7 +117,7 @@ trait AppTrait
         }
         if (!is_null($value)) {
             // @todo let phpstan know we're dealing with a container that can set()
-            assert($this->container instanceof \DI\Container);
+            assert($this->container instanceof ContainerAdapter);
             $this->container->set($key, $value);
         }
         if ($this->container->has($key)) {
