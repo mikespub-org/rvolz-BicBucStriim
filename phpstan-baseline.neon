@@ -7,6 +7,12 @@ parameters:
 			path: config/bootstrap.php
 
 		-
+			message: '#^Constructor of class BicBucStriim\\Actions\\ActionResolver has an unused parameter \$container\.$#'
+			identifier: constructor.unusedParameter
+			count: 1
+			path: src/Actions/ActionResolver.php
+
+		-
 			message: '#^Call to an undefined method Twig\\Loader\\LoaderInterface\:\:prependPath\(\)\.$#'
 			identifier: method.notFound
 			count: 1

@@ -75,7 +75,7 @@ class ActionServiceProvider extends ServiceProvider
             OpdsActions::class,
             ExtraActions::class,
             ApiActions::class,
-            DefaultActions::class,
+            //DefaultActions::class,
         ];
         foreach ($actions as $class) {
             $registry->register($class);

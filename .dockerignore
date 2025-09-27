@@ -27,3 +27,5 @@ public/
 rector.php
 build.xml
 behat.yml
+clover.xml
+coverage/

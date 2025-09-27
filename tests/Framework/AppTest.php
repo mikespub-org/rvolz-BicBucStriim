@@ -40,7 +40,7 @@ class AppTest extends TestCase
         $settings = new Settings([
             'calibre_dir' => $this->testDbPath,
             'lang' => 'en',
-            'l10n' => new L10n($en),
+            'l10n' => new L10n('en'),
             'sep' => ' - ',
             'version' => 'TEST',
         ]);

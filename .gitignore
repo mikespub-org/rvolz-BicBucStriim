@@ -36,3 +36,5 @@ tests/cache
 rector.php
 behat.yml
 yarn.lock
+clover.xml
+coverage/
