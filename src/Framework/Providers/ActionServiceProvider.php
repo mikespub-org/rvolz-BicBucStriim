@@ -10,6 +10,8 @@ use BicBucStriim\Actions\ExtraActions;
 use BicBucStriim\Actions\MainActions;
 use BicBucStriim\Actions\MetadataActions;
 use BicBucStriim\Actions\OpdsActions;
+use BicBucStriim\Framework\LaravelRenderer;
+use BicBucStriim\Framework\RendererInterface;
 use BicBucStriim\Framework\Http\Controllers\ActionAdapterController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
@@ -24,6 +26,8 @@ use Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory;
 use Symfony\Bridge\PsrHttpMessage\Factory\PsrHttpFactory;
 use Symfony\Bridge\PsrHttpMessage\HttpFoundationFactoryInterface;
 use Symfony\Bridge\PsrHttpMessage\PsrHttpFactoryInterface;
+use Twig\Environment as TwigEnvironment;
+use Twig\Loader\FilesystemLoader;
 
 class ActionServiceProvider extends ServiceProvider
 {
@@ -57,6 +61,21 @@ class ActionServiceProvider extends ServiceProvider
                 $app->make(ResponseFactoryInterface::class),
             );
         });
+
+        // Bind the Twig Environment to the container as a singleton.
+        $this->app->singleton(TwigEnvironment::class, function ($app) {
+            // Point the loader to the existing 'templates' directory at the project root.
+            $loader = new FilesystemLoader($app->basePath('templates'));
+
+            // For production, you would enable Twig's cache.
+            // $options = ['cache' => $app->storagePath('framework/views/twig')];
+            $options = [];
+
+            return new TwigEnvironment($loader, $options);
+        });
+
+        // Bind our RendererInterface to the LaravelRenderer implementation.
+        $this->app->bind(RendererInterface::class, LaravelRenderer::class);
     }
 
     /**

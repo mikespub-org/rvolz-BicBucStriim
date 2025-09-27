@@ -14,6 +14,8 @@ use BicBucStriim\AppData\BicBucStriim;
 use BicBucStriim\AppData\Settings;
 use BicBucStriim\Calibre\Calibre;
 use BicBucStriim\Session\Session;
+use BicBucStriim\Framework\RendererInterface;
+use BicBucStriim\Framework\TwigRenderer;
 use BicBucStriim\Utilities\Mailer;
 use BicBucStriim\Utilities\Thumbnails;
 use Psr\Cache\CacheItemPoolInterface;
@@ -78,6 +80,10 @@ $builder->addDefinitions([
     \Twig\Environment::class => function (ContainerInterface $c) {
         $loader = new \Twig\Loader\FilesystemLoader('templates');
         return new \Twig\Environment($loader);
+    },
+    RendererInterface::class => function (ContainerInterface $c) {
+        $twig = $c->get(\Twig\Environment::class);
+        return new TwigRenderer($twig);
     },
 ]);
 

@@ -12,4 +12,16 @@ class SymfonyRenderer extends AbstractController implements RendererInterface
         // but we can get the content from it.
         return parent::render($template, $data)->getContent();
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function prependPath(string $path): void
+    {
+        if ($this->container->has('twig')) {
+            /** @var \Twig\Environment $twig */
+            $twig = $this->container->get('twig');
+            $twig->getLoader()->prependPath($path);
+        }
+    }
 }

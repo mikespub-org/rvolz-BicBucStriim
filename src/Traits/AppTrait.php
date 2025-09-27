@@ -17,6 +17,7 @@ use BicBucStriim\Calibre\Calibre;
 use BicBucStriim\Utilities\Mailer;
 use BicBucStriim\Utilities\Thumbnails;
 use BicBucStriim\Framework\ContainerAdapter;
+use BicBucStriim\Framework\RendererInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Log\LoggerInterface;
 
@@ -102,6 +103,15 @@ trait AppTrait
     public function twig()
     {
         return $this->container(\Twig\Environment::class);
+    }
+
+    /**
+     * Get renderer from container
+     * @return RendererInterface
+     */
+    public function renderer()
+    {
+        return $this->container(RendererInterface::class);
     }
 
     /**

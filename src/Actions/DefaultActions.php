@@ -15,7 +15,6 @@ use BicBucStriim\Utilities\RequestUtil;
 use BicBucStriim\Utilities\ResponseUtil;
 use BicBucStriim\Framework\ContainerAdapter;
 use BicBucStriim\Utilities\RouteUtil;
-use BicBucStriim\Framework\RendererInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -33,9 +32,6 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
     protected $requester = null;
     /** @var ResponseUtil|null */
     protected $responder = null;
-
-    /** @var RendererInterface */
-    protected $renderer;
 
     /** @var string|null */
     protected $templatesDir = null;
@@ -87,7 +83,6 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
             $container = new ContainerAdapter($container);
         }
         $this->container = $container;
-        // @todo set renderer to TwigRenderer in the future
     }
 
     /**
@@ -186,8 +181,12 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
         }
         // Slim 2 framework will replace data, render template and echo output via slim view display()
         $this->setTemplatesDir();
-        // @todo use renderer->render instead of twig()->render in the future
-        $content = $this->twig()->render($template, $data);
+        try {
+            // Get the renderer via the AppTrait method
+            $content = $this->renderer()->render($template, $data);
+        } catch (\Exception $e) {
+            return $this->responder->error(500, $e->getMessage());
+        }
         return $this->responder->html($content);
     }
 
@@ -197,16 +196,15 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
      */
     public function setTemplatesDir()
     {
-        if (is_null($this->templatesDir)) {
-            $this->templatesDir = '';
+        if ($this->templatesDir === null) {
             $settings = $this->settings();
-            // convert to real path here
-            if (!empty($settings->templates_dir)) {
-                $this->templatesDir = realpath($settings->templates_dir);
-            }
-            // override default templates if available
+            $this->templatesDir = $settings->templates_dir ?? '';
             if (!empty($this->templatesDir)) {
-                $this->twig()->getLoader()->prependPath($this->templatesDir);
+                $path = realpath($this->templatesDir);
+                if ($path) {
+                    // Use the new AppTrait method to get the renderer
+                    $this->renderer()->prependPath($path);
+                }
             }
         }
     }

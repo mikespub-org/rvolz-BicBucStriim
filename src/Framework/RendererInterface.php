@@ -14,4 +14,11 @@ interface RendererInterface
      * @param array<string, mixed> $data The data to pass to the template.
      */
     public function render(string $template, array $data = []): string;
+
+    /**
+     * Prepends a path for custom templates.
+     *
+     * @param string $path The directory path to prepend.
+     */
+    public function prependPath(string $path): void;
 }

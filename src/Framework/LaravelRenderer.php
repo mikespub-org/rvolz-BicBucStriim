@@ -1,17 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace BicBucStriim\Framework;
 
-use Twig\Environment;
+use Twig\Environment as TwigEnvironment;
 
 /**
- * An implementation of RendererInterface that uses Twig.
+ * An implementation of RendererInterface that uses Twig within a Laravel application.
  */
-class TwigRenderer implements RendererInterface
+class LaravelRenderer implements RendererInterface
 {
-    private Environment $twig;
+    private TwigEnvironment $twig;
 
-    public function __construct(Environment $twig)
+    public function __construct(TwigEnvironment $twig)
     {
         $this->twig = $twig;
     }
