@@ -79,9 +79,19 @@ class BicBucStriim
                 R::removeToolBoxByKey('default');
             }
             R::setup('sqlite:' . $rp);
+            // force resetting the static Facade properties for tests
+            R::selectDatabase('default', true);
             R::freeze($freeze);
         } else {
             $this->mydb = null;
+        }
+    }
+
+    public function __destruct()
+    {
+        if (R::hasDatabase('default')) {
+            R::close();
+            R::removeToolBoxByKey('default');
         }
     }
 

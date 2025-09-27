@@ -52,9 +52,7 @@ class AuthorsTest extends PHPUnit\Framework\TestCase
 
     public function tearDown(): void
     {
-        // Must use nuke() to clear caches etc.
-        R::nuke();
-        R::close();
+        // Must destruct to clear caches etc.
         $this->bbs = null;
         system("rm -rf " . self::$data);
     }
