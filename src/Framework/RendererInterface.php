@@ -21,4 +21,12 @@ interface RendererInterface
      * @param string $path The directory path to prepend.
      */
     public function prependPath(string $path): void;
+
+    /**
+     * Adds a function/filter to the template engine.
+     *
+     * @param string $name The name of the function/filter.
+     * @param callable $callback The callable that implements the function.
+     */
+    public function addFunction(string $name, callable $callback): void;
 }

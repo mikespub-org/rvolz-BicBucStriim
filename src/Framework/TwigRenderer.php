@@ -31,4 +31,13 @@ class TwigRenderer implements RendererInterface
     {
         $this->twig->getLoader()->prependPath($path);
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function addFunction(string $name, callable $callback): void
+    {
+        $filter = new \Twig\TwigFilter($name, $callback);
+        $this->twig->addFilter($filter);
+    }
 }

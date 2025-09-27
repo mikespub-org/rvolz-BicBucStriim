@@ -305,11 +305,8 @@ class MainActions extends DefaultActions
     {
         $settings = $this->settings();
 
-        // Add filter for human readable filesize
-        $filter = new TwigFilter('hfsize', function ($string) {
-            return $this->humanFilesize($string);
-        });
-        $this->twig()->addFilter($filter);
+        // Add a function to the renderer for human-readable file sizes
+        $this->renderer()->addFunction('hfsize', [$this, 'humanFilesize']);
 
         // parameter checking
         if (!is_numeric($id)) {

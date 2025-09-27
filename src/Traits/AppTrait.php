@@ -99,6 +99,7 @@ trait AppTrait
     /**
      * Get Twig environment
      * @return \Twig\Environment
+     * @deprecated 3.6.7 use renderer() instead
      */
     public function twig()
     {

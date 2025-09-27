@@ -56,8 +56,15 @@ interface AppInterface
     /**
      * Get Twig environment
      * @return \Twig\Environment
+     * @deprecated 3.6.7 use renderer() instead
      */
     public function twig();
+
+    /**
+     * Get renderer from container
+     * @return \BicBucStriim\Framework\RendererInterface
+     */
+    public function renderer();
 
     /**
      * Get container key

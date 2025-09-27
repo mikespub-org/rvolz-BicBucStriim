@@ -24,4 +24,17 @@ class SymfonyRenderer extends AbstractController implements RendererInterface
             $twig->getLoader()->prependPath($path);
         }
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function addFunction(string $name, callable $callback): void
+    {
+        if ($this->container->has('twig')) {
+            /** @var \Twig\Environment $twig */
+            $twig = $this->container->get('twig');
+            $filter = new \Twig\TwigFilter($name, $callback);
+            $twig->addFilter($filter);
+        }
+    }
 }
