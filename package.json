@@ -6,12 +6,13 @@
   "devDependencies": {
     "read-yaml": "^1.1.0"
   },
-  "packageManager": "yarn@4.9.4",
+  "packageManager": "yarn@4.11.0",
   "dependencies": {
     "jquery": "2.1.4",
     "jquery-mobile": "^1.5.0-alpha.1",
     "jquery.loadtemplate": "^1.5.10",
     "js-cookie": "^3.0.5",
-    "modernizr": "^3.13.1"
+    "modernizr": "^3.13.1",
+    "swagger-ui-dist": "^5.30.2"
   }
 }

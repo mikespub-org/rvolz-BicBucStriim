@@ -30,6 +30,6 @@ return function ($app, $appname, $appversion) {
     // replacement for DateTimeFileWriter that supports Psr\Log
     $logger->add(new \Apix\Log\Logger\File('./data/debug-' . date('Y-m-d') . '.log'));
     $logger->info($appname . ' ' . $appversion . ': Running in debug mode.');
-    error_reporting(E_ALL | E_STRICT);
+    error_reporting(E_ALL);
     $logger->info('Running on PHP: ' . PHP_VERSION);
 };

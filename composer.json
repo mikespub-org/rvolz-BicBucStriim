@@ -19,8 +19,8 @@
         "php": ">=8.2",
         "michelf/php-markdown": "^2.0",
         "slim/slim": "^4.15",
-        "phpmailer/phpmailer": "^6.10",
-        "twig/twig": "^3.21",
+        "phpmailer/phpmailer": "^7.0",
+        "twig/twig": "^3.22",
         "aura/auth": "^4.0",
         "aura/session": "^4.0",
         "gabordemooij/redbean": "^5.7",
@@ -36,12 +36,14 @@
         "8ctopus/apix-log": "^3.1",
         "dflydev/fig-cookies": "^3.2",
         "middlewares/cache": "^3.1",
-        "symfony/cache": "^7.3"
+        "symfony/cache": "^7.4"
     },
     "require-dev": {
         "phpunit/phpunit": "^11.5",
-        "mikespub/epub-loader": "^3.6"
+        "mikespub/epub-loader": "^3.7"
     },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
     "suggest": {
         "mikespub/epub-loader": "epub-loader is a utility package for ebooks"
     },

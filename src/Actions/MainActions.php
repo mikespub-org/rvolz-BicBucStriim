@@ -157,6 +157,7 @@ class MainActions extends DefaultActions
             $username = $this->requester->getUserName();
             $this->log()->debug("logging out user: " . $username);
             $this->container('logout_service')->logout($this->requester->getAuth());
+            // @phpstan-ignore if.alwaysTrue
             if ($this->requester->isAuthenticated()) {
                 $this->log()->error("error logging out user: " . $username);
             } else {
@@ -293,7 +294,7 @@ class MainActions extends DefaultActions
     public function humanFilesize($bytes, $decimals = 0)
     {
         $size = ['B','KB','MB','GB','TB','PB','EB','ZB','YB'];
-        $factor = floor((strlen($bytes) - 1) / 3);
+        $factor = (int) floor((strlen($bytes) - 1) / 3);
         return sprintf("%.{$decimals}f", $bytes / pow(1024, $factor)) . @$size[$factor];
     }
 

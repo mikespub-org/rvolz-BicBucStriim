@@ -11,7 +11,6 @@
 
 namespace BicBucStriim\Actions;
 
-use Psr\Container\ContainerInterface as Container;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
@@ -26,9 +25,8 @@ class ActionResolver
     /**
      * Summary of __construct
      * @param ActionRegistry $registry
-     * @param ?Container $container
      */
-    public function __construct(ActionRegistry $registry, Container $container = null)
+    public function __construct(ActionRegistry $registry)
     {
         $this->registry = $registry;
     }
