@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "216730b57a0a2c0ac30f2899be1fb8aa",
+    "content-hash": "579a43c9365799e918c25000b4d5992b",
     "packages": [
         {
             "name": "8ctopus/apix-log",
-            "version": "3.1.0",
+            "version": "3.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/8ctopus/apix-log.git",
-                "reference": "ebad650e496ad91ce35002a77b5781e5e3596b3a"
+                "reference": "e4504be3a809c2983588f9f72e3f54f87081d469"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/8ctopus/apix-log/zipball/ebad650e496ad91ce35002a77b5781e5e3596b3a",
-                "reference": "ebad650e496ad91ce35002a77b5781e5e3596b3a",
+                "url": "https://api.github.com/repos/8ctopus/apix-log/zipball/e4504be3a809c2983588f9f72e3f54f87081d469",
+                "reference": "e4504be3a809c2983588f9f72e3f54f87081d469",
                 "shasum": ""
             },
             "require": {
@@ -34,7 +34,7 @@
                 "friendsofphp/php-cs-fixer": "^3.8",
                 "phpmd/phpmd": "^2.13",
                 "phpstan/phpstan": "^1.9",
-                "phpunit/phpunit": "^9.0|^10.0|^11.0"
+                "phpunit/phpunit": "^9.0|^10.0|^11.0|^12.0"
             },
             "suggest": {
                 "PHPMailer/apix-log-phpmailer": "Allow sending log messages via PHPMailer",
@@ -80,9 +80,9 @@
             ],
             "support": {
                 "issues": "https://github.com/8ctopus/apix-log/issues",
-                "source": "https://github.com/8ctopus/apix-log/tree/3.1.0"
+                "source": "https://github.com/8ctopus/apix-log/tree/3.2.0"
             },
-            "time": "2025-05-30T06:18:36+00:00"
+            "time": "2025-11-27T06:44:10+00:00"
         },
         {
             "name": "aura/auth",
@@ -312,16 +312,16 @@
         },
         {
             "name": "laravel/serializable-closure",
-            "version": "v2.0.6",
+            "version": "v2.0.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/serializable-closure.git",
-                "reference": "038ce42edee619599a1debb7e81d7b3759492819"
+                "reference": "cb291e4c998ac50637c7eeb58189c14f5de5b9dd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/serializable-closure/zipball/038ce42edee619599a1debb7e81d7b3759492819",
-                "reference": "038ce42edee619599a1debb7e81d7b3759492819",
+                "url": "https://api.github.com/repos/laravel/serializable-closure/zipball/cb291e4c998ac50637c7eeb58189c14f5de5b9dd",
+                "reference": "cb291e4c998ac50637c7eeb58189c14f5de5b9dd",
                 "shasum": ""
             },
             "require": {
@@ -330,7 +330,7 @@
             "require-dev": {
                 "illuminate/support": "^10.0|^11.0|^12.0",
                 "nesbot/carbon": "^2.67|^3.0",
-                "pestphp/pest": "^2.36|^3.0",
+                "pestphp/pest": "^2.36|^3.0|^4.0",
                 "phpstan/phpstan": "^2.0",
                 "symfony/var-dumper": "^6.2.0|^7.0.0"
             },
@@ -369,7 +369,7 @@
                 "issues": "https://github.com/laravel/serializable-closure/issues",
                 "source": "https://github.com/laravel/serializable-closure"
             },
-            "time": "2025-10-09T13:42:30+00:00"
+            "time": "2025-11-21T20:52:36+00:00"
         },
         {
             "name": "michelf/php-markdown",
@@ -918,16 +918,16 @@
         },
         {
             "name": "phpmailer/phpmailer",
-            "version": "v7.0.0",
+            "version": "v7.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHPMailer/PHPMailer.git",
-                "reference": "c7111310c6116ba508a6a170a89eaaed2129bd42"
+                "reference": "360ae911ce62e25e11249f6140fa58939f556ebe"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHPMailer/PHPMailer/zipball/c7111310c6116ba508a6a170a89eaaed2129bd42",
-                "reference": "c7111310c6116ba508a6a170a89eaaed2129bd42",
+                "url": "https://api.github.com/repos/PHPMailer/PHPMailer/zipball/360ae911ce62e25e11249f6140fa58939f556ebe",
+                "reference": "360ae911ce62e25e11249f6140fa58939f556ebe",
                 "shasum": ""
             },
             "require": {
@@ -941,13 +941,13 @@
                 "doctrine/annotations": "^1.2.6 || ^1.13.3",
                 "php-parallel-lint/php-console-highlighter": "^1.0.0",
                 "php-parallel-lint/php-parallel-lint": "^1.3.2",
-                "phpcompatibility/php-compatibility": "^9.3.5",
-                "roave/security-advisories": "dev-latest",
-                "squizlabs/php_codesniffer": "^3.7.2",
+                "phpcompatibility/php-compatibility": "^10.0.0@dev",
+                "squizlabs/php_codesniffer": "^3.13.5",
                 "yoast/phpunit-polyfills": "^1.0.4"
             },
             "suggest": {
                 "decomplexity/SendOauth2": "Adapter for using XOAUTH2 authentication",
+                "directorytree/imapengine": "For uploading sent messages via IMAP, see gmail example",
                 "ext-imap": "Needed to support advanced email address parsing according to RFC822",
                 "ext-mbstring": "Needed to send email in multibyte encoding charset or decode encoded addresses",
                 "ext-openssl": "Needed for secure SMTP sending and DKIM signing",
@@ -988,7 +988,7 @@
             "description": "PHPMailer is a full-featured email creation and transfer class for PHP",
             "support": {
                 "issues": "https://github.com/PHPMailer/PHPMailer/issues",
-                "source": "https://github.com/PHPMailer/PHPMailer/tree/v7.0.0"
+                "source": "https://github.com/PHPMailer/PHPMailer/tree/v7.0.1"
             },
             "funding": [
                 {
@@ -996,7 +996,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-10-15T16:40:02+00:00"
+            "time": "2025-11-25T07:18:09+00:00"
         },
         {
             "name": "psr/cache",
@@ -1489,7 +1489,7 @@
         },
         {
             "name": "symfony/cache",
-            "version": "v7.4.0-RC2",
+            "version": "v7.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/cache.git",
@@ -1569,7 +1569,7 @@
                 "psr6"
             ],
             "support": {
-                "source": "https://github.com/symfony/cache/tree/v7.4.0-RC2"
+                "source": "https://github.com/symfony/cache/tree/v7.4.0"
             },
             "funding": [
                 {
@@ -1991,16 +1991,16 @@
         },
         {
             "name": "symfony/var-exporter",
-            "version": "v7.3.4",
+            "version": "v7.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/var-exporter.git",
-                "reference": "0f020b544a30a7fe8ba972e53ee48a74c0bc87f4"
+                "reference": "03a60f169c79a28513a78c967316fbc8bf17816f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/var-exporter/zipball/0f020b544a30a7fe8ba972e53ee48a74c0bc87f4",
-                "reference": "0f020b544a30a7fe8ba972e53ee48a74c0bc87f4",
+                "url": "https://api.github.com/repos/symfony/var-exporter/zipball/03a60f169c79a28513a78c967316fbc8bf17816f",
+                "reference": "03a60f169c79a28513a78c967316fbc8bf17816f",
                 "shasum": ""
             },
             "require": {
@@ -2008,9 +2008,9 @@
                 "symfony/deprecation-contracts": "^2.5|^3"
             },
             "require-dev": {
-                "symfony/property-access": "^6.4|^7.0",
-                "symfony/serializer": "^6.4|^7.0",
-                "symfony/var-dumper": "^6.4|^7.0"
+                "symfony/property-access": "^6.4|^7.0|^8.0",
+                "symfony/serializer": "^6.4|^7.0|^8.0",
+                "symfony/var-dumper": "^6.4|^7.0|^8.0"
             },
             "type": "library",
             "autoload": {
@@ -2048,7 +2048,7 @@
                 "serialize"
             ],
             "support": {
-                "source": "https://github.com/symfony/var-exporter/tree/v7.3.4"
+                "source": "https://github.com/symfony/var-exporter/tree/v7.4.0"
             },
             "funding": [
                 {
@@ -2068,7 +2068,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-09-11T10:12:26+00:00"
+            "time": "2025-09-11T10:15:23+00:00"
         },
         {
             "name": "twig/twig",
@@ -2153,16 +2153,16 @@
     "packages-dev": [
         {
             "name": "illuminate/collections",
-            "version": "v12.39.0",
+            "version": "v12.40.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/collections.git",
-                "reference": "deb291b109b6f7fd776a3550a120771137b3c5d1"
+                "reference": "3a794986bad4caf369d17ae19d4ef20a38dd8b0c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/illuminate/collections/zipball/deb291b109b6f7fd776a3550a120771137b3c5d1",
-                "reference": "deb291b109b6f7fd776a3550a120771137b3c5d1",
+                "url": "https://api.github.com/repos/illuminate/collections/zipball/3a794986bad4caf369d17ae19d4ef20a38dd8b0c",
+                "reference": "3a794986bad4caf369d17ae19d4ef20a38dd8b0c",
                 "shasum": ""
             },
             "require": {
@@ -2208,11 +2208,11 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2025-10-30T12:22:05+00:00"
+            "time": "2025-11-24T14:13:52+00:00"
         },
         {
             "name": "illuminate/conditionable",
-            "version": "v12.39.0",
+            "version": "v12.40.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/conditionable.git",
@@ -2258,16 +2258,16 @@
         },
         {
             "name": "illuminate/contracts",
-            "version": "v12.39.0",
+            "version": "v12.40.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/contracts.git",
-                "reference": "5ab717c8f0dd4e84be703796bbb415ccff8de57a"
+                "reference": "b97a94df448f196f23d646e21999bfd5d86ae23b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/illuminate/contracts/zipball/5ab717c8f0dd4e84be703796bbb415ccff8de57a",
-                "reference": "5ab717c8f0dd4e84be703796bbb415ccff8de57a",
+                "url": "https://api.github.com/repos/illuminate/contracts/zipball/b97a94df448f196f23d646e21999bfd5d86ae23b",
+                "reference": "b97a94df448f196f23d646e21999bfd5d86ae23b",
                 "shasum": ""
             },
             "require": {
@@ -2302,11 +2302,11 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2025-10-07T19:59:08+00:00"
+            "time": "2025-11-26T16:51:20+00:00"
         },
         {
             "name": "illuminate/macroable",
-            "version": "v12.39.0",
+            "version": "v12.40.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/macroable.git",
@@ -4415,7 +4415,7 @@
         },
         {
             "name": "symfony/http-client",
-            "version": "v7.4.0-RC3",
+            "version": "v7.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/http-client.git",
@@ -4492,7 +4492,7 @@
                 "http"
             ],
             "support": {
-                "source": "https://github.com/symfony/http-client/tree/v7.4.0-RC3"
+                "source": "https://github.com/symfony/http-client/tree/v7.4.0"
             },
             "funding": [
                 {
@@ -4884,9 +4884,9 @@
         }
     ],
     "aliases": [],
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "stability-flags": {},
-    "prefer-stable": true,
+    "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
         "php": ">=8.2"

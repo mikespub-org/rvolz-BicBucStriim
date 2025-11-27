@@ -5,7 +5,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [3.x.x] - 20xx-xx-xx
+
+## [3.6.7] - 2025-11-27 Maintenance update (PHP 8.2)
+### Added
+- Prepare support for other PHP frameworks
+- Add open graph meta tags to share books
 ### Changed
+- Update packages and dependencies
+- Update Docker files to use PHP 8.4
 - Document javascript library versions in package.json (info only)
 
 ## [3.6.3] - 2024-11-12 Add dark default theme + deal with empty book pubdates
