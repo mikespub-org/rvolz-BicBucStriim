@@ -15,3 +15,7 @@ currently being supported with security updates.
 ## Reporting a Vulnerability
 
 Please report any security vulnerability via https://github.com/mikespub-org/rvolz-BicBucStriim/security/advisories
+
+## Acceptable Risk for Private Use
+
+This project relies on insecure jquery-mobile and jquery versions for its default templates. Please do not publish your library on the Internet.
