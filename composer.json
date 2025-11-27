@@ -16,7 +16,7 @@
     "type": "project",
     "license": "MIT",
     "require": {
-        "php": ">=8.2",
+        "php": ">=8.4",
         "michelf/php-markdown": "^2.0",
         "slim/slim": "^4.15",
         "phpmailer/phpmailer": "^7.0",
@@ -39,8 +39,8 @@
         "symfony/cache": "^7.4 || ^8.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "^11.5",
-        "mikespub/epub-loader": "^3.7"
+        "phpunit/phpunit": "^11.5 || ^12.0",
+        "mikespub/epub-loader": "^4.0"
     },
     "suggest": {
         "mikespub/epub-loader": "epub-loader is a utility package for ebooks"
