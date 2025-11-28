@@ -15,6 +15,7 @@ docker-compose-dev.yaml
 #!.yarn/releases
 #!.yarn/plugins
 .pnp.*
+yarn.lock
 data/authors/*.png
 data/titles/*.png
 bicbucstriim*.zip

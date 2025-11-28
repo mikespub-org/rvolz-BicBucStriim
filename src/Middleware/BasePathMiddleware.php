@@ -33,7 +33,7 @@ final class BasePathMiddleware implements MiddlewareInterface
      * @param \Slim\App|object $app The app
      * @param string|null $phpSapi The PHP_SAPI value
      */
-    public function __construct($app, string $phpSapi = null)
+    public function __construct($app, ?string $phpSapi = null)
     {
         $this->app = $app;
         $this->phpSapi = $phpSapi;
