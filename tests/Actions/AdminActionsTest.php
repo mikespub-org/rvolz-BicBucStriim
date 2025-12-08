@@ -83,11 +83,15 @@ class AdminActionsTest extends PHPUnit\Framework\TestCase
         $app = TestHelper::getApp();
         $request = TestHelper::getAuthRequest('POST', '/admin/users/', ['username' => 'testuser', 'password' => 'testpassword']);
 
-        $mock = $this->createMock(BicBucStriim::class);
-        $mock->method('addUser')->willThrowException(new Exception('Test exception'));
+        // Build mock BicBucStriim where addUser() throws exception
+        $mock = $this->getMockBuilder(BicBucStriim::class)
+            ->setConstructorArgs(['data/data.db', true])
+            ->onlyMethods(['addUser'])
+            ->getMock();
+        $mock->expects($this->once())->method('addUser')->willThrowException(new Exception('Test exception'));
         $app->getContainer()->set(BicBucStriim::class, $mock);
 
-        $expected = 'No or bad configuration database.';
+        $expected = 'Error while applying changes';
         $response = $app->handle($request);
         $this->assertStringContainsString($expected, (string) $response->getBody());
     }

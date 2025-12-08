@@ -214,7 +214,11 @@ class MiddlewareTest extends PHPUnit\Framework\TestCase
                 ->onlyMethods(['is_authorized'])
                 ->getMock();
             // Not expects($this->once()) because this will not be called for static resources
-            $middleware->expects($this->any())->method('is_authorized')->willReturn(true);
+            if (in_array($this->dataName(), ['cover', 'thumbnail'])) {
+                $middleware->expects($this->never())->method('is_authorized')->willReturn(true);
+            } else {
+                $middleware->expects($this->once())->method('is_authorized')->willReturn(true);
+            }
 
             $response = $middleware->process($request, $handler);
             $this->assertEquals(\Nyholm\Psr7\Response::class, $response::class);
