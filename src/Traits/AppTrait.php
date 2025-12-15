@@ -128,7 +128,8 @@ trait AppTrait
         }
         if (!is_null($value)) {
             // @todo let phpstan know we're dealing with a container that can set()
-            assert($this->container instanceof ContainerAdapter);
+            //assert($this->container instanceof ContainerAdapter);
+            assert($this->container instanceof \DI\Container);
             $this->container->set($key, $value);
         }
         if ($this->container->has($key)) {
