@@ -18,7 +18,7 @@ class MailerTest extends PHPUnit\Framework\TestCase
         return [
             // type, method, expected, result
             ['mail', 'getMailerMail', 0, ''],
-            ['sendmail', 'getMailerSendmail', 0, 'Could not execute: /usr/sbin/sendmail -t -i'],
+            ['sendmail', 'getMailerSendmail', 0, 'Could not execute: /usr/sbin/sendmail'],
             ['smtp', 'getMailerSmtp', 0, 'SMTP connect() failed.'],
         ];
     }
