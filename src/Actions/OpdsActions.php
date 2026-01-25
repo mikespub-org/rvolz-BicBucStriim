@@ -405,7 +405,8 @@ class OpdsActions extends DefaultActions
         if ($this->requester->isAuthenticated()) {
             $username = $this->requester->getUserName();
             $this->log()->debug("logging out user: " . $username);
-            $this->container('logout_service')->logout($this->requester->getAuth());
+            $authService = $this->getAuthService();
+            $authService->logout($this->requester->getAuth());
             // @phpstan-ignore if.alwaysTrue
             if ($this->requester->isAuthenticated()) {
                 $this->log()->error("error logging out user: " . $username);

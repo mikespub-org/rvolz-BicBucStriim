@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [4.x.x] - 20xx-xx-xx
 
+## [4.0.1] - 2026-01-24 Add AuthServices class
+### Added
+- Add AuthServices class for login/logout/resume methods
+### Removed
+- Drop deprecated methods for releases older than 4.0.0
+
 ## [4.0.0] - 2025-11-27 Pre-release for PHP 8.4+
 ### Changed
 - Update platform reqs in composer.json

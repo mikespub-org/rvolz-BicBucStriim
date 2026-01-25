@@ -127,7 +127,8 @@ class MainActions extends DefaultActions
                     'page' => $this->buildPage('login')]);
             } else {
                 try {
-                    $this->container('login_service')->login($this->requester->getAuth(), ['username' => $uname, 'password' => $upw]);
+                    $authService = $this->getAuthService();
+                    $authService->login($this->requester->getAuth(), ['username' => $uname, 'password' => $upw]);
                     $success = $this->requester->getAuth()->getStatus();
                     $this->log()->debug('login success: ' . $success);
                     if ($this->requester->isAuthenticated()) {
@@ -156,7 +157,8 @@ class MainActions extends DefaultActions
         if ($this->requester->isAuthenticated()) {
             $username = $this->requester->getUserName();
             $this->log()->debug("logging out user: " . $username);
-            $this->container('logout_service')->logout($this->requester->getAuth());
+            $authService = $this->getAuthService();
+            $authService->logout($this->requester->getAuth());
             // @phpstan-ignore if.alwaysTrue
             if ($this->requester->isAuthenticated()) {
                 $this->log()->error("error logging out user: " . $username);

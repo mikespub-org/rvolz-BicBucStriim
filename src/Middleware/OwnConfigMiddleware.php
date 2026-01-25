@@ -96,10 +96,8 @@ class OwnConfigMiddleware extends DefaultMiddleware
         }
 
         if ($settings->must_login == 1) {
-            $this->container('must_login', true);
             $this->log()->info('multi user mode: login required');
         } else {
-            $this->container('must_login', false);
             $this->log()->debug('easy mode: login not required');
         }
         $this->log()->debug("own_config_middleware: config loaded");

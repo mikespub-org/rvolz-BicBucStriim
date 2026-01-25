@@ -127,6 +127,14 @@ class LoginMiddleware extends DefaultMiddleware
             }
             return false;
         }
+        if (str_starts_with($resource, '/extra/')) {
+            if (!$this->is_authorized($request)) {
+                $this->log()->debug('login: redirecting to login');
+                $responder = new ResponseUtil(null);
+                return $responder->redirect($this->requester->getRootUrl() . '/login/');
+            }
+            return false;
+        }
         // we do not want/need to initialize $this->setAuth() here = anonymous user without session
         return false;
     }
@@ -172,8 +180,8 @@ class LoginMiddleware extends DefaultMiddleware
         // @todo this sets 'auth' attribute on $this->request
         $this->requester->setAuth($authTracker);
         try {
-            $resume_service = $this->container('resume_service');
-            $resume_service->resume($authTracker);
+            $authService = $this->getAuthService();
+            $authService->resume($authTracker);
             // @todo this sets 'session' attribute on $this->request
             $this->requester->setSession($session);
         } catch (\ErrorException $e) {
@@ -203,7 +211,8 @@ class LoginMiddleware extends DefaultMiddleware
             return false;
         }
         try {
-            $this->container('login_service')->login($authTracker, [
+            $authService = $this->getAuthService();
+            $authService->login($authTracker, [
                 'username' => $authArray[0],
                 'password' => $authArray[1]]);
             $this->log()->debug('login status: ' . var_export($authTracker->getStatus(), true));
@@ -241,9 +250,10 @@ class LoginMiddleware extends DefaultMiddleware
         $hash = new \Aura\Auth\Verifier\PasswordVerifier(PASSWORD_BCRYPT);
         $cols = ['username', 'password', 'id', 'email', 'role', 'languages', 'tags'];
         $pdoAdapter = $authFactory->newPdoAdapter($pdo, $hash, $cols, 'user');
-        $this->container('login_service', fn() => $authFactory->newLoginService($pdoAdapter));
-        $this->container('logout_service', fn() => $authFactory->newLogoutService($pdoAdapter));
-        $this->container('resume_service', fn() => $authFactory->newResumeService($pdoAdapter));
+        // Set auth factory and adapter for auth services
+        $authService = $this->getAuthService();
+        $authService->setAuthFactory($authFactory);
+        $authService->setAdapter($pdoAdapter);
         return $authFactory->newInstance();
     }
 

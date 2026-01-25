@@ -54,13 +54,6 @@ interface AppInterface
     public function settings();
 
     /**
-     * Get Twig environment
-     * @return \Twig\Environment
-     * @deprecated 3.6.7 use renderer() instead
-     */
-    public function twig();
-
-    /**
      * Get renderer from container
      * @return \BicBucStriim\Framework\RendererInterface
      */
@@ -69,14 +62,19 @@ interface AppInterface
     /**
      * Get container key
      * @param ?string $key
-     * @param mixed $value
      * @return mixed
      */
-    public function container($key = null, $value = null);
+    public function container($key = null);
 
     /**
      * Get response factory
      * @return \Psr\Http\Message\ResponseFactoryInterface
      */
     public function getResponseFactory();
+
+    /**
+     * Get auth services
+     * @return \BicBucStriim\Session\AuthServices
+     */
+    public function getAuthService();
 }

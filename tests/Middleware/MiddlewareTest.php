@@ -8,6 +8,7 @@ use BicBucStriim\Middleware\CachingMiddleware;
 use BicBucStriim\Middleware\DefaultMiddleware;
 use BicBucStriim\Middleware\LoginMiddleware;
 use BicBucStriim\Middleware\OwnConfigMiddleware;
+use BicBucStriim\Session\AuthServices;
 use BicBucStriim\Utilities\RequestUtil;
 use BicBucStriim\Utilities\TestHelper;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -240,8 +241,11 @@ class MiddlewareTest extends PHPUnit\Framework\TestCase
             'role' => 1,
         ];
         $auth = TestHelper::getAuth($request, $userData);
-        // Set resume service for session
-        $app->getContainer()->set('resume_service', TestHelper::getAuthFactory($request)->newResumeService());
+        // Set auth resume service for session
+        //$app->getContainer()->set('resume_service', TestHelper::getAuthFactory($request)->newResumeService());
+        $authFactory = TestHelper::getAuthFactory($request);
+        $authServices = $app->getContainer()->get(AuthServices::class);
+        $authServices->setAuthFactory($authFactory);
 
         // Build mock LoginMiddleware with makeAuthTracker == $auth
         $middleware = $this->getMockBuilder(LoginMiddleware::class)
@@ -271,8 +275,11 @@ class MiddlewareTest extends PHPUnit\Framework\TestCase
             'invalid' => true,
         ];
         $auth = TestHelper::getAuth($request, $userData);
-        // Set resume service for session
-        $app->getContainer()->set('resume_service', TestHelper::getAuthFactory($request)->newResumeService());
+        // Set auth resume service for session
+        //$app->getContainer()->set('resume_service', TestHelper::getAuthFactory($request)->newResumeService());
+        $authFactory = TestHelper::getAuthFactory($request);
+        $authServices = $app->getContainer()->get(AuthServices::class);
+        $authServices->setAuthFactory($authFactory);
 
         // Build mock LoginMiddleware with makeAuthTracker == $auth
         $middleware = $this->getMockBuilder(LoginMiddleware::class)

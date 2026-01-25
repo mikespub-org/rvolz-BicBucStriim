@@ -13,6 +13,7 @@ use Aura\Auth\Auth;
 use BicBucStriim\AppData\BicBucStriim;
 use BicBucStriim\AppData\Settings;
 use BicBucStriim\Calibre\Calibre;
+use BicBucStriim\Session\AuthServices;
 use BicBucStriim\Session\Session;
 use BicBucStriim\Framework\RendererInterface;
 use BicBucStriim\Framework\TwigRenderer;
@@ -46,8 +47,10 @@ $builder->addDefinitions([
             return new FilesystemAdapter('BicBucStriim', 3600);
         }
     },
-    Session::class => 'depends on request - see login middleware',
-    Auth::class => 'depends on request - see login middleware',
+    // depends on request - see login middleware
+    AuthServices::class => function (ContainerInterface $c) {
+        return new AuthServices();
+    },
     BicBucStriim::class => function (ContainerInterface $c) {
         $dataPath = 'data/data.db';
         # Freeze (true) DB schema before release! Set to false for DB development.

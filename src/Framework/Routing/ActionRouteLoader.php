@@ -21,7 +21,7 @@ class ActionRouteLoader extends Loader
         parent::__construct();
     }
 
-    public function load(mixed $resource, string $type = null): RouteCollection
+    public function load(mixed $resource, ?string $type = null): RouteCollection
     {
         if ($this->isLoaded) {
             throw new \RuntimeException('Do not add the "bbs_routes" loader twice');
@@ -45,7 +45,7 @@ class ActionRouteLoader extends Loader
         return $routes;
     }
 
-    public function supports(mixed $resource, string $type = null): bool
+    public function supports(mixed $resource, ?string $type = null): bool
     {
         return 'bbs_routes' === $type;
     }

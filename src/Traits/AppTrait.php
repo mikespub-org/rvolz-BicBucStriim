@@ -14,6 +14,7 @@ namespace BicBucStriim\Traits;
 use BicBucStriim\AppData\BicBucStriim;
 use BicBucStriim\AppData\Settings;
 use BicBucStriim\Calibre\Calibre;
+use BicBucStriim\Session\AuthServices;
 use BicBucStriim\Utilities\Mailer;
 use BicBucStriim\Utilities\Thumbnails;
 use BicBucStriim\Framework\ContainerAdapter;
@@ -26,7 +27,7 @@ use Psr\Log\LoggerInterface;
  ********************************************************************/
 trait AppTrait
 {
-    /** @var ?\Psr\Container\ContainerInterface */
+    /** @var \Psr\Container\ContainerInterface|ContainerAdapter|null */
     protected $container;
 
     /**
@@ -75,7 +76,13 @@ trait AppTrait
         if (is_array($settings)) {
             $settings = new Settings($settings);
         }
-        return $this->container(Settings::class, $settings);
+        // Ensure the container is always our adapter, which provides the non-standard set() method.
+        if (!method_exists($this->container, 'set')) {
+            $this->container = new ContainerAdapter($this->container);
+        }
+        // @todo avoid re-setting container value here
+        $this->container->set(Settings::class, $settings);
+        return $this->container->get(Settings::class);
     }
 
     /**
@@ -97,16 +104,6 @@ trait AppTrait
     }
 
     /**
-     * Get Twig environment
-     * @return \Twig\Environment
-     * @deprecated 3.6.7 use renderer() instead
-     */
-    public function twig()
-    {
-        return $this->container(\Twig\Environment::class);
-    }
-
-    /**
      * Get renderer from container
      * @return RendererInterface
      */
@@ -118,19 +115,12 @@ trait AppTrait
     /**
      * Get container key
      * @param ?string $key
-     * @param mixed $value
      * @return mixed
      */
-    public function container($key = null, $value = null)
+    public function container($key = null)
     {
         if (empty($key)) {
             return $this->container;
-        }
-        if (!is_null($value)) {
-            // @todo let phpstan know we're dealing with a container that can set()
-            //assert($this->container instanceof ContainerAdapter);
-            assert($this->container instanceof \DI\Container);
-            $this->container->set($key, $value);
         }
         if ($this->container->has($key)) {
             return $this->container->get($key);
@@ -145,5 +135,14 @@ trait AppTrait
     public function getResponseFactory()
     {
         return $this->container(ResponseFactoryInterface::class);
+    }
+
+    /**
+     * Get auth services
+     * @return AuthServices
+     */
+    public function getAuthService()
+    {
+        return $this->container(AuthServices::class);
     }
 }

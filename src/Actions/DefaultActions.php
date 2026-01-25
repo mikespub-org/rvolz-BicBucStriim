@@ -79,7 +79,7 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
     {
         // Ensure the container is always our adapter, which provides the non-standard set() method.
         // This makes the Action class self-sufficient and independent of how it was instantiated.
-        if (!($container instanceof ContainerAdapter)) {
+        if (!method_exists($container, 'set')) {
             $container = new ContainerAdapter($container);
         }
         $this->container = $container;
