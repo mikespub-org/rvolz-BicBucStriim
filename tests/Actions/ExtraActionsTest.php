@@ -44,9 +44,11 @@ class ExtraActionsTest extends TestCase
         $app = TestHelper::getApp();
         $request = RequestUtil::getServerRequest('GET', '/extra/');
 
-        $expected = 'You don&#039;t have sufficient access rights.';
+        $expected = 302;
         $response = $app->handle($request);
-        $this->assertStringContainsString($expected, (string) $response->getBody());
+        $this->assertEquals($expected, $response->getStatusCode());
+        $expected = ['./login/'];
+        $this->assertEquals($expected, $response->getHeader('Location'));
     }
 
     #[\PHPUnit\Framework\Attributes\RunInSeparateProcess]

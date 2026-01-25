@@ -54,6 +54,10 @@ class MainActionsTest extends PHPUnit\Framework\TestCase
                 [], '<title>BicBucStriim :: Search</title>',
                 'GET', '/search/', ['$self', 'globalSearch'],
             ],
+            'main-search-post' => [
+                [], '<title>BicBucStriim :: Search</title>',
+                'POST', '/search/', ['$self', 'globalSearch'],
+            ],
             'main-serie-v1' => [
                 ['id' => 1, 'page' => 0], '<title>BicBucStriim :: Series Details</title>',
                 'GET', '/series/{id}/{page}/', ['$self', 'seriesDetailsSlice'],
