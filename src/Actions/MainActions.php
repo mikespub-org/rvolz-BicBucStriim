@@ -59,6 +59,7 @@ class MainActions extends DefaultActions
             'main-author-v1' => ['GET', '/authors/{id}/{page}/', [$self, 'authorDetailsSlice']],
             'main-authors-v1' => ['GET', '/authorslist/{page}/', [$self, 'authorsSlice']],
             'main-search' => ['GET', '/search/', [$self, 'globalSearch']],
+            'main-search-post' => ['POST', '/search/', [$self, 'globalSearch']],
             'main-serie-v1' => ['GET', '/series/{id}/{page}/', [$self, 'seriesDetailsSlice']],
             'main-series-v1' => ['GET', '/serieslist/{page}/', [$self, 'seriesSlice']],
             'main-tag-v1' => ['GET', '/tags/{id}/{page}/', [$self, 'tagDetailsSlice']],
@@ -211,7 +212,12 @@ class MainActions extends DefaultActions
         // TODO check search paramater?
 
         $filter = $this->getFilter();
-        $search = $this->requester->get('search') ?? '';
+        $search = $this->requester->get('search') ?? $this->requester->post('search') ?? '';
+        if ($search == '') {
+            return $this->render('global_search.twig', [
+                'page' => $this->buildPage('pagination_search', 0),
+                'search' => $search]);
+        }
         $tlb = $this->calibre()->titlesSlice($settings['lang'], 0, $settings->page_size, $filter, trim($search));
         $tlb_books = array_map([$this, 'checkThumbnail'], $tlb['entries']);
         $tla = $this->calibre()->authorsSlice(0, $settings->page_size, trim($search));
@@ -220,7 +226,7 @@ class MainActions extends DefaultActions
         $tlt_books = array_map([$this, 'checkThumbnail'], $tlt['entries']);
         $tls = $this->calibre()->seriesSlice(0, $settings->page_size, trim($search));
         $tls_books = array_map([$this, 'checkThumbnail'], $tls['entries']);
-        return $this->render('global_search.twig', [
+        return $this->render('global_search_result.twig', [
             'page' => $this->buildPage('pagination_search', 0),
             'books' => $tlb_books,
             'books_total' => $tlb['total'] == -1 ? 0 : $tlb['total'],
@@ -282,6 +288,7 @@ class MainActions extends DefaultActions
         return $this->render('titles.twig', [
             'page' => $this->buildPage('titles', 2, 1),
             'url' => 'titleslist',
+            'url_v2' => 'titles',
             'books' => $books,
             'curpage' => $tl['page'],
             'pages' => $tl['pages'],
@@ -613,6 +620,7 @@ class MainActions extends DefaultActions
         return $this->render('authors.twig', [
             'page' => $this->buildPage('authors', 3, 1),
             'url' => 'authorslist',
+            'url_v2' => 'authors',
             'authors' => $tl['entries'],
             'curpage' => $tl['page'],
             'pages' => $tl['pages'],
@@ -744,6 +752,7 @@ class MainActions extends DefaultActions
         return $this->render('series.twig', [
             'page' => $this->buildPage('series', 5, 1),
             'url' => 'serieslist',
+            'url_v2' => 'series',
             'series' => $tl['entries'],
             'curpage' => $tl['page'],
             'pages' => $tl['pages'],
@@ -810,6 +819,7 @@ class MainActions extends DefaultActions
         return $this->render('tags.twig', [
             'page' => $this->buildPage('tags', 4, 1),
             'url' => 'tagslist',
+            'url_v2' => 'tags',
             'tags' => $tl['entries'],
             'curpage' => $tl['page'],
             'pages' => $tl['pages'],

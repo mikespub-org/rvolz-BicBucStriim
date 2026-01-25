@@ -14,7 +14,7 @@
             {# go backwards #}
             <a
                     class="nav-link rounded-l-md"
-                    href="{% if curpage is not null and curpage > 0 %}{{ page.rot }}/{{ url }}/?index={{ curpage - 1 }}{% if search is not empty %}&search={{ search }}&options={{ search_options }}{% endif %}{% if sort is not empty %}&sort={{ sort }}{% endif %}{% else %}#{% endif %}"
+                    href="{% if curpage is not null and curpage > 0 %}{{ page.rot }}/{{ url_v2 }}/?index={{ curpage - 1 }}{% if search is not empty %}&search={{ search }}&options={{ search_options }}{% endif %}{% if sort is not empty %}&sort={{ sort }}{% endif %}{% else %}#{% endif %}"
                     title="{{ page.glob.l10n.pagination_prev }}"
             >
                 <span class="sr-only">{{ page.glob.l10n.pagination_prev }}</span>
@@ -25,7 +25,7 @@
             {# go forwards #}
             <a
                     class="nav-link rounded-r-md"
-                    href="{% if curpage is not null and curpage+1 < pages %}{{ page.rot }}/{{ url }}/?index={{ curpage + 1 }}{% if search is not empty %}&search={{ search }}&options={{ search_options }}{% endif %}{% if sort is not empty %}&sort={{ sort }}{% endif %}{% else %}#{% endif %}"
+                    href="{% if curpage is not null and curpage+1 < pages %}{{ page.rot }}/{{ url_v2 }}/?index={{ curpage + 1 }}{% if search is not empty %}&search={{ search }}&options={{ search_options }}{% endif %}{% if sort is not empty %}&sort={{ sort }}{% endif %}{% else %}#{% endif %}"
                     title="{{ page.glob.l10n.pagination_next }}"
             >
                 <span class="sr-only">{{ page.glob.l10n.pagination_next }}</span>

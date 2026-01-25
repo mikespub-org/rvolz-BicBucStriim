@@ -2,7 +2,7 @@
 <div class="px-2 relative z-0 shadow-sm rounded-md" x-data="visit4Sort">
     <script type="application/javascript">
         async function visit4Sort(val) {
-            url = "{{ page.rot }}/{{ url }}/?index={{ curpage }}{% if search is not empty %}&search={{ search }}&options={{ search_options }}{% endif %}"
+            url = "{{ page.rot }}/{{ url_v2 }}/?index={{ curpage }}{% if search is not empty %}&search={{ search }}&options={{ search_options }}{% endif %}"
             switch (val) {
                 case '1':
                     Turbolinks.visit(url + '&sort=byTitle', {action: "replace"});
