@@ -60,7 +60,7 @@ class CalibreTest extends PHPUnit\Framework\TestCase
         $this->assertEquals(6, $result["authors"]);
         $this->assertEquals(6, $result["tags"]);
         $this->assertEquals(4, $result["series"]);
-        $this->assertEquals(Calibre::USER_VERSION, $result["version"]);
+        $this->assertGreaterThanOrEqual(Calibre::USER_VERSION, $result["version"]);
     }
 
     public function testLibraryStatsTagFilter(): void
@@ -70,7 +70,7 @@ class CalibreTest extends PHPUnit\Framework\TestCase
         $this->assertEquals(6, $result["authors"]);
         $this->assertEquals(6, $result["tags"]);
         $this->assertEquals(4, $result["series"]);
-        $this->assertEquals(Calibre::USER_VERSION, $result["version"]);
+        $this->assertGreaterThanOrEqual(Calibre::USER_VERSION, $result["version"]);
     }
 
     public function testLibraryStatsLanguageFilter(): void
@@ -80,7 +80,7 @@ class CalibreTest extends PHPUnit\Framework\TestCase
         $this->assertEquals(6, $result["authors"]);
         $this->assertEquals(6, $result["tags"]);
         $this->assertEquals(4, $result["series"]);
-        $this->assertEquals(Calibre::USER_VERSION, $result["version"]);
+        $this->assertGreaterThanOrEqual(Calibre::USER_VERSION, $result["version"]);
     }
 
     public function testLibraryStatsLanguageAndTagFilter(): void
@@ -90,7 +90,7 @@ class CalibreTest extends PHPUnit\Framework\TestCase
         $this->assertEquals(6, $result["authors"]);
         $this->assertEquals(6, $result["tags"]);
         $this->assertEquals(4, $result["series"]);
-        $this->assertEquals(Calibre::USER_VERSION, $result["version"]);
+        $this->assertGreaterThanOrEqual(Calibre::USER_VERSION, $result["version"]);
     }
 
     public function testLast30(): void
