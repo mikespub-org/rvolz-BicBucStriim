@@ -21,7 +21,7 @@ use Exception;
  */
 class Calibre
 {
-    # Calibre DB user version
+    # Calibre DB user version (v6.15 = 26, v9.0 = 27)
     public const USER_VERSION = 26;
     # Calibre Notes DB file
     public const NOTES_DB_FILE = '.calnotes/notes.db';
