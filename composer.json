@@ -20,7 +20,7 @@
         "michelf/php-markdown": "^2.0",
         "slim/slim": "^4.15",
         "phpmailer/phpmailer": "^7.1",
-        "twig/twig": "^3.27",
+        "twig/twig": "^3.28",
         "aura/auth": "^4.0",
         "aura/session": "^6.0",
         "gabordemooij/redbean": "^5.7",
@@ -33,13 +33,13 @@
         "nyholm/psr7": "^1.8",
         "nyholm/psr7-server": "^1.1",
         "php-di/php-di": "^7.1",
-        "8ctopus/apix-log": "^3.2",
+        "8ctopus/apix-log": "^3.3",
         "dflydev/fig-cookies": "^3.2",
         "middlewares/cache": "^3.1",
         "symfony/cache": "^7.4 || ^8.1"
     },
     "require-dev": {
-        "phpunit/phpunit": "^12.5 || ^13.2",
+        "phpunit/phpunit": "^12.5 || ^13.3",
         "mikespub/epub-loader": "^4.1"
     },
     "suggest": {
