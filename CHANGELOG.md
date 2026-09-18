@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [4.x.x] - 20xx-xx-xx
 
+## [4.0.5] - 2026-09-18 Maintenance update
+### Changed
+- Update dependencies in composer.json
+- Support Calibre 9 db schema in test databases and unit tests
+
 ## [4.0.1] - 2026-01-24 Add AuthServices class
 ### Added
 - Add AuthServices class for login/logout/resume methods

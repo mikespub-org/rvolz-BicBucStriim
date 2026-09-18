@@ -13,6 +13,6 @@
     "jquery.loadtemplate": "^1.5.10",
     "js-cookie": "^3.0.8",
     "modernizr": "^3.13.1",
-    "swagger-ui-dist": "^5.32.15"
+    "swagger-ui-dist": "^5.33.0"
   }
 }

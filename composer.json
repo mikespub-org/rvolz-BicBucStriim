@@ -20,7 +20,7 @@
         "michelf/php-markdown": "^2.0",
         "slim/slim": "^4.15",
         "phpmailer/phpmailer": "^7.1",
-        "twig/twig": "^3.28",
+        "twig/twig": "^3.29",
         "aura/auth": "^4.0",
         "aura/session": "^6.0",
         "gabordemooij/redbean": "^5.7",
