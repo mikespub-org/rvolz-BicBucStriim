@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [4.x.x] - 20xx-xx-xx
 ### Changed
+- Upgrade Tailwind CSS from 2.0 to 3.4 in assets/tailwind
 - Update dependencies in composer.json
 
 ## [4.0.5] - 2026-09-18 Maintenance update

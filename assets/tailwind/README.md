@@ -3,11 +3,21 @@
 This directory contains assets and scripts for *front-end development* of the Tailwind CSS templates,
 slightly adapted from the v2.x frontend branch.
 
-The composer-scripts.json file contains some examples of development workflow scripts you could adapt
-for your own composer.json file.
+All Tailwind-specific development happens in this directory:
 
-The package.json and *.config.js files should be copied to the project directory before you run
 ```
+cd assets/tailwind
 yarn install
 ```
-or run any of the custom composer scripts there...
+
+Local development artifacts (`yarn.lock`, `dist/`, `.pnp.*`, `.yarn/`) are not committed;
+only the generated production file `style/tailwind/style.css` is.
+
+Build scripts (run from this directory, Node >= 22):
+
+- `yarn development` — intermediate build to `dist/style/style.css` (untracked)
+- `yarn serve` — same, in watch mode
+- `yarn production` — production build to `../../style/tailwind/style.css` (committed)
+
+The composer-scripts.json file contains examples of development workflow scripts you could adapt
+for your own composer.json file.

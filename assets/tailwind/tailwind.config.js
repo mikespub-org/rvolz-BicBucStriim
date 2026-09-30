@@ -1,7 +1,7 @@
 module.exports = {
-  purge: [
-    './templates/*.html',
-    './templates/*.twig'
+  content: [
+    '../../templates/tailwind/*.html',
+    '../../templates/tailwind/*.twig'
   ],
   darkMode: 'media', // or 'media' or 'class'
   theme: {
@@ -156,11 +156,10 @@ module.exports = {
         backgroundColor: theme => ({
           ...theme('colors'),
         }),
-    },
-  },
-  variants: {
-    extend: {
-      opacity: ['disabled']
+        borderColor: {
+          /* v2 default border color, restored (v3 changed it to currentColor) */
+          DEFAULT: '#e5e7eb',
+        },
     },
   },
   plugins: [
