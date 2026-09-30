@@ -84,7 +84,6 @@ class CalibreUtil
         } elseif (function_exists('finfo_file')) {
             $finfo = finfo_open(FILEINFO_MIME);
             $mtype = finfo_file($finfo, $file_path);
-            finfo_close($finfo);
         }
 
         if ($mtype == '') {

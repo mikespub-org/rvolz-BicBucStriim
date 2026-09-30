@@ -23,7 +23,7 @@
         "twig/twig": "^3.30",
         "aura/auth": "^7.0",
         "aura/session": "^7.0",
-        "gabordemooij/redbean": "^5.7",
+        "gabordemooij/redbean": "dev-master",
         "psr/container": "^2.0",
         "psr/http-message": "^1.1 || ^2.0",
         "psr/http-server-middleware": "^1.0",

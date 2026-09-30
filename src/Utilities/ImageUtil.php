@@ -93,9 +93,6 @@ class ImageUtil
         imagecopy($inbetween, $source, $dstx, $dsty, 0, 0, $width, $height);
         imagecopyresampled($thumb, $inbetween, 0, 0, 0, 0, $newwidth, $newheight, $maxwh, $maxwh);
         $created = imagepng($thumb, $thumb_path);
-        imagedestroy($thumb);
-        imagedestroy($inbetween);
-        imagedestroy($source);
         return $created;
     }
 
@@ -149,7 +146,6 @@ class ImageUtil
         } elseif (function_exists('finfo_file')) {
             $finfo = finfo_open(FILEINFO_MIME);
             $mimeType = finfo_file($finfo, $tmpFile);
-            finfo_close($finfo);
         }
         if (empty($mimeType) || !str_starts_with($mimeType, 'image/')) {
             $extension = pathinfo($imageUrl, PATHINFO_EXTENSION);
