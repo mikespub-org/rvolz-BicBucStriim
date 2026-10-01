@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c320cea4f713da83fd4b233a7f27d3e3",
+    "content-hash": "825c0ec73e7238c18a90832e0927d340",
     "packages": [
         {
             "name": "8ctopus/apix-log",
@@ -2647,16 +2647,16 @@
         },
         {
             "name": "mikespub/php-epub-meta",
-            "version": "4.1.4",
+            "version": "4.1.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mikespub-org/php-epub-meta.git",
-                "reference": "72da44ef754f30c5da0ccd6b8f83656b21a7b349"
+                "reference": "e199ff93736424b4fc495a504d01b7dcb9ffb2b4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mikespub-org/php-epub-meta/zipball/72da44ef754f30c5da0ccd6b8f83656b21a7b349",
-                "reference": "72da44ef754f30c5da0ccd6b8f83656b21a7b349",
+                "url": "https://api.github.com/repos/mikespub-org/php-epub-meta/zipball/e199ff93736424b4fc495a504d01b7dcb9ffb2b4",
+                "reference": "e199ff93736424b4fc495a504d01b7dcb9ffb2b4",
                 "shasum": ""
             },
             "require": {
@@ -2669,7 +2669,7 @@
                 "php": ">=8.4"
             },
             "require-dev": {
-                "phpunit/phpunit": "^12.5 || ^13.3"
+                "phpunit/phpunit": "^13.3"
             },
             "suggest": {
                 "mikespub/epub-loader": "epub-loader is a utility resource for ebooks",
@@ -2713,9 +2713,9 @@
             ],
             "support": {
                 "issues": "https://github.com/mikespub-org/php-epub-meta/issues",
-                "source": "https://github.com/mikespub-org/php-epub-meta/tree/4.1.4"
+                "source": "https://github.com/mikespub-org/php-epub-meta/tree/4.1.5"
             },
-            "time": "2026-09-16T18:28:32+00:00"
+            "time": "2026-09-30T17:39:30+00:00"
         },
         {
             "name": "mikespub/survos-wikidata",
