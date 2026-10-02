@@ -1,9 +1,10 @@
 {% extends 'main.twig' %}
 
 {% block content %}
-
-<h1>{{ title }}</h1>
-<p class="alert-error">
-	{{ error }}
-</p>
+<div style="max-width: 600px; margin: 30px auto;">
+	<h1>{{ title }}</h1>
+	<p class="bbs-flash bbs-flash-error alert-error">
+		{{ error }}
+	</p>
+</div>
 {% endblock %}

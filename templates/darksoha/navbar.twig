@@ -6,97 +6,104 @@
   ~
   -->
 
-<div data-role="navbar">
-    <ul>
-        <li>
-            <a href="{{page.rot}}/" data-icon="home" data-rel="external" {% if page.menu== 1 %}class="ui-btn-active"
-               {%endif%}>
-                {{page.glob.l10n.home}}
+<nav class="bbs-navbar" data-role="navbar">
+    <ul style="display:contents; list-style:none; margin:0; padding:0;">
+        <li class="bbs-nav-item">
+            <a href="{{page.rot}}/" class="bbs-nav-link {% if page.menu == 1 %}active ui-btn-active{% endif %}">
+                <svg class="bbs-icon" aria-hidden="true"><use xlink:href="#bbs-icon-home" href="#bbs-icon-home"/></svg>
+                <span>{{page.glob.l10n.home}}</span>
             </a>
         </li>
-        <li>
-            <a href="{{page.rot}}/titleslist/0/" data-icon="bars" {% if page.menu== 2 %}class="ui-btn-active" {%endif%}>
-                {{page.glob.l10n.titles}}
+        <li class="bbs-nav-item">
+            <a href="{{page.rot}}/titleslist/0/" class="bbs-nav-link {% if page.menu == 2 %}active ui-btn-active{% endif %}">
+                <svg class="bbs-icon" aria-hidden="true"><use xlink:href="#bbs-icon-bars" href="#bbs-icon-bars"/></svg>
+                <span>{{page.glob.l10n.titles}}</span>
             </a>
         </li>
-        <li>
-            <a href="{{page.rot}}/authorslist/0/" data-icon="user" {% if page.menu== 3 %}class="ui-btn-active"
-               {%endif%}>
-                {{page.glob.l10n.authors}}
+        <li class="bbs-nav-item">
+            <a href="{{page.rot}}/authorslist/0/" class="bbs-nav-link {% if page.menu == 3 %}active ui-btn-active{% endif %}">
+                <svg class="bbs-icon" aria-hidden="true"><use xlink:href="#bbs-icon-user" href="#bbs-icon-user"/></svg>
+                <span>{{page.glob.l10n.authors}}</span>
             </a>
         </li>
-        <li>
-            <a href="{{page.rot}}/tagslist/0/" data-icon="tag" {% if page.menu== 4 %}class="ui-btn-active" {%endif%}>
-                {{page.glob.l10n.tags}}
+        <li class="bbs-nav-item">
+            <a href="{{page.rot}}/tagslist/0/" class="bbs-nav-link {% if page.menu == 4 %}active ui-btn-active{% endif %}">
+                <svg class="bbs-icon" aria-hidden="true"><use xlink:href="#bbs-icon-tag" href="#bbs-icon-tag"/></svg>
+                <span>{{page.glob.l10n.tags}}</span>
             </a>
         </li>
-        <li>
-            <a href="{{page.rot}}/serieslist/0/" data-icon="bullets" {% if page.menu== 5 %}class="ui-btn-active"
-               {%endif%}>
-                {{page.glob.l10n.series}}
+        <li class="bbs-nav-item">
+            <a href="{{page.rot}}/serieslist/0/" class="bbs-nav-link {% if page.menu == 5 %}active ui-btn-active{% endif %}">
+                <svg class="bbs-icon" aria-hidden="true"><use xlink:href="#bbs-icon-bullets" href="#bbs-icon-bullets"/></svg>
+                <span>{{page.glob.l10n.series}}</span>
             </a>
         </li>
     </ul>
-</div>
+</nav>
+
 {% if page.menu != 1 %}
-<div data-role="navbar" data-iconpos="left" class="ui-body ui-body-c">
-    <ul>
+<nav class="bbs-subnav" data-role="navbar">
+    <ul style="display:contents; list-style:none; margin:0; padding:0;">
 {% if curpage != NULL %}
-        <li>
+        <li class="bbs-subnav-item">
 	{% if curpage > 0 %}
-            <a data-icon="arrow-l"
-               href="{{page.rot}}/{{url}}/{{curpage - 1}}/{% if search != NULL %}?search={{search}}{% endif %}{% if sort != NULL %}?sort={{sort}}{% endif %}">
-                {{page.glob.l10n.pagination_prev}}
+            <a class="bbs-subnav-link" href="{{page.rot}}/{{url}}/{{curpage - 1}}/{% if search != NULL %}?search={{search}}{% endif %}{% if sort != NULL %}?sort={{sort}}{% endif %}">
+                <svg class="bbs-icon" aria-hidden="true"><use xlink:href="#bbs-icon-arrow-l" href="#bbs-icon-arrow-l"/></svg>
+                <span>{{page.glob.l10n.pagination_prev}}</span>
             </a>
             {% else %}
-            <a href="#" data-icon="blank" class="ui-nodisc-icon ui-alt-icon">&nbsp;</a>
+            <span class="bbs-subnav-link disabled">&nbsp;</span>
 	{% endif %}
         </li>
-        <li>
-            <a
-                    {% if search !=NULL %}
-                    href="#" data-icon="search"
-                    {% elseif sort== "byReverseDate" %}
-            href="{{page.rot}}/titleslist/0/?sort=byTitle" data-icon="calendar"
-            {% else %}
-            href="{{page.rot}}/titleslist/0/?sort=byReverseDate" data-icon="comment"
-            {% endif %}
+        <li class="bbs-subnav-item">
+            <a class="bbs-subnav-link"
+                {% if search != NULL %}
+                href="#"
+                {% elseif sort == "byReverseDate" %}
+                href="{{page.rot}}/titleslist/0/?sort=byTitle"
+                {% else %}
+                href="{{page.rot}}/titleslist/0/?sort=byReverseDate"
+                {% endif %}
             >
-            {% if search != NULL %}
-            {{page.glob.l10n.pagination_search}}
-            {% else %}
-            {{page.glob.l10n.pagination_page}}
-            {% endif %}
-            {% if pages > 0 %}{{ curpage+1 }}/{{ pages }}{% else %}0/0{% endif %}
+                {% if search != NULL %}
+                <svg class="bbs-icon" aria-hidden="true"><use xlink:href="#bbs-icon-search" href="#bbs-icon-search"/></svg>
+                <span>{{page.glob.l10n.pagination_search}}</span>
+                {% elseif sort == "byReverseDate" %}
+                <svg class="bbs-icon" aria-hidden="true"><use xlink:href="#bbs-icon-calendar" href="#bbs-icon-calendar"/></svg>
+                <span>{{page.glob.l10n.pagination_page}}</span>
+                {% else %}
+                <svg class="bbs-icon" aria-hidden="true"><use xlink:href="#bbs-icon-comment" href="#bbs-icon-comment"/></svg>
+                <span>{{page.glob.l10n.pagination_page}}</span>
+                {% endif %}
+                <span>{% if pages > 0 %}{{ curpage + 1 }}/{{ pages }}{% else %}0/0{% endif %}</span>
             </a>
         </li>
-        <li>
-	{% if curpage+1 < pages %}
-            <a data-icon="arrow-r"
-               href="{{page.rot}}/{{url}}/{{curpage + 1}}/{% if search != NULL %}?search={{search}}{% endif %}{% if sort != NULL %}?sort={{sort}}{% endif %}">
-			{{page.glob.l10n.pagination_next}}
+        <li class="bbs-subnav-item">
+	{% if curpage + 1 < pages %}
+            <a class="bbs-subnav-link" href="{{page.rot}}/{{url}}/{{curpage + 1}}/{% if search != NULL %}?search={{search}}{% endif %}{% if sort != NULL %}?sort={{sort}}{% endif %}">
+                <span>{{page.glob.l10n.pagination_next}}</span>
+                <svg class="bbs-icon" aria-hidden="true"><use xlink:href="#bbs-icon-arrow-r" href="#bbs-icon-arrow-r"/></svg>
             </a>
             {% else %}
-            <a href="#" data-icon="blank" class="ui-nodisc-icon  ui-alt-icon">&nbsp;</a>
+            <span class="bbs-subnav-link disabled">&nbsp;</span>
 	{% endif %}
         </li>
 {% else %}
-        <li><a href="#" data-icon="blank" class="ui-nodisc-icon  ui-alt-icon">&nbsp;</a></li>
-        <li><a href="#" data-icon="blank" class="ui-nodisc-icon  ui-alt-icon">&nbsp;</a></li>
-        <li>
+        <li class="bbs-subnav-item"><span class="bbs-subnav-link disabled">&nbsp;</span></li>
+        <li class="bbs-subnav-item"><span class="bbs-subnav-link disabled">&nbsp;</span></li>
+        <li class="bbs-subnav-item">
 	{% if page.auth %}
             {% if page.level > 1 %}
-            <a data-rel="back" data-icon="back">
-                {{ page.glob.l10n.back }}
+            <a class="bbs-subnav-link" href="javascript:history.back();" data-rel="back">
+                <svg class="bbs-icon" aria-hidden="true"><use xlink:href="#bbs-icon-back" href="#bbs-icon-back"/></svg>
+                <span>{{ page.glob.l10n.back }}</span>
             </a>
             {% else %}
-            <a href="#" data-icon="blank" class="ui-nodisc-icon ui-alt-icon">&nbsp;</a>
+            <span class="bbs-subnav-link disabled">&nbsp;</span>
             {% endif %}
 	{% endif %}
         </li>
 {% endif %}
     </ul>
-</div>
+</nav>
 {% endif %}
-
-

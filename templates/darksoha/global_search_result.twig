@@ -4,78 +4,95 @@
 {% endblock %}
 
 {% block content %}
-<div>
-    <form action="{{page.rot}}/search/"
-          method="get" class="ui-bar-a">
-        <div data-role="fieldcontain" class="ui-hide-label">
-            <label for="search">{{page.glob.l10n.pagination_search_lbl}}</label>
+<div style="margin-bottom: 20px;">
+    <form action="{{page.rot}}/search/" method="get">
+        <div data-role="fieldcontain">
+            <label for="search" class="visually-hidden">{{page.glob.l10n.pagination_search_lbl}}</label>
             <input type="search" name="search" id="search" value="{{search}}"
                    placeholder="{{page.glob.l10n.pagination_search_ph}}" autofocus="true"/>
         </div>
     </form>
 </div>
-<div data-role="collapsible-set">
-	<div data-role="collapsible">
-		<h3>{{page.glob.l10n.titles}}: {{books_total}}</h3>
-		<ul data-role="listview" data-filter="false">	
+
+<div class="bbs-search-results">
+	<details class="bbs-collapsible" data-role="collapsible" {% if books|length > 0 %}open{% endif %}>
+		<summary class="bbs-collapsible-header">{{page.glob.l10n.titles}}: {{books_total}}</summary>
+		<ul class="bbs-listview" data-role="listview" data-filter="false">	
 			{% for book in books %}
 				{% include "title_entry.twig" %}
 		  	{% endfor %}
 		  	{% if more_books %}
-		  		<li data-theme="a">
-		  			<a href="{{page.rot}}/titleslist/0/?search={{search}}">{{books_total}} {{page.glob.l10n.titles}} ...</a>
+		  		<li class="bbs-list-item" style="padding: 10px 15px; text-align: center;">
+		  			<a href="{{page.rot}}/titleslist/0/?search={{search}}"><strong>{{books_total}} {{page.glob.l10n.titles}} ...</strong></a>
 				</li>
 			{% endif %}
 		</ul>
-	</div>
-	<div data-role="collapsible">
-		<h3>{{page.glob.l10n.authors}}:  {{authors_total}}</h3>
-		<ul data-role="listview" data-filter="false">	
+	</details>
+
+	<details class="bbs-collapsible" data-role="collapsible" {% if authors|length > 0 %}open{% endif %}>
+		<summary class="bbs-collapsible-header">{{page.glob.l10n.authors}}: {{authors_total}}</summary>
+		<ul class="bbs-listview" data-role="listview" data-filter="false">	
 			{% for author in authors %}
-				<li>
-				<a href="{{page.rot}}/authors/{{ author.id }}/0/">{{ author.sort }}
-					<span class="ui-li-count">{{author.anzahl}}</span>
-				</a>
-			</li>
+				<li class="bbs-list-item">
+					<a class="bbs-list-link" href="{{page.rot}}/authors/{{ author.id }}/0/">
+						<div class="bbs-list-info">
+							<h3 class="bbs-list-title">{{ author.sort }}</h3>
+						</div>
+						<span class="bbs-badge ui-li-count">{{author.anzahl}}</span>
+						<svg class="bbs-icon bbs-list-arrow" aria-hidden="true"><use xlink:href="#bbs-icon-carat-r" href="#bbs-icon-carat-r"/></svg>
+					</a>
+				</li>
 		  {% endfor %}
 		  {% if more_authors %}
-		  		<li data-theme="a">
-		  			<a href="{{page.rot}}/authorslist/0/?search={{search}}">{{authors_total}} {{page.glob.l10n.authors}}...</a>
+		  		<li class="bbs-list-item" style="padding: 10px 15px; text-align: center;">
+		  			<a href="{{page.rot}}/authorslist/0/?search={{search}}"><strong>{{authors_total}} {{page.glob.l10n.authors}} ...</strong></a>
 				</li>
 			{% endif %}
 		</ul>
-	</div>
-	<div data-role="collapsible">
-		<h3>{{page.glob.l10n.tags}}:  {{tags_total}}</h3>
-		<ul data-role="listview" data-filter="false">	
+	</details>
+
+	<details class="bbs-collapsible" data-role="collapsible" {% if tags|length > 0 %}open{% endif %}>
+		<summary class="bbs-collapsible-header">{{page.glob.l10n.tags}}: {{tags_total}}</summary>
+		<ul class="bbs-listview" data-role="listview" data-filter="false">	
 			{% for tag in tags %}
-				<li>
-					<a href="{{page.rot}}/tags/{{ tag.id }}/0/">{{ tag.name }}
-					<span class="ui-li-count">{{ tag.anzahl }}</span></a>
+				<li class="bbs-list-item">
+					<a class="bbs-list-link" href="{{page.rot}}/tags/{{ tag.id }}/0/">
+						<div class="bbs-list-info">
+							<h3 class="bbs-list-title">{{ tag.name }}</h3>
+						</div>
+						<span class="bbs-badge ui-li-count">{{ tag.anzahl }}</span>
+						<svg class="bbs-icon bbs-list-arrow" aria-hidden="true"><use xlink:href="#bbs-icon-carat-r" href="#bbs-icon-carat-r"/></svg>
+					</a>
 				</li>
 		  {% endfor %}
 		  {% if more_tags %}
-		  		<li data-theme="a">
-		  			<a href="{{page.rot}}/tagslist/0/?search={{search}}">{{tags_total}} {{page.glob.l10n.tags}}...</a>
+		  		<li class="bbs-list-item" style="padding: 10px 15px; text-align: center;">
+		  			<a href="{{page.rot}}/tagslist/0/?search={{search}}"><strong>{{tags_total}} {{page.glob.l10n.tags}} ...</strong></a>
 				</li>
 			{% endif %}
 		</ul>
-	</div>
-	<div data-role="collapsible">
-		<h3>{{page.glob.l10n.series}}:  {{series_total}}</h3>
-		<ul data-role="listview" data-filter="false">	
+	</details>
+
+	<details class="bbs-collapsible" data-role="collapsible" {% if series|length > 0 %}open{% endif %}>
+		<summary class="bbs-collapsible-header">{{page.glob.l10n.series}}: {{series_total}}</summary>
+		<ul class="bbs-listview" data-role="listview" data-filter="false">	
 			{% for this_series in series %}
-				<li>
-				<a href="{{page.rot}}/series/{{ this_series.id }}/0/">{{ this_series.name }}
-				<span class="ui-li-count">{{ this_series.anzahl }}</span></a>
-			</li>
+				<li class="bbs-list-item">
+					<a class="bbs-list-link" href="{{page.rot}}/series/{{ this_series.id }}/0/">
+						<div class="bbs-list-info">
+							<h3 class="bbs-list-title">{{ this_series.name }}</h3>
+						</div>
+						<span class="bbs-badge ui-li-count">{{ this_series.anzahl }}</span>
+						<svg class="bbs-icon bbs-list-arrow" aria-hidden="true"><use xlink:href="#bbs-icon-carat-r" href="#bbs-icon-carat-r"/></svg>
+					</a>
+				</li>
 		  {% endfor %}
 		  {% if more_series %}
-		  		<li data-theme="a">
-		  			<a href="{{page.rot}}/serieslist/0/?search={{search}}">{{series_total}} {{page.glob.l10n.series}}...</a>
+		  		<li class="bbs-list-item" style="padding: 10px 15px; text-align: center;">
+		  			<a href="{{page.rot}}/serieslist/0/?search={{search}}"><strong>{{series_total}} {{page.glob.l10n.series}} ...</strong></a>
 				</li>
 			{% endif %}
 		</ul>
-	</div>
+	</details>
 </div>
 {% endblock %}

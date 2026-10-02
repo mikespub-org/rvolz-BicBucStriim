@@ -6,12 +6,12 @@
 <h1>{{ page.glob.l10n.admin }}</h1>
 {% include "flash_messages.twig" %}
 
-<form action="{{page.rot}}/admin/configuration/" method="post" id="adminform">
+<form action="{{page.rot}}/admin/configuration/" method="post" id="adminform" style="max-width: 700px;">
 	<fieldset data-role="fieldcontain">
 		<label for="calibre_dir">{{page.glob.l10n.calibre_dir1}}</label>
 		<input name="calibre_dir" id="calibre_dir" type="text" 
 			value="{{page.glob.calibre_dir}}" placeholder="{{page.glob.l10n.calibre_dir2}}" required autofocus />
-		<p>{{page.glob.l10n.calibre_dir_expl}}</p>					
+		<p class="bbs-form-help">{{page.glob.l10n.calibre_dir_expl}}</p>					
 	</fieldset>	
 	<fieldset data-role="fieldcontain">
 		<label for="must_login">{{page.glob.l10n.admin_must_login}}</label>
@@ -23,7 +23,7 @@
 				{{page.glob.l10n.switch_yes}}
 			</option>
 		</select>
-		<p>{{page.glob.l10n.admin_must_login_expl}}</p>					
+		<p class="bbs-form-help">{{page.glob.l10n.admin_must_login_expl}}</p>					
 	</fieldset>	
 	<fieldset data-role="fieldcontain">
 		<label for="kindle">{{page.glob.l10n.kindle_enable}}</label>
@@ -35,34 +35,33 @@
 				{{page.glob.l10n.switch_yes}}
 			</option>
 		</select>
-		<p>{{page.glob.l10n.kindle_expl}}</p>
+		<p class="bbs-form-help">{{page.glob.l10n.kindle_expl}}</p>
 	</fieldset>	
 	<fieldset data-role="fieldcontain">
 		<label for="kindle_from_email">{{page.glob.l10n.kindle_from_email1}}</label>
 		<input name="kindle_from_email" id="kindle_from_email" type="text" 
 			value="{{page.glob.kindle_from_email}}" placeholder="{{page.glob.l10n.kindle_from_email2}}" />
-		<p>{{page.glob.l10n.kindle_expl2}}</p>
+		<p class="bbs-form-help">{{page.glob.l10n.kindle_expl2}}</p>
 	</fieldset>
 	<fieldset data-role="fieldcontain">
 		<label for="mailer">{{page.glob.l10n.admin_mailer}}</label>
-		<select name="mailer" id="mailer" value="{{page.glob.mailer}}">
+		<select name="mailer" id="mailer">
 		{% for mailer in mailers %}
 			<option value="{{mailer.key}}" {%if page.glob.mailer == mailer.key %}selected="true"{% endif %}>{{mailer.text}}</option>
 		{% endfor %}
 		</select>
-		<p>{{page.glob.l10n.admin_mailer_expl}} <a href="../mail/">SMTP</a></p>					
+		<p class="bbs-form-help">{{page.glob.l10n.admin_mailer_expl}} <a href="../mail/">SMTP</a></p>					
 	</fieldset>
 	<fieldset data-role="fieldcontain">
         <label for="title_time_sort">{{page.glob.l10n.admin_tts}}</label>
-        <select name="title_time_sort" id="title_time_sort" value="{{page.glob.title_time_sort}}">
+        <select name="title_time_sort" id="title_time_sort">
             {% for tts in ttss %}
-            <option value="{{tts.key}}" {%if page.glob.title_time_sort== tts.key %}selected="true" {% endif %}>
+            <option value="{{tts.key}}" {%if page.glob.title_time_sort == tts.key %}selected="true" {% endif %}>
                 {{tts.text}}
             </option>
             {% endfor %}
         </select>
-
-        <p>{{page.glob.l10n.admin_tts_expl}}</p>
+        <p class="bbs-form-help">{{page.glob.l10n.admin_tts_expl}}</p>
     </fieldset>
     <fieldset data-role="fieldcontain">
 		<label for="thumb_gen_clipped">{{page.glob.l10n.thumb_gen_clipped}}</label>
@@ -74,18 +73,18 @@
 				{{page.glob.l10n.switch_yes}}
 			</option>
 		</select>
-		<p>{{page.glob.l10n.thumb_gen_clipped_expl}}</p>
+		<p class="bbs-form-help">{{page.glob.l10n.thumb_gen_clipped_expl}}</p>
 	</fieldset>	
 	<fieldset data-role="fieldcontain">
 		<label for="page_size">{{page.glob.l10n.page_size}}</label>
 		<input name="page_size" id="page_size" 
-			type="range" 
+			type="number" 
 			value="{{page.glob.page_size}}"
 			min="1"
 			max="100"
 			step="1"
 		/>
-		<p>{{page.glob.l10n.page_size_expl}}</p>
+		<p class="bbs-form-help">{{page.glob.l10n.page_size_expl}}</p>
 	</fieldset>	
 	<fieldset data-role="fieldcontain">
 		<label for="display_app_name">{{page.glob.l10n.display_app_name}}</label>
@@ -93,7 +92,7 @@
 			type="text" 
 			value="{{page.glob.display_app_name}}"
 		/>
-		<p>{{page.glob.l10n.display_app_name_expl}}</p>
+		<p class="bbs-form-help">{{page.glob.l10n.display_app_name_expl}}</p>
 	</fieldset>	
 	<fieldset data-role="fieldcontain">
 		<label for="metadata_update">{{page.glob.l10n.metadata_update}}</label>
@@ -105,7 +104,7 @@
 				{{page.glob.l10n.switch_yes}}
 			</option>
 		</select>
-		<p>{{page.glob.l10n.metadata_update_expl}}</p>
+		<p class="bbs-form-help">{{page.glob.l10n.metadata_update_expl}}</p>
 	</fieldset>
 	<fieldset data-role="fieldcontain">
 		<label for="relative_urls">{{page.glob.l10n.relative_urls}}</label>
@@ -117,21 +116,24 @@
 			{{page.glob.l10n.switch_yes}}
 			</option>
 		</select>
-		<p>{{page.glob.l10n.relative_urls_expl}}</p>
+		<p class="bbs-form-help">{{page.glob.l10n.relative_urls_expl}}</p>
 	</fieldset>
 	<fieldset data-role="fieldcontain">
 		<label for="templates_dir">{{page.glob.l10n.admin_templates_dir}}</label>
-		<select name="templates_dir" id="templates_dir" value="{{page.glob.templates_dir}}">
+		<select name="templates_dir" id="templates_dir">
 			{% for templates_dir in templates_dirs %}
 				<option value="{{templates_dir.key}}" {%if page.glob.templates_dir == templates_dir.key %}selected="true"{% endif %}>
 					{{templates_dir.text}}
 				</option>
 			{% endfor %}
 		</select>
-		<p><em>Note: if you change the templates directory and press "Save", the layout of the result page may not be correct at first. If so, please reload the page afterwards...</em></p>
+		<p class="bbs-form-help"><em>Note: if you change the templates directory and press "Save", the layout of the result page may not be correct at first. If so, please reload the page afterwards...</em></p>
 	</fieldset>
 
-	<button type="submit">{{page.glob.l10n.save}}</button>	
+	<button type="submit" class="bbs-btn bbs-btn-primary bbs-btn-block">
+		<svg class="bbs-icon" aria-hidden="true"><use xlink:href="#bbs-icon-check" href="#bbs-icon-check"/></svg>
+		<span>{{page.glob.l10n.save}}</span>
+	</button>	
 </form>
 
 {% endblock %}

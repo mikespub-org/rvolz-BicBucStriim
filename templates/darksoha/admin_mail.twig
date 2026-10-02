@@ -6,46 +6,47 @@
 <h1>{{ page.glob.l10n.admin_mail }}</h1>
 {% include "flash_messages.twig" %}
 
-<p>{{page.glob.l10n.admin_mail_legend}}</p>
-<form action="{{page.rot}}/admin/mail/" method="put" id="mailform" data-proot="{{page.rot}}">
+<p class="bbs-form-help">{{page.glob.l10n.admin_mail_legend}}</p>
+<form action="{{page.rot}}/admin/mail/" method="put" id="mailform" data-proot="{{page.rot}}" style="max-width: 600px;">
 	<fieldset data-role="fieldcontain">
 		<label for="username">{{page.glob.l10n.admin_username}}</label>
 		<input name="username" id="username" type="text" 
 			value="{{mail.username}}" placeholder="{{page.glob.l10n.admin_username}}" 
 			required="true" />
+		<p class="bbs-form-help">{{page.glob.l10n.admin_smtpusername_expl}}</p>					
 	</fieldset>	
-	<p>{{page.glob.l10n.admin_smtpusername_expl}}</p>					
 	<fieldset data-role="fieldcontain">
 		<label for="password">{{page.glob.l10n.admin_userpw}}</label>
 		<input name="password" id="password" type="password" 
 			value="{{mail.password}}" placeholder="{{page.glob.l10n.admin_userpw}}" 
 			required="true" />
-		<p>{{page.glob.l10n.admin_smtpuserpw_expl}}</p>					
+		<p class="bbs-form-help">{{page.glob.l10n.admin_smtpuserpw_expl}}</p>					
 	</fieldset>	
 	<fieldset data-role="fieldcontain">
 		<label for="smtpserver">{{page.glob.l10n.admin_smtpserver}}</label>
 		<input name="smtpserver" id="smtpserver" type="text" 
 			value="{{mail.smtpserver}}" placeholder="{{page.glob.l10n.admin_smtpserver}}" required="true" />		
-		<p>{{page.glob.l10n.admin_smtpserver_expl}}</p>					
+		<p class="bbs-form-help">{{page.glob.l10n.admin_smtpserver_expl}}</p>					
 	</fieldset>
 	<fieldset data-role="fieldcontain"> 
 		<label for="smtpport">{{page.glob.l10n.admin_smtpport}}</label>
 		<input name="smtpport" id="smtpport" type="number" 
 			value="{{mail.smtpport}}" placeholder="{{page.glob.l10n.admin_smtpport}}" 
 			required="true" />		
-		<p>{{page.glob.l10n.admin_smtpport_expl}}</p>					
+		<p class="bbs-form-help">{{page.glob.l10n.admin_smtpport_expl}}</p>					
 	</fieldset>	
 	<fieldset data-role="fieldcontain">
 		<label for="smtpenc">{{page.glob.l10n.admin_smtpenc}}</label>
-		<select name="smtpenc" id="smtpenc" value="{{mail.smtpenc}}">
+		<select name="smtpenc" id="smtpenc">
 		{% for encryption in encryptions %}
 			<option value="{{encryption.key}}" {%if mail.smtpenc == encryption.key %}selected="true"{% endif %}>{{encryption.text}}</option>
 		{% endfor %}
 		</select>
-		<p>{{page.glob.l10n.admin_smtpenc_expl}}</p>					
+		<p class="bbs-form-help">{{page.glob.l10n.admin_smtpenc_expl}}</p>					
 	</fieldset>
-	<button  data-ajax="true" data-icon="check" type="submit">
-		{{page.glob.l10n.save}}
+	<button class="bbs-btn bbs-btn-primary bbs-btn-block" type="submit">
+		<svg class="bbs-icon" aria-hidden="true"><use xlink:href="#bbs-icon-check" href="#bbs-icon-check"/></svg>
+		<span>{{page.glob.l10n.save}}</span>
 	</button>	
 </form>
 {% endblock %}

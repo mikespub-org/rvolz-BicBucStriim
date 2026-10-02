@@ -1,0 +1,44 @@
+@import url("../style.css");
+
+/* Apply dark theme defaults */
+:root {
+  --bbs-bg-body: #181818;
+  --bbs-bg-card: #222222;
+  --bbs-text: #e0e0e0;
+  --bbs-text-muted: #999999;
+  --bbs-border: #383838;
+  --bbs-border-light: #2c2c2c;
+  --bbs-divider-bg: #282828;
+  --bbs-divider-text: #bbbbbb;
+
+  --bbs-header-bg: #121212;
+  --bbs-header-text: #ffffff;
+  --bbs-header-btn-bg: #252525;
+  --bbs-header-btn-hover: #333333;
+
+  --bbs-nav-bg: #121212;
+  --bbs-nav-text: #aaaaaa;
+  --bbs-nav-active-bg: #252525;
+  --bbs-nav-active-text: #ffffff;
+  --bbs-nav-active-border: #4a90e2;
+
+  --bbs-subnav-bg: #1c1c1c;
+  --bbs-subnav-text: #cccccc;
+  --bbs-subnav-border: #333333;
+
+  --bbs-badge-bg: #333333;
+  --bbs-badge-text: #ffffff;
+
+  --bbs-btn-bg: #282828;
+  --bbs-btn-text: #e0e0e0;
+  --bbs-btn-border: #444444;
+  --bbs-btn-hover: #383838;
+
+  --bbs-primary: #3498db;
+  --bbs-primary-text: #ffffff;
+}
+
+body {
+  background-color: #181818;
+  color: #e0e0e0;
+}

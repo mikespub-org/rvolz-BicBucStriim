@@ -5,16 +5,23 @@
 {% block headerlinks %}{% endblock %}
 
 {% block content %}
+<div style="max-width: 480px; margin: 30px auto;">
 	<header>
 		<h1>{{page.glob.l10n.login}}</h1>
 	</header>
+	{% include "flash_messages.twig" %}
 	<form action="{{page.rot}}/login/" method="post" id="loginform" data-proot="{{page.rot}}">
-	<fieldset data-role="fieldcontain">
-	  <label for="username">{{page.glob.l10n.admin_username}}</label>
-	  <input type="text" name="username" id="username" value="{{username}}" autofocus required/>
-	  <label for="password">{{page.glob.l10n.admin_userpw}}</label>
-	  <input type="password" name="password" id="password" value="{{password}}" required />
-	</fieldset >      
-	<button type="submit" name="login">{{page.glob.l10n.login}}</button> 
+		<fieldset data-role="fieldcontain">
+			<label for="username">{{page.glob.l10n.admin_username}}</label>
+			<input type="text" name="username" id="username" value="{{username}}" autofocus required/>
+			
+			<label for="password">{{page.glob.l10n.admin_userpw}}</label>
+			<input type="password" name="password" id="password" value="{{password}}" required />
+		</fieldset>      
+		<button type="submit" name="login" class="bbs-btn bbs-btn-primary bbs-btn-block">
+			<svg class="bbs-icon" aria-hidden="true"><use xlink:href="#bbs-icon-power" href="#bbs-icon-power"/></svg>
+			<span>{{page.glob.l10n.login}}</span>
+		</button> 
 	</form>
+</div>
 {% endblock %}

@@ -16,157 +16,186 @@
 {% block pid %}id="ptitle_detail"{%endblock%}
 
 {% block content %}
-<section class="title_detail">	
+<section class="title_detail clearfix">	
 	<header>
-			<h1>{{ book.title }}</h1> 												
-			<p>					
-				{% if book.pubdate %}{{ book.pubdate|date("Y") }}{% endif %}	{{ language }}
-			</p>
-			<p class="ui-state-error">{{ flash.error }}</p>	
+		<h1>{{ book.title }}</h1> 												
+		<p>					
+			{% if book.pubdate %}{{ book.pubdate|date("Y") }}{% endif %}	{{ language }}
+		</p>
+		{% if flash.error %}
+		<p class="ui-state-error">{{ flash.error }}</p>	
+		{% endif %}
 	</header>		
-	<div data-role="collapsible">
-		<h2>{{page.glob.l10n.download}}</h2>
-		{% if protect_dl == true %} 
-		<div class="dl_access">
-			<p>
-				{{ page.glob.l10n.check_access_info }}
-			</p>
-			<a data-role="button" data-rel="dialog" href="{{page.rot}}/titles/{{book.id}}/showaccess/">
-				{{ page.glob.l10n.check_access }}
-			</a>
-		</div>
-		{% endif %}	
-		<div class ="dl_download" {% if protect_dl == true %} hidden="true" {% endif %}>
-			<p>
-				{{ page.glob.l10n.presskey }}
-			</p>
-			<div data-role="controlgroup" data-type="horizontal" class="downButtons">
-				{% for format in formats %}				
-						<a data-role="button" 
+	<details class="bbs-collapsible" data-role="collapsible" open>
+		<summary class="bbs-collapsible-header">{{page.glob.l10n.download}}</summary>
+		<div class="bbs-collapsible-content">
+			{% if protect_dl == true %} 
+			<div class="dl_access">
+				<p>{{ page.glob.l10n.check_access_info }}</p>
+				<a class="bbs-btn" data-role="button" data-rel="dialog" href="{{page.rot}}/titles/{{book.id}}/showaccess/">
+					{{ page.glob.l10n.check_access }}
+				</a>
+			</div>
+			{% endif %}	
+			<div class="dl_download" {% if protect_dl == true %} hidden="true" {% endif %}>
+				<p>{{ page.glob.l10n.presskey }}</p>
+				<div class="bbs-btn-group downButtons" data-role="controlgroup" data-type="horizontal">
+					{% for format in formats %}				
+						<a class="bbs-btn" data-role="button" 
 							{% if page.glob.glob_dl_toggle == true %} disabled="true" {% endif %} 
 							data-ajax="false" 
 							href="{{page.rot}}/titles/{{book.id}}/file/{{format.name|url_encode()}}.{{format.format|lower}}">
-								{{ format.format }} | {{format.uncompressed_size|hfsize}}
+							<svg class="bbs-icon" aria-hidden="true"><use xlink:href="#bbs-icon-cloud" href="#bbs-icon-cloud"/></svg>
+							<span>{{ format.format }} | {{format.uncompressed_size|hfsize}}</span>
 						</a>
-				{% endfor %}
-				{% if kindle_format %}
-					<input id="kindleButton" type="button" data-inline="true" data-icon="forward" value="{{page.glob.l10n.send_to_kindle}}" />
-				{% endif %}
+					{% endfor %}
+					{% if kindle_format %}
+						<button id="kindleButton" class="bbs-btn" type="button">
+							<svg class="bbs-icon" aria-hidden="true"><use xlink:href="#bbs-icon-forward" href="#bbs-icon-forward"/></svg>
+							<span>{{page.glob.l10n.send_to_kindle}}</span>
+						</button>
+					{% endif %}
+				</div>
 			</div>
 		</div>
-	</div>
+	</details>
+
 	{% if kindle_format %}
-	    <div data-role="popup" id="kindlePopup" data-overlay-theme="a" data-theme="c" style="max-width:450px;" class="ui-corner-all" data-transition="pop" data-dismissible="false">
-	      <div data-role="header" data-theme="a" class="ui-corner-top">
-	        <h1>{{page.glob.l10n.send_to_kindle}}</h1>
-	      </div>
-	      <div data-role="content" data-theme="a" class="ui-corner-bottom ui-content">
-	        <h4 class="ui-title">{{ page.glob.l10n.presskey2 }}</h4>
-	        <p><em>{{kindle_from_email}}</em> {{ page.glob.l10n.presskey3 }}</p>
-			<form action="{{page.rot}}/titles/{{book.id}}/kindle/{{kindle_format.name|url_encode()}}.{{kindle_format.format|lower}}" method="POST" id="ajax-form" data-ajax="false">
-			<div style="padding:5px 0 0 5px;max-width:280px;">
-				<label for="kindleEmail" class="ui-hidden-accessible">{{page.glob.l10n.kindle_to_email}}</label>
-				<input type="email" name="kindleEmail" id="kindleEmail" value="" placeholder="{{page.glob.l10n.kindle_to_email}}" data-theme="d" data-clear-btn="true" />
-		  	</div>
-	      	<div id="ajax-message" style="height:0.7em;padding-bottom:5px;">
-	        	<span id="msg" style="color:red;display:none;"><small>{{ page.glob.l10n.error_kindle_send }}</small></span> 
-	      	</div>
-	      	<input id="ajax-form-button" type="submit" data-inline="true" data-theme="b" value="{{page.glob.l10n.send_now}}"/>
-	      	<a href="#" data-role="button" data-inline="true" data-rel="back" data-theme="c">{{page.glob.l10n.cancel}}</a>  
-	        </form> 
-		  </div>
+	<div class="bbs-modal" id="kindlePopup" data-role="popup">
+		<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; border-bottom:1px solid #ccc; padding-bottom:8px;">
+			<h3 style="margin:0;">{{page.glob.l10n.send_to_kindle}}</h3>
+			<a href="#" class="bbs-modal-close" data-rel="back" style="font-size:1.5rem; line-height:1; color:#888;">&times;</a>
 		</div>
+		<div>
+			<h4>{{ page.glob.l10n.presskey2 }}</h4>
+			<p><em>{{kindle_from_email}}</em> {{ page.glob.l10n.presskey3 }}</p>
+			<form action="{{page.rot}}/titles/{{book.id}}/kindle/{{kindle_format.name|url_encode()}}.{{kindle_format.format|lower}}" method="POST" id="ajax-form" data-ajax="false">
+				<div style="margin-bottom:12px;">
+					<label for="kindleEmail">{{page.glob.l10n.kindle_to_email}}</label>
+					<input type="email" name="kindleEmail" id="kindleEmail" value="" placeholder="{{page.glob.l10n.kindle_to_email}}" required />
+				</div>
+				<div id="ajax-message" style="min-height:1.2em; margin-bottom:8px;">
+					<span id="msg" style="color:red; display:none;"><small>{{ page.glob.l10n.error_kindle_send }}</small></span> 
+				</div>
+				<div class="bbs-btn-group">
+					<input id="ajax-form-button" class="bbs-btn bbs-btn-primary" type="submit" value="{{page.glob.l10n.send_now}}"/>
+					<a href="#" class="bbs-btn bbs-modal-close" data-role="button" data-rel="back">{{page.glob.l10n.cancel}}</a>  
+				</div>
+			</form> 
+		</div>
+	</div>
 	{% endif %}
+
 	<aside class="title_detail_image">
 		{% if book.has_cover %}		
-		<img src="{{page.rot}}/titles/{{ book.id }}/cover/" />
+		<img src="{{page.rot}}/titles/{{ book.id }}/cover/" alt="{{ book.title }}" />
 		{% endif %}		
 	</aside>
+
 	<section class="title_details">
-		<div id="authors" data-role="collapsible" data-collapsed="false">
-				<h2>{{page.glob.l10n.authors}}</h2>
+		<details class="bbs-collapsible" id="authors" data-role="collapsible" open>
+			<summary class="bbs-collapsible-header">{{page.glob.l10n.authors}}</summary>
+			<div class="bbs-collapsible-content bbs-btn-group">
 				{% for author in authors %}
-				<a data-role="button" data-icon="info" href="{{page.rot}}/authors/{{author.id}}/0/">{{ author.name }}</a>
+				<a class="bbs-btn" data-role="button" href="{{page.rot}}/authors/{{author.id}}/0/">
+					<svg class="bbs-icon" aria-hidden="true"><use xlink:href="#bbs-icon-user" href="#bbs-icon-user"/></svg>
+					<span>{{ author.name }}</span>
+				</a>
 				{% endfor %} 
-		</div>
+			</div>
+		</details>
+
 		{% if series != NULL %}
-		<div id="series" data-role="collapsible">
-				<h2>{{page.glob.l10n.series}}</h2>
+		<details class="bbs-collapsible" id="series" data-role="collapsible" open>
+			<summary class="bbs-collapsible-header">{{page.glob.l10n.series}}</summary>
+			<div class="bbs-collapsible-content bbs-btn-group">
 				{% for this_series in series %}
-				<a data-role="button" data-icon="info" href="{{page.rot}}/series/{{this_series.id}}/0/">{{ this_series.name }} ({{book.series_index}})</a>
+				<a class="bbs-btn" data-role="button" href="{{page.rot}}/series/{{this_series.id}}/0/">
+					<svg class="bbs-icon" aria-hidden="true"><use xlink:href="#bbs-icon-bullets" href="#bbs-icon-bullets"/></svg>
+					<span>{{ this_series.name }} ({{book.series_index}})</span>
+				</a>
 				{% endfor %} 
-		</div>		
+			</div>
+		</details>		
 		{% endif %}
-		<div id="tags" data-role="collapsible">
-			<h2>{{page.glob.l10n.tags}}</h2>			
-			<p>
+
+		<details class="bbs-collapsible" id="tags" data-role="collapsible" open>
+			<summary class="bbs-collapsible-header">{{page.glob.l10n.tags}}</summary>
+			<div class="bbs-collapsible-content bbs-btn-group">
 				{% for tag in tags %}
-				<a data-role="button" data-mini="true" data-inline="true" href="{{page.rot}}/tags/{{tag.id}}/0/">{{ tag.name }}</a>
+				<a class="bbs-btn bbs-btn-mini" data-role="button" href="{{page.rot}}/tags/{{tag.id}}/0/">
+					<svg class="bbs-icon" aria-hidden="true"><use xlink:href="#bbs-icon-tag" href="#bbs-icon-tag"/></svg>
+					<span>{{ tag.name }}</span>
+				</a>
 				{% endfor %}
-			</p>
-		</div>
+			</div>
+		</details>
+
 		{% if show_idlinks %}
-		<div id="idlinks" data-role="collapsible" data-collapsed="false">
-			<h2>{{page.glob.l10n.idlinks}}</h2>			
-			<p>
+		<details class="bbs-collapsible" id="idlinks" data-role="collapsible" open>
+			<summary class="bbs-collapsible-header">{{page.glob.l10n.idlinks}}</summary>			
+			<div class="bbs-collapsible-content bbs-btn-group">
 				{% for id in ids %}
 					{% if id_templates[id.type] != NULL %}
-						<a data-role="button" data-icon="cloud" rel="external" href="{{ id_templates[id.type][0]|replace({'%id%': id.val})}}">{{ id_templates[id.type][1] }}</a>
+						<a class="bbs-btn bbs-btn-mini" data-role="button" rel="external" target="_blank" href="{{ id_templates[id.type][0]|replace({'%id%': id.val})}}">
+							<svg class="bbs-icon" aria-hidden="true"><use xlink:href="#bbs-icon-cloud" href="#bbs-icon-cloud"/></svg>
+							<span>{{ id_templates[id.type][1] }}</span>
+						</a>
 					{% endif %}
 				{% endfor %}
-			</p>
-		</div>
+			</div>
+		</details>
 		{% endif %}
+
 		{% if ccs != NULL %}
-		<div id="custom_columns" data-role="collapsible">
-			<h4>{{page.glob.l10n.custom_columns}}</h4>			
-			<table id="custom_columns_table">
-				<tbody>
-					{% for cc in ccs %}
-					<tr>
-						<th>
-							{{cc.name}}
-						</th>
-						<td>
-							{% if cc.type == 'comments' %}
-								{% autoescape false %}{{cc.value}}{% endautoescape %}
-							{% else %}
-								{% if cc.type == 'rating' %}
-									{% set i = cc.value/2 %}
-									{% for y in 1..i %}
-										 &#10033;
-									{% endfor %}
+		<details class="bbs-collapsible" id="custom_columns" data-role="collapsible" open>
+			<summary class="bbs-collapsible-header">{{page.glob.l10n.custom_columns}}</summary>			
+			<div class="bbs-collapsible-content">
+				<table id="custom_columns_table">
+					<tbody>
+						{% for cc in ccs %}
+						<tr>
+							<th>{{cc.name}}</th>
+							<td>
+								{% if cc.type == 'comments' %}
+									{% autoescape false %}{{cc.value}}{% endautoescape %}
 								{% else %}
-									{% if cc.type == 'bool' %}
-										{% if cc.value == 1 %}
-										 	&#10004;
-										{% else %}	 
-											 &#10006;
-										{% endif %}			 
+									{% if cc.type == 'rating' %}
+										{% set i = cc.value/2 %}
+										{% for y in 1..i %}
+											 &#10033;
+										{% endfor %}
 									{% else %}
-										{{cc.value}}
-									{% endif %}	
+										{% if cc.type == 'bool' %}
+											{% if cc.value == 1 %}
+											 	&#10004;
+											{% else %}	 
+												 &#10006;
+											{% endif %}			 
+										{% else %}
+											{{cc.value}}
+										{% endif %}	
+									{% endif %}
 								{% endif %}
-							{% endif %}
-						</td>
-					</tr>
-					{% endfor %}
-				</tbody>
-			</table>
-		</div>
+							</td>
+						</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		</details>
 		{% endif %}
+
 		{% if comment %}
-		<div id="comment">
-				<h4>{{page.glob.l10n.comment}}</h4>			
-				<div>
-					{% autoescape false %}
-					{{ comment }}
-					{% endautoescape %}
-				</div>
+		<div id="comment" style="margin-top:15px;">
+			<h4>{{page.glob.l10n.comment}}</h4>			
+			<div class="bbs-comment-body">
+				{% autoescape false %}
+				{{ comment }}
+				{% endautoescape %}
+			</div>
 		</div>
 		{% endif %}
 	</section>
 </section>
-
-
 {% endblock %}

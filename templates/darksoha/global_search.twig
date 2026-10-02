@@ -4,14 +4,17 @@
 {% endblock %}
 
 {% block content %}
-<div>
-    <form action="{{page.rot}}/search/"
-          method="get" class="ui-bar-a">
-        <div data-role="fieldcontain" class="ui-hide-label">
+<div style="max-width: 600px; margin: 30px auto;">
+    <form action="{{page.rot}}/search/" method="get">
+        <div data-role="fieldcontain">
             <label for="search">{{page.glob.l10n.pagination_search_lbl}}</label>
             <input type="search" name="search" id="search" value="{{search}}"
                    placeholder="{{page.glob.l10n.pagination_search_ph}}" autofocus="true"/>
         </div>
+        <button type="submit" class="bbs-btn bbs-btn-primary bbs-btn-block" style="margin-top: 10px;">
+            <svg class="bbs-icon" aria-hidden="true"><use xlink:href="#bbs-icon-search" href="#bbs-icon-search"/></svg>
+            <span>{{page.glob.l10n.pagination_search}}</span>
+        </button>
     </form>
 </div>
 {% endblock %}
