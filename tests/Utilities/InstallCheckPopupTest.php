@@ -84,6 +84,7 @@ class InstallCheckPopupTest extends PHPUnit\Framework\TestCase
 
         $popups = [];
         foreach ($xpath->query('//*[contains(concat(" ", normalize-space(@class), " "), " bbs-popup ")]') as $node) {
+            /** @var DOMElement $node */
             $popups[] = [
                 'id' => $node->getAttribute('id'),
                 'closeButtons' => $xpath->query('.//a[@data-rel="back"]', $node)->length,
@@ -92,6 +93,7 @@ class InstallCheckPopupTest extends PHPUnit\Framework\TestCase
 
         $triggers = [];
         foreach ($xpath->query('//a[@data-rel="popup"]') as $node) {
+            /** @var DOMElement $node */
             $triggers[] = ['href' => $node->getAttribute('href')];
         }
 
@@ -161,7 +163,7 @@ class InstallCheckPopupTest extends PHPUnit\Framework\TestCase
         }
 
         // And every popup should be reachable from a split button.
-        $targets = array_map(fn ($t) => ltrim($t['href'], '#'), $structure['triggers']);
+        $targets = array_map(fn($t) => ltrim($t['href'], '#'), $structure['triggers']);
         foreach ($ids as $id) {
             $this->assertContains($id, $targets, 'Popup ' . $id . ' is never opened by a split button');
         }
