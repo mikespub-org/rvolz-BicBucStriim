@@ -4,14 +4,10 @@
     "modernizr": "yarn exec modernizr -c assets/modernizr-config.json -d js/libs/modernizr-custom.min.js"
   },
   "devDependencies": {
-    "js-yaml": "^5.4.2"
+    "js-yaml": "^5.4.3"
   },
   "packageManager": "yarn@4.18.1",
   "dependencies": {
-    "jquery": "2.1.4",
-    "jquery-mobile": "^1.5.0-alpha.1",
-    "jquery.loadtemplate": "^1.5.10",
-    "js-cookie": "^3.0.8",
     "modernizr": "^3.13.1",
     "swagger-ui-dist": "^5.33.1"
   }

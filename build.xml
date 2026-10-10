@@ -31,7 +31,6 @@
                 <include name="img/**" />
                 <include name="js/**" />
                 <include name="style/style.css" />
-                <include name="style/jquery/**" />
                 <include name="style/tailwind/**" />
                 <include name="config/**" />
                 <include name="lang/**" />
