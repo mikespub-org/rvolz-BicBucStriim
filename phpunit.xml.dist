@@ -5,6 +5,12 @@
       <directory>tests</directory>
     </testsuite>
   </testsuites>
+  <!-- Tests that shell out to Node are opt-in: run with group installcheck-js -->
+  <groups>
+    <exclude>
+      <group>installcheck-js</group>
+    </exclude>
+  </groups>
   <source restrictNotices="true" restrictWarnings="true" ignoreIndirectDeprecations="true">
     <include>
       <directory>src</directory>

@@ -31,6 +31,7 @@
                 <include name="img/**" />
                 <include name="js/**" />
                 <include name="style/style.css" />
+                <include name="style/installcheck.css" />
                 <include name="style/tailwind/**" />
                 <include name="config/**" />
                 <include name="lang/**" />
