@@ -5,10 +5,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [4.x.x] - 20xx-xx-xx
+
+## [4.1.4] - 2026-10-10 Modernize templates
 ### Changed
+- Modernize templates to vanilla HTML/CSS with legacy e-reader compatibility
+- Replace read-yaml with js-yaml for genl10n.js
 - Upgrade Alpine.js etc. from 2.7 to 2.8 in js/tailwind (not 3.x yet)
 - Upgrade Tailwind CSS from 2.0 to 3.4 in assets/tailwind (not 4.x yet)
+- Upgrade aura/auth and aura/session PHP packages to 7.0
 - Update dependencies in composer.json
+### Removed
+- Remove dependency on insecure jquery-mobile, jquery etc. versions
 
 ## [4.0.5] - 2026-09-18 Maintenance update
 ### Changed
