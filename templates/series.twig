@@ -18,32 +18,37 @@
 {% block pid %}id="pseries"{%endblock%}
 
 {% block content %}
-<ul data-role="listview" data-filter="false">	
+<ul class="bbs-listview" data-role="listview" data-filter="false">	
 	{% for this_series in series %}
-		{% if series.initial != "" %}
-			<li data-role="list-divider"> {{ this_series.initial }}</li>
+		{% if this_series.initial != "" %}
+			<li class="bbs-list-divider" data-role="list-divider">{{ this_series.initial }}</li>
 		{% else %}
-			<li>
-				<a href="{{page.rot}}/series/{{ this_series.id }}/0/">{{ this_series.name }}
-				<span class="ui-li-count">{{ this_series.anzahl }}</span></a>
+			<li class="bbs-list-item">
+				<a class="bbs-list-link" href="{{page.rot}}/series/{{ this_series.id }}/0/">
+					<svg class="bbs-icon" aria-hidden="true" style="margin-right:10px;"><use xlink:href="#bbs-icon-bullets" href="#bbs-icon-bullets"/></svg>
+					<div class="bbs-list-info">
+						<h3 class="bbs-list-title">{{ this_series.name }}</h3>
+					</div>
+					<span class="bbs-badge ui-li-count">{{ this_series.anzahl }}</span>
+					<svg class="bbs-icon bbs-list-arrow" aria-hidden="true"><use xlink:href="#bbs-icon-carat-r" href="#bbs-icon-carat-r"/></svg>
+				</a>
 			</li>
 		{% endif %}
   	{% endfor %}
 </ul>
 {% endblock %}
 
-
 {% block leftpanel %}
-<section data-role="panel" data-display="overlay" data-position="left" id="series_options_panel">
+<section class="bbs-panel" data-role="panel" data-display="overlay" data-position="left" id="series_options_panel">
     <h2>{{page.glob.l10n.pagination_search}}</h2>
 
-    <form action="{{page.rot}}/search/"
-          method="get" class="ui-bar-a">
-        <div data-role="fieldcontain" class="ui-hide-label">
-            <label for="search">{{page.glob.l10n.pagination_search_lbl}}</label>
+    <form action="{{page.rot}}/search/" method="get">
+        <div data-role="fieldcontain">
+            <label for="search" class="visually-hidden">{{page.glob.l10n.pagination_search_lbl}}</label>
             <input type="search" name="search" id="search" value="{{search}}"
                    placeholder="{{page.glob.l10n.pagination_search_ph}}" autofocus="true"/>
         </div>
+        <button type="submit" class="bbs-btn bbs-btn-primary bbs-btn-block">{{page.glob.l10n.pagination_search}}</button>
     </form>
 </section>
 {% endblock %}

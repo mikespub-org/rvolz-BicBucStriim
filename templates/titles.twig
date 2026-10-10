@@ -18,38 +18,37 @@
 {% block pid %}id="ptitles"{%endblock%}
 
 {% block content %}
-<ul data-role="listview" data-filter="false">	
+<ul class="bbs-listview" data-role="listview" data-filter="false">	
 	{% for book in books %}
 		{% if book.initial != "" %}
-			<li data-role="list-divider"> {{ book.initial }}</li>
+			<li class="bbs-list-divider" data-role="list-divider">{{ book.initial }}</li>
 		{% else %}
 			{% include "title_entry.twig" %}
 		{% endif %}
-  {% endfor %}
+	{% endfor %}
 </ul>
 {% endblock %}
 
 {% block leftpanel %}
-<section data-role="panel" data-display="overlay" data-position="left" id="titles_options_panel">
-    <div class="ui-body ui-body-a ui-corner-all">
+<section class="bbs-panel" data-role="panel" data-display="overlay" data-position="left" id="titles_options_panel">
+    <div style="margin-bottom: 20px;">
         <h3>{{page.glob.l10n.pagination_search}}</h3>
 
-        <form action="{{page.rot}}/search/"
-              method="get">
-            <div data-role="fieldcontain" class="ui-hide-label">
-                <label for="search">{{page.glob.l10n.pagination_search_lbl}}</label>
+        <form action="{{page.rot}}/search/" method="get">
+            <div data-role="fieldcontain">
+                <label for="search" class="visually-hidden">{{page.glob.l10n.pagination_search_lbl}}</label>
                 <input type="search" name="search" id="search" value="{{search}}"
                        placeholder="{{page.glob.l10n.pagination_search_ph}}" autofocus="true"/>
             </div>
+            <button type="submit" class="bbs-btn bbs-btn-primary bbs-btn-block">{{page.glob.l10n.pagination_search}}</button>
         </form>
     </div>
-    <div class="ui-body ui-body-a ui-corner-all">
+    <div>
         <h3>{{page.glob.l10n.titles_sort}}</h3>
 
-        <div data-role="controlgroup" data-type="horizontal">
-            <a href="{{page.rot}}/titleslist/0/?sort=byReverseDate" class="ui-btn ui-btn-corner-all">{{page.glob.l10n.date}}</a>
-            <a href="{{page.rot}}/titleslist/0/?sort=byTitle"
-               class="ui-btn ui-btn-corner-all">{{page.glob.l10n.title}}</a>
+        <div class="bbs-btn-group" data-role="controlgroup" data-type="horizontal">
+            <a href="{{page.rot}}/titleslist/0/?sort=byReverseDate" class="bbs-btn">{{page.glob.l10n.date}}</a>
+            <a href="{{page.rot}}/titleslist/0/?sort=byTitle" class="bbs-btn">{{page.glob.l10n.title}}</a>
         </div>
     </div>
 </section>

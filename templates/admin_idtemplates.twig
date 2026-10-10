@@ -8,42 +8,48 @@
 </header>
 {% include "flash_messages.twig" %}
 
-<p>{{page.glob.l10n.admin_idtemplates_legend|raw}}</p>
-<ul id="idtemplates" data-role="listview" data-split-icon="delete" data-inset="true">
+<p class="bbs-form-help">{{page.glob.l10n.admin_idtemplates_legend|raw}}</p>
+<ul id="idtemplates" class="bbs-listview" data-role="listview" style="max-width: 650px;">
 {% for template in templates %}
-	<li>
-		<a class="template"  data-template="{{template.name}}">
-			<h2>
-				<span class="template-name">{{template.name}}</span>
-				<span> </span>
+	<li class="bbs-list-item" style="padding: 10px 15px; display: flex; justify-content: space-between; align-items: center;">
+		<a class="template" data-template="{{template.name}}" href="#" style="flex: 1; padding-right: 10px;">
+			<h3 style="margin: 0 0 4px 0;">
+				<span class="template-name">{{template.name}}</span>: 
 				<span class="template-label">{{template.label}}</span>
-			</h2>
-			<p class="template-uri">{{template.val|raw}}</p>
+			</h3>
+			<p class="template-uri" style="margin: 0; font-size: 0.85rem; color: #666; word-break: break-all;">{{template.val|raw}}</p>
 		</a>
-		<a class="idtemplate_clear" href="#" data-template="{{template.name}}" data-proot="{{page.rot}}">
+		<a class="bbs-btn bbs-btn-danger bbs-btn-mini idtemplate_clear" href="#" data-template="{{template.name}}" data-proot="{{page.rot}}">
 			{{page.glob.l10n.admin_idtemplate_clear}}
 		</a>
 	</li>
 {% endfor %}
 </ul>
-<div id="edit" data-role="popup" data-theme="a" class="ui-corner-all ui-content">
+
+<div id="edit" class="bbs-modal" data-role="popup">
 	<form id="templateform" data-proot="{{page.rot}}">
 		<h3>{{page.glob.l10n.admin_idtemplate}}</h3>
-		<label for="name" class="ui-hidden-accessible">
-			{{page.glob.l10n.admin_idtemplate_name}}
-		</label>
-		<input name="name" id="name" value="" type="text" disabled="true" />
-		<label for="label" class="ui-hidden-accessible">
-			{{page.glob.l10n.admin_idtemplate_label}}
-		</label>
-		<input name="label" id="label" value="" placeholder="{{page.glob.l10n.admin_idtemplate_label}}" type="text"/>
-		<label for="template" class="ui-hidden-accessible">
-			{{page.glob.l10n.admin_idtemplate_template}}
-		</label>
-		<input name="template" id="template" value="" placeholder="{{page.glob.l10n.admin_idtemplate_template}}" type="url"/>
-		<button type="submit" data-ajax="true" data-icon="check" data-mini="true">
-			{{page.glob.l10n.save}}
-		</button>
+		<div style="margin-bottom: 10px;">
+			<label for="name">{{page.glob.l10n.admin_idtemplate_name}}</label>
+			<input name="name" id="name" value="" type="text" readonly />
+		</div>
+		<div style="margin-bottom: 10px;">
+			<label for="label">{{page.glob.l10n.admin_idtemplate_label}}</label>
+			<input name="label" id="label" value="" placeholder="{{page.glob.l10n.admin_idtemplate_label}}" type="text"/>
+		</div>
+		<div style="margin-bottom: 15px;">
+			<label for="template">{{page.glob.l10n.admin_idtemplate_template}}</label>
+			<input name="template" id="template" value="" placeholder="{{page.glob.l10n.admin_idtemplate_template}}" type="url"/>
+		</div>
+		<div class="bbs-btn-group">
+			<button type="submit" class="bbs-btn bbs-btn-primary">
+				<svg class="bbs-icon" aria-hidden="true"><use xlink:href="#bbs-icon-check" href="#bbs-icon-check"/></svg>
+				<span>{{page.glob.l10n.save}}</span>
+			</button>
+			<a href="#" class="bbs-btn bbs-modal-close" onclick="document.getElementById('edit').classList.remove('open'); document.querySelector('.bbs-drawer-backdrop').classList.remove('open'); return false;">
+				{{page.glob.l10n.cancel}}
+			</a>
+		</div>
 	</form>
 </div>
 {% endblock %}

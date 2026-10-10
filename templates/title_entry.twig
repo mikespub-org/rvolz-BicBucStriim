@@ -1,15 +1,18 @@
-<li>
-	<a href="{{page.rot}}/titles/{{book.id}}/">
+<li class="bbs-list-item">
+	<a class="bbs-list-link" href="{{page.rot}}/titles/{{book.id}}/">
 		{% if book.thumbnail%}
-		<img src="{{page.rot}}/data/titles/thumb_{{ book.id }}.png" />
+		<img class="bbs-thumb" src="{{page.rot}}/data/titles/thumb_{{ book.id }}.png" alt="" />
 		{% else %}
-		<img src="{{page.rot}}/titles/{{ book.id }}/thumbnail/" />
+		<img class="bbs-thumb" src="{{page.rot}}/titles/{{ book.id }}/thumbnail/" alt="" />
 		{% endif %}
 		
-		<h3>
-			{% if series %}{{book.series_index}} - {% endif %}
-			{{ book.title }} {% if book.pubdate %}({{ book.pubdate|date("Y") }}){% endif %}
-		</h3>
-		<p>{{book.author_sort}} {{book.addInfo}}</p>
+		<div class="bbs-list-info">
+			<h3 class="bbs-list-title">
+				{% if series %}{{book.series_index}} - {% endif %}
+				{{ book.title }} {% if book.pubdate %}({{ book.pubdate|date("Y") }}){% endif %}
+			</h3>
+			<p class="bbs-list-meta">{{book.author_sort}} {{book.addInfo}}</p>
+		</div>
+		<svg class="bbs-icon bbs-list-arrow" aria-hidden="true"><use xlink:href="#bbs-icon-carat-r" href="#bbs-icon-carat-r"/></svg>
 	</a>
 </li>

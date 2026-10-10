@@ -5,10 +5,12 @@
 {% block headerlinks %}{% endblock %}
 
 {% block content %}
-<header>
-	<h1>{{page.glob.l10n.logout}}</h1>	
-</header>  
-<p>
-{{page.glob.l10n.logout_expl}}:  <a href="{{page.rot}}/login/">{{page.glob.l10n.login}}</a>.
-</p>
+<div style="max-width: 500px; margin: 30px auto; text-align: center;">
+	<header>
+		<h1>{{page.glob.l10n.logout}}</h1>	
+	</header>  
+	<p>
+	{{page.glob.l10n.logout_expl}}: <a href="{{page.rot}}/login/" class="bbs-btn bbs-btn-primary" style="margin-top: 10px;">{{page.glob.l10n.login}}</a>
+	</p>
+</div>
 {% endblock %}

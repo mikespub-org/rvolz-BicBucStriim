@@ -6,27 +6,17 @@
 
 {% block content %}
 	{% include "flash_messages.twig" %}
-	<ul data-role="listview">
+	<ul class="bbs-listview" data-role="listview">
 		{% for option in options %}
-			{% if option.external %}
-			<li data-icon="action">
-				<a rel="external" target="_blank" href="{{page.rot}}/extra/{{option.id}}/">
-					<h3>
-						{{ option.label }}
-					</h3>
-					<p>{{ option.description }}</p>
+			<li class="bbs-list-item">
+				<a class="bbs-list-link" {% if option.external %}rel="external" target="_blank"{% endif %} href="{{page.rot}}/extra/{{option.id}}/">
+					<div class="bbs-list-info">
+						<h3 class="bbs-list-title">{{ option.label }}</h3>
+						<p class="bbs-list-meta">{{ option.description }}</p>
+					</div>
+					<svg class="bbs-icon bbs-list-arrow" aria-hidden="true"><use xlink:href="#bbs-icon-carat-r" href="#bbs-icon-carat-r"/></svg>
 				</a>
 			</li>
-			{% else %}
-			<li>
-				<a href="{{page.rot}}/extra/{{option.id}}/">
-					<h3>
-						{{ option.label }}
-					</h3>
-					<p>{{ option.description }}</p>
-				</a>
-			</li>
-			{% endif %}
 		{% endfor %}
 	</ul>
 {% endblock %}

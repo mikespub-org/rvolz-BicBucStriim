@@ -1,34 +1,34 @@
-<div id="flash">
+<div id="flash" class="bbs-flash-container">
 	{% for message in messages %}
-		<p class="success">{{message}}</p>
+		<p class="success bbs-flash bbs-flash-success">{{message}}</p>
 	{% endfor %}
 
 	{% if flash.info %}
-		<p class="success">{{flash.info}}</p>
+		<p class="success bbs-flash bbs-flash-success">{{flash.info}}</p>
 	{% endif %}
 
 	{% if flash.error %}
-		<p class="error">{{flash.error}}</p>
+		<p class="error bbs-flash bbs-flash-error">{{flash.error}}</p>
 	{% endif %}
 	
 	{% for error in errors %}
 	{% if error == 1 %}
-		<p class="error">{{page.glob.l10n.invalid_calibredir2}}</p>
+		<p class="error bbs-flash bbs-flash-error">{{page.glob.l10n.invalid_calibredir2}}</p>
 	{% elseif error == 2 %}
-		<p class="error">{{page.glob.l10n.invalid_password2}}</p>
+		<p class="error bbs-flash bbs-flash-error">{{page.glob.l10n.invalid_password2}}</p>
 	{% elseif error == 3 %}
-		<p class="error">{{page.glob.l10n.admin_pw_required2}}</p>
+		<p class="error bbs-flash bbs-flash-error">{{page.glob.l10n.admin_pw_required2}}</p>
 	{% elseif error == 4 %}
-		<p class="error">{{page.glob.l10n.admin_invalid_page_size}}</p>	
+		<p class="error bbs-flash bbs-flash-error">{{page.glob.l10n.admin_invalid_page_size}}</p>	
 	{% elseif error == 5 %}
-		<p class="error">{{page.glob.l10n.invalid_email_address}}</p>		
+		<p class="error bbs-flash bbs-flash-error">{{page.glob.l10n.invalid_email_address}}</p>		
 	{% else %}
-		<p class="error">{{page.glob.l10n.unknown_error1}}</p>
+		<p class="error bbs-flash bbs-flash-error">{{page.glob.l10n.unknown_error1}}</p>
 	{% endif %}
 	{% endfor %}
 	{% if errors %}
 		<p>
-			<a href="{{page.rot}}/installcheck.php">
+			<a href="{{page.rot}}/installcheck.php" class="bbs-btn bbs-btn-mini">
 				{{page.glob.l10n.check_installation}}
 			</a>
 		</p>

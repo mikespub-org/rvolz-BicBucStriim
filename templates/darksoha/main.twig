@@ -6,25 +6,21 @@
   ~  Licensed under MIT License, see LICENSE
   ~
   -->
-<html lang="{{ page.glob.lang|default('en') }}" {% if page.custom == 'darksoha' %}data-theme="darksoha"{% endif %}>
+<html lang="{{ page.glob.lang|default('en') }}" data-theme="darksoha">
 <head>
     <meta charset="utf-8">
     <title>{{ page.title }}</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
     {% block headerlinks %}{% endblock %}
-    {% if page.custom and page.custom != '' %}
-    <link rel="stylesheet" href="{{page.rot}}/style/{{page.custom}}/style.css">
-    {% else %}
-    <link rel="stylesheet" href="{{page.rot}}/style/style.css">
-    {% endif %}
+    <link rel="stylesheet" href="{{page.rot}}/style/darksoha/style.css">
     <link rel="icon" href="{{page.rot}}/favicon.ico" type="image/x-icon">
     <link rel="apple-touch-icon" href="{{page.rot}}/bbs-icon.png">
     <script src="{{page.rot}}/js/script.js" defer></script>
 </head>
-<body class="bbs-body {% if page.custom == 'darksoha' %}darksoha{% endif %}">
+<body class="bbs-body darksoha">
 {% include "icons.twig" %}
 
-<div class="bbs-page" data-role="page" data-title="{{ page.title }}" {% block pid %}{% endblock %}>
+<div data-role="page" data-title="{{ page.title }}" {% block pid %}{% endblock %}>
 
     <header class="bbs-header" data-role="header">
         {% block leftpanel %}{% endblock %}
