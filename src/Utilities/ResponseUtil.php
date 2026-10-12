@@ -4,6 +4,7 @@ namespace BicBucStriim\Utilities;
 
 use Dflydev\FigCookies\FigResponseCookies;
 use Dflydev\FigCookies\SetCookie;
+use Nyholm\Psr7\Factory\Psr17Factory;
 use Psr\Http\Message\ResponseInterface as Response;
 
 /**
@@ -14,13 +15,35 @@ class ResponseUtil
     /** @var Response */
     protected $response;
 
+    /** @var Psr17Factory|null shared PSR-17 factory, created on first use */
+    protected $psr17Factory;
+
+    /**
+     * Return a single shared Nyholm PSR-17 factory, creating it on first use.
+     *
+     * The factory is NOT created in the constructor - it is only allocated when a
+     * method actually needs one (to create a response when none was supplied, or
+     * to stream a file). Nyholm is the PSR-17 library used across Slim, the custom
+     * App, and the Laravel provider, so this stays consistent everywhere.
+     *
+     * @return Psr17Factory
+     */
+    protected function factory()
+    {
+        if ($this->psr17Factory === null) {
+            $this->psr17Factory = new Psr17Factory();
+        }
+        return $this->psr17Factory;
+    }
+
     /**
      * @param ?Response $response
      */
     public function __construct($response)
     {
-        // @todo get app responsefactory from container
-        $this->response = $response ?? static::getResponse();
+        // Only reach for the factory when a response wasn't supplied. If one was
+        // passed in, factory() is never called and no factory is allocated.
+        $this->response = $response ?? $this->factory()->createResponse();
     }
 
     /**
@@ -131,7 +154,7 @@ class ResponseUtil
      */
     public function error($status, $message = '')
     {
-        $emptyBody = static::getResponse()->getBody();
+        $emptyBody = $this->factory()->createResponse()->getBody();
         $emptyBody->write($message);
         $this->response = $this->response->withStatus($status)->withBody($emptyBody);
         return $this->response;
@@ -255,8 +278,7 @@ class ResponseUtil
     {
         $etag = '"' . md5((string) filemtime($filepath) . '-' . $filepath) . '"';
         $resp = $this->response->withStatus($status)->withHeader('Content-type', $type)->withHeader('Content-Length', (string) filesize($filepath))->withHeader('ETag', $etag);
-        $psr17Factory = new \Nyholm\Psr7\Factory\Psr17Factory();
-        $this->response = $resp->withBody($psr17Factory->createStreamFromFile($filepath));
+        $this->response = $resp->withBody($this->factory()->createStreamFromFile($filepath));
         return $this->response;
     }
 
@@ -273,8 +295,7 @@ class ResponseUtil
         //header("Content-Description: File Transfer");
         //header("Content-Transfer-Encoding: binary");
         $resp = $this->response->withStatus($status)->withHeader('Content-type', $type)->withHeader('Content-Length', (string) filesize($filepath))->withHeader('Content-Disposition', "attachment; filename=\"" . $filename . "\"");
-        $psr17Factory = new \Nyholm\Psr7\Factory\Psr17Factory();
-        $this->response = $resp->withBody($psr17Factory->createStreamFromFile($filepath));
+        $this->response = $resp->withBody($this->factory()->createStreamFromFile($filepath));
         return $this->response;
     }
 
@@ -289,6 +310,8 @@ class ResponseUtil
 
     /**
      * Create response from app response factory or Nyholm PSR-17 factory
+     *
+     * @deprecated 4.1.5 Use instance with $this->factory() instead
      * @param ?\Slim\App $app
      * @return Response
      */

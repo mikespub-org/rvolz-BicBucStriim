@@ -110,38 +110,52 @@ class ActionRegistry
 
             $routes = $actionClass::getRoutes($actionClass);
             foreach ($routes as $name => $routeInfo) {
-                $parsed = RouteUtil::parseRouteTuple($routeInfo);
-                $path = $parsed['path'];
-                if (!empty($prefix)) {
-                    // Prepend the action's prefix to the route path
-                    $path = rtrim($prefix, '/') . $path;
-                }
-                $this->routeMap[$name] = [
-                    'methods' => $parsed['methods'],
-                    'path' => $path,
-                    'callable' => $parsed['callable'],
-                    // Drop any null/empty route middleware (e.g. a $gatekeeper
-                    // placeholder that was not provided to getRoutes()).
-                    'middleware' => array_values(array_filter($parsed['middleware'])),
-                    'gated' => $gated,
-                ];
+                $this->addRouteToMap($name, $routeInfo, $prefix, $gated);
             }
 
             // Extra routes (e.g. the API CORS preflight) are registered at the
-            // application root, i.e. *without* the action's URL prefix.
+            // application root, i.e. *without* the action's URL prefix, and are
+            // never gated.
             if (method_exists($actionClass, 'getExtraRoutes')) {
                 foreach ($actionClass::getExtraRoutes($actionClass) as $name => $routeInfo) {
-                    $parsed = RouteUtil::parseRouteTuple($routeInfo);
-                    $this->routeMap[$name] = [
-                        'methods' => $parsed['methods'],
-                        'path' => $parsed['path'],
-                        'callable' => $parsed['callable'],
-                        'middleware' => array_values(array_filter($parsed['middleware'])),
-                        'gated' => false,
-                    ];
+                    $this->addRouteToMap($name, $routeInfo, null, false);
                 }
             }
         }
+    }
+
+    /**
+     * Build a single route-map entry from a route tuple.
+     *
+     * This is the single place that shapes a route-map entry (methods, path,
+     * callable, middleware, gated), shared by both the class' own routes and
+     * its extra (root-level) routes. Callers control the two things that
+     * actually differ between the two: whether a URL prefix is applied and
+     * whether the route is gated.
+     *
+     * @param string $name
+     * @param array<mixed> $routeInfo a route tuple: method(s), path, ...middleware(s), callable
+     * @param ?string $prefix optional URL prefix to prepend to the path
+     * @param bool $gated whether the route requires the group-level role guard
+     * @return void
+     */
+    private function addRouteToMap(string $name, array $routeInfo, ?string $prefix, bool $gated): void
+    {
+        $parsed = RouteUtil::parseRouteTuple($routeInfo);
+        $path = $parsed['path'];
+        if (!empty($prefix)) {
+            // Prepend the action's prefix to the route path
+            $path = rtrim($prefix, '/') . $path;
+        }
+        $this->routeMap[$name] = [
+            'methods' => $parsed['methods'],
+            'path' => $path,
+            'callable' => $parsed['callable'],
+            // Drop any null/empty route middleware (e.g. a $gatekeeper
+            // placeholder that was not provided to getRoutes()).
+            'middleware' => array_values(array_filter($parsed['middleware'])),
+            'gated' => $gated,
+        ];
     }
 
     /**
