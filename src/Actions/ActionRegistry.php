@@ -12,6 +12,7 @@
 namespace BicBucStriim\Actions;
 
 use Psr\Container\ContainerInterface as Container;
+use BicBucStriim\Utilities\RouteUtil;
 
 /*********************************************************************
  * Action registry (framework agnostic)
@@ -20,10 +21,13 @@ class ActionRegistry
 {
     /** @var array<class-string> */
     private $actions = [];
+    /** @var array<class-string, string|null> */
+    private $prefixes = [];
     /** @var array<class-string, DefaultActions> */
     private $instances;
     /** @var ?\Psr\Container\ContainerInterface */
     private $container;
+    /** @var array<string, array{methods: array<string>|string, path: string, callable: callable, middleware: array<int, mixed>, gated: bool}> */
     private $routeMap = [];
 
     /**
@@ -39,13 +43,17 @@ class ActionRegistry
     /**
      * Summary of register
      * @param class-string $actionClass
+     * @param ?string $prefix optional URL prefix to mount the class' routes
+     *   under; defaults to the class' own PREFIX constant.
      * @return void
      */
-    public function register($actionClass)
+    public function register($actionClass, $prefix = null)
     {
         // Store action class only if not already present to avoid duplicates
         if (!in_array($actionClass, $this->actions, true)) {
             $this->actions[] = $actionClass;
+            // Use the class' own PREFIX constant when no prefix is given
+            $this->prefixes[$actionClass] = $prefix ?? (defined("$actionClass::PREFIX") ? $actionClass::PREFIX : null);
         }
     }
 
@@ -66,7 +74,13 @@ class ActionRegistry
 
     /**
      * Summary of getRouteMap
-     * @return array<mixed>
+     *
+     * Returns the framework-agnostic route map. Each entry is a structured
+     * array with the keys: methods, path, callable, middleware and gated
+     * (see loadRoutes()). The path already includes the action class' URL
+     * prefix; extra (root-level) routes are not prefixed.
+     *
+     * @return array<string, array{methods: array<string>|string, path: string, callable: callable, middleware: array<int, mixed>, gated: bool}>
      */
     public function getRouteMap(): array
     {
@@ -87,16 +101,45 @@ class ActionRegistry
             if (!method_exists($actionClass, 'getRoutes')) {
                 continue;
             }
-            // @todo handle $gatekeeper
-            $prefix = $actionClass::PREFIX;
-            $routes = $actionClass::getRoutes($actionClass);
+            // Use the prefix provided at register() time (falls back to the
+            // class' own PREFIX constant), so e.g. DefaultActions can be
+            // mounted under /api even though its PREFIX is null.
+            $prefix = $this->prefixes[$actionClass] ?? null;
+            // Group-level gatekeeping policy, shared by all framework adapters.
+            $gated = method_exists($actionClass, 'usesGroupGatekeeper') && $actionClass::usesGroupGatekeeper();
 
+            $routes = $actionClass::getRoutes($actionClass);
             foreach ($routes as $name => $routeInfo) {
+                $parsed = RouteUtil::parseRouteTuple($routeInfo);
+                $path = $parsed['path'];
                 if (!empty($prefix)) {
                     // Prepend the action's prefix to the route path
-                    $routeInfo[1] = rtrim($prefix, '/') . $routeInfo[1];
+                    $path = rtrim($prefix, '/') . $path;
                 }
-                $this->routeMap[$name] = $routeInfo;
+                $this->routeMap[$name] = [
+                    'methods' => $parsed['methods'],
+                    'path' => $path,
+                    'callable' => $parsed['callable'],
+                    // Drop any null/empty route middleware (e.g. a $gatekeeper
+                    // placeholder that was not provided to getRoutes()).
+                    'middleware' => array_values(array_filter($parsed['middleware'])),
+                    'gated' => $gated,
+                ];
+            }
+
+            // Extra routes (e.g. the API CORS preflight) are registered at the
+            // application root, i.e. *without* the action's URL prefix.
+            if (method_exists($actionClass, 'getExtraRoutes')) {
+                foreach ($actionClass::getExtraRoutes($actionClass) as $name => $routeInfo) {
+                    $parsed = RouteUtil::parseRouteTuple($routeInfo);
+                    $this->routeMap[$name] = [
+                        'methods' => $parsed['methods'],
+                        'path' => $parsed['path'],
+                        'callable' => $parsed['callable'],
+                        'middleware' => array_values(array_filter($parsed['middleware'])),
+                        'gated' => false,
+                    ];
+                }
             }
         }
     }

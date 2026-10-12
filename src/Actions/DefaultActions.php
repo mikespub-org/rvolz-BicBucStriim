@@ -14,7 +14,6 @@ namespace BicBucStriim\Actions;
 use BicBucStriim\Utilities\RequestUtil;
 use BicBucStriim\Utilities\ResponseUtil;
 use BicBucStriim\Framework\ContainerAdapter;
-use BicBucStriim\Utilities\RouteUtil;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -28,6 +27,18 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
 
     public const PREFIX = null;
 
+    /**
+     * Roles required to access the action methods of this class.
+     *
+     * An empty array means the routes are available to everyone, while
+     * e.g. ['admin'] restricts them to admin users. This is used for
+     * framework-agnostic role checks as well as for the framework-specific
+     * group middleware applied by RouteUtil::addActionRoutes().
+     *
+     * @var array<int, string>
+     */
+    public const ROLES = [];
+
     /** @var RequestUtil|null */
     protected $requester = null;
     /** @var ResponseUtil|null */
@@ -37,24 +48,36 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
     protected $templatesDir = null;
 
     /**
-     * Add routes for default actions
-     * @param \Slim\App|object $app
-     * @param ?string $prefix
-     * @param ?object $gatekeeper (optional)
-     * @return void
+     * Whether the group middleware ($gatekeeper) should be applied to all
+     * routes of this action class. Defaults to true for classes requiring
+     * admin access (see ROLES), but may be overridden.
+     *
+     * This is framework-agnostic policy used by the framework-specific routers
+     * (e.g. RouteUtil::addActionRoutes()) to decide whether to wrap the whole
+     * group of routes in the gatekeeper middleware.
+     *
+     * @return bool
      */
-    public static function addRoutes($app, $prefix = self::PREFIX, $gatekeeper = null)
+    public static function usesGroupGatekeeper(): bool
     {
-        // Slim 4 framework uses its own CallableResolver if this is a class string, *before* invocation strategy
-        $self = static::class;
-        $routes = static::getRoutes($self, $gatekeeper);
-        if (!empty($prefix)) {
-            $app->group($prefix, function (\Slim\Routing\RouteCollectorProxy $group) use ($routes) {
-                RouteUtil::mapRoutes($group, $routes);
-            });
-        } else {
-            RouteUtil::mapRoutes($app, $routes);
-        }
+        return in_array('admin', static::ROLES, true);
+    }
+
+    /**
+     * Get extra routes to be registered at the application root (i.e. *not*
+     * under the class' URL prefix), beyond those in getRoutes(). For example
+     * the API CORS preflight route.
+     *
+     * The returned value uses the same tuple format as getRoutes():
+     * name => method(s), path, ...middleware(s), callable.
+     *
+     * @param self|class-string $self
+     * @param ?object $gatekeeper (optional)
+     * @return array<mixed> list of [method(s), path, ...middleware(s), callable] for each extra route
+     */
+    public static function getExtraRoutes($self, $gatekeeper = null)
+    {
+        return [];
     }
 
     /**

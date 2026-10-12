@@ -55,7 +55,7 @@ class DefaultActionsTest extends PHPUnit\Framework\TestCase
     {
         $expected = $this->getExpectedRoutes();
         $app = AppFactory::create();
-        DefaultActions::addRoutes($app);
+        RouteUtil::addActionRoutes($app, DefaultActions::class);
         $routeCollector = $app->getRouteCollector();
         $routes = $routeCollector->getRoutes();
         $this->assertEquals(count($expected), count($routes));
@@ -106,7 +106,7 @@ class DefaultActionsTest extends PHPUnit\Framework\TestCase
          */
         $routeCollector = $app->getRouteCollector();
         $routeCollector->setDefaultInvocationStrategy(new ActionsWrapperStrategy());
-        DefaultActions::addRoutes($app);
+        RouteUtil::addActionRoutes($app, DefaultActions::class);
 
         $expected = 'Hello, world!';
         $request = RequestUtil::getServerRequest('GET', '/');

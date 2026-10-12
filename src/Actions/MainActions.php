@@ -16,12 +16,10 @@ use BicBucStriim\Calibre\Author;
 use BicBucStriim\Utilities\CalibreUtil;
 use BicBucStriim\Utilities\InputUtil;
 use BicBucStriim\Utilities\MetadataEpub;
-use BicBucStriim\Utilities\RouteUtil;
 use Michelf\MarkdownExtra;
 use Psr\Http\Message\ResponseInterface as Response;
 use Exception;
 use Throwable;
-use Twig\TwigFilter;
 
 /*********************************************************************
  * Main actions
@@ -29,16 +27,6 @@ use Twig\TwigFilter;
 class MainActions extends DefaultActions
 {
     public const PREFIX = null;
-
-    /**
-     * Add routes for main actions
-     */
-    public static function addRoutes($app, $prefix = self::PREFIX, $gatekeeper = null)
-    {
-        $self = static::class;
-        $routes = static::getRoutes($self, $gatekeeper);
-        RouteUtil::mapRoutes($app, $routes);
-    }
 
     /**
      * Get routes for main actions

@@ -10,7 +10,6 @@
 
 namespace BicBucStriim\Actions;
 
-use BicBucStriim\Utilities\RouteUtil;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Slim\Interfaces\RouteCollectorInterface;
@@ -26,18 +25,20 @@ class ApiActions extends DefaultActions
     protected $routeCollector;
 
     /**
-     * Add routes for API actions
+     * Get the extra route(s) for API actions to be registered at the
+     * application root: the CORS preflight route for any API route(s).
+     *
+     * @param self|class-string $self
+     * @param ?object $gatekeeper (optional)
+     * @return array<mixed> list of [method(s), path, ...middleware(s), callable] for each extra route
      */
-    public static function addRoutes($app, $prefix = self::PREFIX, $gatekeeper = null)
+    public static function getExtraRoutes($self, $gatekeeper = null)
     {
-        $self = static::class;
-        $routes = static::getRoutes($self, $gatekeeper);
-        $app->group($prefix, function (\Slim\Routing\RouteCollectorProxy $group) use ($routes) {
-            RouteUtil::mapRoutes($group, $routes);
-        });
-        // return CORS options for any route(s)
-        //'corsOptions' => ['OPTIONS', '/{routes:.*}', [$self, 'corsOptions']],
-        $app->map(['OPTIONS'], '/{routes:.*}', [$self, 'corsOptions']);
+        return [
+            // name => method(s), path, ...middleware(s), callable
+            // return CORS options for any route(s)
+            'cors-options' => ['OPTIONS', '/{routes:.*}', [$self, 'corsOptions']],
+        ];
     }
 
     /**

@@ -3,6 +3,7 @@
 use BicBucStriim\Actions\DefaultActions;
 use BicBucStriim\Actions\MainActions;
 use BicBucStriim\Utilities\RequestUtil;
+use BicBucStriim\Utilities\RouteUtil;
 use BicBucStriim\Utilities\TestHelper;
 use BicBucStriim\Utilities\Mailer;
 use Slim\Factory\AppFactory;
@@ -148,7 +149,7 @@ class MainActionsTest extends PHPUnit\Framework\TestCase
     {
         $expected = $this->getExpectedRoutes();
         $app = AppFactory::create();
-        MainActions::addRoutes($app);
+        RouteUtil::addActionRoutes($app, MainActions::class);
         $routeCollector = $app->getRouteCollector();
         $routes = $routeCollector->getRoutes();
         $this->assertEquals(count($expected), count($routes));

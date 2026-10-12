@@ -12,7 +12,6 @@
 namespace BicBucStriim\Actions;
 
 use BicBucStriim\Utilities\OpdsGenerator;
-use BicBucStriim\Utilities\RouteUtil;
 use Psr\Http\Message\ResponseInterface as Response;
 
 /*********************************************************************
@@ -21,18 +20,6 @@ use Psr\Http\Message\ResponseInterface as Response;
 class OpdsActions extends DefaultActions
 {
     public const PREFIX = '/opds';
-
-    /**
-     * Add routes for OPDS actions
-     */
-    public static function addRoutes($app, $prefix = self::PREFIX, $gatekeeper = null)
-    {
-        $self = static::class;
-        $routes = static::getRoutes($self, $gatekeeper);
-        $app->group($prefix, function (\Slim\Routing\RouteCollectorProxy $group) use ($routes) {
-            RouteUtil::mapRoutes($group, $routes);
-        });
-    }
 
     /**
      * Get routes for OPDS actions

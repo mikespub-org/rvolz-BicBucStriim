@@ -2,6 +2,7 @@
 
 use BicBucStriim\Actions\MetadataActions;
 use BicBucStriim\AppData\BicBucStriim;
+use BicBucStriim\Utilities\RouteUtil;
 use BicBucStriim\Utilities\TestHelper;
 use Nyholm\Psr7\UploadedFile;
 use Slim\Factory\AppFactory;
@@ -41,7 +42,7 @@ class MetadataActionsTest extends TestCase
     {
         $expected = $this->getExpectedRoutes();
         $app = AppFactory::create();
-        MetadataActions::addRoutes($app);
+        RouteUtil::addActionRoutes($app, MetadataActions::class);
         $routeCollector = $app->getRouteCollector();
         $routes = $routeCollector->getRoutes();
         $this->assertEquals(count($expected), count($routes));

@@ -11,19 +11,9 @@
 
 namespace BicBucStriim\Actions;
 
-if (!function_exists('\BicBucStriim\Actions\getActions')) {
-    function getActions($settings)
-    {
-        return [
-            // classname, prefix
-            [MainActions::class, null],
-            [AdminActions::class, '/admin'],
-            [MetadataActions::class, '/metadata'],
-            [OpdsActions::class, '/opds'],
-            [ExtraActions::class, '/extra'],
-        ];
-    }
-}
+use BicBucStriim\AppData\Settings;
+use BicBucStriim\Framework\ActionLoader;
+use BicBucStriim\Utilities\RouteUtil;
 
 ###### Init routes for production
 return function ($app, $settings, $gatekeeper) {
@@ -31,25 +21,13 @@ return function ($app, $settings, $gatekeeper) {
     $container = $app->getContainer();
     /** @var ActionRegistry $registry */
     $registry = $container->get(ActionRegistry::class);
+    /** @var ?Settings $globalSettings */
+    $globalSettings = $settings['globalSettings'] ?? null;
 
-    // Get the list of actions from the helper function
-    $actions = getActions($settings);
-
-    // Loop through the actions to register them and add their routes
-    foreach ($actions as [$class, $prefix]) {
-        $registry->register($class);
-        $class::addRoutes($app, $prefix, $gatekeeper);
-    }
-
-    // Handle the special case for the API
-    if (!empty($settings['globalSettings']['hasapi'])) {
-        $class = ApiActions::class;
-        $registry->register($class);
-        $class::addRoutes($app, '/api', $gatekeeper);
-    } else {
-        // fall back on hello world
-        $class = DefaultActions::class;
-        $registry->register($class);
-        $class::addRoutes($app, '/api');
+    // Single source of truth for which action classes to load and their URL
+    // prefixes, honoring the 'hasapi' setting.
+    foreach (ActionLoader::getActionDescriptors($globalSettings) as [$class, $prefix]) {
+        $registry->register($class, $prefix);
+        RouteUtil::addActionRoutes($app, $class, $prefix, $gatekeeper);
     }
 };

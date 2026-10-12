@@ -66,8 +66,10 @@ class App implements \Psr\Http\Server\RequestHandlerInterface
 
         // Create a router and add all the routes from our registry.
         $router = \FastRoute\simpleDispatcher(function (\FastRoute\RouteCollector $r) use ($routeMap) {
-            foreach ($routeMap as $name => [$methods, $path, $callable]) {
-                $r->addRoute($methods, $path, $callable);
+            foreach ($routeMap as $name => $route) {
+                // FastRoute stores our route definition as the handler so we can
+                // recover the callable + middleware after a successful match.
+                $r->addRoute($route['methods'], $route['path'], $route);
             }
         });
 
@@ -88,15 +90,58 @@ class App implements \Psr\Http\Server\RequestHandlerInterface
                 break;
 
             case Dispatcher::FOUND:
-                $callable = $routeInfo[1];
+                /** @var array{methods: array<string>|string, path: string, callable: array{0: class-string, 1: string}, middleware: array<int, mixed>, gated: bool} $route */
+                $route = $routeInfo[1];
                 $routeParams = $routeInfo[2];
-                [$class, $method] = $callable;
+                [$class, $method] = $route['callable'];
                 $initialResponse = $psr17Factory->createResponse();
-                $response = $this->resolver->resolve($class, $method, $request, $initialResponse, array_values($routeParams));
+
+                // Run the route's middleware (route-level middleware + the group
+                // admin guard for gated routes) before dispatching to the action.
+                $middleware = $route['middleware'];
+                if ($route['gated']) {
+                    array_unshift($middleware, $this->getRoleGuard());
+                }
+                if (!empty($middleware)) {
+                    $resolver = $this->resolver;
+                    $handler = new class ($resolver, $class, $method, $initialResponse, $routeParams) implements \Psr\Http\Server\RequestHandlerInterface {
+                        public function __construct(
+                            private ActionResolver $resolver,
+                            private string $class,
+                            private string $method,
+                            private ResponseInterface $response,
+                            private array $args,
+                        ) {}
+                        public function handle(ServerRequestInterface $request): ResponseInterface
+                        {
+                            return $this->resolver->resolve($this->class, $this->method, $request, $this->response, array_values($this->args));
+                        }
+                    };
+                    $dispatcher = new MiddlewareDispatcher($middleware, $handler);
+                    $response = $dispatcher->handle($request);
+                } else {
+                    $response = $this->resolver->resolve($class, $method, $request, $initialResponse, array_values($routeParams));
+                }
                 break;
         }
 
         return $response;
+    }
+
+    /**
+     * Get the admin access guard middleware used for gated routes.
+     *
+     * For the custom App we use the framework-agnostic RoleGuard (a plain 403
+     * response) rather than the Slim GatekeeperMiddleware, which is coupled to
+     * DefaultActions and the Twig template engine (see src/Middleware). The
+     * guard relies on the authenticated identity being present on the request
+     * as the 'auth' attribute (set by a login/auth bridge); without one it
+     * fails closed (denies everyone), which is safer than leaving the admin
+     * routes unprotected.
+     */
+    private function getRoleGuard(): \Psr\Http\Server\MiddlewareInterface
+    {
+        return new RoleGuard(new Psr17Factory());
     }
 
     /**

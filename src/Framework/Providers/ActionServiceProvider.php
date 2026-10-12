@@ -3,13 +3,8 @@
 namespace BicBucStriim\Framework\Providers;
 
 use BicBucStriim\Actions\ActionRegistry;
-use BicBucStriim\Actions\AdminActions;
-use BicBucStriim\Actions\ApiActions;
-use BicBucStriim\Actions\DefaultActions;
-use BicBucStriim\Actions\ExtraActions;
-use BicBucStriim\Actions\MainActions;
-use BicBucStriim\Actions\MetadataActions;
-use BicBucStriim\Actions\OpdsActions;
+use BicBucStriim\AppData\Settings;
+use BicBucStriim\Framework\ActionLoader;
 use BicBucStriim\Framework\LaravelRenderer;
 use BicBucStriim\Framework\RendererInterface;
 use BicBucStriim\Framework\Http\Controllers\ActionAdapterController;
@@ -86,30 +81,33 @@ class ActionServiceProvider extends ServiceProvider
         /** @var ActionRegistry $registry */
         $registry = $this->app->make(ActionRegistry::class);
 
-        // Populate the registry with all our action classes.
-        $actions = [
-            MainActions::class,
-            AdminActions::class,
-            MetadataActions::class,
-            OpdsActions::class,
-            ExtraActions::class,
-            ApiActions::class,
-            //DefaultActions::class,
-        ];
-        foreach ($actions as $class) {
-            $registry->register($class);
+        // Single source of truth for which action classes to load and their
+        // URL prefixes, honoring the 'hasapi' setting.
+        /** @var ?Settings $settings */
+        $settings = $this->app->bound(Settings::class) ? $this->app->make(Settings::class) : null;
+        foreach (ActionLoader::getActionDescriptors($settings) as [$class, $prefix]) {
+            $registry->register($class, $prefix);
         }
 
         // Now, map the routes.
         $routeMap = $registry->getRouteMap();
 
-        foreach ($routeMap as $name => [$methods, $path, $callable]) {
+        foreach ($routeMap as $name => $route) {
+            // Structured route entry from the ActionRegistry:
+            // methods, path, callable, middleware, gated.
             // Laravel uses ':' for parameters, while the app uses '{}'.
-            $laravelPath = str_replace(['{', '}'], [':', ''], $path);
+            $laravelPath = str_replace(['{', '}'], [':', ''], $route['path']);
 
-            Route::match($methods, $laravelPath, [ActionAdapterController::class, 'handle'])
+            $laravelRoute = Route::match($route['methods'], $laravelPath, [ActionAdapterController::class, 'handle'])
                 ->name($name)
-                ->defaults('action_callable', $callable);
+                ->defaults('action_callable', $route['callable']);
+
+            // Our route definitions use PSR-15 middleware, which Laravel's
+            // route pipeline does not consume directly. Carry the route-level
+            // middleware and the group gatekeeper flag as route defaults so the
+            // adapter controller can run them around the action.
+            $laravelRoute->defaults('action_middleware', $route['middleware']);
+            $laravelRoute->defaults('action_gated', $route['gated']);
         }
     }
 }

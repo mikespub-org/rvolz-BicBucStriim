@@ -30,15 +30,26 @@ class ActionRouteLoader extends Loader
         $routes = new RouteCollection();
         $routeMap = $this->registry->getRouteMap();
 
-        foreach ($routeMap as $name => $routeInfo) {
-            // $routeInfo is [$methods, $path, $callable]
-            // $callable is [ActionClass::class, 'methodName']
-            $controller = $routeInfo[2][0] . '::' . $routeInfo[2][1];
+        foreach ($routeMap as $name => $route) {
+            // Structured route entry from the ActionRegistry:
+            // methods, path, callable, middleware, gated.
+            // $callable is [ActionClass::class, 'methodName'].
+            $controller = $route['callable'][0] . '::' . $route['callable'][1];
 
-            $route = new Route($routeInfo[1], ['_controller' => $controller]);
-            $route->setMethods($routeInfo[0]);
+            // Symfony has no native per-route middleware, so we carry our
+            // route-level middleware and the group gatekeeper flag as route
+            // defaults. The ActionInitializeListener reads these and wraps the
+            // controller in the appropriate PSR-15 middleware before it runs.
+            $defaults = [
+                '_controller' => $controller,
+                '_bbs_middleware' => $route['middleware'],
+                '_bbs_gated' => $route['gated'],
+            ];
 
-            $routes->add($name, $route);
+            $route_ = new Route($route['path'], $defaults);
+            $route_->setMethods($route['methods']);
+
+            $routes->add($name, $route_);
         }
 
         $this->isLoaded = true;

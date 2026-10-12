@@ -17,7 +17,6 @@ use BicBucStriim\Calibre\Language;
 use BicBucStriim\Calibre\Tag;
 use BicBucStriim\Utilities\InputUtil;
 use BicBucStriim\Utilities\Mailer;
-use BicBucStriim\Utilities\RouteUtil;
 use Psr\Http\Message\ResponseInterface as Response;
 use Exception;
 
@@ -27,19 +26,7 @@ use Exception;
 class AdminActions extends DefaultActions
 {
     public const PREFIX = '/admin';
-
-    /**
-     * Add routes for admin actions
-     */
-    public static function addRoutes($app, $prefix = self::PREFIX, $gatekeeper = null)
-    {
-        $self = static::class;
-        $routes = static::getRoutes($self, $gatekeeper);
-        // use $gatekeeper for all actions in this group
-        $app->group($prefix, function (\Slim\Routing\RouteCollectorProxy $group) use ($routes) {
-            RouteUtil::mapRoutes($group, $routes);
-        })->add($gatekeeper);
-    }
+    public const ROLES = ['admin'];
 
     /**
      * Get routes for admin actions

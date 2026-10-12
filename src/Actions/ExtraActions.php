@@ -11,7 +11,6 @@
 
 namespace BicBucStriim\Actions;
 
-use BicBucStriim\Utilities\RouteUtil;
 use Marsender\EPubLoader\RequestHandler;
 use Marsender\EPubLoader\App\ExtraActions as LoaderActions;
 use Marsender\EPubLoader\Models\AuthorInfo;
@@ -25,19 +24,7 @@ use Psr\Http\Message\ResponseInterface as Response;
 class ExtraActions extends DefaultActions
 {
     public const PREFIX = '/extra';
-
-    /**
-     * Add routes for extra actions
-     */
-    public static function addRoutes($app, $prefix = self::PREFIX, $gatekeeper = null)
-    {
-        $self = static::class;
-        $routes = static::getRoutes($self, $gatekeeper);
-        // use $gatekeeper for all actions in this group
-        $app->group($prefix, function (\Slim\Routing\RouteCollectorProxy $group) use ($routes) {
-            RouteUtil::mapRoutes($group, $routes);
-        })->add($gatekeeper);
-    }
+    public const ROLES = ['admin'];
 
     /**
      * Get routes for extra actions

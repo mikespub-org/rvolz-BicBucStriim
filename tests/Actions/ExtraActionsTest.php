@@ -2,6 +2,7 @@
 
 use BicBucStriim\Actions\ExtraActions;
 use BicBucStriim\Utilities\RequestUtil;
+use BicBucStriim\Utilities\RouteUtil;
 use BicBucStriim\Utilities\TestHelper;
 use Slim\Factory\AppFactory;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -24,7 +25,7 @@ class ExtraActionsTest extends TestCase
     {
         $expected = $this->getExpectedRoutes();
         $app = AppFactory::create();
-        ExtraActions::addRoutes($app);
+        RouteUtil::addActionRoutes($app, ExtraActions::class);
         $routeCollector = $app->getRouteCollector();
         $routes = $routeCollector->getRoutes();
         $this->assertEquals(count($expected), count($routes));

@@ -11,7 +11,6 @@
 
 namespace BicBucStriim\Actions;
 
-use BicBucStriim\Utilities\RouteUtil;
 use Michelf\MarkdownExtra;
 use Psr\Http\Message\ResponseInterface as Response;
 use Exception;
@@ -22,19 +21,7 @@ use Exception;
 class MetadataActions extends DefaultActions
 {
     public const PREFIX = '/metadata';
-
-    /**
-     * Add routes for metadata actions
-     */
-    public static function addRoutes($app, $prefix = self::PREFIX, $gatekeeper = null)
-    {
-        $self = static::class;
-        $routes = static::getRoutes($self, $gatekeeper);
-        // use $gatekeeper for all actions in this group
-        $app->group($prefix, function (\Slim\Routing\RouteCollectorProxy $group) use ($routes) {
-            RouteUtil::mapRoutes($group, $routes);
-        })->add($gatekeeper);
-    }
+    public const ROLES = ['admin'];
 
     /**
      * Get routes for metadata actions
