@@ -12,6 +12,7 @@ use BicBucStriim\Models\Artefact;
 use BicBucStriim\Models\Link;
 use BicBucStriim\Models\Note;
 use BicBucStriim\Models\R;
+use BicBucStriim\Utilities\ImageUtil;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(AppAuthor::class)]
@@ -20,6 +21,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 #[CoversClass(Artefact::class)]
 #[CoversClass(Link::class)]
 #[CoversClass(Note::class)]
+#[CoversClass(ImageUtil::class)]
 class AuthorsTest extends PHPUnit\Framework\TestCase
 {
     public static $schema;

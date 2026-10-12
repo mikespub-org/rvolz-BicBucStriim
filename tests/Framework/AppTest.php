@@ -97,4 +97,40 @@ class AppTest extends TestCase
         $this->assertEquals(405, $response->getStatusCode());
         $this->assertStringContainsString('405 Method Not Allowed', (string) $response->getBody());
     }
+
+    /**
+     * Test that a gated (admin) route is denied when no admin identity is
+     * present on the request. This exercises the RoleGuard middleware branch of
+     * App::handle() (route['gated'] -> unshift guard -> MiddlewareDispatcher)
+     * which is unreachable from the public routes tested above.
+     */
+    public function testHandleGatedRouteDenied(): void
+    {
+        $container = $this->getTestContainer();
+        $app = new App($container);
+
+        // /admin/ is gated: AdminActions requires the admin role.
+        $request = RequestUtil::getServerRequest('GET', '/admin/');
+
+        $response = $app->handle($request);
+        $this->assertEquals(403, $response->getStatusCode());
+        $this->assertStringContainsString('sufficient access rights', (string) $response->getBody());
+    }
+
+    /**
+     * Test that a gated (admin) route is allowed and dispatched to the action
+     * when a valid admin identity is present on the request 'auth' attribute.
+     */
+    public function testHandleGatedRouteAllowed(): void
+    {
+        $container = $this->getTestContainer();
+        $app = new App($container);
+
+        $request = RequestUtil::getServerRequest('GET', '/admin/');
+        $auth = TestHelper::getAuth($request, ['role' => 1]);
+        $request = $request->withAttribute('auth', $auth);
+
+        $response = $app->handle($request);
+        $this->assertEquals(200, $response->getStatusCode());
+    }
 }

@@ -1,8 +1,10 @@
 <?php
 
+use BicBucStriim\Utilities\ImageUtil;
 use BicBucStriim\Utilities\Thumbnails;
 use PHPUnit\Framework\Attributes\CoversClass;
 
+#[CoversClass(ImageUtil::class)]
 #[CoversClass(Thumbnails::class)]
 class ThumbnailsTest extends PHPUnit\Framework\TestCase
 {

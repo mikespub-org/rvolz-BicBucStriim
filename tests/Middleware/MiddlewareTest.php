@@ -23,6 +23,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 #[CoversClass(DefaultMiddleware::class)]
 #[CoversClass(LoginMiddleware::class)]
 #[CoversClass(OwnConfigMiddleware::class)]
+#[CoversClass(AuthServices::class)]
 #[CoversClass(\BicBucStriim\Session\SessionFactory::class)]
 #[CoversClass(\BicBucStriim\Session\Session::class)]
 class MiddlewareTest extends PHPUnit\Framework\TestCase
