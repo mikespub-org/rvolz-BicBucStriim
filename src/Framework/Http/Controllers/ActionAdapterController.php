@@ -2,7 +2,7 @@
 
 namespace BicBucStriim\Framework\Http\Controllers;
 
-use BicBucStriim\Actions\ActionRegistry;
+use BicBucStriim\Actions\ActionResolver;
 use BicBucStriim\Framework\RoleGuard;
 use Illuminate\Http\Request as LaravelRequest;
 use Illuminate\Http\Response as LaravelResponse;
@@ -16,7 +16,7 @@ class ActionAdapterController extends Controller
      */
     public function handle(
         LaravelRequest $request,
-        ActionRegistry $registry,
+        ActionResolver $resolver,
         PsrHttpFactoryInterface $psrFactory,
         HttpFoundationFactoryInterface $httpFoundationFactory,
     ): LaravelResponse {
@@ -39,15 +39,12 @@ class ActionAdapterController extends Controller
             return new LaravelResponse(RoleGuard::DENIED_MESSAGE, 403);
         }
 
-        // 4. Get the shared instance of the Action class from our registry.
-        $actionInstance = $registry->getInstance($class);
-
-        // 5. Initialize the action instance.
-        $actionInstance->initialize($psrRequest, null);
-
-        // 6. Execute the action method with route parameters.
+        // 4. Execute the action via the shared ActionResolver — it looks up the
+        // singleton instance, initializes it with the PSR-7 request, and calls
+        // the method with the route parameters. Keeps the action lifecycle in
+        // one place instead of re-inlining it here.
         $routeParameters = $route->parameters();
-        $psrResponse = $actionInstance->$method(...array_values($routeParameters));
+        $psrResponse = $resolver->resolve($class, $method, $psrRequest, null, array_values($routeParameters));
 
         // 7. Convert the resulting PSR-7 Response back to a Laravel Response.
         return $httpFoundationFactory->createResponse($psrResponse);

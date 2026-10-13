@@ -3,6 +3,7 @@
 namespace BicBucStriim\Framework\Providers;
 
 use BicBucStriim\Actions\ActionRegistry;
+use BicBucStriim\Actions\ActionResolver;
 use BicBucStriim\AppData\Settings;
 use BicBucStriim\Framework\ActionLoader;
 use BicBucStriim\Framework\LaravelRenderer;
@@ -35,6 +36,13 @@ class ActionServiceProvider extends ServiceProvider
         $this->app->singleton(ActionRegistry::class, function ($app) {
             // The registry needs the container to instantiate actions.
             return new ActionRegistry($app);
+        });
+
+        // Register the ActionResolver as a singleton too, so the adapter
+        // controller can share the same registry (and its singleton action
+        // instances) rather than re-inlining the action lifecycle.
+        $this->app->singleton(ActionResolver::class, function ($app) {
+            return new ActionResolver($app->make(ActionRegistry::class));
         });
 
         // Bind PSR-7/PSR-17 factories and the Symfony bridge to the container.
