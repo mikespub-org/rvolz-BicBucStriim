@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace BicBucStriim\Framework;
 
+use BicBucStriim\Middleware\BasePathMiddleware;
 use BicBucStriim\Middleware\CalibreConfigMiddleware;
 use BicBucStriim\Actions\ActionRegistry;
 use BicBucStriim\Actions\ActionResolver;
+use BicBucStriim\Utilities\RequestUtil;
 use FastRoute\Dispatcher;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7Server\ServerRequestCreator;
@@ -43,6 +45,9 @@ class App implements \Psr\Http\Server\RequestHandlerInterface
         // 2. Build the middleware stack.
         // In a real application, this would be more dynamic.
         $middleware = [
+            // Determine the base path first so getPathInfo() and the FastRoute
+            // dispatch in handle() work when BBS runs in a subfolder.
+            new BasePathMiddleware($this),
             new CalibreConfigMiddleware($this->container),
             // Add other middleware like GatekeeperMiddleware here.
         ];
@@ -73,8 +78,14 @@ class App implements \Psr\Http\Server\RequestHandlerInterface
             }
         });
 
-        // 3. DISPATCHING: Dispatch the request to find the matching route.
-        $routeInfo = $router->dispatch($request->getMethod(), $request->getUri()->getPath());
+        // 3. DISPATCHING: Strip any detected base path (set by BasePathMiddleware)
+        // so routes match when BBS is mounted in a subfolder, then dispatch.
+        $basePath = $request->getAttribute(RequestUtil::BASE_PATH, '');
+        $dispatchPath = $request->getUri()->getPath();
+        if (!empty($basePath) && str_starts_with($dispatchPath, $basePath . '/')) {
+            $dispatchPath = substr($dispatchPath, strlen($basePath));
+        }
+        $routeInfo = $router->dispatch($request->getMethod(), $dispatchPath);
         $response = null;
         $psr17Factory = new Psr17Factory();
 

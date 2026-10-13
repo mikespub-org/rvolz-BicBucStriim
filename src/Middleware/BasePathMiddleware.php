@@ -10,10 +10,14 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Slim\Routing\RouteContext;
+use BicBucStriim\Utilities\RequestUtil;
 
 /**
- * Slim 4 Base path middleware.
+ * Base path middleware.
+ *
+ * Detects the URL base path (root or subfolder) and exposes it via the
+ * neutral RequestUtil::BASE_PATH request attribute. Works with Slim (which
+ * also needs App::setBasePath()) and with the framework-agnostic custom App.
  */
 final class BasePathMiddleware implements MiddlewareInterface
 {
@@ -52,9 +56,15 @@ final class BasePathMiddleware implements MiddlewareInterface
         $detector = new BasePathDetector($request->getServerParams(), $this->phpSapi);
 
         $basePath = $detector->getBasePath();
-        $this->app->setBasePath($basePath);
-        // set attribute on request for caching middleware
-        $request = $request->withAttribute(RouteContext::BASE_PATH, $basePath);
+        // Slim's App exposes setBasePath(); the framework-agnostic custom App
+        // does not (it strips the base path from the dispatch path in handle()),
+        // so only call it when the host app provides it.
+        if (method_exists($this->app, 'setBasePath')) {
+            $this->app->setBasePath($basePath);
+        }
+        // Set the neutral base-path attribute on the request so getPathInfo()
+        // (and the custom App's FastRoute dispatch) can strip it consistently.
+        $request = $request->withAttribute(RequestUtil::BASE_PATH, $basePath);
 
         return $handler->handle($request);
     }

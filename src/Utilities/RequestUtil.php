@@ -6,7 +6,6 @@ use Aura\Auth\Auth;
 use BicBucStriim\Session\Session;
 use BicBucStriim\AppData\Settings;
 use Psr\Http\Message\ServerRequestInterface as Request;
-use Slim\Routing\RouteContext;
 
 /**
  * Class RequestUtil provides utilities for the request
@@ -14,6 +13,16 @@ use Slim\Routing\RouteContext;
 class RequestUtil
 {
     public const ADMIN_ROLE = 1;
+
+    /**
+     * Neutral request attribute key for the detected base path.
+     *
+     * Uses the same value as Slim's RouteContext::BASE_PATH ('__basePath__')
+     * so Slim's own router keeps working unchanged, while the application code
+     * no longer needs to import Slim to read it. Every framework bridge sets
+     * this attribute (directly or via BasePathMiddleware) before routing.
+     */
+    public const BASE_PATH = '__basePath__';
 
     /** @var Request */
     protected $request;
@@ -251,7 +260,7 @@ class RequestUtil
     public function getPathInfo()
     {
         $resource = $this->request->getRequestTarget();
-        $basepath = $this->request->getAttribute(RouteContext::BASE_PATH);
+        $basepath = $this->request->getAttribute(self::BASE_PATH);
         //$routeContext = RouteContext::fromRequest($this->request);
         //$basepath = $routeContext->getBasePath();
         //echo "Basepath: '$basepath' - Resource: '$resource'\n";
