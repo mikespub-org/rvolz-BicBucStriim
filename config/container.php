@@ -84,6 +84,12 @@ $builder->addDefinitions([
         $loader = new \Twig\Loader\FilesystemLoader('templates');
         return new \Twig\Environment($loader);
     },
+    // Shared, single ActionRegistry instance. Routes are registered into this
+    // same singleton in config/routes.php, and action classes that need route
+    // introspection (e.g. ApiActions) receive it via dependency injection.
+    \BicBucStriim\Actions\ActionRegistry::class => function (ContainerInterface $c) {
+        return new \BicBucStriim\Actions\ActionRegistry($c);
+    },
     RendererInterface::class => function (ContainerInterface $c) {
         $twig = $c->get(\Twig\Environment::class);
         return new TwigRenderer($twig);

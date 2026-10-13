@@ -67,7 +67,12 @@ class ActionRegistry
         if (!isset($this->instances[$actionClass])) {
             // Wrap the real container in our adapter to provide a stable interface
             $containerAdapter = new \BicBucStriim\Framework\ContainerAdapter($this->container);
-            $this->instances[$actionClass] = new $actionClass($containerAdapter);
+            // Pass the registry itself as an optional second argument. PHP
+            // silently ignores extra positional args for the (single-argument)
+            // action constructors, while ApiActions uses it to introspect the
+            // shared, fully-populated route map without depending on Slim's
+            // RouteCollectorInterface.
+            $this->instances[$actionClass] = new $actionClass($containerAdapter, $this);
         }
         return $this->instances[$actionClass];
     }

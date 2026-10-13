@@ -12,7 +12,6 @@ namespace BicBucStriim\Actions;
 
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface as Response;
-use Slim\Interfaces\RouteCollectorInterface;
 
 /*********************************************************************
  * JSON API actions
@@ -21,8 +20,8 @@ class ApiActions extends DefaultActions
 {
     public const PREFIX = '/api';
 
-    /** @var ?RouteCollectorInterface */
-    protected $routeCollector;
+    /** @var ActionRegistry */
+    protected $registry;
 
     /**
      * Get the extra route(s) for API actions to be registered at the
@@ -58,11 +57,16 @@ class ApiActions extends DefaultActions
     }
 
     /**
-     * This will be instantiated by callable route resolver with dependency injection
+     * This will be instantiated by callable route resolver with dependency injection.
+     *
+     * Depends on the framework-agnostic ActionRegistry (not Slim's
+     * RouteCollectorInterface) so API introspection (routes()/openapi()) works
+     * identically under every supported framework. The registry is a shared
+     * singleton that already carries the fully-populated route map.
      */
-    public function __construct(ContainerInterface $container, RouteCollectorInterface $routeCollector)
+    public function __construct(ContainerInterface $container, ActionRegistry $registry)
     {
-        $this->routeCollector = $routeCollector;
+        $this->registry = $registry;
         parent::__construct($container);
     }
 
@@ -90,12 +94,12 @@ class ApiActions extends DefaultActions
         $settings = $this->settings();
         $title = $settings->display_app_name;
         $root = $this->requester->getRootUrl();
-        $routes = $this->routeCollector->getRoutes();
         $patterns = [];
-        foreach ($routes as $route) {
-            $link = $root . $route->getPattern();
+        foreach ($this->registry->getRouteMap() as $route) {
+            $methods = is_string($route['methods']) ? [$route['methods']] : $route['methods'];
+            $link = $root . $route['path'];
             $patterns[$link] ??= [];
-            $patterns[$link] = array_merge($patterns[$link], array_filter($route->getMethods(), function ($method) {
+            $patterns[$link] = array_merge($patterns[$link], array_filter($methods, function ($method) {
                 return $method !== 'HEAD';
             }));
         }
@@ -155,15 +159,15 @@ class ApiActions extends DefaultActions
             "parameters" => [],
         ];
         $result["paths"] = [];
-        $routes = $this->routeCollector->getRoutes();
-        foreach ($routes as $route) {
-            $path = $route->getPattern();
-            $methods = array_filter($route->getMethods(), function ($method) {
+        foreach ($this->registry->getRouteMap() as $name => $route) {
+            $path = $route['path'];
+            $methods = is_string($route['methods']) ? [$route['methods']] : $route['methods'];
+            $methods = array_filter($methods, function ($method) {
                 return $method !== 'HEAD';
             });
-            $args = $route->getArguments();
-            $operationId = $route->getIdentifier();
-            $name = $route->getName() ?? $operationId;
+            // Use the stable route-map name as both the display name and the
+            // operationId base (replaces Slim's volatile auto-generated id).
+            $operationId = $name;
             // @todo there should be only one here
             if (count($methods) > 1) {
                 $operationId = null;
@@ -212,7 +216,7 @@ class ApiActions extends DefaultActions
                 $method = strtolower($method);
                 $result["paths"][$path][$method] = [
                     "summary" => "Route to $path ($name)",
-                    "operationId" => $operationId ?? ($method . $route->getIdentifier()),
+                    "operationId" => $operationId ?? ($method . $name),
                     "responses" => [
                         "200" => [
                             "description" => "Result of " . $path,
