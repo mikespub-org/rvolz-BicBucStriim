@@ -63,4 +63,31 @@ class RoleGuardTest extends PHPUnit\Framework\TestCase
         $this->assertSame(200, $response->getStatusCode());
         $this->assertStringContainsString('allowed', (string) $response->getBody());
     }
+
+    public function testHasGuardReturnsFalseForEmptyMiddleware(): void
+    {
+        $this->assertFalse(RoleGuard::hasGuard([]));
+    }
+
+    public function testHasGuardDetectsRoleGuardClassString(): void
+    {
+        $this->assertTrue(RoleGuard::hasGuard([RoleGuard::class]));
+    }
+
+    public function testHasGuardDetectsRoleGuardInstance(): void
+    {
+        $this->assertTrue(RoleGuard::hasGuard([new RoleGuard(new Psr17Factory())]));
+    }
+
+    public function testHasGuardDetectsRoleGuardSubclass(): void
+    {
+        $factory = new Psr17Factory();
+        $subclass = new class ($factory) extends RoleGuard {};
+        $this->assertTrue(RoleGuard::hasGuard([$subclass::class]));
+    }
+
+    public function testHasGuardIgnoresUnrelatedMiddleware(): void
+    {
+        $this->assertFalse(RoleGuard::hasGuard(['OtherMiddleware', new stdClass()]));
+    }
 }

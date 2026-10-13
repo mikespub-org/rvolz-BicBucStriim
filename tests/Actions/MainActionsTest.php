@@ -1,5 +1,6 @@
 <?php
 
+use BicBucStriim\Actions\ActionRegistry;
 use BicBucStriim\Actions\DefaultActions;
 use BicBucStriim\Actions\MainActions;
 use BicBucStriim\Utilities\RequestUtil;
@@ -149,7 +150,11 @@ class MainActionsTest extends PHPUnit\Framework\TestCase
     {
         $expected = $this->getExpectedRoutes();
         $app = AppFactory::create();
-        RouteUtil::addActionRoutes($app, MainActions::class);
+        // Register only this action class, then drive the production helper
+        // (addRoutesFromMap) from the single-source-of-truth route map.
+        $registry = new ActionRegistry();
+        $registry->register(MainActions::class);
+        RouteUtil::addRoutesFromMap($app, $registry->getRouteMap());
         $routeCollector = $app->getRouteCollector();
         $routes = $routeCollector->getRoutes();
         $this->assertEquals(count($expected), count($routes));

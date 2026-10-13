@@ -1,5 +1,6 @@
 <?php
 
+use BicBucStriim\Actions\ActionRegistry;
 use BicBucStriim\Actions\DefaultActions;
 use BicBucStriim\Actions\OpdsActions;
 use BicBucStriim\Utilities\RequestUtil;
@@ -89,7 +90,11 @@ class OpdsActionsTest extends PHPUnit\Framework\TestCase
     {
         $expected = $this->getExpectedRoutes();
         $app = AppFactory::create();
-        RouteUtil::addActionRoutes($app, OpdsActions::class);
+        // Register only this action class, then drive the production helper
+        // (addRoutesFromMap) from the single-source-of-truth route map.
+        $registry = new ActionRegistry();
+        $registry->register(OpdsActions::class);
+        RouteUtil::addRoutesFromMap($app, $registry->getRouteMap());
         $routeCollector = $app->getRouteCollector();
         $routes = $routeCollector->getRoutes();
         $this->assertEquals(count($expected), count($routes));

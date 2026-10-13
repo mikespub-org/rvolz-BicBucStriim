@@ -28,6 +28,10 @@ return function ($app, $settings, $gatekeeper) {
     // prefixes, honoring the 'hasapi' setting.
     foreach (ActionLoader::getActionDescriptors($globalSettings) as [$class, $prefix]) {
         $registry->register($class, $prefix);
-        RouteUtil::addActionRoutes($app, $class, $prefix, $gatekeeper);
     }
+
+    // Register all Slim routes from the framework-agnostic route map (single
+    // source of truth, shared with the custom App / Symfony / Laravel adapters).
+    // The map is fully populated by the register() loop above.
+    RouteUtil::addRoutesFromMap($app, $registry->getRouteMap(), $gatekeeper);
 };

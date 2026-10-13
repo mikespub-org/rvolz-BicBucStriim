@@ -1,5 +1,6 @@
 <?php
 
+use BicBucStriim\Actions\ActionRegistry;
 use BicBucStriim\Actions\MetadataActions;
 use BicBucStriim\AppData\BicBucStriim;
 use BicBucStriim\Utilities\RouteUtil;
@@ -42,7 +43,11 @@ class MetadataActionsTest extends TestCase
     {
         $expected = $this->getExpectedRoutes();
         $app = AppFactory::create();
-        RouteUtil::addActionRoutes($app, MetadataActions::class);
+        // Register only this action class, then drive the production helper
+        // (addRoutesFromMap) from the single-source-of-truth route map.
+        $registry = new ActionRegistry();
+        $registry->register(MetadataActions::class);
+        RouteUtil::addRoutesFromMap($app, $registry->getRouteMap());
         $routeCollector = $app->getRouteCollector();
         $routes = $routeCollector->getRoutes();
         $this->assertEquals(count($expected), count($routes));

@@ -72,10 +72,9 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
      * name => method(s), path, ...middleware(s), callable.
      *
      * @param self|class-string $self
-     * @param ?object $gatekeeper (optional)
      * @return array<mixed> list of [method(s), path, ...middleware(s), callable] for each extra route
      */
-    public static function getExtraRoutes($self, $gatekeeper = null)
+    public static function getExtraRoutes($self)
     {
         return [];
     }
@@ -83,10 +82,9 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
     /**
      * Get routes for default actions
      * @param self|class-string $self
-     * @param ?object $gatekeeper (optional)
      * @return array<mixed> list of [method(s), path, ...middleware(s), callable] for each action
      */
-    public static function getRoutes($self, $gatekeeper = null)
+    public static function getRoutes($self)
     {
         return [
             // name => method(s), path, ...middleware(s), callable

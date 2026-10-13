@@ -16,6 +16,7 @@ use BicBucStriim\Calibre\Author;
 use BicBucStriim\Utilities\CalibreUtil;
 use BicBucStriim\Utilities\InputUtil;
 use BicBucStriim\Utilities\MetadataEpub;
+use BicBucStriim\Framework\RoleGuard;
 use Michelf\MarkdownExtra;
 use Psr\Http\Message\ResponseInterface as Response;
 use Exception;
@@ -31,10 +32,9 @@ class MainActions extends DefaultActions
     /**
      * Get routes for main actions
      * @param self|class-string $self
-     * @param ?object $gatekeeper (optional)
      * @return array<mixed> list of [method(s), path, ...middleware(s), callable] for each action
      */
-    public static function getRoutes($self, $gatekeeper = null)
+    public static function getRoutes($self)
     {
         return [
             // name => method(s), path, ...middleware(s), callable
@@ -42,8 +42,8 @@ class MainActions extends DefaultActions
             'main-login' => ['GET', '/login/', [$self, 'showLogin']],
             'main-login-post' => ['POST', '/login/', [$self, 'performLogin']],
             'main-logout' => ['GET', '/logout/', [$self, 'logout']],
-            // use $gatekeeper for individual routes here - @todo move to MetadataActions?
-            'main-author-note' => ['GET', '/authors/{id}/notes/', $gatekeeper, [$self, 'authorNotes']],
+            // use RoleGuard::class ($gatekeeper) for individual routes here - @todo move to MetadataActions?
+            'main-author-note' => ['GET', '/authors/{id}/notes/', RoleGuard::class, [$self, 'authorNotes']],
             'main-author-v1' => ['GET', '/authors/{id}/{page}/', [$self, 'authorDetailsSlice']],
             'main-authors-v1' => ['GET', '/authorslist/{page}/', [$self, 'authorsSlice']],
             'main-search' => ['GET', '/search/', [$self, 'globalSearch']],

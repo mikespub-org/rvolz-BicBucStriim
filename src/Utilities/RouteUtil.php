@@ -2,6 +2,8 @@
 
 namespace BicBucStriim\Utilities;
 
+use BicBucStriim\Framework\RoleGuard;
+
 /**
  * Class RouteUtil provides route utilities for callables and middleware
  */
@@ -9,6 +11,8 @@ class RouteUtil
 {
     /**
      * Map routes for action handlers (generic)
+     *
+     * @deprecated 4.1.5 use RouteUtil::addRoutesFromMap() instead.
      * @param object $group
      * @param array<mixed> $routes array of name => [method(s), path, ...middleware(s), callable] for each action
      * @param mixed $gatekeeper middleware to call before each route (e.g. GatekeeperMiddleware)
@@ -59,6 +63,8 @@ class RouteUtil
 
     /**
      * Map routes for action handlers (Slim 4 syntax)
+     *
+     * @deprecated 4.1.5 use RouteUtil::addRoutesFromMap() instead.
      * @param \Slim\App|\Slim\Routing\RouteCollectorProxy|object $group
      * @param array<mixed> $routes array of name => [method(s), path, ...middleware(s), callable] for each action
      * @param mixed $gatekeeper middleware to call before each route (e.g. GatekeeperMiddleware)
@@ -83,6 +89,7 @@ class RouteUtil
      * without a prefix. Keeping this here (instead of on the Action classes)
      * keeps src/Actions free of any Slim dependency.
      *
+     * @deprecated 4.1.5 use RouteUtil::addRoutesFromMap() instead.
      * @param \Slim\App|\Slim\Routing\RouteCollectorProxy|object $app
      * @param class-string $class action class defining getRoutes()/getExtraRoutes()
      * @param ?string $prefix
@@ -118,6 +125,8 @@ class RouteUtil
 
     /**
      * Add route to group (Slim 4 syntax)
+     *
+     * @deprecated 4.1.5 use RouteUtil::addRoutesFromMap() instead.
      * @param \Slim\App|\Slim\Routing\RouteCollectorProxy|object $group
      * @param string $name
      * @param array<string>|string $method
@@ -158,6 +167,67 @@ class RouteUtil
         foreach ($middlewareList as $middleware) {
             //$wrapper = self::wrapRequestMiddleware($middleware);
             $route = $route->add($middleware);
+        }
+    }
+
+    /**
+     * Register all routes from the framework-agnostic route map onto a Slim app.
+     *
+     * This is the single Slim registration path for P4: it consumes the exact
+     * same structured route map (registry->getRouteMap()) that the custom App,
+     * Symfony and Laravel adapters use, so there is one source of truth and no
+     * chance of the two builders drifting. Paths in the map are already
+     * prefixed, so routes are registered flat (no Slim group/prefix needed).
+     *
+     * Middleware handling (preserves current Slim behavior):
+     *  - Group-gated routes (gated === true) get the Slim $gatekeeper
+     *    (GatekeeperMiddleware) attached, keeping the Twig 403 page.
+     *  - Route-specific middleware class-strings are resolved for Slim: the
+     *    framework-agnostic RoleGuard::class is presented as $gatekeeper so it
+     *    also keeps the Twig 403 page; any other entry is passed through
+     *    unchanged (Slim resolves class-strings via its callable resolver).
+     *
+     * @param \Slim\App $app
+     * @param array<string, array{methods: array<string>|string, path: string, callable: callable, middleware: array<int, string|object>, gated: bool}> $routeMap
+     * @param mixed $gatekeeper middleware to attach to gated routes (e.g. GatekeeperMiddleware)
+     * @return void
+     */
+    public static function addRoutesFromMap($app, array $routeMap, $gatekeeper = null): void
+    {
+        foreach ($routeMap as $name => $route) {
+            // Normalize + expand methods to match historical Slim behavior
+            // (a bare 'GET' route also answers HEAD).
+            $methods = $route['methods'];
+            if (is_string($methods) && $methods === 'GET') {
+                $methods = ['GET', 'HEAD'];
+            } elseif (!is_array($methods)) {
+                $methods = [$methods];
+            }
+
+            // Build the ordered list of Slim middleware to attach to this route.
+            $routeMiddleware = [];
+            // Route-specific middleware (framework-agnostic class-strings).
+            foreach ($route['middleware'] as $middleware) {
+                if ($middleware === RoleGuard::class && $gatekeeper !== null) {
+                    // Present the neutral RoleGuard as the Slim GatekeeperMiddleware
+                    // so admin/author-note routes keep their Twig 403 page.
+                    $routeMiddleware[] = $gatekeeper;
+                } else {
+                    $routeMiddleware[] = $middleware;
+                }
+            }
+            // Group-level gatekeeper for gated routes.
+            if (!empty($route['gated']) && $gatekeeper !== null) {
+                $routeMiddleware[] = $gatekeeper;
+            }
+
+            $routeObj = $app->map($methods, $route['path'], $route['callable']);
+            if (!empty($name)) {
+                $routeObj->setName($name);
+            }
+            foreach ($routeMiddleware as $middleware) {
+                $routeObj = $routeObj->add($middleware);
+            }
         }
     }
 }

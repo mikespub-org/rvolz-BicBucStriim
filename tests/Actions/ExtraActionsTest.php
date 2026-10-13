@@ -1,5 +1,6 @@
 <?php
 
+use BicBucStriim\Actions\ActionRegistry;
 use BicBucStriim\Actions\ExtraActions;
 use BicBucStriim\Utilities\RequestUtil;
 use BicBucStriim\Utilities\RouteUtil;
@@ -25,7 +26,11 @@ class ExtraActionsTest extends TestCase
     {
         $expected = $this->getExpectedRoutes();
         $app = AppFactory::create();
-        RouteUtil::addActionRoutes($app, ExtraActions::class);
+        // Register only this action class, then drive the production helper
+        // (addRoutesFromMap) from the single-source-of-truth route map.
+        $registry = new ActionRegistry();
+        $registry->register(ExtraActions::class);
+        RouteUtil::addRoutesFromMap($app, $registry->getRouteMap());
         $routeCollector = $app->getRouteCollector();
         $routes = $routeCollector->getRoutes();
         $this->assertEquals(count($expected), count($routes));

@@ -31,10 +31,9 @@ class AdminActions extends DefaultActions
     /**
      * Get routes for admin actions
      * @param self|class-string $self
-     * @param ?object $gatekeeper (optional)
      * @return array<mixed> list of [method(s), path, ...middleware(s), callable] for each action
      */
-    public static function getRoutes($self, $gatekeeper = null)
+    public static function getRoutes($self)
     {
         return [
             // name => method(s), path, ...middleware(s), callable

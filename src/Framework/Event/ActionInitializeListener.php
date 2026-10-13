@@ -36,14 +36,17 @@ class ActionInitializeListener
             // Convert Symfony Request to a PSR-7 Request
             $psrRequest = $this->psrHttpFactory->createRequest($event->getRequest());
 
-            // Enforce the group admin guard for gated routes (Admin/Metadata/
-            // Extra). Symfony has no native per-route middleware, so the
-            // gatekeeper flag is carried as a route default (_bbs_gated) by
-            // ActionRouteLoader. Use the framework-agnostic RoleGuard check and
-            // fail closed (deny) with an idiomatic 403. Frameworks without an
-            // auth bridge deny everyone here, which is safer than leaving the
-            // admin routes unprotected.
-            if ($event->getRequest()->attributes->getBoolean('_bbs_gated') && !RoleGuard::isAllowed($psrRequest)) {
+            // Enforce admin access control. Symfony has no native per-route
+            // middleware, so ActionRouteLoader carries both the group gatekeeper
+            // flag (_bbs_gated, e.g. Admin/Metadata/Extra) and the route-level
+            // middleware (_bbs_middleware, e.g. RoleGuard::class on
+            // main-author-note) as route defaults. Use the framework-agnostic
+            // RoleGuard check and fail closed (deny) with an idiomatic 403.
+            // Frameworks without an auth bridge deny everyone here, which is
+            // safer than leaving the admin routes unprotected.
+            $gated = $event->getRequest()->attributes->getBoolean('_bbs_gated');
+            $routeMiddleware = $event->getRequest()->attributes->get('_bbs_middleware', []);
+            if (($gated || RoleGuard::hasGuard($routeMiddleware)) && !RoleGuard::isAllowed($psrRequest)) {
                 throw new AccessDeniedHttpException(RoleGuard::DENIED_MESSAGE);
             }
 

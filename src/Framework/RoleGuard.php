@@ -52,6 +52,29 @@ class RoleGuard implements MiddlewareInterface
     }
 
     /**
+     * Determine whether a route's middleware list contains a RoleGuard-type guard.
+     *
+     * The route map stores middleware as framework-agnostic class-strings (e.g.
+     * RoleGuard::class), so a route can be protected by an access guard without
+     * also being part of a gated action group. Reference adapters (Symfony,
+     * Laravel) that do not run a native PSR-15 route pipeline use this to detect
+     * the guard and enforce the admin check inline, keeping the map identical
+     * across every framework.
+     *
+     * @param array<int, string|object> $middleware
+     */
+    public static function hasGuard(array $middleware): bool
+    {
+        foreach ($middleware as $entry) {
+            $class = is_object($entry) ? get_class($entry) : $entry;
+            if (is_string($class) && ($class === self::class || is_subclass_of($class, self::class))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Build the plain "access denied" response (HTTP 403).
      */
     public function denied(): ResponseInterface

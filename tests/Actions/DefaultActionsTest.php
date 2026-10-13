@@ -1,5 +1,6 @@
 <?php
 
+use BicBucStriim\Actions\ActionRegistry;
 use BicBucStriim\Actions\DefaultActions;
 use BicBucStriim\Utilities\RequestUtil;
 use BicBucStriim\Utilities\ResponseUtil;
@@ -55,7 +56,11 @@ class DefaultActionsTest extends PHPUnit\Framework\TestCase
     {
         $expected = $this->getExpectedRoutes();
         $app = AppFactory::create();
-        RouteUtil::addActionRoutes($app, DefaultActions::class);
+        // Register only this action class, then drive the production helper
+        // (addRoutesFromMap) from the single-source-of-truth route map.
+        $registry = new ActionRegistry();
+        $registry->register(DefaultActions::class);
+        RouteUtil::addRoutesFromMap($app, $registry->getRouteMap());
         $routeCollector = $app->getRouteCollector();
         $routes = $routeCollector->getRoutes();
         $this->assertEquals(count($expected), count($routes));
@@ -106,7 +111,11 @@ class DefaultActionsTest extends PHPUnit\Framework\TestCase
          */
         $routeCollector = $app->getRouteCollector();
         $routeCollector->setDefaultInvocationStrategy(new ActionsWrapperStrategy());
-        RouteUtil::addActionRoutes($app, DefaultActions::class);
+        // Register only this action class, then drive the production helper
+        // (addRoutesFromMap) from the single-source-of-truth route map.
+        $registry = new ActionRegistry();
+        $registry->register(DefaultActions::class);
+        RouteUtil::addRoutesFromMap($app, $registry->getRouteMap());
 
         $expected = 'Hello, world!';
         $request = RequestUtil::getServerRequest('GET', '/');

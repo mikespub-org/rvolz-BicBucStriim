@@ -133,4 +133,41 @@ class AppTest extends TestCase
         $response = $app->handle($request);
         $this->assertEquals(200, $response->getStatusCode());
     }
+
+    /**
+     * Test that a route carrying a route-specific middleware class-string
+     * (main-author-note -> /authors/{id}/notes/, middleware RoleGuard::class)
+     * is denied when no admin identity is present. This exercises the
+     * App::handle() route-middleware resolution path (resolveMiddleware()
+     * string branch -> instantiateMiddleware(RoleGuard::class)), which is
+     * distinct from the group-gated getRoleGuard() path above.
+     */
+    public function testHandleRouteMiddlewareDenied(): void
+    {
+        $container = $this->getTestContainer();
+        $app = new App($container);
+
+        $request = RequestUtil::getServerRequest('GET', '/authors/1/notes/');
+
+        $response = $app->handle($request);
+        $this->assertEquals(403, $response->getStatusCode());
+        $this->assertStringContainsString('sufficient access rights', (string) $response->getBody());
+    }
+
+    /**
+     * Test that the same route-specific-middleware route is allowed and
+     * dispatched to the action when a valid admin identity is present.
+     */
+    public function testHandleRouteMiddlewareAllowed(): void
+    {
+        $container = $this->getTestContainer();
+        $app = new App($container);
+
+        $request = RequestUtil::getServerRequest('GET', '/authors/1/notes/');
+        $auth = TestHelper::getAuth($request, ['role' => 1]);
+        $request = $request->withAttribute('auth', $auth);
+
+        $response = $app->handle($request);
+        $this->assertEquals(200, $response->getStatusCode());
+    }
 }

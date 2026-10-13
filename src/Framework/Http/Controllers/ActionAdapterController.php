@@ -28,14 +28,16 @@ class ActionAdapterController extends Controller
         // 2. Convert the Laravel Request to a PSR-7 Request.
         $psrRequest = $psrFactory->createRequest($request);
 
-        // 3. Enforce the group admin guard for gated routes (Admin/Metadata/
-        // Extra). Laravel has no native PSR-15 route middleware, so the
-        // gatekeeper flag is carried as a route default (action_gated) by
-        // ActionServiceProvider. Use the framework-agnostic RoleGuard check and
-        // fail closed (deny) with a plain 403. Frameworks without an auth bridge
-        // deny everyone here, which is safer than leaving the admin routes
-        // unprotected.
-        if (!empty($route->defaults['action_gated']) && !RoleGuard::isAllowed($psrRequest)) {
+        // 3. Enforce admin access control. Laravel has no native PSR-15 route
+        // middleware, so ActionServiceProvider carries both the group gatekeeper
+        // flag (action_gated, e.g. Admin/Metadata/Extra) and the route-level
+        // middleware (action_middleware, e.g. RoleGuard::class on main-author-note)
+        // as route defaults. Use the framework-agnostic RoleGuard check and fail
+        // closed (deny) with a plain 403. Frameworks without an auth bridge deny
+        // everyone here, which is safer than leaving the routes unprotected.
+        $gated = !empty($route->defaults['action_gated']);
+        $routeMiddleware = $route->defaults['action_middleware'] ?? [];
+        if (($gated || RoleGuard::hasGuard($routeMiddleware)) && !RoleGuard::isAllowed($psrRequest)) {
             return new LaravelResponse(RoleGuard::DENIED_MESSAGE, 403);
         }
 
