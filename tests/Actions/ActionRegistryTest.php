@@ -5,6 +5,7 @@ use BicBucStriim\Actions\AdminActions;
 use BicBucStriim\Actions\ApiActions;
 use BicBucStriim\Actions\DefaultActions;
 use BicBucStriim\Framework\ContainerAdapter;
+use BicBucStriim\Utilities\RouteEntry;
 use BicBucStriim\Utilities\RouteUtil;
 use PHPUnit\Framework\Attributes\CoversClass;
 
@@ -32,8 +33,8 @@ class ActionRegistryTest extends PHPUnit\Framework\TestCase
         $this->assertSame([DefaultActions::class], $registry->getActionClasses());
 
         $map = $registry->getRouteMap();
-        $this->assertSame('/api/', $map['hello']['path']);
-        $this->assertSame('/api/{name}', $map['hello-name']['path']);
+        $this->assertSame('/api/', $map['hello']->path);
+        $this->assertSame('/api/{name}', $map['hello-name']->path);
     }
 
     public function testRegisterFallsBackToClassPrefixConstant(): void
@@ -43,7 +44,7 @@ class ActionRegistryTest extends PHPUnit\Framework\TestCase
         $registry->register(AdminActions::class);
 
         $map = $registry->getRouteMap();
-        $this->assertSame('/admin/', $map['admin-home']['path']);
+        $this->assertSame('/admin/', $map['admin-home']->path);
     }
 
     public function testRegisterWithNullPrefixClassKeepsRootPaths(): void
@@ -53,8 +54,8 @@ class ActionRegistryTest extends PHPUnit\Framework\TestCase
         $registry->register(DefaultActions::class);
 
         $map = $registry->getRouteMap();
-        $this->assertSame('/', $map['hello']['path']);
-        $this->assertSame('/{name}', $map['hello-name']['path']);
+        $this->assertSame('/', $map['hello']->path);
+        $this->assertSame('/{name}', $map['hello-name']->path);
     }
 
     public function testRegisterDeduplicates(): void
@@ -66,7 +67,7 @@ class ActionRegistryTest extends PHPUnit\Framework\TestCase
 
         $this->assertSame([DefaultActions::class], $registry->getActionClasses());
         // The first prefix ('/api') sticks.
-        $this->assertSame('/api/', $registry->getRouteMap()['hello']['path']);
+        $this->assertSame('/api/', $registry->getRouteMap()['hello']->path);
     }
 
     public function testRouteMapEntryShape(): void
@@ -74,17 +75,14 @@ class ActionRegistryTest extends PHPUnit\Framework\TestCase
         $registry = new ActionRegistry();
         $registry->register(DefaultActions::class, '/api');
 
-        $map = $registry->getRouteMap();
-        $this->assertSame(
-            [
-                'methods' => 'GET',
-                'path' => '/api/',
-                'callable' => [DefaultActions::class, 'hello'],
-                'middleware' => [],
-                'gated' => false,
-            ],
-            $map['hello']
-        );
+        $entry = $registry->getRouteMap()['hello'];
+        $this->assertInstanceOf(RouteEntry::class, $entry);
+        $this->assertSame('hello', $entry->name);
+        $this->assertSame('GET', $entry->methods);
+        $this->assertSame('/api/', $entry->path);
+        $this->assertSame([DefaultActions::class, 'hello'], $entry->callable);
+        $this->assertSame([], $entry->middleware);
+        $this->assertFalse($entry->gated);
     }
 
     public function testGatedFlagTrueForAdminClass(): void
@@ -94,8 +92,8 @@ class ActionRegistryTest extends PHPUnit\Framework\TestCase
 
         $map = $registry->getRouteMap();
         // AdminActions::ROLES contains 'admin' -> group gatekeeper applies.
-        $this->assertTrue($map['admin-home']['gated']);
-        $this->assertTrue($map['admin-users']['gated']);
+        $this->assertTrue($map['admin-home']->gated);
+        $this->assertTrue($map['admin-users']->gated);
     }
 
     public function testGatedFlagFalseForPublicClass(): void
@@ -104,7 +102,7 @@ class ActionRegistryTest extends PHPUnit\Framework\TestCase
         $registry->register(DefaultActions::class, '/api');
 
         $map = $registry->getRouteMap();
-        $this->assertFalse($map['hello']['gated']);
+        $this->assertFalse($map['hello']->gated);
     }
 
 
@@ -164,12 +162,12 @@ class ActionRegistryTest extends PHPUnit\Framework\TestCase
 
         $map = $registry->getRouteMap();
         // Regular routes are prefixed.
-        $this->assertSame('/api/', $map['api-home']['path']);
-        $this->assertSame('/api/routes', $map['api-routes']['path']);
+        $this->assertSame('/api/', $map['api-home']->path);
+        $this->assertSame('/api/routes', $map['api-routes']->path);
         // Extra route is un-prefixed and never gated.
         $this->assertArrayHasKey('cors-options', $map);
-        $this->assertSame('/{routes:.*}', $map['cors-options']['path']);
-        $this->assertSame('OPTIONS', $map['cors-options']['methods']);
-        $this->assertFalse($map['cors-options']['gated']);
+        $this->assertSame('/{routes:.*}', $map['cors-options']->path);
+        $this->assertSame('OPTIONS', $map['cors-options']->methods);
+        $this->assertFalse($map['cors-options']->gated);
     }
 }

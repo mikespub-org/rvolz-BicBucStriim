@@ -12,6 +12,7 @@
 namespace BicBucStriim\Actions;
 
 use Psr\Container\ContainerInterface as Container;
+use BicBucStriim\Utilities\RouteEntry;
 use BicBucStriim\Utilities\RouteUtil;
 
 /*********************************************************************
@@ -27,7 +28,7 @@ class ActionRegistry
     private $instances;
     /** @var ?\Psr\Container\ContainerInterface */
     private $container;
-    /** @var array<string, array{methods: array<string>|string, path: string, callable: callable, middleware: array<int, mixed>, gated: bool}> */
+    /** @var array<string, RouteEntry> */
     private $routeMap = [];
 
     /**
@@ -80,12 +81,11 @@ class ActionRegistry
     /**
      * Summary of getRouteMap
      *
-     * Returns the framework-agnostic route map. Each entry is a structured
-     * array with the keys: methods, path, callable, middleware and gated
-     * (see loadRoutes()). The path already includes the action class' URL
-     * prefix; extra (root-level) routes are not prefixed.
+     * Returns the framework-agnostic route map as an array of RouteEntry
+     * objects keyed by route name. Each entry carries: methods, path,
+     * callable, middleware and gated (see loadRoutes()).
      *
-     * @return array<string, array{methods: array<string>|string, path: string, callable: callable, middleware: array<int, mixed>, gated: bool}>
+     * @return array<string, RouteEntry>
      */
     public function getRouteMap(): array
     {
@@ -152,15 +152,14 @@ class ActionRegistry
             // Prepend the action's prefix to the route path
             $path = rtrim($prefix, '/') . $path;
         }
-        $this->routeMap[$name] = [
-            'methods' => $parsed['methods'],
-            'path' => $path,
-            'callable' => $parsed['callable'],
-            // Drop any null/empty route middleware (e.g. a $gatekeeper
-            // placeholder that was not provided to getRoutes()).
-            'middleware' => array_values(array_filter($parsed['middleware'])),
-            'gated' => $gated,
-        ];
+        $this->routeMap[$name] = new RouteEntry(
+            name: $name,
+            methods: $parsed['methods'],
+            path: $path,
+            callable: $parsed['callable'],
+            middleware: array_values(array_filter($parsed['middleware'])),
+            gated: $gated,
+        );
     }
 
     /**

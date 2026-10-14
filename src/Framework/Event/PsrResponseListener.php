@@ -13,6 +13,7 @@ use Symfony\Bridge\PsrHttpMessage\HttpFoundationFactoryInterface;
 /**
  * Listens to the kernel.view event to convert PSR-7 responses
  * from our actions into Symfony HttpFoundation responses.
+ * @suppress PHP0413
  */
 #[AsEventListener(event: KernelEvents::VIEW, method: 'onKernelView')]
 class PsrResponseListener

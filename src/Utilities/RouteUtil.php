@@ -3,6 +3,7 @@
 namespace BicBucStriim\Utilities;
 
 use BicBucStriim\Framework\RoleGuard;
+use BicBucStriim\Utilities\RouteEntry;
 
 /**
  * Class RouteUtil provides route utilities for callables and middleware
@@ -38,7 +39,7 @@ class RouteUtil
      * ActionRegistry consumed by the Symfony, Laravel and custom App adapters.
      *
      * @param array<mixed> $routeInfo a single route tuple
-     * @return array{methods: array<string>|string, path: string, callable: callable, middleware: array<int, mixed>}
+     * @return array{methods: array<string>|string, path: string, callable: array{0: class-string, 1: string}, middleware: array<int, mixed>}
      * @throws \InvalidArgumentException if the tuple is too short to contain method, path and callable
      */
     public static function parseRouteTuple(array $routeInfo): array
@@ -188,7 +189,7 @@ class RouteUtil
      *    unchanged (Slim resolves class-strings via its callable resolver).
      *
      * @param \Slim\App $app
-     * @param array<string, array{methods: array<string>|string, path: string, callable: callable, middleware: array<int, string|object>, gated: bool}> $routeMap
+     * @param array<string, RouteEntry> $routeMap
      * @param mixed $gatekeeper middleware to attach to gated routes (e.g. GatekeeperMiddleware)
      * @return void
      */
@@ -197,7 +198,7 @@ class RouteUtil
         foreach ($routeMap as $name => $route) {
             // Normalize + expand methods to match historical Slim behavior
             // (a bare 'GET' route also answers HEAD).
-            $methods = $route['methods'];
+            $methods = $route->methods;
             if (is_string($methods) && $methods === 'GET') {
                 $methods = ['GET', 'HEAD'];
             } elseif (!is_array($methods)) {
@@ -207,7 +208,7 @@ class RouteUtil
             // Build the ordered list of Slim middleware to attach to this route.
             $routeMiddleware = [];
             // Route-specific middleware (framework-agnostic class-strings).
-            foreach ($route['middleware'] as $middleware) {
+            foreach ($route->middleware as $middleware) {
                 if ($middleware === RoleGuard::class && $gatekeeper !== null) {
                     // Present the neutral RoleGuard as the Slim GatekeeperMiddleware
                     // so admin/author-note routes keep their Twig 403 page.
@@ -217,11 +218,11 @@ class RouteUtil
                 }
             }
             // Group-level gatekeeper for gated routes.
-            if (!empty($route['gated']) && $gatekeeper !== null) {
+            if (!empty($route->gated) && $gatekeeper !== null) {
                 $routeMiddleware[] = $gatekeeper;
             }
 
-            $routeObj = $app->map($methods, $route['path'], $route['callable']);
+            $routeObj = $app->map($methods, $route->path, $route->callable);
             if (!empty($name)) {
                 $routeObj->setName($name);
             }

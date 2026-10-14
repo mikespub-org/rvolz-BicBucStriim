@@ -26,6 +26,9 @@ use Symfony\Bridge\PsrHttpMessage\PsrHttpFactoryInterface;
 use Twig\Environment as TwigEnvironment;
 use Twig\Loader\FilesystemLoader;
 
+/**
+ * @suppress PHP0413
+ */
 class ActionServiceProvider extends ServiceProvider
 {
     /**
@@ -114,18 +117,18 @@ class ActionServiceProvider extends ServiceProvider
             // Structured route entry from the ActionRegistry:
             // methods, path, callable, middleware, gated.
             // Laravel uses ':' for parameters, while the app uses '{}'.
-            $laravelPath = str_replace(['{', '}'], [':', ''], $route['path']);
+            $laravelPath = str_replace(['{', '}'], [':', ''], $route->path);
 
-            $laravelRoute = Route::match($route['methods'], $laravelPath, [ActionAdapterController::class, 'handle'])
+            $laravelRoute = Route::match($route->methods, $laravelPath, [ActionAdapterController::class, 'handle'])
                 ->name($name)
-                ->defaults('action_callable', $route['callable']);
+                ->defaults('action_callable', $route->callable);
 
             // Our route definitions use PSR-15 middleware, which Laravel's
             // route pipeline does not consume directly. Carry the route-level
             // middleware and the group gatekeeper flag as route defaults so the
             // adapter controller can run them around the action.
-            $laravelRoute->defaults('action_middleware', $route['middleware']);
-            $laravelRoute->defaults('action_gated', $route['gated']);
+            $laravelRoute->defaults('action_middleware', $route->middleware);
+            $laravelRoute->defaults('action_gated', $route->gated);
         }
     }
 }

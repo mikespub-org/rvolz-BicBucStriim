@@ -2,7 +2,9 @@
 
 use BicBucStriim\Framework\RoleGuard;
 use BicBucStriim\Utilities\RequestUtil;
+use BicBucStriim\Utilities\RouteEntry;
 use BicBucStriim\Utilities\RouteUtil;
+use BicBucStriim\Utilities\TestHelper;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -33,7 +35,7 @@ class RouteUtilTest extends PHPUnit\Framework\TestCase
 {
     public function testParseRouteTupleMinimalHasNoMiddleware(): void
     {
-        $callable = static fn() => null;
+        $callable = [self::class, 'dummyHandler'];
         $parsed = RouteUtil::parseRouteTuple(['GET', '/books/', $callable]);
 
         $this->assertSame('GET', $parsed['methods']);
@@ -44,7 +46,7 @@ class RouteUtilTest extends PHPUnit\Framework\TestCase
 
     public function testParseRouteTupleWithSingleMiddleware(): void
     {
-        $callable = static fn() => null;
+        $callable = [self::class, 'dummyHandler'];
         $mw = 'Some\\Middleware';
         $parsed = RouteUtil::parseRouteTuple(['GET', '/authors/{id}/notes/', $mw, $callable]);
 
@@ -56,7 +58,7 @@ class RouteUtilTest extends PHPUnit\Framework\TestCase
 
     public function testParseRouteTupleWithMultipleMiddlewareKeepsOrder(): void
     {
-        $callable = static fn() => null;
+        $callable = [self::class, 'dummyHandler'];
         $mw1 = 'First\\Middleware';
         $mw2 = 'Second\\Middleware';
         $parsed = RouteUtil::parseRouteTuple(['POST', '/x/', $mw1, $mw2, $callable]);
@@ -67,7 +69,7 @@ class RouteUtilTest extends PHPUnit\Framework\TestCase
 
     public function testParseRouteTupleMethodsMayBeAnArray(): void
     {
-        $callable = static fn() => null;
+        $callable = [self::class, 'dummyHandler'];
         $methods = ['GET', 'POST'];
         $parsed = RouteUtil::parseRouteTuple([$methods, '/x/', $callable]);
 
@@ -78,7 +80,7 @@ class RouteUtilTest extends PHPUnit\Framework\TestCase
 
     public function testParseRouteTupleMiddlewareMayBeObjects(): void
     {
-        $callable = static fn() => null;
+        $callable = [self::class, 'dummyHandler'];
         $mw = new class {};
         $parsed = RouteUtil::parseRouteTuple(['GET', '/x/', $mw, $callable]);
 
@@ -93,25 +95,27 @@ class RouteUtilTest extends PHPUnit\Framework\TestCase
 
     public function testAddRoutesFromMapExpandsGetToHeadAndSetsNames(): void
     {
-        $callable = static fn() => null;
+        $callable = [self::class, 'dummyHandler'];
         $routeMap = [
-            'get-hello' => [
-                'methods' => 'GET',
-                'path' => '/hello/',
-                'callable' => $callable,
-                'middleware' => [],
-                'gated' => false,
-            ],
-            'post-thing' => [
-                'methods' => 'POST',
-                'path' => '/things/',
-                'callable' => $callable,
-                'middleware' => [],
-                'gated' => false,
-            ],
+            'get-hello' => new RouteEntry(
+                name: 'get-hello',
+                methods: 'GET',
+                path: '/hello/',
+                callable: $callable,
+                middleware: [],
+                gated: false,
+            ),
+            'post-thing' => new RouteEntry(
+                name: 'post-thing',
+                methods: 'POST',
+                path: '/things/',
+                callable: $callable,
+                middleware: [],
+                gated: false,
+            ),
         ];
 
-        $app = \Slim\Factory\AppFactory::create();
+        $app = AppFactory::create();
         RouteUtil::addRoutesFromMap($app, $routeMap);
 
         $routes = $app->getRouteCollector()->getRoutes();
@@ -143,15 +147,16 @@ class RouteUtilTest extends PHPUnit\Framework\TestCase
      */
     public function testAddRoutesFromMapSwapsRoleGuardClassForGatekeeper(): void
     {
-        $callable = static fn() => 'HANDLER-RAN';
+        $callable = [self::class, 'dummyHandler'];
         $routeMap = [
-            'guarded' => [
-                'methods' => 'GET',
-                'path' => '/guarded/',
-                'callable' => $callable,
-                'middleware' => [RoleGuard::class],
-                'gated' => false,
-            ],
+            'guarded' => new RouteEntry(
+                name: 'guarded',
+                methods: 'GET',
+                path: '/guarded/',
+                callable: $callable,
+                middleware: [RoleGuard::class],
+                gated: false,
+            ),
         ];
 
         $app = AppFactory::create();
@@ -170,15 +175,16 @@ class RouteUtilTest extends PHPUnit\Framework\TestCase
      */
     public function testAddRoutesFromMapAttachesGatekeeperToGatedRoute(): void
     {
-        $callable = static fn() => 'HANDLER-RAN';
+        $callable = [self::class, 'dummyHandler'];
         $routeMap = [
-            'gated' => [
-                'methods' => 'GET',
-                'path' => '/gated/',
-                'callable' => $callable,
-                'middleware' => [],
-                'gated' => true,
-            ],
+            'gated' => new RouteEntry(
+                name: 'gated',
+                methods: 'GET',
+                path: '/gated/',
+                callable: $callable,
+                middleware: [],
+                gated: true,
+            ),
         ];
 
         $app = AppFactory::create();
@@ -196,20 +202,15 @@ class RouteUtilTest extends PHPUnit\Framework\TestCase
      */
     public function testAddRoutesFromMapRunsHandlerWithoutGatekeeper(): void
     {
-        $factory = new Psr17Factory();
-        $callable = function () use ($factory) {
-            $response = $factory->createResponse();
-            $response->getBody()->write('HANDLER-RAN');
-            return $response;
-        };
         $routeMap = [
-            'open' => [
-                'methods' => 'GET',
-                'path' => '/open/',
-                'callable' => $callable,
-                'middleware' => [],
-                'gated' => false,
-            ],
+            'open' => new RouteEntry(
+                name: 'open',
+                methods: 'GET',
+                path: '/open/',
+                callable: [TestHelper::class, 'respondHandler'],
+                middleware: [],
+                gated: false,
+            ),
         ];
 
         $app = AppFactory::create();
@@ -220,6 +221,14 @@ class RouteUtilTest extends PHPUnit\Framework\TestCase
 
         $this->assertSame('HANDLER-RAN', (string) $response->getBody());
     }
+
+    /**
+     * A no-op handler used purely as an array-shaped callable in tests whose
+     * route handler is never actually invoked. Mirrors the production
+     * [ActionClass::class, 'method'] shape so those tests exercise the same
+     * callable type the RouteEntry DTO carries.
+     */
+    public static function dummyHandler(): void {}
 
     /**
      * Build a PSR-15 middleware that short-circuits with a sentinel body,

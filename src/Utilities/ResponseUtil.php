@@ -323,7 +323,7 @@ class ResponseUtil
             return $response;
         }
         // create response from Nyholm PSR-17 factory
-        $psr17Factory = new \Nyholm\Psr7\Factory\Psr17Factory();
+        $psr17Factory = new Psr17Factory();
 
         //$responseBody = $psr17Factory->createStream('Hello world');
         //$response = $psr17Factory->createResponse(200)->withBody($responseBody);

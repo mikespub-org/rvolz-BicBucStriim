@@ -9,6 +9,7 @@ use BicBucStriim\Middleware\CalibreConfigMiddleware;
 use BicBucStriim\Actions\ActionRegistry;
 use BicBucStriim\Actions\ActionResolver;
 use BicBucStriim\Utilities\RequestUtil;
+use BicBucStriim\Utilities\RouteEntry;
 use FastRoute\Dispatcher;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7Server\ServerRequestCreator;
@@ -26,10 +27,13 @@ class App implements \Psr\Http\Server\RequestHandlerInterface
     private ActionResolver $resolver;
     private MiddlewareResolver $middlewareResolver;
 
-    public function __construct(ContainerInterface $container)
+    public function __construct(ContainerInterface $container, ?ActionRegistry $registry = null)
     {
         $this->container = $container;
-        $this->registry = new ActionRegistry($this->container);
+        // Allow injecting a pre-seeded registry (e.g. tests registering a custom
+        // action with a Closure route); otherwise build the default one. The
+        // standard actions are still loaded in handle() either way.
+        $this->registry = $registry ?? new ActionRegistry($this->container);
         $this->resolver = new ActionResolver($this->registry);
         $this->middlewareResolver = new MiddlewareResolver($this->container);
     }
@@ -66,30 +70,15 @@ class App implements \Psr\Http\Server\RequestHandlerInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        // 2. ROUTING: Use our ActionRegistry to get a map of all application routes.
-        $loader = new ActionLoader();
-        $loader->load($this->registry);
-        $routeMap = $this->registry->getRouteMap();
+        // 2. ROUTING: load all actions into the registry, then build a FastRoute
+        // dispatcher from its route map.
+        new ActionLoader()->load($this->registry);
+        $router = $this->buildRouter($this->registry->getRouteMap());
 
-        // Create a router and add all the routes from our registry.
-        $router = \FastRoute\simpleDispatcher(function (\FastRoute\RouteCollector $r) use ($routeMap) {
-            foreach ($routeMap as $name => $route) {
-                // FastRoute stores our route definition as the handler so we can
-                // recover the callable + middleware after a successful match.
-                $r->addRoute($route['methods'], $route['path'], $route);
-            }
-        });
-
-        // 3. DISPATCHING: Strip any detected base path (set by BasePathMiddleware)
-        // so routes match when BBS is mounted in a subfolder, then dispatch.
-        $basePath = $request->getAttribute(RequestUtil::BASE_PATH, '');
-        $dispatchPath = $request->getUri()->getPath();
-        if (!empty($basePath) && str_starts_with($dispatchPath, $basePath . '/')) {
-            $dispatchPath = substr($dispatchPath, strlen($basePath));
-        }
-        $routeInfo = $router->dispatch($request->getMethod(), $dispatchPath);
-        $response = null;
+        // 3. DISPATCHING: match the (base-path-stripped) request path.
+        $routeInfo = $router->dispatch($request->getMethod(), $this->dispatchPath($request));
         $psr17Factory = new Psr17Factory();
+        $response = null;
 
         switch ($routeInfo[0]) {
             case Dispatcher::NOT_FOUND:
@@ -103,41 +92,70 @@ class App implements \Psr\Http\Server\RequestHandlerInterface
                 break;
 
             case Dispatcher::FOUND:
-                /** @var array{methods: array<string>|string, path: string, callable: array{0: class-string, 1: string}, middleware: array<int, mixed>, gated: bool} $route */
+                /** @var RouteEntry $route */
                 $route = $routeInfo[1];
-                $routeParams = $routeInfo[2];
-                [$class, $method] = $route['callable'];
-                $initialResponse = $psr17Factory->createResponse();
-
-                // Run the route's middleware (route-level middleware + the group
-                // admin guard for gated routes) before dispatching to the action.
-                // resolveForRoute() is the single spelling of that policy shared
-                // with the Symfony and Laravel adapters.
-                $middleware = $this->middlewareResolver->resolveForRoute((bool) $route['gated'], $route['middleware']);
-                if (!empty($middleware)) {
-                    $resolver = $this->resolver;
-                    $handler = new class ($resolver, $class, $method, $initialResponse, $routeParams) implements \Psr\Http\Server\RequestHandlerInterface {
-                        public function __construct(
-                            private ActionResolver $resolver,
-                            private string $class,
-                            private string $method,
-                            private ResponseInterface $response,
-                            private array $args,
-                        ) {}
-                        public function handle(ServerRequestInterface $request): ResponseInterface
-                        {
-                            return $this->resolver->resolve($this->class, $this->method, $request, $this->response, array_values($this->args));
-                        }
-                    };
-                    $dispatcher = new MiddlewareDispatcher($middleware, $handler);
-                    $response = $dispatcher->handle($request);
-                } else {
-                    $response = $this->resolver->resolve($class, $method, $request, $initialResponse, array_values($routeParams));
-                }
+                $response = $this->dispatchFound($route, $routeInfo[2], $request, $psr17Factory->createResponse());
                 break;
         }
 
         return $response;
+    }
+
+    /**
+     * Build a FastRoute dispatcher from the registry's route map. Each RouteEntry
+     * is stored as the handler so its callable + middleware can be recovered
+     * after a successful match.
+     *
+     * @param array<string, RouteEntry> $routeMap
+     */
+    private function buildRouter(array $routeMap): \FastRoute\Dispatcher
+    {
+        return \FastRoute\simpleDispatcher(function (\FastRoute\RouteCollector $r) use ($routeMap) {
+            foreach ($routeMap as $route) {
+                $r->addRoute($route->methods, $route->path, $route);
+            }
+        });
+    }
+
+    /**
+     * Resolve the path to dispatch against, stripping any detected base path (set
+     * by BasePathMiddleware) so routes match when BBS is mounted in a subfolder.
+     */
+    private function dispatchPath(ServerRequestInterface $request): string
+    {
+        $basePath = $request->getAttribute(RequestUtil::BASE_PATH, '');
+        $path = $request->getUri()->getPath();
+        if (!empty($basePath) && str_starts_with($path, $basePath . '/')) {
+            $path = substr($path, strlen($basePath));
+        }
+        return $path;
+    }
+
+    /**
+     * Dispatch a matched route: resolve its middleware (route-level + the group
+     * admin guard for gated routes) via the shared MiddlewareResolver, then run
+     * the callable inside the shared MiddlewareDispatcher. The dispatcher invokes
+     * the terminal handler directly when there is no middleware, so gated and
+     * ungated routes share a single path (mirroring the Laravel and Symfony
+     * adapters). ActionResolver accepts either the [class, method] array or a
+     * Closure and deconstructs as needed.
+     */
+    private function dispatchFound(RouteEntry $route, array $routeParams, ServerRequestInterface $request, ResponseInterface $initialResponse): ResponseInterface
+    {
+        $middleware = $this->middlewareResolver->resolveForRoute((bool) $route->gated, $route->middleware);
+        $handler = new class ($this->resolver, $route->callable, $initialResponse, $routeParams) implements \Psr\Http\Server\RequestHandlerInterface {
+            public function __construct(
+                private ActionResolver $resolver,
+                private array|\Closure $callable,
+                private ResponseInterface $response,
+                private array $args,
+            ) {}
+            public function handle(ServerRequestInterface $request): ResponseInterface
+            {
+                return $this->resolver->resolve($this->callable, $request, $this->response, array_values($this->args));
+            }
+        };
+        return new MiddlewareDispatcher($middleware, $handler)->handle($request);
     }
 
     /**

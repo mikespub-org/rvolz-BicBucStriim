@@ -31,7 +31,10 @@ class LaravelRenderer implements RendererInterface
      */
     public function prependPath(string $path): void
     {
-        $this->twig->getLoader()->prependPath($path);
+        $loader = $this->twig->getLoader();
+        if ($loader instanceof \Twig\Loader\FilesystemLoader) {
+            $loader->prependPath($path);
+        }
     }
 
     /**

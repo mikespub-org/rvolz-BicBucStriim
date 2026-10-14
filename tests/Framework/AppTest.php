@@ -170,4 +170,63 @@ class AppTest extends TestCase
         $response = $app->handle($request);
         $this->assertEquals(200, $response->getStatusCode());
     }
+
+    /**
+     * A Closure route (context-free handler, no action instance) must dispatch
+     * end-to-end on the custom App: the registry carries it as a RouteEntry
+     * whose callable is a Closure, and ActionResolver invokes it directly.
+     */
+    public function testHandleClosureRoute(): void
+    {
+        $container = $this->getTestContainer();
+        $registry = new \BicBucStriim\Actions\ActionRegistry($container);
+        $registry->register(ClosureTestAction::class);
+        $app = new App($container, $registry);
+
+        $request = RequestUtil::getServerRequest('GET', '/closure/ping');
+        $response = $app->handle($request);
+
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertStringContainsString('CLOSURE-E2E', (string) $response->getBody());
+    }
+
+    /**
+     * Control case: array-shaped routes on the same registry still dispatch to
+     * the action (proving the closure seam didn't disturb the normal path).
+     */
+    public function testHandleArrayRouteStillWorksWithInjectedRegistry(): void
+    {
+        $container = $this->getTestContainer();
+        $registry = new \BicBucStriim\Actions\ActionRegistry($container);
+        $registry->register(ClosureTestAction::class);
+        $app = new App($container, $registry);
+
+        // The standard 'hello' route (DefaultActions) is loaded by ActionLoader
+        // into the injected registry too; it must still resolve normally.
+        $request = RequestUtil::getServerRequest('GET', '/');
+        $response = $app->handle($request);
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertStringContainsString('Most recent', (string) $response->getBody());
+    }
+}
+
+/**
+ * Minimal action exposing a single Closure route, used to verify that
+ * context-free Closure handlers dispatch through the custom App (and, by
+ * extension, the other framework adapters) just like array-shaped handlers.
+ */
+class ClosureTestAction extends \BicBucStriim\Actions\DefaultActions
+{
+    public const PREFIX = '/closure';
+
+    public static function getRoutes($self)
+    {
+        return [
+            // name => [method(s), path, ...middleware(s), callable]
+            'closure-ping' => ['GET', '/ping', function ($request, $response) {
+                $response->getBody()->write('CLOSURE-E2E');
+                return $response;
+            }],
+        ];
+    }
 }

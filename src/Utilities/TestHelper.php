@@ -145,4 +145,20 @@ class TestHelper
 
         return $handler;
     }
+
+    /**
+     * Build a sentinel PSR-7 response with a 'HANDLER-RAN' body.
+     *
+     * Usable as an array-shaped route handler [TestHelper::class, 'respondHandler']
+     * in tests that actually dispatch to the handler, mirroring the production
+     * [ActionClass::class, 'method'] shape carried by RouteEntry::$callable.
+     *
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    public function respondHandler(): \Psr\Http\Message\ResponseInterface
+    {
+        $response = new \Nyholm\Psr7\Factory\Psr17Factory()->createResponse();
+        $response->getBody()->write('HANDLER-RAN');
+        return $response;
+    }
 }

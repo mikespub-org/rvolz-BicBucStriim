@@ -94,8 +94,8 @@ class ApiActions extends DefaultActions
         $root = $this->requester->getRootUrl();
         $patterns = [];
         foreach ($this->registry->getRouteMap() as $route) {
-            $methods = is_string($route['methods']) ? [$route['methods']] : $route['methods'];
-            $link = $root . $route['path'];
+            $methods = is_string($route->methods) ? [$route->methods] : $route->methods;
+            $link = $root . $route->path;
             $patterns[$link] ??= [];
             $patterns[$link] = array_merge($patterns[$link], array_filter($methods, function ($method) {
                 return $method !== 'HEAD';
@@ -158,8 +158,8 @@ class ApiActions extends DefaultActions
         ];
         $result["paths"] = [];
         foreach ($this->registry->getRouteMap() as $name => $route) {
-            $path = $route['path'];
-            $methods = is_string($route['methods']) ? [$route['methods']] : $route['methods'];
+            $path = $route->path;
+            $methods = is_string($route->methods) ? [$route->methods] : $route->methods;
             $methods = array_filter($methods, function ($method) {
                 return $method !== 'HEAD';
             });
