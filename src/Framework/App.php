@@ -24,12 +24,14 @@ class App implements \Psr\Http\Server\RequestHandlerInterface
     private ContainerInterface $container;
     private ActionRegistry $registry;
     private ActionResolver $resolver;
+    private MiddlewareResolver $middlewareResolver;
 
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
         $this->registry = new ActionRegistry($this->container);
         $this->resolver = new ActionResolver($this->registry);
+        $this->middlewareResolver = new MiddlewareResolver($this->container);
     }
 
     /**
@@ -109,7 +111,7 @@ class App implements \Psr\Http\Server\RequestHandlerInterface
 
                 // Run the route's middleware (route-level middleware + the group
                 // admin guard for gated routes) before dispatching to the action.
-                $middleware = $this->resolveMiddleware($route['middleware']);
+                $middleware = $this->middlewareResolver->resolve($route['middleware']);
                 if ($route['gated']) {
                     array_unshift($middleware, $this->getRoleGuard());
                 }
@@ -152,47 +154,7 @@ class App implements \Psr\Http\Server\RequestHandlerInterface
      */
     private function getRoleGuard(): \Psr\Http\Server\MiddlewareInterface
     {
-        return new RoleGuard(new Psr17Factory());
-    }
-
-    /**
-     * Resolve a route's middleware entries into PSR-15 middleware instances.
-     *
-     * The route map stores middleware as framework-agnostic class-strings (e.g.
-     * RoleGuard::class) so the map is identical across all frameworks. The
-     * custom App needs concrete instances to run them through MiddlewareDispatcher,
-     * so we resolve each string here. Entries that are already objects are
-     * passed through unchanged (backward compatible).
-     *
-     * @param array<int, string|object> $middleware
-     * @return array<int, object>
-     */
-    private function resolveMiddleware(array $middleware): array
-    {
-        $resolved = [];
-        foreach ($middleware as $entry) {
-            if (is_object($entry)) {
-                $resolved[] = $entry;
-            } elseif (is_string($entry)) {
-                $resolved[] = $this->instantiateMiddleware($entry);
-            }
-        }
-        return $resolved;
-    }
-
-    /**
-     * Instantiate a middleware from its class-string.
-     *
-     * RoleGuard is the only framework-agnostic route middleware in use today and
-     * needs a PSR-17 factory. Any other middleware class is assumed to have a
-     * no-arg constructor (extend here if that changes).
-     */
-    private function instantiateMiddleware(string $class): object
-    {
-        if ($class === RoleGuard::class || is_subclass_of($class, RoleGuard::class)) {
-            return new RoleGuard(new Psr17Factory());
-        }
-        return new $class();
+        return $this->middlewareResolver->resolve([RoleGuard::class])[0];
     }
 
     /**

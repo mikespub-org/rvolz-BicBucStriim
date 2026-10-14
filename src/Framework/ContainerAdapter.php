@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace BicBucStriim\Framework;
 
 use Psr\Container\ContainerInterface;

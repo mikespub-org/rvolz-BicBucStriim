@@ -25,7 +25,7 @@ The primary goal is to keep the action classes completely independent of any spe
 - **Entry Point**: The application is bootstrapped via `config/bootstrap.php`, which creates and configures a `Slim\App` instance.
 - **Dependency Injection**: The DI container is configured in `config/container.php` using `PHP-DI`. This file is responsible for defining how services are created.
 - **Middleware**: Middleware is defined and applied in `config/middleware.php`.
-- **Routing**: Routes are loaded from `config/routes.php` via `ActionLoader::getActionDescriptors($settings)` (the single source of truth, honoring `hasapi`), registering each class and its routes with `RouteUtil::addActionRoutes($app, $class, $prefix, $gatekeeper)`.
+- **Routing**: Routes are loaded from `config/routes.php` via `ActionLoader::getActionDescriptors($settings)` (the single source of truth, honoring `hasapi`), populating the `ActionRegistry` and registering all routes from its map with `RouteUtil::addRoutesFromMap($app, $registry->getRouteMap(), $gatekeeper)`.
 - **Rendering**: The `config/container.php` file binds the `Framework/TwigRenderer` to the `RendererInterface`. This renderer is a straightforward wrapper around a `\Twig\Environment` instance.
 - **Execution**: Slim's router dispatches to the action callable. The `BicBucStriim\Utilities\ActionsWrapperStrategy` is set as the default invocation strategy. This strategy is responsible for instantiating the action class (if needed), calling its `initialize()` method, and then executing the action method.
 
@@ -49,19 +49,19 @@ Symfony integration leverages its powerful service container and controller-base
 - **Integration**: In `config/services.yaml`, the `SymfonyRenderer` is bound to the `RendererInterface`. When an action class asks for a renderer via `AppTrait::renderer()`, Symfony's container provides the `SymfonyRenderer` instance.
 - **Execution**: The integration is seamless and event-driven, making the shared action methods behave like native Symfony controllers.
     1.  **Routing**: A custom `Routing\ActionRouteLoader` is registered as a service. It loads the structured route map from our `ActionRegistry` and adds all routes to Symfony's router, with `gated`/`middleware` attached as route defaults (`_bbs_gated` / `_bbs_middleware`).
-    2.  **Initialization & Access Control**: The `Event\ActionInitializeListener` listens for Symfony's `kernel.controller` event, converts the request to PSR-7, and calls `initialize()`. If the route is `gated` and the request is not an admin (`RoleGuard`), it throws `AccessDeniedHttpException` (403).
+    2.  **Execution & Access Control**: The `Event\ActionInitializeListener` listens for Symfony's `kernel.controller` event and converts the request to PSR-7. It resolves the route's middleware (`_bbs_middleware`, plus a `RoleGuard` for gated routes) via the shared `MiddlewareResolver` and, when middleware is present, runs the action inside the shared `MiddlewareDispatcher` — then sets the result on the event via `setResponse()`, which short-circuits Symfony's own controller invocation. `RoleGuard` produces the 403 inside this pipeline. When a route has no middleware, the listener only calls `initialize()` and lets Symfony invoke the controller as usual (handled below).
     3.  **Response Handling**: The `Event\PsrResponseListener` listens for Symfony's `kernel.view` event. After the action method runs and returns a PSR-7 `ResponseInterface`, this listener intercepts it and converts it into a native Symfony `Response` object, which the kernel can then send to the client.
 
 ### 4. Laravel
 
 - **Dependency Injection & Bootstrapping**: `Framework/Providers/ActionServiceProvider.php` is the central integration point. This Laravel Service Provider is responsible for:
-    1.  **Registering Services**: It binds all necessary services, including the PSR-7 factories, the Twig environment, and the renderer.
+    1.  **Registering Services**: It binds all necessary services, including the PSR-7 factories, the Twig environment, the renderer, and the shared `MiddlewareResolver`.
     2.  **Registering Routes**: In its `boot()` method, it registers each route from the `ActionRegistry` structured map (honoring `hasapi` via `ActionLoader`), attaching `gated`/`middleware` as route defaults.
 - **Rendering**: `Framework/LaravelRenderer` is used. It implements `RendererInterface` and, like the `TwigRenderer`, acts as a wrapper around a `\Twig\Environment` instance that has been configured within the `ActionServiceProvider`.
 - **Execution**: All registered routes point to a single controller method: `Framework/Http/Controllers/ActionAdapterController::handle`. This adapter controller does the following:
-    1.  Enforces access control first: if the route is `gated` and not an admin (shared `RoleGuard`), returns `403` before running the action.
-    2.  Converts the incoming Laravel `Request` to a PSR-7 `Request`.
-    3.  Uses the `ActionResolver` to execute the correct method on the shared action class (the callable is passed in by the router).
+    1.  Converts the incoming Laravel `Request` to a PSR-7 `Request`.
+    2.  Resolves the route's middleware (`action_middleware`, plus a `RoleGuard` for gated routes via `action_gated`) using the shared `MiddlewareResolver`, and runs the action inside the shared `MiddlewareDispatcher` — `RoleGuard` produces the 403 inside this pipeline when the request is not an admin.
+    3.  Uses the `ActionResolver` (invoked by the pipeline's terminal handler) to execute the correct method on the shared action class (the callable is passed in by the router).
     4.  Converts the resulting PSR-7 `Response` back into a Laravel `Response` to be sent to the client.
 
 This adapter approach allows us to use the shared action classes in Laravel without modification.

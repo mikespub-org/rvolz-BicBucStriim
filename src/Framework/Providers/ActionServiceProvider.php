@@ -7,6 +7,7 @@ use BicBucStriim\Actions\ActionResolver;
 use BicBucStriim\AppData\Settings;
 use BicBucStriim\Framework\ActionLoader;
 use BicBucStriim\Framework\LaravelRenderer;
+use BicBucStriim\Framework\MiddlewareResolver;
 use BicBucStriim\Framework\RendererInterface;
 use BicBucStriim\Framework\Http\Controllers\ActionAdapterController;
 use Illuminate\Support\Facades\Route;
@@ -43,6 +44,15 @@ class ActionServiceProvider extends ServiceProvider
         // instances) rather than re-inlining the action lifecycle.
         $this->app->singleton(ActionResolver::class, function ($app) {
             return new ActionResolver($app->make(ActionRegistry::class));
+        });
+
+        // Register the shared, framework-agnostic MiddlewareResolver so the
+        // adapter controller can turn a route's middleware class-strings into
+        // PSR-15 instances. The Laravel container ($app) is passed as the
+        // optional PSR-11 container so container-provided middleware wins over
+        // the no-arg fallback, matching Slim's CallableResolver behaviour.
+        $this->app->singleton(MiddlewareResolver::class, function ($app) {
+            return new MiddlewareResolver($app, $app->make(ResponseFactoryInterface::class));
         });
 
         // Bind PSR-7/PSR-17 factories and the Symfony bridge to the container.
