@@ -1,16 +1,33 @@
 <?php
 
+declare(strict_types=1);
+
 namespace BicBucStriim\Framework;
 
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Twig\Environment as TwigEnvironment;
 
-class SymfonyRenderer extends AbstractController implements RendererInterface
+/**
+ * An implementation of RendererInterface that uses Twig within a Symfony application.
+ *
+ * Takes the Twig environment via constructor injection (same as TwigRenderer
+ * and LaravelRenderer) so it works with plain Twig setup and is testable
+ * without booting symfony/framework-bundle.
+ */
+class SymfonyRenderer implements RendererInterface
 {
+    private TwigEnvironment $twig;
+
+    public function __construct(TwigEnvironment $twig)
+    {
+        $this->twig = $twig;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function render(string $template, array $data = []): string
     {
-        // The render() method in Symfony's AbstractController returns a Response,
-        // but we can get the content from it.
-        return parent::render($template, $data)->getContent();
+        return $this->twig->render($template, $data);
     }
 
     /**
@@ -18,10 +35,9 @@ class SymfonyRenderer extends AbstractController implements RendererInterface
      */
     public function prependPath(string $path): void
     {
-        if ($this->container->has('twig')) {
-            /** @var \Twig\Environment $twig */
-            $twig = $this->container->get('twig');
-            $twig->getLoader()->prependPath($path);
+        $loader = $this->twig->getLoader();
+        if ($loader instanceof \Twig\Loader\FilesystemLoader) {
+            $loader->prependPath($path);
         }
     }
 
@@ -30,11 +46,7 @@ class SymfonyRenderer extends AbstractController implements RendererInterface
      */
     public function addFunction(string $name, callable $callback): void
     {
-        if ($this->container->has('twig')) {
-            /** @var \Twig\Environment $twig */
-            $twig = $this->container->get('twig');
-            $filter = new \Twig\TwigFilter($name, $callback);
-            $twig->addFilter($filter);
-        }
+        $filter = new \Twig\TwigFilter($name, $callback);
+        $this->twig->addFilter($filter);
     }
 }

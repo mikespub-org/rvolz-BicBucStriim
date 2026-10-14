@@ -141,4 +141,71 @@ class MiddlewareResolverTest extends PHPUnit\Framework\TestCase
         $resolver = new MiddlewareResolver();
         $this->assertSame([], $resolver->resolve([]));
     }
+
+    public function testResolveForRouteUngatedPassesThrough(): void
+    {
+        $noArg = $this->makeNoArgMiddlewareClass();
+        $resolver = new MiddlewareResolver();
+
+        $resolved = $resolver->resolveForRoute(false, [$noArg]);
+
+        $this->assertCount(1, $resolved);
+        $this->assertInstanceOf($noArg, $resolved[0]);
+    }
+
+    public function testResolveForRouteUngatedEmptyStaysEmpty(): void
+    {
+        $resolver = new MiddlewareResolver();
+
+        $this->assertSame([], $resolver->resolveForRoute(false, []));
+    }
+
+    public function testResolveForRouteGatedPrependsGuard(): void
+    {
+        $noArg = $this->makeNoArgMiddlewareClass();
+        $resolver = new MiddlewareResolver();
+
+        $resolved = $resolver->resolveForRoute(true, [$noArg]);
+
+        $this->assertCount(2, $resolved);
+        $this->assertInstanceOf(RoleGuard::class, $resolved[0]);
+        $this->assertInstanceOf($noArg, $resolved[1]);
+    }
+
+    public function testResolveForRouteGatedEmptyYieldsOnlyGuard(): void
+    {
+        $resolver = new MiddlewareResolver();
+
+        $resolved = $resolver->resolveForRoute(true, []);
+
+        $this->assertCount(1, $resolved);
+        $this->assertInstanceOf(RoleGuard::class, $resolved[0]);
+    }
+
+    public function testResolveForRouteGatedDoesNotDuplicateGuard(): void
+    {
+        $resolver = new MiddlewareResolver();
+
+        // Route already carries the guard (e.g. main-author-note) and is also
+        // in a gated group: exactly one guard instance must result.
+        $resolved = $resolver->resolveForRoute(true, [RoleGuard::class]);
+
+        $this->assertCount(1, $resolved);
+        $this->assertInstanceOf(RoleGuard::class, $resolved[0]);
+    }
+
+    public function testResolveForRouteGatedKeepsContainerGuardFirst(): void
+    {
+        // A container-provided guard must win over the fallback and stay first.
+        $provided = new RoleGuard(new Psr17Factory());
+        $container = $this->makePsr11Container([RoleGuard::class => $provided]);
+        $resolver = new MiddlewareResolver($container);
+        $noArg = $this->makeNoArgMiddlewareClass();
+
+        $resolved = $resolver->resolveForRoute(true, [$noArg]);
+
+        $this->assertCount(2, $resolved);
+        $this->assertSame($provided, $resolved[0]);
+        $this->assertInstanceOf($noArg, $resolved[1]);
+    }
 }

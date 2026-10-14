@@ -111,10 +111,9 @@ class App implements \Psr\Http\Server\RequestHandlerInterface
 
                 // Run the route's middleware (route-level middleware + the group
                 // admin guard for gated routes) before dispatching to the action.
-                $middleware = $this->middlewareResolver->resolve($route['middleware']);
-                if ($route['gated']) {
-                    array_unshift($middleware, $this->getRoleGuard());
-                }
+                // resolveForRoute() is the single spelling of that policy shared
+                // with the Symfony and Laravel adapters.
+                $middleware = $this->middlewareResolver->resolveForRoute((bool) $route['gated'], $route['middleware']);
                 if (!empty($middleware)) {
                     $resolver = $this->resolver;
                     $handler = new class ($resolver, $class, $method, $initialResponse, $routeParams) implements \Psr\Http\Server\RequestHandlerInterface {
@@ -139,22 +138,6 @@ class App implements \Psr\Http\Server\RequestHandlerInterface
         }
 
         return $response;
-    }
-
-    /**
-     * Get the admin access guard middleware used for gated routes.
-     *
-     * For the custom App we use the framework-agnostic RoleGuard (a plain 403
-     * response) rather than the Slim GatekeeperMiddleware, which is coupled to
-     * DefaultActions and the Twig template engine (see src/Middleware). The
-     * guard relies on the authenticated identity being present on the request
-     * as the 'auth' attribute (set by a login/auth bridge); without one it
-     * fails closed (denies everyone), which is safer than leaving the admin
-     * routes unprotected.
-     */
-    private function getRoleGuard(): \Psr\Http\Server\MiddlewareInterface
-    {
-        return $this->middlewareResolver->resolve([RoleGuard::class])[0];
     }
 
     /**

@@ -7,7 +7,6 @@ namespace BicBucStriim\Framework\Event;
 use BicBucStriim\Actions\DefaultActions;
 use BicBucStriim\Framework\MiddlewareDispatcher;
 use BicBucStriim\Framework\MiddlewareResolver;
-use BicBucStriim\Framework\RoleGuard;
 use Symfony\Bridge\PsrHttpMessage\HttpFoundationFactoryInterface;
 use Symfony\Bridge\PsrHttpMessage\PsrHttpFactoryInterface;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
@@ -59,15 +58,12 @@ class ActionInitializeListener
         // per-route middleware, so ActionRouteLoader carries both the group
         // gatekeeper flag (_bbs_gated, e.g. Admin/Metadata/Extra) and the
         // route-level middleware (_bbs_middleware, e.g. RoleGuard::class on
-        // main-author-note) as route defaults. Prepend RoleGuard for gated
-        // routes and resolve every entry to a concrete PSR-15 instance via the
-        // shared, container-aware MiddlewareResolver.
+        // main-author-note) as route defaults. resolveForRoute() is the single,
+        // container-aware spelling of the gated+route policy shared with the
+        // custom App and Laravel adapters.
         $gated = $request->attributes->getBoolean('_bbs_gated');
         $routeMiddleware = $request->attributes->get('_bbs_middleware', []);
-        if ($gated) {
-            array_unshift($routeMiddleware, RoleGuard::class);
-        }
-        $middleware = $this->middlewareResolver->resolve($routeMiddleware);
+        $middleware = $this->middlewareResolver->resolveForRoute($gated, $routeMiddleware);
 
         if (empty($middleware)) {
             // No middleware for this route: initialize the action and let Symfony
@@ -97,7 +93,7 @@ class ActionInitializeListener
                 return $this->action->{$this->method}(...$this->args);
             }
         };
-        $psrResponse = (new MiddlewareDispatcher($middleware, $handler))->handle($psrRequest);
+        $psrResponse = new MiddlewareDispatcher($middleware, $handler)->handle($psrRequest);
 
         // Convert the PSR-7 response to a native Symfony Response and short-
         // circuit the kernel. (kernel.view is not dispatched on this path, so we

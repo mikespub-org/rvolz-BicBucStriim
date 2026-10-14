@@ -5,7 +5,6 @@ namespace BicBucStriim\Framework\Http\Controllers;
 use BicBucStriim\Actions\ActionResolver;
 use BicBucStriim\Framework\MiddlewareDispatcher;
 use BicBucStriim\Framework\MiddlewareResolver;
-use BicBucStriim\Framework\RoleGuard;
 use Illuminate\Http\Request as LaravelRequest;
 use Illuminate\Http\Response as LaravelResponse;
 use Psr\Http\Message\ResponseInterface as PsrResponse;
@@ -38,15 +37,11 @@ class ActionAdapterController extends Controller
         // native per-route middleware, so ActionServiceProvider carries both the
         // group gatekeeper flag (action_gated, e.g. Admin/Metadata/Extra) and the
         // route-level middleware (action_middleware, e.g. RoleGuard::class on
-        // main-author-note) as route defaults. Prepend RoleGuard for gated routes
-        // and resolve every entry to a concrete PSR-15 instance via the shared,
-        // container-aware MiddlewareResolver.
+        // main-author-note) as route defaults. resolveForRoute() is the single
+        // spelling of that policy shared with the custom App and Symfony.
         $gated = !empty($route->defaults['action_gated']);
         $routeMiddleware = $route->defaults['action_middleware'] ?? [];
-        if ($gated) {
-            array_unshift($routeMiddleware, RoleGuard::class);
-        }
-        $middleware = $middlewareResolver->resolve($routeMiddleware);
+        $middleware = $middlewareResolver->resolveForRoute($gated, $routeMiddleware);
 
         // 4. Execute the action via the shared ActionResolver inside a terminal
         // request handler, so middleware (e.g. RoleGuard's 403 short-circuit)
@@ -65,7 +60,7 @@ class ActionAdapterController extends Controller
                 return $this->resolver->resolve($this->class, $this->method, $request, null, array_values($this->args));
             }
         };
-        $psrResponse = (new MiddlewareDispatcher($middleware, $handler))->handle($psrRequest);
+        $psrResponse = new MiddlewareDispatcher($middleware, $handler)->handle($psrRequest);
 
         // 5. Convert the resulting PSR-7 Response back to a Laravel Response.
         return $httpFoundationFactory->createResponse($psrResponse);

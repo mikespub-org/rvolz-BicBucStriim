@@ -62,6 +62,28 @@ class MiddlewareResolver
     }
 
     /**
+     * Resolve a route's middleware entries, prepending the group admin guard
+     * for gated routes.
+     *
+     * This is the single, framework-agnostic spelling of the gated+route
+     * middleware policy shared by the custom App, Symfony and Laravel
+     * adapters: when $gated is true the RoleGuard class-string is prepended
+     * before resolution (so container-provided guards still win via
+     * resolve()), and duplicate guards are collapsed to a single instance.
+     *
+     * @param array<int, string|object> $middleware route-level entries
+     * @return array<int, MiddlewareInterface>
+     */
+    public function resolveForRoute(bool $gated, array $middleware): array
+    {
+        $entries = array_values($middleware);
+        if ($gated && !RoleGuard::hasGuard($entries)) {
+            array_unshift($entries, RoleGuard::class);
+        }
+        return $this->resolve($entries);
+    }
+
+    /**
      * Resolve a single middleware entry.
      *
      * @param string|object $entry

@@ -138,9 +138,9 @@ class AppTest extends TestCase
      * Test that a route carrying a route-specific middleware class-string
      * (main-author-note -> /authors/{id}/notes/, middleware RoleGuard::class)
      * is denied when no admin identity is present. This exercises the
-     * App::handle() route-middleware resolution path (resolveMiddleware()
-     * string branch -> instantiateMiddleware(RoleGuard::class)), which is
-     * distinct from the group-gated getRoleGuard() path above.
+     * App::handle() route-middleware resolution path (resolve() string branch
+     * -> RoleGuard fallback), which is distinct from the group-gated
+     * resolveForRoute() path above.
      */
     public function testHandleRouteMiddlewareDenied(): void
     {
