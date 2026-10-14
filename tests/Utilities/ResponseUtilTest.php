@@ -238,12 +238,4 @@ class ResponseUtilTest extends PHPUnit\Framework\TestCase
         $util = new ResponseUtil($response);
         $this->assertSame($response, $util->done());
     }
-
-    public function testDeprecatedGetResponseStillWorks(): void
-    {
-        // The deprecated static helper is retained for backward compatibility.
-        /** @phpstan-ignore staticMethod.deprecated (intentionally exercising the deprecated shim) */
-        $resp = ResponseUtil::getResponse();
-        $this->assertEquals(200, $resp->getStatusCode());
-    }
 }

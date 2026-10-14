@@ -307,27 +307,4 @@ class ResponseUtil
     {
         return $this->response;
     }
-
-    /**
-     * Create response from app response factory or Nyholm PSR-17 factory
-     *
-     * @deprecated 4.1.5 Use instance with $this->factory() instead
-     * @param ?\Slim\App $app
-     * @return Response
-     */
-    public static function getResponse($app = null)
-    {
-        // create response from app response factory
-        if (!empty($app)) {
-            $response = $app->getResponseFactory()->createResponse();
-            return $response;
-        }
-        // create response from Nyholm PSR-17 factory
-        $psr17Factory = new Psr17Factory();
-
-        //$responseBody = $psr17Factory->createStream('Hello world');
-        //$response = $psr17Factory->createResponse(200)->withBody($responseBody);
-        $response = $psr17Factory->createResponse();
-        return $response;
-    }
 }
