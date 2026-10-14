@@ -1,0 +1,77 @@
+/* ==========================================================================
+   Buttons & Button Groups
+   ========================================================================== */
+.bbs-btn,
+button,
+input[type="button"],
+input[type="submit"],
+a[data-role="button"] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 16px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #222222;
+  color: var(--bbs-btn-text, #222222);
+  background-color: #f8f9fa;
+  background-color: var(--bbs-btn-bg, #f8f9fa);
+  border: 1px solid #cccccc;
+  border-color: var(--bbs-btn-border, #cccccc);
+  border-radius: 4px;
+  cursor: pointer;
+  text-decoration: none;
+  touch-action: manipulation;
+  vertical-align: middle;
+  min-height: 40px;
+}
+
+.bbs-btn:hover,
+button:hover,
+input[type="button"]:hover,
+input[type="submit"]:hover,
+a[data-role="button"]:hover {
+  background-color: #e9ecef;
+  background-color: var(--bbs-btn-hover, #e9ecef);
+  text-decoration: none;
+}
+
+.bbs-btn-primary,
+button[type="submit"] {
+  background-color: #2980b9;
+  background-color: var(--bbs-primary, #2980b9);
+  color: #ffffff;
+  color: var(--bbs-primary-text, #ffffff);
+  border-color: #2471a3;
+}
+.bbs-btn-primary:hover,
+button[type="submit"]:hover {
+  background-color: #1f618d;
+}
+
+.bbs-btn-danger {
+  background-color: #c0392b;
+  background-color: var(--bbs-error, #c0392b);
+  color: #ffffff;
+  border-color: #a93226;
+}
+
+.bbs-btn-mini {
+  padding: 4px 10px;
+  font-size: 0.85rem;
+  min-height: 32px;
+}
+
+.bbs-btn-block {
+  display: flex;
+  width: 100%;
+}
+
+.bbs-btn-group,
+[data-role="controlgroup"] {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 10px 0;
+}

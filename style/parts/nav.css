@@ -1,0 +1,133 @@
+/* ==========================================================================
+   Main Navigation Bar (5 tabs)
+   ========================================================================== */
+.bbs-navbar {
+  display: table;
+  table-layout: fixed;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  background-color: #2b3e50;
+  background-color: var(--bbs-nav-bg, #2b3e50);
+  border-bottom: 1px solid rgba(0,0,0,0.2);
+}
+
+@supports (display: flex) {
+  .bbs-navbar {
+    display: flex;
+  }
+}
+
+.bbs-nav-item {
+  display: table-cell;
+  text-align: center;
+  vertical-align: middle;
+}
+
+@supports (display: flex) {
+  .bbs-nav-item {
+    display: block;
+    flex: 1;
+  }
+}
+
+.bbs-nav-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 2px 6px 2px;
+  min-height: 48px;
+  color: #cfd9e0;
+  color: var(--bbs-nav-text, #cfd9e0);
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-decoration: none;
+  border-bottom: 3px solid transparent;
+  touch-action: manipulation;
+}
+
+.bbs-nav-link .bbs-icon {
+  margin-bottom: 2px;
+  width: 1.35em;
+  height: 1.35em;
+}
+
+.bbs-nav-link:hover, .bbs-nav-link:focus {
+  color: #ffffff;
+  text-decoration: none;
+  background-color: rgba(255,255,255,0.05);
+}
+
+.bbs-nav-link.active,
+.bbs-nav-link.ui-btn-active {
+  background-color: #1f2d3a;
+  background-color: var(--bbs-nav-active-bg, #1f2d3a);
+  color: #ffffff;
+  color: var(--bbs-nav-active-text, #ffffff);
+  border-bottom: 3px solid #3498db;
+  border-bottom-color: var(--bbs-nav-active-border, #3498db);
+  font-weight: bold;
+}
+
+/* ==========================================================================
+   Sub-Navbar / Pagination Bar
+   ========================================================================== */
+.bbs-subnav {
+  display: table;
+  table-layout: fixed;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  background-color: #e2e7ec;
+  background-color: var(--bbs-subnav-bg, #e2e7ec);
+  border-bottom: 1px solid #cbd3da;
+  border-bottom-color: var(--bbs-subnav-border, #cbd3da);
+}
+
+@supports (display: flex) {
+  .bbs-subnav {
+    display: flex;
+  }
+}
+
+.bbs-subnav-item {
+  display: table-cell;
+  text-align: center;
+  vertical-align: middle;
+}
+
+@supports (display: flex) {
+  .bbs-subnav-item {
+    display: block;
+    flex: 1;
+  }
+}
+
+.bbs-subnav-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 4px;
+  min-height: 42px;
+  color: #333333;
+  color: var(--bbs-subnav-text, #333333);
+  font-size: 0.85rem;
+  font-weight: 500;
+  text-decoration: none;
+  touch-action: manipulation;
+}
+
+.bbs-subnav-link:hover, .bbs-subnav-link:focus {
+  background-color: rgba(0,0,0,0.05);
+  text-decoration: none;
+}
+
+.bbs-subnav-link.disabled {
+  opacity: 0.35;
+  pointer-events: none;
+  cursor: default;
+}
