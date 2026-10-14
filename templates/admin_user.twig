@@ -41,8 +41,8 @@
 	<fieldset data-role="fieldcontain">
 		<label for="edituser_role">{{page.glob.l10n.admin_role}}</label>
 		<select name="edituser_role" id="edituser_role">
-			<option value="0" {% if user.role == 0 %}selected="true"{% endif %}>{{page.glob.l10n.admin_role_user}}</option>
-			<option value="1" {% if user.role == 1 %}selected="true"{% endif %}>{{page.glob.l10n.admin_role_admin}}</option>
+			<option value="normal" {% if user.role == 0 %}selected="true"{% endif %}>{{page.glob.l10n.admin_role_user}}</option>
+			<option value="admin" {% if user.role == 1 %}selected="true"{% endif %}>{{page.glob.l10n.admin_role_admin}}</option>
 		</select>
 	</fieldset>
 	<button class="bbs-btn bbs-btn-primary bbs-btn-block" type="submit">

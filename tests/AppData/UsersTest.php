@@ -6,7 +6,6 @@ if (!defined('REDBEAN_MODEL_PREFIX')) {
 
 use BicBucStriim\AppData\BicBucStriim;
 use BicBucStriim\Models\User;
-use BicBucStriim\Models\R;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(BicBucStriim::class)]

@@ -91,7 +91,7 @@ trait HasUsers
      * @param string 	$password 	new clear text password or old encrypted password
      * @param string 	$languages 	comma-delimited set of language identifiers
      * @param string 	$tags 		string comma-delimited set of tags
-     * @param string 	$role       "1" for admin "0" for normal user
+     * @param string 	$role       "admin" for admin or other for normal user
      * @return ?User updated user account or null if there was an error
      */
     public function changeUser($userid, $password, $languages, $tags, $role)
