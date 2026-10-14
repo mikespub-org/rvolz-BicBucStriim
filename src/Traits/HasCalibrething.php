@@ -28,7 +28,7 @@ trait HasCalibrething
             ' ctype = :type and cid = :id',
             [
                 ':type' => $calibreType,
-                'id' => $calibreId,
+                ':id' => $calibreId,
             ]
         );
         if (!is_null($calibreThing)) {

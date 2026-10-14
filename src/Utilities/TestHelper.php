@@ -2,6 +2,7 @@
 
 namespace BicBucStriim\Utilities;
 
+use BicBucStriim\AppData\BicBucStriim;
 use BicBucStriim\AppData\Settings;
 use Middlewares\Utils\CallableHandler;
 use Psr\Http\Message\ResponseFactoryInterface;
@@ -47,9 +48,12 @@ class TestHelper
 
     /**
      * Get Slim app with container = for middleware & basic actions without full bootstrap
+     * @param ?string $dataPath if given, the Slim app is built against this BBS DB
+     *      instead of the live data/data.db (read-only, so tests can run against a
+     *      sandbox without mutating the checked-in library).
      * @return \Slim\App<\DI\Container>
      */
-    public static function getAppWithContainer()
+    public static function getAppWithContainer($dataPath = null)
     {
         $container = require static::baseDir() . '/config/container.php';
         AppFactory::setContainer($container);
@@ -61,7 +65,15 @@ class TestHelper
         $app->getContainer()->set(Settings::class, $settings['globalSettings']);
         $app->getContainer()->set(ResponseFactoryInterface::class, fn() => $app->getResponseFactory());
         $app->getContainer()->set(RouteCollectorInterface::class, fn() => $app->getRouteCollector());
-        // skip middleware and routes here
+
+        // Sandbox: replace the live BBS DB with a fresh one so tests run
+        // against a user-less first-launch state without mutating data/data.db.
+        if ($dataPath !== null) {
+            $app->getContainer()->set(
+                BicBucStriim::class,
+                new BicBucStriim($dataPath)
+            );
+        }
 
         return $app;
     }

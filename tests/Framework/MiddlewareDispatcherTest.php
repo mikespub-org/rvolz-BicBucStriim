@@ -86,22 +86,24 @@ class MiddlewareDispatcherTest extends PHPUnit\Framework\TestCase
     public function testShortCircuitNeverReachesFallback(): void
     {
         $guard = new RoleGuard(new Psr17Factory());
-        $reached = false;
-        $handler = new class ($reached) implements RequestHandlerInterface {
-            public function __construct(private bool &$reached) {}
+        $handler = new class implements RequestHandlerInterface {
+            public $reachedCount = 0;
+
             public function handle(ServerRequestInterface $request): ResponseInterface
             {
-                $this->reached = true;
+                $this->reachedCount++;
                 return new Psr17Factory()->createResponse(200);
             }
         };
         $dispatcher = new MiddlewareDispatcher([$guard], $handler);
 
-        // No 'auth' attribute -> RoleGuard denies with 403.
+        // No 'auth' attribute -> RoleGuard denies with 403 and short-circuits,
+        // so the handler's reachedCount stays at 0.
         $response = $dispatcher->handle($this->makeRequest());
 
         $this->assertSame(403, $response->getStatusCode());
-        $this->assertFalse($reached);
+        $reached = $handler->reachedCount;
+        $this->assertSame(0, $reached);
     }
 
     public function testDispatcherIsSingleUsePerHandleCall(): void
