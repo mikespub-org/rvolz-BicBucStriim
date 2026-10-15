@@ -5,10 +5,11 @@
       <directory>tests</directory>
     </testsuite>
   </testsuites>
-  <!-- Tests that shell out to Node are opt-in: run with group installcheck-js -->
+  <!-- Tests that shell out to Node are opt-in: run with group node-js
+       (optionally add a filter for a single harness class) -->
   <groups>
     <exclude>
-      <group>installcheck-js</group>
+      <group>node-js</group>
     </exclude>
   </groups>
   <source restrictNotices="true" restrictWarnings="true" ignoreIndirectDeprecations="true">

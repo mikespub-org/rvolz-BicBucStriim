@@ -23,10 +23,12 @@ use Twig\Loader\FilesystemLoader;
  * Excluded from the default test run (see <groups> in phpunit.xml.dist) because
  * it shells out to Node. Run it explicitly with:
  *
- *   vendor/bin/phpunit --group installcheck-js
+ *   vendor/bin/phpunit --group node-js
+ *
+ * or just this harness with --filter InstallCheckPopupTest.
  */
 #[CoversNothing]
-#[Group('installcheck-js')]
+#[Group('node-js')]
 class InstallCheckPopupTest extends PHPUnit\Framework\TestCase
 {
     private const EXPECTED_POPUPS = 11;

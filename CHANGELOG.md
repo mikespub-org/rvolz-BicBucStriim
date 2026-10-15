@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [4.x.x] - 20xx-xx-xx
 ### Changed
+- Fix editing author notes after modernizing the templates
 - Fix authentication for editing metadata when login is not required
 - Split CSS into parts with imports for maintenance - see PR #14 by @Simounet
 - Fix losing admin rights after changing password - see issue #13 by @Frasnkk

@@ -57,9 +57,10 @@
   }
 
   function showFlash(msg, isError) {
-    var flash = document.getElementById('flash');
-    if (!flash) return;
-    flash.innerHTML = '<p class="' + (isError ? 'error' : 'success') + '">' + msg + '</p>';
+    var flashes = document.querySelectorAll('#flash');
+    for (var i = 0; i < flashes.length; i++) {
+      flashes[i].innerHTML = '<p class="' + (isError ? 'error' : 'success') + '">' + msg + '</p>';
+    }
   }
 
   onReady(function () {
@@ -495,5 +496,71 @@
     for (var l = 0; l < linkDeleteBtns.length; l++) {
       bindLinkDelete(linkDeleteBtns[l]);
     }
+
+    // -------------------------------------------------------------
+    // 7. Author Notes (author notes page)
+    // -------------------------------------------------------------
+    var noteForm = document.getElementById('author-note-edit');
+    if (noteForm) {
+      noteForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+        var textInput = document.getElementById('note-edit');
+        ajax({
+          type: 'POST',
+          url: noteForm.getAttribute('action'),
+          data: {
+            ntext: textInput ? textInput.value : '',
+            mime: 'text/markdown'
+          },
+          success: function (data) {
+            var notesEl = document.getElementById('author-notes');
+            if (notesEl && data.note && typeof data.note.html === 'string') {
+              notesEl.innerHTML = data.note.html;
+            }
+            showFlash(data.msg || 'Note saved', false);
+          },
+          error: function (xhr) {
+            showFlash(xhr.responseText || 'Error saving note', true);
+          }
+        });
+      });
+    }
+
+    var delNotesBtn = document.getElementById('delete-notes');
+    if (delNotesBtn) {
+      delNotesBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+        var root = this.getAttribute('data-proot') || '';
+        var author = this.getAttribute('data-author');
+        ajax({
+          type: 'DELETE',
+          url: root + '/metadata/authors/' + author + '/notes/',
+          success: function (data) {
+            var textInput = document.getElementById('note-edit');
+            if (textInput) textInput.value = '';
+            var notesEl = document.getElementById('author-notes');
+            if (notesEl) notesEl.innerHTML = '';
+            showFlash(data.msg || 'Note deleted', false);
+          },
+          error: function (xhr) {
+            showFlash(xhr.responseText || 'Error deleting note', true);
+          }
+        });
+      });
+    }
+
+    // -------------------------------------------------------------
+    // 8. Back/forward cache: refresh restored author details page
+    // -------------------------------------------------------------
+    // A page restored from the browser's back/forward cache is a frozen
+    // snapshot: after editing the note on the notes page, going Back would
+    // show the original note without asking the server. Reload on restore
+    // so the current state is rendered (like the old jQuery Mobile page
+    // cache did). Other pages are either edited in-document or read-only.
+    window.onpageshow = function (event) {
+      if (event && event.persisted && document.getElementById('pauthor_detail')) {
+        location.reload();
+      }
+    };
   });
 })();
