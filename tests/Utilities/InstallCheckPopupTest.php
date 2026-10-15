@@ -21,7 +21,8 @@ use Twig\Loader\FilesystemLoader;
 
 /**
  * Excluded from the default test run (see <groups> in phpunit.xml.dist) because
- * it shells out to Node. Run it explicitly with:
+ * it shells out to Node through yarn (jsdom is resolved via Yarn PnP). Run it
+ * explicitly with:
  *
  *   vendor/bin/phpunit --group node-js
  *
@@ -102,10 +103,13 @@ class InstallCheckPopupTest extends PHPUnit\Framework\TestCase
         return ['popups' => $popups, 'triggers' => $triggers];
     }
 
+    /**
+     * Harnesses run via "yarn node" so Yarn PnP can resolve the jsdom dependency.
+     */
     private function isNodeAvailable(): bool
     {
         $descriptors = [1 => ['pipe', 'w'], 2 => ['pipe', 'w']];
-        $proc = proc_open('node --version', $descriptors, $pipes);
+        $proc = proc_open('yarn node -e "require(\'jsdom\')"', $descriptors, $pipes);
         if (!is_resource($proc)) {
             return false;
         }
@@ -129,7 +133,7 @@ class InstallCheckPopupTest extends PHPUnit\Framework\TestCase
         file_put_contents($fixture, json_encode($structure + ['label' => $label]));
 
         $cmd = sprintf(
-            'node %s %s %s 2>&1',
+            'yarn node %s %s %s 2>&1',
             escapeshellarg($harness),
             escapeshellarg($fixture),
             escapeshellarg($this->projectRoot)
@@ -177,7 +181,7 @@ class InstallCheckPopupTest extends PHPUnit\Framework\TestCase
     public function testPopupOpensAndCloses(): void
     {
         if (!$this->isNodeAvailable()) {
-            $this->markTestSkipped('Node.js is not available');
+            $this->markTestSkipped('yarn node with jsdom is not available');
         }
 
         $structure = $this->extractPopupStructure($this->renderInstallCheck());

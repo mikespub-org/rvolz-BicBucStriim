@@ -23,7 +23,8 @@ use PHPUnit\Framework\Attributes\RunInSeparateProcess;
  * form id that silently detaches the save handler again (see commit c2af339).
  *
  * Excluded from the default test run (see <groups> in phpunit.xml.dist) because
- * it shells out to Node. Run it explicitly with:
+ * it shells out to Node through yarn (jsdom is resolved via Yarn PnP). Run it
+ * explicitly with:
  *
  *   vendor/bin/phpunit --group node-js
  *
@@ -101,9 +102,12 @@ class AuthorNotesScriptTest extends PHPUnit\Framework\TestCase
         ];
     }
 
+    /**
+     * Harnesses run via "yarn node" so Yarn PnP can resolve the jsdom dependency.
+     */
     private function isNodeAvailable(): bool
     {
-        $proc = proc_open('node --version', [1 => ['pipe', 'w'], 2 => ['pipe', 'w']], $pipes);
+        $proc = proc_open('yarn node -e "require(\'jsdom\')"', [1 => ['pipe', 'w'], 2 => ['pipe', 'w']], $pipes);
         if (!is_resource($proc)) {
             return false;
         }
@@ -127,7 +131,7 @@ class AuthorNotesScriptTest extends PHPUnit\Framework\TestCase
         file_put_contents($fixtureFile, json_encode($fixture + ['label' => $label]));
 
         $cmd = sprintf(
-            'node %s %s %s 2>&1',
+            'yarn node %s %s %s 2>&1',
             escapeshellarg($harness),
             escapeshellarg($fixtureFile),
             escapeshellarg($this->projectRoot)
@@ -168,7 +172,7 @@ class AuthorNotesScriptTest extends PHPUnit\Framework\TestCase
     public function testNoteEditorScriptBehaviour(): void
     {
         if (!$this->isNodeAvailable()) {
-            $this->markTestSkipped('Node.js is not available');
+            $this->markTestSkipped('yarn node with jsdom is not available');
         }
 
         $structure = $this->extractNoteEditorStructure($this->renderAuthorNotesPage());
