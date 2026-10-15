@@ -6,9 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [4.x.x] - 20xx-xx-xx
 ### Changed
+- Fix authentication for editing metadata when login is not required
+- Split CSS into parts with imports for maintenance - see PR #14 by @Simounet
 - Fix losing admin rights after changing password - see issue #13 by @Frasnkk
 - Refactor routes, gatekeeper and middleware to be more framework-agnostic
 - Fix swagger-ui template to send right accept header
+### Removed
+- Drop deprecated methods for releases older than 4.2.0
 
 ## [4.1.4] - 2026-10-10 Modernize templates
 ### Changed

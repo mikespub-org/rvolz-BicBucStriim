@@ -135,6 +135,30 @@ class LoginMiddleware extends DefaultMiddleware
             }
             return false;
         }
+        // see main-author-v1 and main-author-v2 routes in MainActions
+        if (str_starts_with($resource, '/authors/') && preg_match('~^/authors/\d+/~', $resource)) {
+            // we need to initialize $this->setAuth() if we want to edit authors in MainActions
+            $this->is_authorized($request);
+            // special case author details page
+            $this->log()->debug('login: author details page authorized');
+            return false;
+        }
+        // see main-serie-v1 and main-serie-v2 routes in MainActions
+        if (str_starts_with($resource, '/series/') && preg_match('~^/series/\d+/~', $resource)) {
+            // we need to initialize $this->setAuth() if we want to edit series in MainActions
+            $this->is_authorized($request);
+            // special case series details page
+            $this->log()->debug('login: series details page authorized');
+            return false;
+        }
+        // see meta-* routes in MetadataActions
+        if (str_starts_with($resource, '/metadata/')) {
+            // we need to initialize $this->setAuth() if we want to edit authors or series in MetadataActions
+            $this->is_authorized($request);
+            // special case edit metadata page
+            $this->log()->debug('login: edit metadata page authorized');
+            return false;
+        }
         // we do not want/need to initialize $this->setAuth() here = anonymous user without session
         return false;
     }
