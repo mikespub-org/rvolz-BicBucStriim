@@ -1,4 +1,6 @@
 Feature: Delete author images
+	# script.js handles panel opening and the #delete-image DELETE request.
+	# No tests/js harness currently asserts the image-delete handler.
 
 	Users can add author images to author detail pages
 	that are displayed on top of the page. These images
@@ -26,6 +28,7 @@ Feature: Delete author images
 		And the author image panel appears
 		And press the "Delete" link
 		Then I get the success message "Changes applied"
+		# Action: MetadataActions::delAuthorThumbnail, DELETE /metadata/authors/{id}/thumbnail/ (meta-author-thumb-delete).
 
 	Scenario: Deleting a non-existent author image does nothing
 		When I click on the metadata menu
@@ -35,6 +38,7 @@ Feature: Delete author images
 		And I get the success message "Changes applied"
 		And press the "Delete" link
 		Then I get the success message "Changes applied"
+		# Action: MetadataActions::delAuthorThumbnail, DELETE /metadata/authors/{id}/thumbnail/ (meta-author-thumb-delete).
 
 	Scenario: Deleting an author image also replaces the thumbnail
 		When I click on the metadata menu
@@ -46,5 +50,6 @@ Feature: Delete author images
 		And I click on menu item "Authors"
 		And the app switches to the "Authors" view
 		Then the entry for author "Grimmelshausen" shows the default thumbnail
+		# Actions: MetadataActions::delAuthorThumbnail, DELETE /metadata/authors/{id}/thumbnail/ (meta-author-thumb-delete); MainActions::authorsSlice, GET /authors/ (main-authors-v2) or /authorslist/{page}/ (main-authors-v1).
 
 		

@@ -11,12 +11,14 @@ Feature: The authors list displays all book authors in the library.
 		And the menu item "Authors" is active
 		And there are no "previous" buttons
 		And there are "next" buttons
+		# Action: MainActions::authorsSlice, GET /authors/ (main-authors-v2); legacy GET /authorslist/{page}/ (main-authors-v1).
 
 	Scenario: Clicking on a list entry leads to an author details page
 		When I click on menu item "Authors"
 		And the app switches to the "Authors" view
 		And I click on list item "Eichendorff, Joseph von"
 		Then the "Authors" details page 5 for "Joseph von Eichendorff" appears
+		# Action: MainActions::authorDetailsSlice, GET /authors/{id}/ (main-author-v2); legacy GET /authors/{id}/{page}/ (main-author-v1).
 
 	Scenario: The *next* button shows the next 2 Authors
 		When I click on menu item "Authors"
@@ -27,6 +29,7 @@ Feature: The authors list displays all book authors in the library.
 		And the list contains 2 items
 		And there are "previous" buttons
 		And there are "next" buttons
+		# Action: MainActions::authorsSlice, GET /authors/ (main-authors-v2); legacy GET /authorslist/{page}/ (main-authors-v1).
 
 	Scenario: The *back* button shows the previous 2 Authors
 		When I click on menu item "Authors"
@@ -35,6 +38,7 @@ Feature: The authors list displays all book authors in the library.
 		And I click on the "previous" button
 		Then "Authors" page 0 with content "Eichendorff, Joseph von" appears
 		And the list contains 2 items
+		# Action: MainActions::authorsSlice, GET /authors/ (main-authors-v2); legacy GET /authorslist/{page}/ (main-authors-v1).
 
 	Scenario: The last list page has only a *back* button
 		When I click on menu item "Authors"
@@ -44,6 +48,7 @@ Feature: The authors list displays all book authors in the library.
 		And the list contains 2 items
 		And there are "previous" buttons
 		And there are no "next" buttons
+		# Action: MainActions::authorsSlice, GET /authors/ (main-authors-v2); legacy GET /authorslist/{page}/ (main-authors-v1).
 
 	Scenario: Searching leads to global search
 		When I click on menu item "Authors"
@@ -54,3 +59,4 @@ Feature: The authors list displays all book authors in the library.
 		And the page contains "Authors: 1"
 		And the page contains "Tags: 0"
 		And the page contains "Series: 0"
+		# Action: MainActions::globalSearch, GET/POST /search/ (main-search, main-search-post).

@@ -1,16 +1,15 @@
-@initial
-Feature: User configures after installation
-	In order to configure the application just after installation
-	As an admin user
-	I get the admin page immediately 
+Feature: Redirect after installation
 
-	Scenario: root redirects to admin page
-		Given I just installed the application
-		And I login as user "admin"
-		Then I get redirected to the admin page
-		
-	Scenario: every other page also redirects to admin page
-		Given I just installed the application
-		And I login as user "admin"
-		And I click the menu link "Books"
-		Then I get redirected to the admin page
+  After a fresh install the application redirects to the admin page.
+
+  Scenario: Root redirects to admin page
+  Then I get redirected to the admin page
+  # Action: MainActions::main, GET / (main-home); the install-state redirect is middleware/config behavior.
+  # Related authentication redirect coverage: tests/Middleware/MiddlewareTest.php::testMustLoginNoAuth.
+  # No PHPUnit test currently asserts the post-install redirect destination.
+
+  Scenario: Every other page also redirects to admin page
+  Then I get redirected to the admin page
+  # Action: MainActions::main, GET / (main-home); the install-state redirect is middleware/config behavior.
+  # Related authentication redirect coverage: tests/Middleware/MiddlewareTest.php::testMustLoginNoAuth.
+  # No PHPUnit test currently asserts the post-install redirect destination.

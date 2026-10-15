@@ -8,5 +8,6 @@ Feature: The home page lists the most recent books
 		When I navigate to the home page
 		Then I see my 2 newest books
 		And the menu item "Home" is active
+		# Action: MainActions::main, GET / (main-home).
 
 	

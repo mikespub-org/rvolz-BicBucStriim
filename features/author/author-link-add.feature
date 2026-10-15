@@ -1,27 +1,24 @@
-Feature: Author details pages list books by an author
+Feature: Author link add
+  # Client flow: script.js handles #author-link-new submission and updates both link lists.
+  # tests/js/author_links_harness.js (driven by AuthorLinksScriptTest::testLinksEditorScriptBehaviour)
+  # asserts the POST request, DOM updates, and failure behavior.
 
-	The details pages for authors list all books by an author in the
-	library. Additionally users can add an author image and/or links,
-	e.g. a link to the author's website, blog, Twitter feed ...
+  An admin user can add a link to an author's website, blog, Twitter feed or
+  similar on the author details page.
 
-	If an author image was added, this is also used as a thumbnail in the
-	authors list view.
+  Background: Navigating to an author details page
+  When I click on menu item "Authors"
+  And the app switches to the "Authors" view
+  And I click on list item "Grimmelshausen"
+  And the app switches to the "Author details" page 6 for "Grimmelshausen"
+  And I click on the "Edit" button
+  And the app switches to the "Author details" view
 
-	Scenario: Add an author image
-
-	Scenario: Replace an author image
-
-	Scenario: Delete an author image
-
-	Scenario: Add an author link
-
-	Scenario: Replace an author link
-
-	Scenario: Delete an author link
-
-	Scenario: Authors without an author image get the default thumbnail
-		pending
-
-	Scenario: Authors with an author image get a also thumbnail version
-		pending
-		
+  Scenario: Author links can be added
+  When I add an author link with label "My Website" and URL "https://example.org"
+  Then I get a success message "Changes applied"
+  And the author links list contains the link "https://example.org" with label "My Website"
+  # Action: MetadataActions::newAuthorLink, POST /metadata/authors/{id}/links/ (meta-author-link-post).
+  # covered-by: tests/Actions/MetadataActionsTest.php::testAuthorLinks
+  #            (JSON POST /authors/{id}/links/) and
+  #            tests/AppData/AuthorsTest.php testAuthorLinks

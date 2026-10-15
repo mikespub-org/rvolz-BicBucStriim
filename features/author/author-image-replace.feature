@@ -1,27 +1,25 @@
-Feature: Author details pages list books by an author
+Feature: Replace author images
+  # Image upload uses a native multipart form; script.js only opens the metadata panels.
+  # No tests/js harness currently covers panel opening or image replacement.
 
-	The details pages for authors list all books by an author in the
-	library. Additionally users can add an author image and/or links,
-	e.g. a link to the author's website, blog, Twitter feed ...
+  Replacing an author image uploads a new image for the same author.
 
-	If an author image was added, this is also used as a thumbnail in the
-	authors list view.
+  Background: An author already has an image
+    When I click on menu item "Authors"
+    And the app switches to the "Authors" view
+    And I click on list item "Grimmelshausen"
+    And the "Authors" details page 6 for "Grimmelshausen" appears
+    And I click on the metadata menu
+    And I click on the image menu button
+    And the author image panel appears
+    And I attach the author image file "tests/fixtures/author1.jpg"
+    And I press the "Upload" button
+    Then there is an author image
 
-	Scenario: Add an author image
-
-	Scenario: Replace an author image
-
-	Scenario: Delete an author image
-
-	Scenario: Add an author link
-
-	Scenario: Replace an author link
-
-	Scenario: Delete an author link
-
-	Scenario: Authors without an author image get the default thumbnail
-		pending
-
-	Scenario: Authors with an author image get a also thumbnail version
-		pending
-		
+  Scenario: Replace an existing author image
+    When I attach the author image file "tests/fixtures/test-cover.jpg"
+    And I press the "Upload" button
+    Then the displayed author image has been replaced with the new upload
+    # Action: MetadataActions::editAuthorThumbnail, POST /metadata/authors/{id}/thumbnail/ (meta-author-thumb-post).
+    # Upload path coverage: tests/Actions/MetadataActionsTest.php::testEditAuthorThumbnail.
+    # No PHPUnit test currently verifies replacement of an existing image.
