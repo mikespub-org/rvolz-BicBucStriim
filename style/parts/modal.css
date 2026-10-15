@@ -1,0 +1,45 @@
+/* ==========================================================================
+   Modals & Popups (Send to Kindle, Delete User, ID Template Edit)
+   ========================================================================== */
+.bbs-modal-backdrop,
+.bbs-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0,0,0,0.5);
+  z-index: 3000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 15px;
+}
+
+.bbs-modal,
+[data-role="popup"] {
+  display: none;
+  background-color: #ffffff;
+  background-color: var(--bbs-bg-card, #ffffff);
+  border: 1px solid #cccccc;
+  border-color: var(--bbs-border, #cccccc);
+  border-radius: 6px;
+  padding: 20px;
+  max-width: 480px;
+  width: 100%;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+  z-index: 3001;
+}
+
+.bbs-modal.open,
+[data-role="popup"].open,
+.bbs-modal:target,
+[data-role="popup"]:target {
+  display: block;
+}
+
+/* When inside overlay */
+.bbs-modal-backdrop.open,
+.bbs-modal-overlay.open {
+  display: flex;
+}

@@ -1,0 +1,22 @@
+/* ==========================================================================
+   E-Ink & High-Contrast Fallbacks
+   ========================================================================== */
+@media (prefers-contrast: more), (monochrome) {
+  body {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+  }
+  .bbs-header, .bbs-navbar {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+    border-bottom: 2px solid #000000 !important;
+  }
+  .bbs-listview, .bbs-btn, fieldset, details.bbs-collapsible {
+    border: 2px solid #000000 !important;
+  }
+  .bbs-badge {
+    border: 1px solid #000000 !important;
+    background-color: #ffffff !important;
+    color: #000000 !important;
+  }
+}

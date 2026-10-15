@@ -1,0 +1,58 @@
+/* ==========================================================================
+   Collapsible Sections (details / summary)
+   ========================================================================== */
+.bbs-collapsible,
+[data-role="collapsible"] {
+  margin-bottom: 12px;
+  border: 1px solid #cccccc;
+  border-color: var(--bbs-border, #cccccc);
+  border-radius: 4px;
+  background-color: #ffffff;
+  background-color: var(--bbs-bg-card, #ffffff);
+  overflow: hidden;
+}
+
+.bbs-collapsible-header,
+[data-role="collapsible"] > h2,
+[data-role="collapsible"] > h3 {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  background-color: #f0f0f0;
+  background-color: var(--bbs-divider-bg, #f0f0f0);
+  color: #222222;
+  color: var(--bbs-text, #222222);
+  cursor: pointer;
+  user-select: none;
+  list-style: none;
+}
+.bbs-collapsible-header::-webkit-details-marker {
+  display: none;
+}
+
+.bbs-collapsible-header::after {
+  content: "▾";
+  font-size: 1.1rem;
+  transition: transform 0.2s ease;
+}
+.bbs-collapsible:not([open]) .bbs-collapsible-header::after {
+  transform: rotate(-90deg);
+}
+
+.bbs-collapsible-content,
+[data-role="collapsible"] > div,
+[data-role="collapsible"] > ul {
+  padding: 12px 14px;
+  border-top: 1px solid #cccccc;
+  border-top-color: var(--bbs-border, #cccccc);
+}
+
+[data-role="collapsible"] > ul {
+  padding: 0;
+  border: none;
+  border-radius: 0;
+}

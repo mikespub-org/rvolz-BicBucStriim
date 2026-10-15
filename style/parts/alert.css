@@ -1,0 +1,30 @@
+/* ==========================================================================
+   Flash Messages & Alerts
+   ========================================================================== */
+#flash,
+.bbs-flash-container {
+  margin: 10px 0;
+}
+
+#flash p,
+.bbs-flash {
+  padding: 10px 14px;
+  border-radius: 4px;
+  margin: 0 0 8px 0;
+  font-weight: 500;
+  color: #ffffff;
+}
+
+#flash .success,
+.bbs-flash-success {
+  background-color: #27ae60;
+  color: #ffffff;
+}
+
+#flash .error,
+.bbs-flash-error,
+.ui-state-error,
+.alert-error {
+  background-color: #c0392b;
+  color: #ffffff;
+}

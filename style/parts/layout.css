@@ -1,0 +1,88 @@
+/* ==========================================================================
+   Top Header Bar
+   ========================================================================== */
+.bbs-header {
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+}
+
+.bbs-header-bar {
+  height: 50px;
+  background-color: #2b3e50;
+  background-color: var(--bbs-header-bg, #2b3e50);
+  color: #ffffff;
+  color: var(--bbs-header-text, #ffffff);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 10px;
+  border-bottom: 1px solid rgba(0,0,0,0.2);
+}
+
+.bbs-header-title {
+  font-size: 1.1rem;
+  font-weight: bold;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+  padding-right: 10px;
+  color: #ffffff;
+}
+
+.bbs-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.bbs-header-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 4px;
+  background-color: #1f2d3a;
+  background-color: var(--bbs-header-btn-bg, #1f2d3a);
+  color: #ffffff;
+  border: 1px solid rgba(255,255,255,0.15);
+  cursor: pointer;
+  text-decoration: none;
+  touch-action: manipulation;
+}
+
+.bbs-header-btn:hover, .bbs-header-btn:focus {
+  background-color: #17222c;
+  background-color: var(--bbs-header-btn-hover, #17222c);
+  text-decoration: none;
+}
+
+/* ==========================================================================
+   Main Content Area
+   ========================================================================== */
+.bbs-content {
+  padding: 15px 10px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* ==========================================================================
+   Footer
+   ========================================================================== */
+.bbs-footer,
+.footer {
+  margin-top: 30px;
+  padding: 15px;
+  text-align: center;
+  font-size: 0.85rem;
+  color: #777777;
+  color: var(--bbs-text-muted, #777777);
+  border-top: 1px solid #e0e0e0;
+  border-top-color: var(--bbs-border-light, #e0e0e0);
+}

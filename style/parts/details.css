@@ -1,0 +1,97 @@
+/* ==========================================================================
+   Detail Layouts (Titles, Authors, Series, Tags)
+   ========================================================================== */
+.title_detail,
+.author-detail-row,
+.series_detail,
+.tag_detail {
+  margin-top: 5px;
+}
+
+.title_detail_image {
+  width: 38%;
+  float: left;
+  text-align: center;
+  margin-bottom: 20px;
+}
+.title_detail_image img {
+  max-width: 90%;
+  max-height: 450px;
+  border-radius: 4px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+  border: 1px solid #cccccc;
+}
+
+.title_details {
+  width: 58%;
+  float: right;
+  padding-left: 2%;
+  margin-bottom: 20px;
+}
+
+.author-metadata-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin: 15px 0;
+}
+.author-thumb-col {
+  flex: 0 0 200px;
+  text-align: center;
+}
+.author-thumb-col img {
+  border-radius: 4px;
+  border: 1px solid #cccccc;
+  max-width: 100%;
+}
+.author-info-col {
+  flex: 1;
+  min-width: 250px;
+}
+
+@media (max-width: 768px) {
+  .title_detail_image {
+    width: 100%;
+    float: none;
+    margin: 0 auto 15px auto;
+  }
+  .title_details {
+    width: 100%;
+    float: none;
+    padding-left: 0;
+  }
+  .author-thumb-col {
+    flex: 1 1 100%;
+  }
+}
+
+/* Clearfix */
+.clearfix::after,
+.title_detail::after,
+.author-detail-row::after,
+.series_detail::after,
+.tag_detail::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+
+/* Custom columns table */
+#custom_columns_table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+#custom_columns_table tbody th {
+  border-bottom: 1px dotted #888888;
+  border-right: 1px dotted #888888;
+  text-align: right;
+  vertical-align: top;
+  padding: 8px 12px;
+  width: 30%;
+  font-weight: 600;
+}
+#custom_columns_table td {
+  border-bottom: 1px dotted #888888;
+  padding: 8px 12px;
+}
