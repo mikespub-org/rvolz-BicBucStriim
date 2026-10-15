@@ -97,6 +97,115 @@ class AdminActionsTest extends PHPUnit\Framework\TestCase
     }
 
     #[\PHPUnit\Framework\Attributes\RunInSeparateProcess]
+    public function testDeleteUserInvalidId(): void
+    {
+        $app = TestHelper::getApp();
+        $request = TestHelper::getAuthRequest('DELETE', '/admin/users/abc/');
+
+        $expected = 400;
+        $response = $app->handle($request);
+        $this->assertEquals($expected, $response->getStatusCode());
+    }
+
+    #[\PHPUnit\Framework\Attributes\RunInSeparateProcess]
+    public function testDeleteUserValid(): void
+    {
+        $app = TestHelper::getApp();
+        $bbs = $app->getContainer()->get(BicBucStriim::class);
+        foreach ($bbs->users() as $existing) {
+            if ($existing['username'] === 'testuser') {
+                $bbs->deleteUser($existing['id']);
+                break;
+            }
+        }
+        $user = $bbs->addUser('testuser', 'testpassword');
+        $this->assertNotNull($user);
+        $userId = $user->unbox()->getProperties()['id'];
+
+        $request = TestHelper::getAuthRequest('DELETE', '/admin/users/' . $userId . '/');
+
+        $expected = 'Changes applied';
+        $response = $app->handle($request);
+        $this->assertStringContainsString($expected, (string) $response->getBody());
+
+        // the user must be gone, without leaving a trace behind
+        $this->assertNull($bbs->user($userId));
+    }
+
+    #[\PHPUnit\Framework\Attributes\RunInSeparateProcess]
+    public function testModifyUserValid(): void
+    {
+        $app = TestHelper::getApp();
+        $bbs = $app->getContainer()->get(BicBucStriim::class);
+        foreach ($bbs->users() as $existing) {
+            if ($existing['username'] === 'testuser') {
+                $bbs->deleteUser($existing['id']);
+                break;
+            }
+        }
+        $user = $bbs->addUser('testuser', 'testpassword');
+        $this->assertNotNull($user);
+        $userId = $user->unbox()->getProperties()['id'];
+
+        // same payload the admin_user page sends via js/script.js
+        // (role select values are 'normal'/'admin', mapped by changeUser())
+        $params = [
+            'username' => 'testuser',
+            'password' => 'newpassword',
+            'languages' => 'deu',
+            'tags' => 'poetry',
+            'role' => 'admin',
+        ];
+        $request = TestHelper::getAuthRequest('PUT', '/admin/users/' . $userId . '/', $params);
+
+        $expected = 'Changes applied';
+        $response = $app->handle($request);
+        $result = json_decode((string) $response->getBody(), true);
+        $this->assertStringContainsString($expected, $result['msg']);
+        $this->assertEquals('deu', $result['user']['languages']);
+        $this->assertEquals('poetry', $result['user']['tags']);
+        $this->assertEquals('1', (string) $result['user']['role']);
+
+        // changes must be persisted, without leaving a trace behind
+        $changed = $bbs->user($userId);
+        $this->assertEquals('deu', $changed->languages);
+        $this->assertEquals('poetry', $changed->tags);
+        $this->assertTrue($bbs->deleteUser($userId));
+    }
+
+    #[\PHPUnit\Framework\Attributes\RunInSeparateProcess]
+    public function testModifyUserInvalid(): void
+    {
+        $app = TestHelper::getApp();
+        $bbs = $app->getContainer()->get(BicBucStriim::class);
+        foreach ($bbs->users() as $existing) {
+            if ($existing['username'] === 'testuser') {
+                $bbs->deleteUser($existing['id']);
+                break;
+            }
+        }
+        $user = $bbs->addUser('testuser', 'testpassword');
+        $this->assertNotNull($user);
+        $userId = $user->unbox()->getProperties()['id'];
+
+        // empty password: the model returns null, like UsersTest::testChangeUser
+        $params = [
+            'username' => 'testuser',
+            'password' => '',
+            'languages' => 'deu',
+            'tags' => 'poetry',
+            'role' => '0',
+        ];
+        $request = TestHelper::getAuthRequest('PUT', '/admin/users/' . $userId . '/', $params);
+
+        $expected = 'Error while applying changes';
+        $response = $app->handle($request);
+        $this->assertStringContainsString($expected, (string) $response->getBody());
+
+        $this->assertTrue($bbs->deleteUser($userId));
+    }
+
+    #[\PHPUnit\Framework\Attributes\RunInSeparateProcess]
     public function testAdmin(): void
     {
         $app = TestHelper::getApp();
