@@ -3,6 +3,9 @@ Feature: Admin configures after installation
   As an admin user I get the admin page immediately and can enter the
   Calibre library directory.
 
+  Background: Logging in as the initial administrator
+  Given I login as user "admin"
+
   Scenario: Invalid directory
   When I enter an invalid directory name
   Then I get an error message

@@ -27,6 +27,6 @@ work/
 public/
 rector.php
 build.xml
-behat.yml
+behat.php
 clover.xml
 coverage/

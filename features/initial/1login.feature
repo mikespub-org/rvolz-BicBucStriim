@@ -3,6 +3,7 @@ Feature: Login
   Access to the application requires valid login data.
 
   Scenario: The login page renders
+  When I visit "/login/"
   Then I get the login page
   # Action: MainActions::showLogin, GET /login/ (main-login).
   # Route coverage: tests/Actions/MainActionsTest.php::testAppGetRequest (/login/).
