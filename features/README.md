@@ -2,7 +2,19 @@
 
 Behat uses Mink's BrowserKit HTTP session to exercise the app over HTTP. A `--dry-run` checks step matching only; it does not execute the steps.
 
-The initial setup scenarios in `initial/`, the home-page scenario in `general/home.feature`, and the first four Books list/pagination scenarios in `general/titles.feature` are implemented. Most other generated context steps are still pending. BrowserKit form submissions require `symfony/mime` in the shared Behat tools install.
+## Required Test Setup
+
+Use PHP 8.4 or newer and install the application's Composer dependencies from the repository root. The environment providing the `behat` executable also needs these direct Composer packages:
+
+- `behat/behat`
+- `friends-of-behat/mink-extension` for Behat/Mink integration
+- `behat/mink-browserkit-driver` for the `browserkit_http` session
+- `symfony/http-client` for real HTTP requests
+- `symfony/mime` for BrowserKit form submissions
+
+The Behat/Mink integration and driver pull in Mink, Symfony BrowserKit, and DomCrawler as transitive dependencies; they do not need separate direct requirements. The project uses a shared Behat tools installation, but any tools environment with these packages and a `behat` command on `PATH` will work.
+
+The initial setup scenarios in `initial/`, the home-page scenario in `general/home.feature`, and the first four Books list/pagination scenarios in `general/titles.feature` are implemented. Most other generated context steps are still pending.
 
 `FeatureSetupContext` runs before each scenario in the admin, author, OPDS, and general suites. It sets the isolated app DB's Calibre library path to `tests/fixtures/lib2`, page size to 2, and disables login-required mode. The initial suite is deliberately excluded because it tests the unconfigured installation flow. Set `BBS_DATA_DB` in both the app-server and Behat processes; the hook refuses to run without a writable DB path.
 
