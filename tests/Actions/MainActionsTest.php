@@ -7,8 +7,12 @@ use BicBucStriim\Utilities\RequestUtil;
 use BicBucStriim\Utilities\RouteUtil;
 use BicBucStriim\Utilities\TestHelper;
 use BicBucStriim\Utilities\Mailer;
+use BicBucStriim\Utilities\ResponseUtil;
+use BicBucStriim\Session\AuthServices;
 use Slim\Factory\AppFactory;
 use PHPUnit\Framework\Attributes\CoversClass;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Log\LoggerInterface;
 
 #[CoversClass(MainActions::class)]
 #[CoversClass(DefaultActions::class)]
@@ -213,6 +217,73 @@ class MainActionsTest extends PHPUnit\Framework\TestCase
                 $this->assertEquals($expected, strlen((string) $response->getBody()));
             }
         }
+    }
+
+    public function testPerformLoginRedirectsAfterSuccessfulAuthentication(): void
+    {
+        [$action, $authService, $auth, $responder, $response] = $this->makeLoginAction(true);
+        $authService->expects($this->once())
+            ->method('login')
+            ->with($auth, ['username' => 'admin', 'password' => 'secret']);
+        $action->expects($this->never())->method('render');
+        $responder->expects($this->once())
+            ->method('redirect')
+            ->with('/bbs/');
+
+        $this->assertSame($response, $action->performLogin());
+    }
+
+    public function testPerformLoginRendersLoginPageWhenAuthenticationFails(): void
+    {
+        [$action, $authService, $auth, $responder, $response] = $this->makeLoginAction(false);
+        $authService->expects($this->once())
+            ->method('login')
+            ->with($auth, ['username' => 'admin', 'password' => 'secret'])
+            ->willThrowException(new Exception('Invalid credentials'));
+        $responder->expects($this->never())->method('redirect');
+        $action->expects($this->once())
+            ->method('render')
+            ->with('login.twig', ['page' => ['page' => 'login']])
+            ->willReturn($response);
+
+        $this->assertSame($response, $action->performLogin());
+    }
+
+    private function makeLoginAction(bool $authenticated): array
+    {
+        $auth = TestHelper::getAuth(RequestUtil::getServerRequest());
+        $requester = $this->createStub(RequestUtil::class);
+        $requester->method('post')->willReturn(['username' => 'admin', 'password' => 'secret']);
+        $requester->method('getAuth')->willReturn($auth);
+        $requester->method('isAuthenticated')->willReturn($authenticated);
+        $requester->method('getUserName')->willReturn('admin');
+        $requester->method('getBasePath')->willReturn('/bbs');
+
+        $response = $this->createStub(ResponseInterface::class);
+        $responder = $this->getMockBuilder(ResponseUtil::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['redirect'])
+            ->getMock();
+        $responder->method('redirect')->willReturn($response);
+        $authService = $this->getMockBuilder(AuthServices::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['login'])
+            ->getMock();
+        $action = $this->getMockBuilder(MainActions::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['getAuthService', 'log', 'render', 'buildPage'])
+            ->getMock();
+        $action->method('getAuthService')->willReturn($authService);
+        $action->method('log')->willReturn($this->createStub(LoggerInterface::class));
+        $action->method('render')->willReturn($response);
+        $action->method('buildPage')->willReturn(['page' => 'login']);
+
+        new ReflectionProperty(\BicBucStriim\Actions\DefaultActions::class, 'requester')
+            ->setValue($action, $requester);
+        new ReflectionProperty(\BicBucStriim\Actions\DefaultActions::class, 'responder')
+            ->setValue($action, $responder);
+
+        return [$action, $authService, $auth, $responder, $response];
     }
 
     #[\PHPUnit\Framework\Attributes\RunInSeparateProcess]

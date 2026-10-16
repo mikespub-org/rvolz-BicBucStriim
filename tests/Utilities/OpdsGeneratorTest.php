@@ -13,6 +13,7 @@ use BicBucStriim\Calibre\Calibre;
 use BicBucStriim\Calibre\CalibreFilter;
 use BicBucStriim\Utilities\OpdsGenerator;
 use BicBucStriim\Utilities\L10n;
+use BicBucStriim\Utilities\TestHelper;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(OpdsGenerator::class)]
@@ -20,7 +21,6 @@ class OpdsGeneratorTest extends PHPUnit\Framework\TestCase
 {
     public static $opds_rng;
     public static $data;
-    public static $db2;
     public static $cdb2;
     public static $datadb;
 
@@ -34,16 +34,9 @@ class OpdsGeneratorTest extends PHPUnit\Framework\TestCase
     public function setUp(): void
     {
         self::$opds_rng = dirname(__DIR__, 2) . '/tests/fixtures/opds_catalog_1_1.rng';
-        self::$data = dirname(__DIR__, 2) . '/tests/data';
-        self::$db2 = dirname(__DIR__, 2) . '/tests/fixtures/data2.db';
+        self::$datadb = TestHelper::copyFixtureDatabase();
+        self::$data = dirname(self::$datadb);
         self::$cdb2 = dirname(__DIR__, 2) . '/tests/fixtures/lib2/metadata.db';
-        self::$datadb = dirname(__DIR__, 2) . '/tests/data/data.db';
-        if (file_exists(self::$data)) {
-            system("rm -rf " . self::$data);
-        }
-        mkdir(self::$data);
-        chmod(self::$data, 0o777);
-        copy(self::$db2, self::$datadb);
         $this->bbs = new BicBucStriim(self::$datadb);
         $this->calibre = new Calibre(self::$cdb2);
         $l10n = new L10n('en');
@@ -60,7 +53,7 @@ class OpdsGeneratorTest extends PHPUnit\Framework\TestCase
     {
         $this->calibre = null;
         $this->bbs = null;
-        system("rm -rf " . self::$data);
+        TestHelper::removeFixtureDatabase(self::$datadb);
     }
 
     # Validation helper: validate relaxng

@@ -10,11 +10,6 @@ class CustomColumnsTest extends PHPUnit\Framework\TestCase
     public static $cdb2;
     public static $cdb4;
 
-    public static $db2;
-
-    public static $data;
-    public static $datadb;
-
     /** @var ?Calibre */
     public $calibre;
 
@@ -24,10 +19,6 @@ class CustomColumnsTest extends PHPUnit\Framework\TestCase
         self::$cdb2 = dirname(__DIR__, 2) . '/tests/fixtures/lib2/metadata.db';
         self::$cdb4 = dirname(__DIR__, 2) . '/tests/fixtures/lib4/metadata.db';
 
-        self::$db2 = dirname(__DIR__, 2) . '/tests/fixtures/data2.db';
-
-        self::$data = dirname(__DIR__, 2) . '/tests/data';
-        self::$datadb = dirname(__DIR__, 2) . '/tests/data/data.db';
         $this->calibre = new Calibre(self::$cdb2);
     }
 

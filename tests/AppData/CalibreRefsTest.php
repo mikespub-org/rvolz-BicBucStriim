@@ -12,6 +12,7 @@ use BicBucStriim\AppData\AppTag;
 use BicBucStriim\AppData\BicBucStriim;
 use BicBucStriim\AppData\DataConstants;
 use BicBucStriim\Models\Calibrething;
+use BicBucStriim\Utilities\TestHelper;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 /**
@@ -36,18 +37,8 @@ class CalibreRefsTest extends PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        self::$data = dirname(__DIR__) . '/data';
-        self::$datadb = self::$data . '/data.db';
-        if (file_exists(self::$data)) {
-            system('rm -rf ' . self::$data);
-        }
-        mkdir(self::$data);
-        chmod(self::$data, 0o777);
-
-        // Fresh copy for every test so mutations (R::store) never leak,
-        // and the checked-in library stays untouched.
-        copy(dirname(__DIR__) . '/fixtures/data2.db', self::$datadb);
-        chmod(self::$datadb, 0o666);
+        self::$datadb = TestHelper::copyFixtureDatabase();
+        self::$data = dirname(self::$datadb);
         $this->bbs = new BicBucStriim(self::$datadb, false);
     }
 
@@ -55,9 +46,7 @@ class CalibreRefsTest extends PHPUnit\Framework\TestCase
     {
         // Remove the test DB so nothing is left behind.
         $this->bbs = null;
-        if (file_exists(self::$data)) {
-            system('rm -rf ' . self::$data);
-        }
+        TestHelper::removeFixtureDatabase(self::$datadb);
     }
 
     public function testBookFactoryAndRoundTrip(): void

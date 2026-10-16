@@ -6,16 +6,13 @@ if (!defined('REDBEAN_MODEL_PREFIX')) {
 
 use BicBucStriim\AppData\BicBucStriim;
 use BicBucStriim\Models\User;
+use BicBucStriim\Utilities\TestHelper;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(BicBucStriim::class)]
 #[CoversClass(User::class)]
 class UsersTest extends PHPUnit\Framework\TestCase
 {
-    public static $schema;
-    public static $testschema;
-    public static $db2;
-
     public static $data;
     public static $datadb;
 
@@ -24,19 +21,8 @@ class UsersTest extends PHPUnit\Framework\TestCase
 
     public function setUp(): void
     {
-        self::$schema = dirname(__DIR__, 2) . '/data/schema.sql';
-        self::$testschema = dirname(__DIR__, 2) . '/tests/data/schema.sql';
-        self::$db2 = dirname(__DIR__, 2) . '/tests/fixtures/data2.db';
-
-        self::$data = dirname(__DIR__, 2) . '/tests/data';
-        self::$datadb = dirname(__DIR__, 2) . '/tests/data/data.db';
-        if (file_exists(self::$data)) {
-            system("rm -rf " . self::$data);
-        }
-        mkdir(self::$data);
-        chmod(self::$data, 0o777);
-        copy(self::$db2, self::$datadb);
-        copy(self::$schema, self::$testschema);
+        self::$datadb = TestHelper::copyFixtureDatabase();
+        self::$data = dirname(self::$datadb);
         $this->bbs = new BicBucStriim(self::$datadb, false);
     }
 
@@ -44,7 +30,7 @@ class UsersTest extends PHPUnit\Framework\TestCase
     {
         // Must destruct to clear caches etc.
         $this->bbs = null;
-        system("rm -rf " . self::$data);
+        TestHelper::removeFixtureDatabase(self::$datadb);
     }
 
     public function testAddUser(): void

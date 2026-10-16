@@ -2,6 +2,8 @@
 
 use BicBucStriim\Actions\ActionRegistry;
 use BicBucStriim\Actions\ExtraActions;
+use BicBucStriim\AppData\BicBucStriim;
+use BicBucStriim\AppData\Settings;
 use BicBucStriim\Utilities\RequestUtil;
 use BicBucStriim\Utilities\RouteUtil;
 use BicBucStriim\Utilities\TestHelper;
@@ -88,5 +90,53 @@ class ExtraActionsTest extends TestCase
         $expected = 'Die Glücksritter';
         $response = $app->handle($request);
         $this->assertStringContainsString($expected, (string) $response->getBody());
+    }
+
+    public static function getMetadataCallbacks(): array
+    {
+        return [
+            'author' => ['setAuthorInfo', 'author', 'author', 'name', 'link', 7],
+            'series' => ['setSeriesInfo', 'series', 'series', 'name', 'link', 1],
+            'book' => ['setBookInfo', 'title', 'book', 'title', 'uri', 1],
+        ];
+    }
+
+    #[\PHPUnit\Framework\Attributes\DataProvider('getMetadataCallbacks')]
+    #[\PHPUnit\Framework\Attributes\RunInSeparateProcess]
+    public function testMetadataCallbacksAddLinks(
+        string $callback,
+        string $calibreMethod,
+        string $bbsMethod,
+        string $nameField,
+        string $linkField,
+        int $id
+    ): void {
+        $databasePath = TestHelper::copyFixtureDatabase();
+        $url = 'https://example.org/item';
+        $source = 'Metadata source';
+        try {
+            $app = TestHelper::getApp(0, $databasePath);
+            $settings = $app->getContainer()->get(Settings::class);
+            $settings[Settings::CALIBRE_DIR] = dirname(__DIR__, 2) . '/tests/fixtures/lib2';
+            $app->getContainer()->set(Settings::class, $settings);
+            $action = new ExtraActions($app->getContainer());
+            $record = $action->calibre()->$calibreMethod($id);
+            $this->assertNotNull($record);
+            $name = $record->{$nameField};
+            $bbs = $app->getContainer()->get(BicBucStriim::class);
+            $entity = $bbs->$bbsMethod($id, $name);
+            $this->assertSame([], $entity->getLinks());
+
+            $info = (object) ['source' => $source, $linkField => $url];
+
+            $this->assertTrue($action->$callback($id, $info));
+            $links = $bbs->$bbsMethod($id, $name)->getLinks();
+            $this->assertCount(1, $links);
+            $this->assertSame($url, $links[0]->url);
+            $this->assertSame($source . ' Link', $links[0]->label);
+        } finally {
+            unset($entity, $bbs, $action, $settings, $app, $record);
+            TestHelper::removeFixtureDatabase($databasePath);
+        }
     }
 }

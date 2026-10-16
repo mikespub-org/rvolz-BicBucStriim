@@ -2,8 +2,12 @@
 
 use BicBucStriim\Actions\AdminActions;
 use BicBucStriim\AppData\BicBucStriim;
+use BicBucStriim\AppData\Settings;
+use BicBucStriim\Utilities\RequestUtil;
 use BicBucStriim\Utilities\TestHelper;
 use PHPUnit\Framework\Attributes\CoversClass;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Log\LoggerInterface;
 
 #[CoversClass(AdminActions::class)]
 class AdminActionsTest extends PHPUnit\Framework\TestCase
@@ -227,6 +231,136 @@ class AdminActionsTest extends PHPUnit\Framework\TestCase
         $response = $app->handle($request);
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertStringContainsString($expected, (string) $response->getBody());
+    }
+
+    public static function validPageSizes(): array
+    {
+        return ['minimum' => [1], 'maximum' => [100]];
+    }
+
+    public static function invalidPageSizes(): array
+    {
+        return ['below minimum' => [0], 'above maximum' => [101]];
+    }
+
+    #[\PHPUnit\Framework\Attributes\DataProvider('validPageSizes')]
+    public function testChangeJsonPersistsValidPageSizeInFixtureDatabase(int $pageSize): void
+    {
+        $databasePath = TestHelper::copyFixtureDatabase();
+
+        try {
+            $app = TestHelper::getApp(0, $databasePath);
+            $settings = $app->getContainer()->get(Settings::class);
+            $settings[Settings::CALIBRE_DIR] = dirname(__DIR__, 2) . '/tests/fixtures/lib2';
+            $app->getContainer()->set(Settings::class, $settings);
+            $bbs = $app->getContainer()->get(BicBucStriim::class);
+            $request = TestHelper::getAuthRequest('POST', '/admin/configuration/', [
+                Settings::CALIBRE_DIR => $settings[Settings::CALIBRE_DIR],
+                Settings::KINDLE => 0,
+                Settings::KINDLE_FROM_EMAIL => '',
+                Settings::THUMB_GEN_CLIPPED => 1,
+                Settings::PAGE_SIZE => $pageSize,
+            ]);
+
+            $response = $app->handle($request);
+
+            $this->assertSame(200, $response->getStatusCode());
+            $this->assertSame((string) $pageSize, (string) $bbs->config(Settings::PAGE_SIZE)->val);
+        } finally {
+            unset($response, $bbs, $settings, $app);
+            TestHelper::removeFixtureDatabase($databasePath);
+        }
+    }
+
+    #[\PHPUnit\Framework\Attributes\DataProvider('invalidPageSizes')]
+    public function testChangeJsonRejectsPageSizeOutsideAllowedRange(int $pageSize): void
+    {
+        $settings = new Settings([
+            Settings::CALIBRE_DIR => '/fixture/library',
+            Settings::PAGE_SIZE => 30,
+        ]);
+        $posted = [
+            Settings::CALIBRE_DIR => '/fixture/library',
+            Settings::KINDLE => 0,
+            Settings::KINDLE_FROM_EMAIL => '',
+            Settings::THUMB_GEN_CLIPPED => 1,
+            Settings::PAGE_SIZE => $pageSize,
+        ];
+        [$action, $bbs] = $this->makeConfigurationAction($posted, $settings);
+
+        $bbs->expects($this->never())->method('saveConfigs');
+        $action->expects($this->once())
+            ->method('render')
+            ->with('admin_configuration.twig', $this->callback(
+                static fn(array $data): bool => in_array(4, $data['errors'] ?? [], true)
+            ));
+
+        $action->changeJson();
+
+        $this->assertSame(30, $settings[Settings::PAGE_SIZE]);
+    }
+
+    public function testChangeJsonRejectsKindleWithoutSenderEmail(): void
+    {
+        $settings = new Settings([
+            Settings::CALIBRE_DIR => '/fixture/library',
+            Settings::PAGE_SIZE => 30,
+        ]);
+        $posted = [
+            Settings::CALIBRE_DIR => '/fixture/library',
+            Settings::KINDLE => 1,
+            Settings::KINDLE_FROM_EMAIL => '',
+            Settings::THUMB_GEN_CLIPPED => 1,
+            Settings::PAGE_SIZE => 30,
+        ];
+        [$action, $bbs] = $this->makeConfigurationAction($posted, $settings);
+
+        $bbs->expects($this->never())->method('saveConfigs');
+        $action->expects($this->once())
+            ->method('render')
+            ->with('admin_configuration.twig', $this->callback(
+                static fn(array $data): bool => in_array(5, $data['errors'] ?? [], true)
+            ));
+
+        $action->changeJson();
+
+        $this->assertSame(0, $settings[Settings::KINDLE]);
+    }
+
+    private function makeConfigurationAction(array $posted, Settings $settings): array
+    {
+        $requester = $this->createStub(RequestUtil::class);
+        $requester->method('isAdmin')->willReturn(true);
+        $requester->method('post')->willReturn($posted);
+
+        $bbs = $this->getMockBuilder(BicBucStriim::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['saveConfigs'])
+            ->getMock();
+        $action = $this->getMockBuilder(AdminActions::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods([
+                'settings', 'log', 'render', 'buildPage', 'getMessageString',
+                'bbs', 'setSettings', 'hasValidCalibreDir', 'buildMailers',
+                'buildTitleTimeSortOptions', 'buildTemplatesDirs',
+            ])
+            ->getMock();
+        $action->method('settings')->willReturn($settings);
+        $action->method('log')->willReturn($this->createStub(LoggerInterface::class));
+        $action->method('render')->willReturn($this->createStub(ResponseInterface::class));
+        $action->method('buildPage')->willReturn([]);
+        $action->method('getMessageString')->willReturn('message');
+        $action->method('bbs')->willReturn($bbs);
+        $action->method('setSettings')->willReturn($settings);
+        $action->method('hasValidCalibreDir')->willReturn(true);
+        $action->method('buildMailers')->willReturn([]);
+        $action->method('buildTitleTimeSortOptions')->willReturn([]);
+        $action->method('buildTemplatesDirs')->willReturn([]);
+
+        new ReflectionProperty(\BicBucStriim\Actions\DefaultActions::class, 'requester')
+            ->setValue($action, $requester);
+
+        return [$action, $bbs];
     }
 
     #[\PHPUnit\Framework\Attributes\RunInSeparateProcess]

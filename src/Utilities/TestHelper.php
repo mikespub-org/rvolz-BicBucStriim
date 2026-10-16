@@ -9,6 +9,8 @@ use Psr\Http\Message\ResponseFactoryInterface;
 use Slim\Factory\AppFactory;
 use Slim\Interfaces\RouteCollectorInterface;
 
+final class FixtureDatabaseException extends \RuntimeException {}
+
 class TestHelper
 {
     protected static function baseDir()
@@ -16,14 +18,63 @@ class TestHelper
         return dirname(__DIR__, 2);
     }
 
+    protected static function useDataPath($app, ?string $dataPath): void
+    {
+        if ($dataPath !== null) {
+            $app->getContainer()->set(
+                BicBucStriim::class,
+                new BicBucStriim($dataPath)
+            );
+        }
+    }
+
+    public static function copyFixtureDatabase(): string
+    {
+        $directory = sys_get_temp_dir() . '/bbs-fixture-' . bin2hex(random_bytes(6));
+        mkdir($directory);
+        $databasePath = $directory . '/data.db';
+        $databaseCopied = copy(static::baseDir() . '/tests/fixtures/data2.db', $databasePath);
+        $schemaCopied = copy(static::baseDir() . '/data/schema.sql', $directory . '/schema.sql');
+        if (!$databaseCopied || !$schemaCopied) {
+            static::removeFixtureDatabase($databasePath);
+            throw new FixtureDatabaseException('Unable to copy the test database fixture.');
+        }
+        return $databasePath;
+    }
+
+    public static function removeFixtureDatabase(string $databasePath): void
+    {
+        $directory = dirname($databasePath);
+        if (basename($databasePath) !== 'data.db' || !str_starts_with(basename($directory), 'bbs-fixture-')) {
+            throw new \InvalidArgumentException('Only fixture database copies can be removed.');
+        }
+
+        if (is_dir($directory)) {
+            $iterator = new \RecursiveIteratorIterator(
+                new \RecursiveDirectoryIterator($directory, \FilesystemIterator::SKIP_DOTS),
+                \RecursiveIteratorIterator::CHILD_FIRST
+            );
+            foreach ($iterator as $entry) {
+                if ($entry->isDir()) {
+                    rmdir($entry->getPathname());
+                } else {
+                    unlink($entry->getPathname());
+                }
+            }
+            rmdir($directory);
+        }
+    }
+
     /**
      * Get Slim app with bootstrap = for full actions
      * @param mixed $login
+     * @param ?string $dataPath optional path to an isolated, initialized BBS database
      * @return mixed
      */
-    public static function getApp($login = 0)
+    public static function getApp($login = 0, ?string $dataPath = null)
     {
         $app = require static::baseDir() . '/config/bootstrap.php';
+        static::useDataPath($app, $dataPath);
         $settings = $app->getContainer()->get(Settings::class);
         // will be overridden by own config middleware
         $settings->must_login = $login;
@@ -32,13 +83,15 @@ class TestHelper
     }
 
     /**
-     * Make hasapi configurable via environment variable
+     * Make hasapi configurable via environment variable.
+     * @param ?string $dataPath optional path to an isolated, initialized BBS database
      */
-    public static function getAppWithApi($hasapi = true)
+    public static function getAppWithApi($hasapi = true, ?string $dataPath = null)
     {
         // we need to set this before bootstrap to get api routes
         putenv("BBS_HAS_API=$hasapi");
         $app = require static::baseDir() . '/config/bootstrap.php';
+        static::useDataPath($app, $dataPath);
         $settings = $app->getContainer()->get(Settings::class);
         $settings['hasapi'] = $hasapi;
         $settings->must_login = 0;
@@ -66,14 +119,7 @@ class TestHelper
         $app->getContainer()->set(ResponseFactoryInterface::class, fn() => $app->getResponseFactory());
         $app->getContainer()->set(RouteCollectorInterface::class, fn() => $app->getRouteCollector());
 
-        // Sandbox: replace the live BBS DB with a fresh one so tests run
-        // against a user-less first-launch state without mutating data/data.db.
-        if ($dataPath !== null) {
-            $app->getContainer()->set(
-                BicBucStriim::class,
-                new BicBucStriim($dataPath)
-            );
-        }
+        static::useDataPath($app, $dataPath);
 
         return $app;
     }

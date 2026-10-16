@@ -127,36 +127,40 @@ class ConfigMiddlewareTest extends PHPUnit\Framework\TestCase
         // Sandbox app with a fixture-booted DB whose stored db_version is
         // downgraded to an old version, so OwnConfigMiddleware must answer 500
         // with 'Old configuration database'.
-        $dir = sys_get_temp_dir() . '/bbs-old-' . uniqid();
-        mkdir($dir);
-        copy(dirname(__DIR__) . '/fixtures/data2.db', $dir . '/data.db');
-        $app = TestHelper::getAppWithContainer($dir . '/data.db');
-        $bbs = $app->getContainer()->get(BicBucStriim::class);
-        // Downgrade the stored db_version so OwnConfigMiddleware sees STATUS_OLD.
-        $bbs->mydb->exec("UPDATE config SET val = '1' WHERE name = 'db_version'");
+        $databasePath = TestHelper::copyFixtureDatabase();
+        try {
+            $app = TestHelper::getAppWithContainer($databasePath);
+            $bbs = $app->getContainer()->get(BicBucStriim::class);
+            // Downgrade the stored db_version so OwnConfigMiddleware sees STATUS_OLD.
+            $bbs->mydb->exec("UPDATE config SET val = '1' WHERE name = 'db_version'");
 
-        $request = RequestUtil::getServerRequest('GET', '/');
-        $handler = TestHelper::getHandler($app, 'HANDLED');
-        $middleware = new OwnConfigMiddleware($app->getContainer(), Settings::getKnownConfigs());
+            $request = RequestUtil::getServerRequest('GET', '/');
+            $handler = TestHelper::getHandler($app, 'HANDLED');
+            $middleware = new OwnConfigMiddleware($app->getContainer(), Settings::getKnownConfigs());
 
-        $response = $middleware->process($request, $handler);
-        $this->assertSame(500, $response->getStatusCode());
-        $this->assertStringContainsString('Old configuration database', (string) $response->getBody());
+            $response = $middleware->process($request, $handler);
+            $this->assertSame(500, $response->getStatusCode());
+            $this->assertStringContainsString('Old configuration database', (string) $response->getBody());
+        } finally {
+            unset($response, $middleware, $handler, $request, $bbs, $app);
+            TestHelper::removeFixtureDatabase($databasePath);
+        }
     }
 
     public function testOwnConfigOkPasses(): void
     {
-        // The default test container's BBS DB (tests/data/data.db via
-        // container.php) is schema-current: the request must pass through.
-        $app = TestHelper::getAppWithContainer();
-        // No sandbox DB => the live data/data.db stays untouched; this test
-        // only reads from it and the response must be passed through.
+        $databasePath = TestHelper::copyFixtureDatabase();
+        try {
+            $app = TestHelper::getAppWithContainer($databasePath);
+            $request = RequestUtil::getServerRequest('GET', '/');
+            $handler = TestHelper::getHandler($app, 'HANDLED');
+            $middleware = new OwnConfigMiddleware($app->getContainer(), Settings::getKnownConfigs());
 
-        $request = RequestUtil::getServerRequest('GET', '/');
-        $handler = TestHelper::getHandler($app, 'HANDLED');
-        $middleware = new OwnConfigMiddleware($app->getContainer(), Settings::getKnownConfigs());
-
-        $response = $middleware->process($request, $handler);
-        $this->assertStringContainsString('HANDLED', (string) $response->getBody());
+            $response = $middleware->process($request, $handler);
+            $this->assertStringContainsString('HANDLED', (string) $response->getBody());
+        } finally {
+            unset($response, $middleware, $handler, $request, $app);
+            TestHelper::removeFixtureDatabase($databasePath);
+        }
     }
 }

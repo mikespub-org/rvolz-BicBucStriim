@@ -17,4 +17,4 @@ Feature: Clip thumbnails
     When I reload the configuration page
     Then the "thumb_gen_clipped" slider is set to "No"
     # Actions: AdminActions::configuration, GET /admin/configuration/ (admin-config); AdminActions::changeJson, POST /admin/configuration/ (admin-config-post).
-    # No PHPUnit test currently submits the configuration form.
+    # The PHPUnit configuration tests cover page-size persistence and validation, not persistence of this thumbnail setting.

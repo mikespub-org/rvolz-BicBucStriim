@@ -1,6 +1,7 @@
 Feature: Series metadata
 
   Admin metadata endpoints support notes and links associated with a series.
+  # Separate EPUB Loader callback coverage: tests/Actions/ExtraActionsTest.php::testMetadataCallbacksAddLinks checks link creation for author, series, and book callbacks; it does not exercise the loader request flow.
 
   Background: Acting as an administrator
     Given I am logged in as "admin"

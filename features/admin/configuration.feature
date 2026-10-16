@@ -18,7 +18,7 @@ Feature: Application configuration
     Then the title date sort is "Publication date"
     And the page size is 5
     # Actions: AdminActions::configuration, GET /admin/configuration/ (admin-config); AdminActions::changeJson, POST /admin/configuration/ (admin-config-post).
-    # No PHPUnit test currently exercises AdminActions::changeJson persistence.
+    # PHPUnit: tests/Actions/AdminActionsTest.php::testChangeJsonPersistsValidPageSizeInFixtureDatabase covers page-size persistence at the allowed boundaries.
 
   Scenario: Reject a page size outside the allowed range
     When I set the page size to 0
@@ -27,6 +27,7 @@ Feature: Application configuration
     And I see a page-size validation error
     # Action: AdminActions::changeJson, POST /admin/configuration/ (admin-config-post).
     # AdminActions::changeJson accepts page sizes from 1 through 100.
+    # PHPUnit: tests/Actions/AdminActionsTest.php::testChangeJsonRejectsPageSizeOutsideAllowedRange covers values 0 and 101.
 
   Scenario: Require a sender address when enabling Kindle
     When I enable Send-to-Kindle
@@ -36,3 +37,4 @@ Feature: Application configuration
     And I see a sender-email validation error
     # Action: AdminActions::changeJson, POST /admin/configuration/ (admin-config-post).
     # AdminActions::changeJson validates the sender email when Kindle is enabled.
+    # PHPUnit: tests/Actions/AdminActionsTest.php::testChangeJsonRejectsKindleWithoutSenderEmail covers an empty sender address.
