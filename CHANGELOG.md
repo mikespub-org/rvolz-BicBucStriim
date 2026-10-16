@@ -5,7 +5,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [4.x.x] - 20xx-xx-xx
+
+## [4.2.1] - 2026-10-16 Refactor + fix issues
+### Added
+- Add missing unit tests referenced in feature scenarios (dev)
 ### Changed
+- Update gherkin feature files based on current code base (dev)
 - Fix editing author notes after modernizing the templates
 - Fix authentication for editing metadata when login is not required
 - Split CSS into parts with imports for maintenance - see PR #14 by @Simounet
@@ -13,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Refactor routes, gatekeeper and middleware to be more framework-agnostic
 - Fix swagger-ui template to send right accept header
 ### Removed
+- Drop old capybara cucumber support + step definitions (dev)
 - Drop deprecated methods for releases older than 4.2.0
 
 ## [4.1.4] - 2026-10-10 Modernize templates

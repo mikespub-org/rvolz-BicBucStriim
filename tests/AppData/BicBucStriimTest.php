@@ -13,6 +13,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 #[CoversClass(BicBucStriim::class)]
 #[CoversClass(Calibrething::class)]
 #[CoversClass(Config::class)]
+#[CoversClass(TestHelper::class)]
 class BicBucStriimTest extends PHPUnit\Framework\TestCase
 {
     public static $data;
