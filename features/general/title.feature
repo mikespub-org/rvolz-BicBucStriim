@@ -16,8 +16,7 @@ Feature: Title details
     And I click on list item "Glücksritter"
     And the "Books" details page 4 for "Die Glücksritter" appears
     Then clicking on "Download" reveals the download options
-    And clicking on download format "EPUB" starts the download for file
-      "Die Glucksritter - Joseph von Eichendorff.epub" and length 10175
+    And clicking on download format "EPUB" starts the download for file "Die Glucksritter - Joseph von Eichendorff.epub" and length 10175
     # Actions: MainActions::title, GET /titles/{id}/ (main-title); MainActions::book, GET /titles/{id}/file/{file} (main-book).
     # Route/file smoke coverage: tests/Actions/MainActionsTest.php::testAppGetRequest
     # for /titles/{id}/file/{file}; its fixture is a different book and does not

@@ -52,7 +52,8 @@ $builder->addDefinitions([
         return new AuthServices();
     },
     BicBucStriim::class => function (ContainerInterface $c) {
-        $dataPath = 'data/data.db';
+        $settings = $c->get('settings');
+        $dataPath = $settings['dataDbPath'] ?? 'data/data.db';
         # Freeze (true) DB schema before release! Set to false for DB development.
         $bbs = new BicBucStriim($dataPath, true);
         if (!$bbs->dbOk()) {

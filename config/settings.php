@@ -17,6 +17,8 @@ $appname = getenv('BBS_APP_NAME') ?: Settings::APP_NAME;
 $appversion = Settings::APP_VERSION;
 # Base path - null means undefined, empty '' or '/bbs' etc. mean predefined
 $basepath = getenv('BBS_BASE_PATH') ?: null;
+# SQLite database file path
+$dataDbPath = getenv('BBS_DATA_DB') ?: 'data/data.db';
 # Run mode
 $mode = !empty(getenv('BBS_DEBUG_MODE')) ? 'debug' : 'production';
 #$mode = 'debug';
@@ -40,6 +42,7 @@ return [
     'appname' => $appname,
     'appversion' => $appversion,
     'basepath' => $basepath,
+    'dataDbPath' => $dataDbPath,
     'globalSettings' => $settings,
     'knownConfigs' => $knownConfigs,
     'mode' => $mode,
