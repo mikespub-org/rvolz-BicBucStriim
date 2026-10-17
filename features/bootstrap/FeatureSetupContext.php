@@ -4,6 +4,10 @@ use Behat\Behat\Context\Context;
 use Behat\Hook\BeforeScenario;
 use BicBucStriim\AppData\Settings;
 
+/**
+ * Summary of FeatureSetupContext
+ * @suppress PHP0413
+ */
 class FeatureSetupContext implements Context
 {
     #[BeforeScenario]

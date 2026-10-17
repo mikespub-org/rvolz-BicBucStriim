@@ -14,6 +14,10 @@ use DOMXPath;
 use ZipArchive;
 use Exception;
 
+/**
+ * Summary of EPub
+ * @suppress PHP0418
+ */
 class EPub
 {
     public $xml; //FIXME change to protected, later

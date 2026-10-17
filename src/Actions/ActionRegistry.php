@@ -26,14 +26,14 @@ class ActionRegistry
     private $prefixes = [];
     /** @var array<class-string, DefaultActions> */
     private $instances;
-    /** @var ?\Psr\Container\ContainerInterface */
+    /** @var ?Container */
     private $container;
     /** @var array<string, RouteEntry> */
     private $routeMap = [];
 
     /**
      * Summary of __construct
-     * @param ?\Psr\Container\ContainerInterface $container
+     * @param ?Container $container
      */
     public function __construct(?Container $container = null)
     {

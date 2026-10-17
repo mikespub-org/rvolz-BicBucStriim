@@ -157,10 +157,8 @@ class ExtraActions extends DefaultActions
         $handler = new RequestHandler($gConfig, LoaderActions::class, $cacheDir);
         $result = $handler->request($action, $dbNum, $urlParams, $urlPath);
 
-        if (method_exists($handler, 'isDone')) {
-            if ($handler->isDone()) {
-                return $this->responder->done();
-            }
+        if ($handler->isDone()) {
+            return $this->responder->done();
         }
 
         // render a json response if hasapi with Accept header - see DefaultActions::render()
@@ -198,7 +196,7 @@ class ExtraActions extends DefaultActions
         $result = true;
         if (!empty($authorInfo->image) && str_starts_with($authorInfo->image, 'http')) {
             $image = $appentity->saveThumbnail($authorInfo->image, $clipped);
-            $result = $result && ($image ? true : false);
+            $result = $image ? true : false;
         }
         if (!empty($authorInfo->link) && str_starts_with($authorInfo->link, 'http')) {
             // check for duplicate links
@@ -247,7 +245,7 @@ class ExtraActions extends DefaultActions
         $result = true;
         if (!empty($seriesInfo->image) && str_starts_with($seriesInfo->image, 'http')) {
             $image = $appentity->saveThumbnail($seriesInfo->image, $clipped);
-            $result = $result && ($image ? true : false);
+            $result = $image ? true : false;
         }
         if (!empty($seriesInfo->link) && str_starts_with($seriesInfo->link, 'http')) {
             // check for duplicate links
@@ -296,7 +294,7 @@ class ExtraActions extends DefaultActions
         $result = true;
         if (!empty($bookInfo->cover) && str_starts_with($bookInfo->cover, 'http')) {
             $image = $appentity->saveThumbnail($bookInfo->cover, $clipped);
-            $result = $result && ($image ? true : false);
+            $result = $image ? true : false;
         }
         if (!empty($bookInfo->uri) && str_starts_with($bookInfo->uri, 'http')) {
             // check for duplicate links

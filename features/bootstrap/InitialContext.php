@@ -6,6 +6,7 @@ use Behat\MinkExtension\Context\RawMinkContext;
 
 /**
  * Defines application features from the specific context.
+ * @suppress PHP0413
  */
 class InitialContext extends RawMinkContext
 {

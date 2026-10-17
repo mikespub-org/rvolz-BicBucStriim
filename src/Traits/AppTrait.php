@@ -50,7 +50,7 @@ trait AppTrait
 
     /**
      * Get application log
-     * @return \Psr\Log\LoggerInterface
+     * @return LoggerInterface
      */
     public function log()
     {
@@ -130,7 +130,7 @@ trait AppTrait
 
     /**
      * Get response factory
-     * @return \Psr\Http\Message\ResponseFactoryInterface
+     * @return ResponseFactoryInterface
      */
     public function getResponseFactory()
     {

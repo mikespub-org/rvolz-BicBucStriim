@@ -47,6 +47,9 @@ if (isset($settings['basepath'])) {
 $config = require __DIR__ . '/config.php';
 $config($app, $settings);
 
+/**
+ * @suppress PHP0418
+ */
 # Store $globalSettings in container for everything
 $app->getContainer()->set(Settings::class, $settings['globalSettings']);
 

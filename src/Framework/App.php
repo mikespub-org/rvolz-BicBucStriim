@@ -108,7 +108,7 @@ class App implements \Psr\Http\Server\RequestHandlerInterface
      *
      * @param array<string, RouteEntry> $routeMap
      */
-    private function buildRouter(array $routeMap): \FastRoute\Dispatcher
+    private function buildRouter(array $routeMap): Dispatcher
     {
         return \FastRoute\simpleDispatcher(function (\FastRoute\RouteCollector $r) use ($routeMap) {
             foreach ($routeMap as $route) {

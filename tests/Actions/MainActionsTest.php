@@ -278,9 +278,9 @@ class MainActionsTest extends PHPUnit\Framework\TestCase
         $action->method('render')->willReturn($response);
         $action->method('buildPage')->willReturn(['page' => 'login']);
 
-        new ReflectionProperty(\BicBucStriim\Actions\DefaultActions::class, 'requester')
+        new ReflectionProperty(DefaultActions::class, 'requester')
             ->setValue($action, $requester);
-        new ReflectionProperty(\BicBucStriim\Actions\DefaultActions::class, 'responder')
+        new ReflectionProperty(DefaultActions::class, 'responder')
             ->setValue($action, $responder);
 
         return [$action, $authService, $auth, $responder, $response];

@@ -310,7 +310,7 @@ class LoginMiddleware extends DefaultMiddleware
             if (empty($auth_array1) || strcasecmp('Basic', $auth_array1[0]) != 0) {
                 return null;
             }
-            if (sizeof($auth_array1) != 2 || !isset($auth_array1[1])) {
+            if (sizeof($auth_array1) != 2 || empty($auth_array1[1])) {
                 return null;
             }
             $auth = base64_decode($auth_array1[1]);
