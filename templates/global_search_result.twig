@@ -5,13 +5,7 @@
 
 {% block content %}
 <div style="margin-bottom: 20px;">
-    <form action="{{page.rot}}/search/" method="get">
-        <div data-role="fieldcontain">
-            <label for="search" class="visually-hidden">{{page.glob.l10n.pagination_search_lbl}}</label>
-            <input type="search" name="search" id="search" value="{{search}}"
-                   placeholder="{{page.glob.l10n.pagination_search_ph}}" autofocus="true"/>
-        </div>
-    </form>
+    {% include 'search.part.twig' %}
 </div>
 
 <div class="bbs-search-results">

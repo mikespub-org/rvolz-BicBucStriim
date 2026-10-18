@@ -1,0 +1,11 @@
+<form action="{{page.rot}}/search/" method="get">
+    <div data-role="fieldcontain">
+        <label for="search" class="visually-hidden">{{page.glob.l10n.pagination_search_lbl}}</label>
+        <input type="search" name="search" id="search" value="{{search}}"
+               placeholder="{{page.glob.l10n.pagination_search_ph}}" autofocus="true"/>
+    </div>
+    <button type="submit" class="bbs-btn bbs-btn-primary bbs-btn-block">
+        <svg class="bbs-icon" aria-hidden="true"><use xlink:href="#bbs-icon-search" href="#bbs-icon-search"/></svg>
+        {{page.glob.l10n.pagination_search}}
+    </button>
+</form>
