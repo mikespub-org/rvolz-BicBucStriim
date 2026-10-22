@@ -27,7 +27,6 @@
 <div data-role="page" data-title="{{ page.title }}" {% block pid %}{% endblock %}>
 
     <header class="bbs-header" data-role="header">
-        {% block leftpanel %}{% endblock %}
         <div class="bbs-header-bar">
             <p class="bbs-header-title">
                 {{ page.title }}
@@ -85,6 +84,7 @@
         {% include "footer.twig" %}
     </footer>
 
+    {% block leftpanel %}{% endblock %}
     {% block rightpanel %}{% endblock %}
 </div>
 <!-- page -->
