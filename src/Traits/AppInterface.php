@@ -73,6 +73,12 @@ interface AppInterface
     public function getResponseFactory();
 
     /**
+     * Get action registry
+     * @return \BicBucStriim\Actions\ActionRegistry
+     */
+    public function getActionRegistry();
+
+    /**
      * Get auth services
      * @return \BicBucStriim\Session\AuthServices
      */

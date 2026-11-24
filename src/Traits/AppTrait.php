@@ -11,6 +11,7 @@
 
 namespace BicBucStriim\Traits;
 
+use BicBucStriim\Actions\ActionRegistry;
 use BicBucStriim\AppData\BicBucStriim;
 use BicBucStriim\AppData\Settings;
 use BicBucStriim\Calibre\Calibre;
@@ -135,6 +136,15 @@ trait AppTrait
     public function getResponseFactory()
     {
         return $this->container(ResponseFactoryInterface::class);
+    }
+
+    /**
+     * Get action registry
+     * @return ActionRegistry
+     */
+    public function getActionRegistry()
+    {
+        return $this->container(ActionRegistry::class);
     }
 
     /**

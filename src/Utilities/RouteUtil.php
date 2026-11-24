@@ -4,6 +4,7 @@ namespace BicBucStriim\Utilities;
 
 use BicBucStriim\Framework\RoleGuard;
 use BicBucStriim\Utilities\RouteEntry;
+use Exception;
 
 /**
  * Class RouteUtil provides route utilities for callables and middleware
@@ -107,5 +108,93 @@ class RouteUtil
                 $routeObj = $routeObj->add($middleware);
             }
         }
+    }
+
+    /**
+     * Summary of getPathFromRouteMap
+     * @param array<string, RouteEntry> $routeMap from action registry
+     * @param array<string, mixed> $params
+     * @return string
+     */
+    public static function getPathFromRouteMap(array $routeMap, string $routeName, array $params = [])
+    {
+        $params = array_filter($params, function ($val) {
+            if (empty($val) && strval($val) !== '0') {
+                return false;
+            }
+            return true;
+        });
+        if (empty($routeName)) {
+            return self::addQueryString('/', $params);
+        }
+        $routeEntry = $routeMap[$routeName] ?? null;
+        if (empty($routeEntry)) {
+            throw new Exception('Invalid route name ' . htmlspecialchars($routeName));
+        }
+        $path = $routeEntry->path;
+        $found = [];
+        // check and replace path params + support custom patterns - see nikic/fast-route
+        $count = preg_match_all("~\{(\w+(|:[^}]+))\}~", $path, $found);
+        if ($count === false) {
+            throw new Exception('Invalid path for route name ' . htmlspecialchars($routeName));
+        }
+        // no path parameters found in route - return what is left
+        if ($count === 0) {
+            return self::addQueryString($path, $params);
+        }
+        // start checking path parameters
+        if (in_array('ignore', $found[1])) {
+            $params['ignore'] ??= 'ignore';
+        }
+        if (count($found[1]) > count($params)) {
+            throw new Exception('Missing params for route name ' . htmlspecialchars($routeName));
+        }
+        foreach ($found[1] as $param) {
+            $pattern = '';
+            if (str_contains($param, ':')) {
+                [$param, $pattern] = explode(':', $param);
+            }
+            if (!isset($params[$param])) {
+                throw new Exception('Missing param for route name ' . htmlspecialchars($routeName) . ': ' . rawurlencode($param));
+            }
+            $value = $params[$param];
+            // @todo support ctype_upper() pattern for first letter - see opdsBy*NamesForInitial
+            if (!empty($pattern) && !preg_match('/^' . $pattern . '$/', (string) $value)) {
+                throw new Exception('Invalid param for route name ' . htmlspecialchars($routeName) . ': ' . rawurlencode($param));
+            }
+            /**
+            if (in_array($param, ['title', 'author', 'ignore'])) {
+                $value = rawurlencode($value);
+            }
+            // search query or first letter
+            if (in_array($param, ['search', 'initial'])) {
+                $value = rawurlencode($value);
+            }
+             */
+            // extra file or path
+            if (in_array($param, ['file', 'path']) && !str_contains($value, '%')) {
+                $value = implode('/', array_map(rawurlencode(...), explode('/', $value)));
+            }
+            if (!empty($pattern)) {
+                $path = str_replace('{' . $param . ':' . $pattern . '}', "$value", $path);
+            } else {
+                $path = str_replace('{' . $param . '}', "$value", $path);
+            }
+            unset($params[$param]);
+        }
+        return self::addQueryString($path, $params);
+    }
+
+    /**
+     * Summary of addQueryString
+     * @param array<string, mixed> $params
+     * @return string
+     */
+    protected static function addQueryString(string $path, array $params = [])
+    {
+        if (empty($params)) {
+            return $path;
+        }
+        return $path . '?' . http_build_query($params, '', null, PHP_QUERY_RFC3986);
     }
 }

@@ -1,5 +1,8 @@
 <?php
 
+use BicBucStriim\Actions\ActionRegistry;
+use BicBucStriim\Actions\MainActions;
+use BicBucStriim\Actions\OpdsActions;
 use BicBucStriim\Framework\RoleGuard;
 use BicBucStriim\Utilities\RequestUtil;
 use BicBucStriim\Utilities\RouteEntry;
@@ -248,5 +251,38 @@ class RouteUtilTest extends PHPUnit\Framework\TestCase
                 return $response;
             }
         };
+    }
+
+    public static function getExpectedRoutes()
+    {
+        include_once dirname(__DIR__) . '/Actions/MainActionsTest.php';
+        include_once dirname(__DIR__) . '/Actions/OpdsActionsTest.php';
+        return MainActionsTest::getExpectedRoutes() + OpdsActionsTest::getExpectedRoutes();
+    }
+
+    #[\PHPUnit\Framework\Attributes\DataProvider('getExpectedRoutes')]
+    public function testGetPathFromRouteMap($input, $output, $methods, $pattern, ...$args): void
+    {
+        $this->assertGreaterThan(0, count($args));
+        if (is_string($methods) && $methods == 'GET') {
+            $expected = $pattern;
+            foreach ($input as $name => $value) {
+                $expected = str_replace('{' . $name . '}', (string) $value, $expected);
+            }
+            $registry = new ActionRegistry();
+            $registry->register(MainActions::class);
+            $registry->register(OpdsActions::class);
+            $routeMap = $registry->getRouteMap();
+            // get named data set in dataProvider
+            $routeName = $this->dataName();
+            $path = RouteUtil::getPathFromRouteMap($routeMap, $routeName, $input);
+            // no search string in path here - keep as query param
+            if ($routeName == 'opds-search-page') {
+                $params = $input;
+                unset($params['page']);
+                $expected .= '?' . http_build_query($params);
+            }
+            $this->assertEquals($expected, $path);
+        }
     }
 }
