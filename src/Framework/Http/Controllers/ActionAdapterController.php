@@ -30,7 +30,7 @@ class ActionAdapterController extends Controller
     ): LaravelResponse {
         // 1. Get the target action callable from the route defaults.
         $route = $request->route();
-        $actionCallable = $route->defaults['action_callable'];
+        $actionCallable = $route->defaults['_bbs_callable'];
 
         // 2. Convert the Laravel Request to a PSR-7 Request.
         $psrRequest = $psrFactory->createRequest($request);
@@ -51,15 +51,15 @@ class ActionAdapterController extends Controller
      * Resolve the PSR-15 middleware for the current route.
      *
      * Laravel has no native per-route middleware, so ActionServiceProvider carries
-     * both the group gatekeeper flag (action_gated, e.g. Admin/Metadata/Extra) and
-     * the route-level middleware (action_middleware, e.g. RoleGuard::class on
+     * both the group gatekeeper flag (_bbs_gated, e.g. Admin/Metadata/Extra) and
+     * the route-level middleware (_bbs_middleware, e.g. RoleGuard::class on
      * main-author-note) as route defaults. resolveForRoute() is the single
      * spelling of that policy shared with the custom App and Symfony.
      */
     private function resolveRouteMiddleware($route, MiddlewareResolver $middlewareResolver): array
     {
-        $gated = !empty($route->defaults['action_gated']);
-        $routeMiddleware = $route->defaults['action_middleware'] ?? [];
+        $gated = !empty($route->defaults['_bbs_gated']);
+        $routeMiddleware = $route->defaults['_bbs_middleware'] ?? [];
         return $middlewareResolver->resolveForRoute($gated, $routeMiddleware);
     }
 

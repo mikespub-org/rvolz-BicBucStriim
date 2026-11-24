@@ -26,7 +26,7 @@ return function ($app, $settings, $gatekeeper) {
 
     // Single source of truth for which action classes to load and their URL
     // prefixes, honoring the 'hasapi' setting.
-    foreach (ActionLoader::getActionDescriptors($globalSettings) as [$class, $prefix]) {
+    foreach (ActionLoader::getActionDescriptors($globalSettings) as $class => $prefix) {
         $registry->register($class, $prefix);
     }
 

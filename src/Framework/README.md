@@ -60,7 +60,7 @@ Symfony integration leverages its powerful service container and controller-base
 - **Rendering**: `Framework/LaravelRenderer` is used. It implements `RendererInterface` and, like the `TwigRenderer`, acts as a wrapper around a `\Twig\Environment` instance that has been configured within the `ActionServiceProvider`.
 - **Execution**: All registered routes point to a single controller method: `Framework/Http/Controllers/ActionAdapterController::handle`. This adapter controller does the following:
     1.  Converts the incoming Laravel `Request` to a PSR-7 `Request`.
-    2.  Resolves the route's middleware via the shared `MiddlewareResolver::resolveForRoute($gated, $middleware)` (`action_gated` flag + `action_middleware` entries), and runs the action inside the shared `MiddlewareDispatcher` — `RoleGuard` produces the 403 inside this pipeline when the request is not an admin.
+    2.  Resolves the route's middleware via the shared `MiddlewareResolver::resolveForRoute($gated, $middleware)` (`_bbs_gated` flag + `_bbs_middleware` entries), and runs the action inside the shared `MiddlewareDispatcher` — `RoleGuard` produces the 403 inside this pipeline when the request is not an admin.
     3.  Uses the `ActionResolver` (invoked by the pipeline's terminal handler) to execute the correct method on the shared action class — the callable is passed in by the router and is either the array form `[ActionClass::class, 'methodName']` (resolved through the registry and `initialize()`d) or a context-free `Closure` (invoked directly, no action instance).
     4.  Converts the resulting PSR-7 `Response` back into a Laravel `Response` to be sent to the client.
 

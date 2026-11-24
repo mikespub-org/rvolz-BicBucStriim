@@ -106,7 +106,7 @@ class ActionServiceProvider extends ServiceProvider
         // URL prefixes, honoring the 'hasapi' setting.
         /** @var ?Settings $settings */
         $settings = $this->app->bound(Settings::class) ? $this->app->make(Settings::class) : null;
-        foreach (ActionLoader::getActionDescriptors($settings) as [$class, $prefix]) {
+        foreach (ActionLoader::getActionDescriptors($settings) as $class => $prefix) {
             $registry->register($class, $prefix);
         }
 
@@ -121,14 +121,14 @@ class ActionServiceProvider extends ServiceProvider
 
             $laravelRoute = Route::match($route->methods, $laravelPath, [ActionAdapterController::class, 'handle'])
                 ->name($name)
-                ->defaults('action_callable', $route->callable);
+                ->defaults('_bbs_callable', $route->callable);
 
             // Our route definitions use PSR-15 middleware, which Laravel's
             // route pipeline does not consume directly. Carry the route-level
             // middleware and the group gatekeeper flag as route defaults so the
             // adapter controller can run them around the action.
-            $laravelRoute->defaults('action_middleware', $route->middleware);
-            $laravelRoute->defaults('action_gated', $route->gated);
+            $laravelRoute->defaults('_bbs_middleware', $route->middleware);
+            $laravelRoute->defaults('_bbs_gated', $route->gated);
         }
     }
 }

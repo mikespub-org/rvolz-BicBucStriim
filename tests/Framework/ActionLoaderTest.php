@@ -31,12 +31,12 @@ class ActionLoaderTest extends PHPUnit\Framework\TestCase
         // mounted under /api (regardless of its own null PREFIX).
         $this->assertSame(
             [
-                [MainActions::class, MainActions::PREFIX],
-                [AdminActions::class, AdminActions::PREFIX],
-                [MetadataActions::class, MetadataActions::PREFIX],
-                [OpdsActions::class, OpdsActions::PREFIX],
-                [ExtraActions::class, ExtraActions::PREFIX],
-                [DefaultActions::class, '/api'],
+                MainActions::class => MainActions::PREFIX,
+                AdminActions::class => AdminActions::PREFIX,
+                MetadataActions::class => MetadataActions::PREFIX,
+                OpdsActions::class => OpdsActions::PREFIX,
+                ExtraActions::class => ExtraActions::PREFIX,
+                DefaultActions::class => '/api',
             ],
             $descriptors
         );
@@ -49,14 +49,14 @@ class ActionLoaderTest extends PHPUnit\Framework\TestCase
         $descriptors = ActionLoader::getActionDescriptors($settings);
 
         // The /api slot is served by the real ApiActions.
-        $this->assertSame([ApiActions::class, ApiActions::PREFIX], $descriptors[5]);
+        $this->assertSame(ApiActions::PREFIX, $descriptors[ApiActions::class]);
     }
 
     public function testDescriptorsDefaultToApiOffWhenNoSettings(): void
     {
         // No settings -> hasapi falsy -> DefaultActions stub in the /api slot.
         $descriptors = ActionLoader::getActionDescriptors();
-        $this->assertSame([DefaultActions::class, '/api'], $descriptors[5]);
+        $this->assertSame('/api', $descriptors[DefaultActions::class]);
     }
 
     public function testGetActionClassesReturnsOnlyClassNames(): void
@@ -79,7 +79,7 @@ class ActionLoaderTest extends PHPUnit\Framework\TestCase
     {
         $registry = new ActionRegistry();
         $loader = new ActionLoader();
-        $loader->load($registry);
+        $loader->loadRegistry($registry);
 
         $this->assertSame(
             [
@@ -100,7 +100,7 @@ class ActionLoaderTest extends PHPUnit\Framework\TestCase
         $settings['hasapi'] = true;
 
         $registry = new ActionRegistry();
-        new ActionLoader()->load($registry, $settings);
+        new ActionLoader()->loadRegistry($registry, $settings);
 
         $classes = $registry->getActionClasses();
         $this->assertContains(ApiActions::class, $classes);

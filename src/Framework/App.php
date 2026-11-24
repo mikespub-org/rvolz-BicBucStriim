@@ -72,7 +72,7 @@ class App implements \Psr\Http\Server\RequestHandlerInterface
     {
         // 2. ROUTING: load all actions into the registry, then build a FastRoute
         // dispatcher from its route map.
-        new ActionLoader()->load($this->registry);
+        new ActionLoader()->loadRegistry($this->registry);
         $router = $this->buildRouter($this->registry->getRouteMap());
 
         // 3. DISPATCHING: match the (base-path-stripped) request path.

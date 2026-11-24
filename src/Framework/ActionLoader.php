@@ -29,11 +29,7 @@ class ActionLoader
      */
     public static function getActionClasses(?Settings $settings = null): array
     {
-        $classes = [];
-        foreach (self::getActionDescriptors($settings) as [$class, $prefix]) {
-            $classes[] = $class;
-        }
-        return $classes;
+        return array_keys(self::getActionDescriptors($settings));
     }
 
     /**
@@ -50,34 +46,33 @@ class ActionLoader
      * class' own PREFIX constant.
      *
      * @param ?Settings $settings
-     * @return array<array{0: class-string, 1: string|null}>
+     * @return array<class-string, string|null>
      */
     public static function getActionDescriptors(?Settings $settings = null): array
     {
         $hasapi = !empty($settings['hasapi']);
-        $api = $hasapi
-            ? [ApiActions::class, ApiActions::PREFIX]
-            : [DefaultActions::class, '/api'];
+        $apiClass = $hasapi ? ApiActions::class : DefaultActions::class;
+        $apiPrefix = $hasapi ? ApiActions::PREFIX : '/api';
 
         return [
-            // classname, prefix
-            [MainActions::class, MainActions::PREFIX],
-            [AdminActions::class, AdminActions::PREFIX],
-            [MetadataActions::class, MetadataActions::PREFIX],
-            [OpdsActions::class, OpdsActions::PREFIX],
-            [ExtraActions::class, ExtraActions::PREFIX],
-            $api,
+            MainActions::class => MainActions::PREFIX,
+            AdminActions::class => AdminActions::PREFIX,
+            MetadataActions::class => MetadataActions::PREFIX,
+            OpdsActions::class => OpdsActions::PREFIX,
+            ExtraActions::class => ExtraActions::PREFIX,
+            $apiClass => $apiPrefix,
         ];
     }
 
     /**
      * Populate the ActionRegistry with all application actions.
+     * @todo see if there is any reason not to use static method here
      *
      * @param ?Settings $settings used to decide whether the JSON API is enabled
      */
-    public function load(ActionRegistry $registry, ?Settings $settings = null): void
+    public function loadRegistry(ActionRegistry $registry, ?Settings $settings = null): void
     {
-        foreach (self::getActionDescriptors($settings) as [$class, $prefix]) {
+        foreach (self::getActionDescriptors($settings) as $class => $prefix) {
             $registry->register($class, $prefix);
         }
     }

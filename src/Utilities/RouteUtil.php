@@ -13,7 +13,7 @@ class RouteUtil
     /**
      * Parse a route tuple into its parts.
      *
-     * This is the framework-agnostic counterpart to mapSlim4Routes(): every
+     * This is the framework-agnostic replacement of mapSlim4Routes(): every
      * route definition uses the tuple format
      *
      *     name => [method(s), path, ...middleware(s), callable]
@@ -21,7 +21,7 @@ class RouteUtil
      * where the callable is *always* the last element and everything between
      * the path and the callable is route-specific middleware (zero, one or
      * more). This method is the single source of truth for that parsing and is
-     * shared by the Slim router (mapSlim4Routes) and the framework-agnostic
+     * shared by the Slim router (addRoutesFromMap) and the framework-agnostic
      * ActionRegistry consumed by the Symfony, Laravel and custom App adapters.
      *
      * @param array<mixed> $routeInfo a single route tuple
