@@ -15,4 +15,15 @@
 		</div>
 		<svg class="bbs-icon bbs-list-arrow" aria-hidden="true"><use xlink:href="#bbs-icon-carat-r" href="#bbs-icon-carat-r"/></svg>
 	</a>
+        <ul class="bbs-list-download-container">
+                {% for format in book.files %}
+                        <li class="bbs-list-download-item">
+                                <a class="bbs-btn bbs-list-download"
+                                        href="{{page.rot}}/titles/{{format.book}}/file/{{format.name|url_encode()}}.{{format.format|lower}}">
+                                                <svg class="bbs-icon" aria-hidden="true"><use xlink:href="#bbs-icon-cloud"href="#bbs-icon-cloud"></svg>
+                                                {{ format.format }}
+                                </a>
+                        </li>
+                {% endfor %}
+        </ul>
 </li>

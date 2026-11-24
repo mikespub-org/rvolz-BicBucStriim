@@ -522,6 +522,7 @@ class Calibre
                 array_push($fmtnames, $format->format);
             }
             $book->formats = join(',', $fmtnames);
+            $book->files = $fmts;
         }
         if (extension_loaded('intl')) {
             foreach ($books as $book) {
