@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [4.x.x] - 20xx-xx-xx
+### Added
+- Add download link to title entry part in list view - see PR #15 by @Simounet
+### Changed
+- Fix search form sidebar and re-use in default templates - see PR #14 by @Simounet
 
 ## [4.2.1] - 2026-10-16 Refactor + fix issues
 ### Added
