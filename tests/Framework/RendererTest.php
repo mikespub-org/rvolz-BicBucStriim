@@ -60,7 +60,7 @@ class RendererTest extends PHPUnit\Framework\TestCase
         foreach (['twig', 'laravel', 'symfony'] as $label) {
             [$dir, $twig] = $this->makeTwig(['hello.twig' => "{{ 'ab'|shout }}"]);
             $renderer = $this->makeRenderer($label, $twig);
-            $renderer->addFunction('shout', fn(string $s): string => strtoupper($s) . '!');
+            $renderer->addFilter('shout', fn(string $s): string => strtoupper($s) . '!');
             $this->assertSame('AB!', $renderer->render('hello.twig'), $label);
         }
     }

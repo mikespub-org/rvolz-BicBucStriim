@@ -40,9 +40,18 @@ class LaravelRenderer implements RendererInterface
     /**
      * {@inheritdoc}
      */
-    public function addFunction(string $name, callable $callback): void
+    public function addFilter(string $name, callable $callback): void
     {
         $filter = new \Twig\TwigFilter($name, $callback);
         $this->twig->addFilter($filter);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function addFunction(string $name, callable $callback): void
+    {
+        $function = new \Twig\TwigFunction($name, $callback);
+        $this->twig->addFunction($function);
     }
 }
