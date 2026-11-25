@@ -172,7 +172,7 @@ class RouteUtil
             }
              */
             // extra file or path
-            if (in_array($param, ['file', 'path']) && !str_contains($value, '%')) {
+            if (in_array($param, ['file', 'path', 'fname']) && !str_contains($value, '%')) {
                 $value = implode('/', array_map(rawurlencode(...), explode('/', $value)));
             }
             if (!empty($pattern)) {
