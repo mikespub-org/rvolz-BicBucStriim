@@ -19,6 +19,10 @@
 .bbs-modal,
 [data-role="popup"] {
   display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   background-color: #ffffff;
   background-color: var(--bbs-bg-card, #ffffff);
   border: 1px solid #cccccc;
@@ -27,6 +31,8 @@
   padding: 20px;
   max-width: 480px;
   width: 100%;
+  max-height: 80vh;
+  overflow-y: auto;
   box-shadow: 0 8px 25px rgba(0,0,0,0.3);
   z-index: 3001;
 }

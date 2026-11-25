@@ -213,9 +213,15 @@
                 var li = document.createElement('li');
                 li.className = 'bbs-list-item';
                 li.setAttribute('data-user', data.user.id);
-                li.innerHTML = '<a class="bbs-list-link" href="' + root + '/admin/users/' + data.user.id + '/"><h2>' + data.user.username + '</h2></a>' +
-                               '<a class="bbs-btn bbs-btn-danger bbs-btn-mini user_delete" href="#" data-user="' + data.user.id + '">Delete</a>';
-                userList.insertBefore(li, userList.firstChild);
+                li.setAttribute('style', "padding: 10px 15px; display: flex; justify-content: space-between; align-items: center;");
+              	li.innerHTML =
+                  '    <a href="' + root + '/admin/users/' + data.user.id + '/" style="font-weight: 600; font-size: 1.05rem;">' +
+                  '      ' + data.user.username + '' +
+                  '    </a>' +
+                  '    <a class="bbs-btn bbs-btn-danger bbs-btn-mini user_delete" href="#" data-user="' + data.user.id + '">' +
+                  '      Delete user account' +
+                  '    </a>';
+                userList.insertBefore(li, null);
                 bindUserDelete(li.querySelector('.user_delete'));
               }
             }

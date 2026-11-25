@@ -52,7 +52,7 @@ trait HasUsers
         if (empty($username) || empty($password)) {
             return null;
         }
-        $other = R::findOne('user', ' username = :name', [':name' > $username]);
+        $other = R::findOne('user', ' username = :name', [':name' => $username]);
         if (!is_null($other)) {
             return null;
         }
