@@ -4,43 +4,44 @@
 
     {% include "flash_messages.twig" %}
 
-    <h2 class="font-semibold">{{ page.glob.l10n.admin_users_legend1 }}</h2>
-    <form action="{{ page.rot }}/admin/users/" method="post" id="newuserform">
-        <input type="text" class="hidden" name="function" value="createuser">
-        <fieldset class="config-fieldset">
-            <label for="newuser_name">{{ page.glob.l10n.admin_username }}</label>
-            <input name="newuser_name" id="newuser_name" type="text"
-                   value="" placeholder="{{ page.glob.l10n.admin_username }}"/>
-        </fieldset>
-        <fieldset class="config-fieldset">
-            <label for="newuser_password">{{ page.glob.l10n.admin_userpw }}</label>
-            <input name="newuser_password" id="newuser_password" type="password"
-                   value="" placeholder="{{ page.glob.l10n.admin_userpw }}"/>
-        </fieldset>
-        <button class="btn-config">
-            {{ page.glob.l10n.save }}
-        </button>
-    </form>
+    <div x-data="adminUsers()">
+        <h2 class="font-semibold">{{ page.glob.l10n.admin_users_legend1 }}</h2>
+        <form action="{{ page.rot }}/admin/users/" method="post" id="newuserform" data-proot="{{ page.rot }}"
+              @submit.prevent="addUser()">
+            <fieldset class="config-fieldset">
+                <label for="newuser_name">{{ page.glob.l10n.admin_username }}</label>
+                <input name="newuser_name" id="newuser_name" type="text" x-model="newUser.username"
+                       value="" placeholder="{{ page.glob.l10n.admin_username }}" required/>
+            </fieldset>
+            <fieldset class="config-fieldset">
+                <label for="newuser_password">{{ page.glob.l10n.admin_userpw }}</label>
+                <input name="newuser_password" id="newuser_password" type="password" x-model="newUser.password"
+                       value="" placeholder="{{ page.glob.l10n.admin_userpw }}" required/>
+            </fieldset>
+            <button type="submit" class="btn-config">
+                {{ page.glob.l10n.save }}
+            </button>
+        </form>
 
-    <div x-data="adminUserDelete()">
         <h2 class="font-semibold mt-4">{{ page.glob.l10n.admin_users_legend2 }}</h2>
         <ul id="users" class="w-full">
             {% for user in users %}
-                <li class="bg-manatee-200 rounded border m-2 p-2 flex items-center justify-between">
-                    <a href="{{ page.rot }}/admin/users/{{ user.id }}/" class="text-left">
-                        <h2>{{ user.username }}</h2>
+                <li class="bg-manatee-200 rounded border m-2 p-2 flex items-center justify-between"
+                    data-user="{{ user.id }}">
+                    <a href="{{ page.rot }}/admin/users/{{ user.id }}/" class="text-left" data-user-link>
+                        <h2 data-user-name>{{ user.username }}</h2>
                     </a>
                     <div class="ml-4 flex items-end">
-                        <a class="top-link" href="{{ page.rot }}/admin/users/{{ user.id }}/" title="{{ page.glob.l10n.admin_users_edit }}">
+                        <a class="top-link" href="{{ page.rot }}/admin/users/{{ user.id }}/"
+                           title="{{ page.glob.l10n.admin_users_edit }}" data-user-edit>
                             <span class="sr-only">{{ page.glob.l10n.admin_users_edit }}</span>
                             <svg class="w-6 h-6 align-middle" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                             </svg>
                         </a>
-                        <button class="top-link"
+                        <button class="top-link" type="button"
                                 title="{{ page.glob.l10n.admin_users_delete }}"
-                                @click="open({{ user.id }})"
-                        >
+                                @click="open({{ user.id }})" data-user-delete>
                             <span class="sr-only">{{ page.glob.l10n.admin_users_delete }}</span>
                             <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -50,22 +51,32 @@
                 </li>
             {% endfor %}
         </ul>
-        <script type="application/javascript">
-            function adminUserDelete() {
-                return {
-                    show: false,
-                    userId: -1,
-                    open(userId) { this.show = true; this.userId = userId },
-                    close() { this.show = false },
-                    isOpen() { return this.show === true },
-                    getUserId() { return this.userId },
-                }
-            }
-        </script>
+        <template id="user-row-template">
+            <li class="bg-manatee-200 rounded border m-2 p-2 flex items-center justify-between">
+                <a href="#" class="text-left" data-user-link>
+                    <h2 data-user-name></h2>
+                </a>
+                <div class="ml-4 flex items-end">
+                    <a class="top-link" href="#" title="{{ page.glob.l10n.admin_users_edit }}" data-user-edit>
+                        <span class="sr-only">{{ page.glob.l10n.admin_users_edit }}</span>
+                        <svg class="w-6 h-6 align-middle" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                        </svg>
+                    </a>
+                    <button class="top-link" type="button"
+                            title="{{ page.glob.l10n.admin_users_delete }}" data-user-delete>
+                        <span class="sr-only">{{ page.glob.l10n.admin_users_delete }}</span>
+                        <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </button>
+                </div>
+            </li>
+        </template>
 
         {# delete dialog #}
         <div class="fixed z-10 inset-0 overflow-y-auto"
-             x-show="isOpen()"
+             x-show="show"
              @click.away="close()"
         >
             <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
@@ -92,9 +103,9 @@
                      x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
                      x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                 >
-                    <form action="{{ page.rot }}/admin/users/" method="post" id="deluserform">
-                        <input type="text" class="hidden" name="function" value="deleteuser">
-                        <input type="number" class="hidden" name="userid" x-bind:value="getUserId()">
+                    <form action="{{ page.rot }}/admin/users/" method="post" id="deluserform"
+                          @submit.prevent="deleteUser()">
+                        <input type="hidden" name="userid" x-bind:value="userId">
                         <div class="sm:flex sm:items-start">
                             <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
                                 <!-- Heroicon name: exclamation -->
