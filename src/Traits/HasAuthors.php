@@ -59,9 +59,10 @@ trait HasAuthors
     }
 
     /**
-     * Get the file name of an author's thumbnail image.
+     * Get the file name of an author's thumbnail image if it exists.
      * @param int 	$authorId 	Calibre ID of the author
      * @return 		?Artefact Artefact with url of the thumbnail image, or null
+     * @deprecated 4.2.3 use bbs()->author($authorId)->getThumbnail() instead
      */
     public function authorThumbnail($authorId)
     {
@@ -70,9 +71,10 @@ trait HasAuthors
     }
 
     /**
-     * Return all links defined for an author.
+     * Return all links defined for an author if it exists.
      * @param int 	$authorId 	Calibre ID for the author
      * @return array<Link> author links
+     * @deprecated 4.2.3 use bbs()->author($authorId)->getLinks() instead
      */
     public function authorLinks($authorId)
     {
@@ -81,9 +83,10 @@ trait HasAuthors
     }
 
     /**
-     * Get the note text for an author.
+     * Get the note text for an author if it exists.
      * @param int 	$authorId 	Calibre ID of the author
      * @return 		?Note 		note text or null
+     * @deprecated 4.2.3 use bbs()->author($authorId)->getNote() instead
      */
     public function authorNote($authorId)
     {

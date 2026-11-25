@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Add download link to title entry part in list view - see PR #15 by @Simounet
 ### Changed
+- Deprecate author*() methods in HasAuthors trait for BicBucStriim class
+- Clarify use of dataDir vs. dataUri in BicBucStriim and Thumbnails classes
+- Replace addFunction() with addFilter() in RendererInterface + create addFunction()
+- Fix user admin for tailwind templates - see issue #16 by @TheWatcher2k3
 - Fix search form sidebar and re-use in default templates - see PR #14 by @Simounet
 
 ## [4.2.1] - 2026-10-16 Refactor + fix issues

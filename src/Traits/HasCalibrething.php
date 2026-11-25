@@ -19,7 +19,7 @@ trait HasCalibrething
      * Find a Calibre item.
      * @param int 	$calibreType
      * @param int 	$calibreId
-     * @return ?Calibrething the Calibre item
+     * @return ?Calibrething the Calibre item or null
      */
     public function getCalibreThing($calibreType, $calibreId)
     {

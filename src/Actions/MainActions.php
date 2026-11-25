@@ -647,7 +647,7 @@ class MainActions extends DefaultActions
         $author = $tl['author'];
         $author->thumbnail = $this->bbs()->author($id)->getThumbnail();
         // Note: $author->note comes from Calibre DB
-        $note = $this->bbs()->authorNote($id);
+        $note = $this->bbs()->author($id)->getNote();
         if (!is_null($note)) {
             $author->notes_source = $note->ntext;
         } else {
@@ -694,7 +694,8 @@ class MainActions extends DefaultActions
             $this->log()->debug('authorNotes: author id not found ' . $id);
             return $this->notFound();
         }
-        $note = $this->bbs()->authorNote($id);
+        // Note: $author->note comes from Calibre DB
+        $note = $this->bbs()->author($id)->getNote();
         if (!is_null($note)) {
             $author->notes_source = $note->ntext;
         } else {
