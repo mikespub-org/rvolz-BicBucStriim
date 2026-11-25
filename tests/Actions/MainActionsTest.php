@@ -3,6 +3,7 @@
 use BicBucStriim\Actions\ActionRegistry;
 use BicBucStriim\Actions\DefaultActions;
 use BicBucStriim\Actions\MainActions;
+use BicBucStriim\Calibre\Data;
 use BicBucStriim\Utilities\RequestUtil;
 use BicBucStriim\Utilities\RouteUtil;
 use BicBucStriim\Utilities\TestHelper;
@@ -316,5 +317,50 @@ class MainActionsTest extends PHPUnit\Framework\TestCase
         unset($_POST['email']);
         $this->assertStringContainsString($expected, (string) $response->getBody());
         $this->assertEquals(200, $response->getStatusCode());
+    }
+
+    public function testGetPathForMainBook()
+    {
+        // Use the real test container so the adapter wraps a PSR-11 container.
+        $container = require dirname(__DIR__, 2) . '/config/container.php';
+        $registry = $container->get(ActionRegistry::class);
+        $registry->register(MainActions::class);
+
+        $instance = $registry->getInstance(MainActions::class);
+        $this->assertInstanceOf(MainActions::class, $instance);
+
+        $routeName = 'main-book';
+        $routes = self::getExpectedRoutes();
+        [$input, $output, $methods, $pattern] = $routes[$routeName];
+        $expected = $pattern;
+        foreach ($input as $name => $value) {
+            $expected = str_replace('{' . $name . '}', (string) $value, $expected);
+            // let getPathFromRouteMap() encode values if needed
+            if (in_array($name, ['file', 'path']) && str_contains($value, '%')) {
+                $input[$name] = rawurldecode($value);
+            }
+        }
+        $path = $instance->getPath($routeName, $input);
+        $this->assertEquals($expected, $path);
+    }
+
+    public function testGetLinkForData()
+    {
+        // Use the real test container so the adapter wraps a PSR-11 container.
+        $container = require dirname(__DIR__, 2) . '/config/container.php';
+        $registry = $container->get(ActionRegistry::class);
+        $registry->register(MainActions::class);
+
+        $instance = $registry->getInstance(MainActions::class);
+        $this->assertInstanceOf(MainActions::class, $instance);
+
+        $data = new Data();
+        $data->book = 7;
+        $data->name = "The Stones of Venice, Volume II - John Ruskin";
+        $data->format = "EPUB";
+
+        $expected = "/titles/7/file/The%20Stones%20of%20Venice%2C%20Volume%20II%20-%20John%20Ruskin.epub";
+        $path = $instance->getLink($data);
+        $this->assertEquals($expected, $path);
     }
 }

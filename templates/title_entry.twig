@@ -23,6 +23,8 @@
 					<svg class="bbs-icon" aria-hidden="true"><use xlink:href="#bbs-icon-cloud"href="#bbs-icon-cloud"></svg>
 					{{ format.format }}
 				</a>
+				{#<!-- {{page.rot}}{{path('main-book', {'id': format.book, 'file': format.name ~ '.' ~ format.format|lower})}} -->#}
+				{#<!-- {{page.rot}}{{link(format)}} -->#}
 			</li>
 		{% endfor %}
 	</ul>

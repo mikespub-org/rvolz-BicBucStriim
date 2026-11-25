@@ -268,6 +268,10 @@ class RouteUtilTest extends PHPUnit\Framework\TestCase
             $expected = $pattern;
             foreach ($input as $name => $value) {
                 $expected = str_replace('{' . $name . '}', (string) $value, $expected);
+                // let getPathFromRouteMap() encode values if needed
+                if (in_array($name, ['file', 'path']) && str_contains($value, '%')) {
+                    $input[$name] = rawurldecode($value);
+                }
             }
             $registry = new ActionRegistry();
             $registry->register(MainActions::class);

@@ -47,7 +47,12 @@ class BookLanguageLink extends Item {}
 class Comment extends Item {}
 class CustomColumn extends Item {}
 class CustomColumns extends Item {}
-class Data extends Item {}
+class Data extends Item
+{
+    public $book;
+    public $name;
+    public $format;
+}
 class Initial extends Item
 {
     public $initial;
