@@ -28,7 +28,7 @@ trait HasBooks
      */
     public function book($bookId, $bookTitle = null)
     {
-        return new AppBook($bookId, $bookTitle, $this->dataDir);
+        return new AppBook($bookId, $bookTitle, $this->dataUri);
     }
 
     /**

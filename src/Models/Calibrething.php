@@ -105,7 +105,7 @@ class Calibrething extends Model
     /**
      * Return the thumbnail file related to this Calibre entity.
      * @param ?int $atype artefact type (not actually needed at the moment)
-     * @return ?Artefact Path to thumbnail file or null
+     * @return ?Artefact Artefact with url to thumbnail file or null
      */
     public function getThumbnail($atype = null)
     {

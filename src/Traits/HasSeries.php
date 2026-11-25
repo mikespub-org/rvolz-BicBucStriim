@@ -28,7 +28,7 @@ trait HasSeries
      */
     public function series($seriesId, $seriesName = null)
     {
-        return new AppSeries($seriesId, $seriesName, $this->dataDir);
+        return new AppSeries($seriesId, $seriesName, $this->dataUri);
     }
 
     /**

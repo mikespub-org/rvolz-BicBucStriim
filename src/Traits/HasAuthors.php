@@ -34,7 +34,7 @@ trait HasAuthors
      */
     public function author($authorId, $authorName = null)
     {
-        return new AppAuthor($authorId, $authorName, $this->dataDir);
+        return new AppAuthor($authorId, $authorName, $this->dataUri);
     }
 
     /**
@@ -61,7 +61,7 @@ trait HasAuthors
     /**
      * Get the file name of an author's thumbnail image.
      * @param int 	$authorId 	Calibre ID of the author
-     * @return 		?Artefact file name of the thumbnail image, or null
+     * @return 		?Artefact Artefact with url of the thumbnail image, or null
      */
     public function authorThumbnail($authorId)
     {

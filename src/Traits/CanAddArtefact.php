@@ -11,6 +11,7 @@
 namespace BicBucStriim\Traits;
 
 use BicBucStriim\AppData\DataConstants;
+use BicBucStriim\AppData\Settings;
 use BicBucStriim\Models\Artefact;
 use BicBucStriim\Models\Calibrething;
 use BicBucStriim\Models\R;
@@ -20,13 +21,10 @@ use Throwable;
 
 trait CanAddArtefact
 {
-    # dir for bbs db
-    public $dataDir = '';
-
     /**
      * Get the file name of a Calibre entity's thumbnail image.
      * @param ?Calibrething $calibreThing
-     * @return ?Artefact file name of the thumbnail image, or null
+     * @return ?Artefact Artefact with url of the thumbnail image, or null
      */
     public function getCalibreThumbnail($calibreThing)
     {
@@ -59,7 +57,7 @@ trait CanAddArtefact
         }
 
         if (empty($this->dataDir)) {
-            $this->dataDir = realpath('data');
+            $this->dataDir = realpath(Settings::DATA_URI);
         }
         // change directory & prefix depending on $calibreType
         [$thumbsDir, $prefix] = Thumbnails::getConfig($calibreThing->ctype);
@@ -87,6 +85,7 @@ trait CanAddArtefact
         // @todo use relative url for thumbnails
         $baseDir = dirname(__DIR__, 2);
         if (str_starts_with($fname, $baseDir)) {
+            // url => ./data/authors/author_64_thm.png
             $fname = '.' . substr($fname, strlen($baseDir));
         }
         $artefact = $calibreThing->getThumbnail();
@@ -117,7 +116,10 @@ trait CanAddArtefact
         if (is_null($artefact)) {
             return false;
         }
-        $ret = unlink($artefact->url);
+        $ret = false;
+        if (!empty($artefact->url) && file_exists($artefact->url)) {
+            $ret = unlink($artefact->url);
+        }
         $calibreThing->deleteArtefact($artefact->id);
         $calibreThing->refctr -= 1;
         R::trash($artefact);

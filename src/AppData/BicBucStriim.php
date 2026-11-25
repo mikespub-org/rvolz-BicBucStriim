@@ -37,12 +37,10 @@ class BicBucStriim
     public $mydb = null;
     # last sqlite error
     public $last_error = 0;
-    # dir for bbs db
+    # dir for bbs db (relative to root)
+    public $dataUri = '';
+    # dir for bbs db (real path)
     public $dataDir = '';
-    # dir for generated title thumbs
-    public $titlesDir = '';
-    # dir for generated author thumbs
-    public $authorsDir = '';
 
     /**
      * Try to open the BBS DB. If the DB file does not exist we do nothing.
@@ -51,7 +49,7 @@ class BicBucStriim
      * We open it first as PDO, because we need that for the
      * authentication library, then we initialize RedBean.
      *
-     * @param string  	$dataPath 	Path to BBS DB, default = data/data.db
+     * @param string  	$dataPath 	Path to BBS DB (relative to root), default = data/data.db
      * @param boolean	$freeze 	if true the DB schema is fixed,
      * 								else RedBeanPHP adapt the schema
      * 								default = true
@@ -59,14 +57,17 @@ class BicBucStriim
     public function __construct($dataPath = 'data/data.db', $freeze = true)
     {
         $rp = realpath($dataPath);
-        $this->dataDir = dirname($dataPath);
-        $this->titlesDir = $this->dataDir . '/titles';
-        if (!file_exists($this->titlesDir)) {
-            mkdir($this->titlesDir);
+        // use relative to root for uri
+        $this->dataUri = dirname($dataPath);
+        // set data dir for thumbnails (real path)
+        $this->dataDir = realpath($this->dataUri);
+        $titlesDir = $this->dataDir . '/titles';
+        if (!file_exists($titlesDir)) {
+            mkdir($titlesDir);
         }
-        $this->authorsDir = $this->dataDir . '/authors';
-        if (!file_exists($this->authorsDir)) {
-            mkdir($this->authorsDir);
+        $authorsDir = $this->dataDir . '/authors';
+        if (!file_exists($authorsDir)) {
+            mkdir($authorsDir);
         }
         if (file_exists($rp) && is_writeable($rp)) {
             $this->mydb = new PDO('sqlite:' . $rp, null, null, []);

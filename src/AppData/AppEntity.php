@@ -32,17 +32,17 @@ class AppEntity
 
     public const CALIBRE_TYPE = DataConstants::ENTITY_TYPE;
 
-    # dir for bbs db
+    # dir for bbs db (real path)
     public $dataDir = '';
     public ?Calibrething $calibreThing = null;
 
-    public function __construct($calibreId, $calibreName = null, $dataDir = 'data')
+    public function __construct($calibreId, $calibreName = null, $dataDir = Settings::DATA_URI)
     {
         $this->calibreThing = $this->getCalibreThing(static::CALIBRE_TYPE, $calibreId);
         if (!isset($this->calibreThing) && isset($calibreName)) {
             $this->calibreThing = $this->addCalibreThing(static::CALIBRE_TYPE, $calibreId, $calibreName);
         }
-        // set data dir for thumbnails
+        // set data dir for thumbnails (real path)
         $this->dataDir = realpath($dataDir);
     }
 
@@ -57,7 +57,7 @@ class AppEntity
 
     /**
      * Get the file name of a Calibre entity's thumbnail image.
-     * @return ?Artefact file name of the thumbnail image, or null
+     * @return ?Artefact Artefact with url of the thumbnail image, or null
      */
     public function getThumbnail()
     {

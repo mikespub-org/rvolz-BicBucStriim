@@ -20,13 +20,15 @@ class Thumbnails
         DataConstants::SERIES_TYPE => ['series', 'series_'],
     ];
 
-    # dir for bbs db
+    # dir for bbs db (relative to root)
+    public $dataUri = '';
+    # dir for bbs db (real path)
     public $dataDir = '';
-    # dir for generated title thumbs
+    # dir for generated title thumbs (real path)
     public $titlesDir = '';
-    # dir for generated author thumbs
+    # dir for generated author thumbs (real path)
     public $authorsDir = '';
-    # dir for generated series thumbs - @todo
+    # dir for generated series thumbs (real path) - @todo
     public $seriesDir = '';
 
     /**
@@ -44,16 +46,21 @@ class Thumbnails
 
     /**
      * Summary of __construct
-     * @param string $dataDir
+     * @param string $dataDir (relative to root)
      */
     public function __construct($dataDir)
     {
+        // use relative to root for uri
+        $this->dataUri = $dataDir;
+        // set data dir for thumbnails (real path)
         $this->dataDir = realpath($dataDir);
-        $this->titlesDir = $dataDir . '/titles';
+        [$thumbsDir, ] = self::getConfig(DataConstants::BOOK_TYPE);
+        $this->titlesDir = $this->dataDir . '/' . $thumbsDir;
         if (!file_exists($this->titlesDir)) {
             mkdir($this->titlesDir);
         }
-        $this->authorsDir = $dataDir . '/authors';
+        [$thumbsDir, ] = self::getConfig(DataConstants::AUTHOR_TYPE);
+        $this->authorsDir = $this->dataDir . '/' . $thumbsDir;
         if (!file_exists($this->authorsDir)) {
             mkdir($this->authorsDir);
         }
@@ -62,7 +69,7 @@ class Thumbnails
     /**
      * Checks if the thumbnail for a book was already generated.
      * @param int 	$id 	Calibre book ID
-     * @return 	bool	true if the thumbnail fiel exists, else false
+     * @return 	bool	true if the thumbnail file exists, else false
      */
     public function isTitleThumbnailAvailable($id)
     {
@@ -84,7 +91,7 @@ class Thumbnails
      * @param  int 		$id 		book id
      * @param  ?string 	$cover 	    path to cover image
      * @param  bool|int $clipped	true = clip the thumbnail, else stuff it
-     * @return ?string thumbnail path or NULL
+     * @return ?string real thumbnail path or NULL
      */
     public function titleThumbnail($id, $cover, $clipped)
     {

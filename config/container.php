@@ -65,7 +65,9 @@ $builder->addDefinitions([
         return $bbs;
     },
     Thumbnails::class => function (ContainerInterface $c) {
-        $dataDir = 'data';
+        $settings = $c->get('settings');
+        $dataPath = $settings['dataDbPath'] ?? 'data/data.db';
+        $dataDir = dirname($dataPath);
         # Get Thumbnails utility class
         $thumbs = new Thumbnails($dataDir);
         return $thumbs;
@@ -85,15 +87,15 @@ $builder->addDefinitions([
         $loader = new \Twig\Loader\FilesystemLoader('templates');
         return new \Twig\Environment($loader);
     },
+    RendererInterface::class => function (ContainerInterface $c) {
+        $twig = $c->get(\Twig\Environment::class);
+        return new TwigRenderer($twig);
+    },
     // Shared, single ActionRegistry instance. Routes are registered into this
     // same singleton in config/routes.php, and action classes that need route
     // introspection (e.g. ApiActions) receive it via dependency injection.
     \BicBucStriim\Actions\ActionRegistry::class => function (ContainerInterface $c) {
         return new \BicBucStriim\Actions\ActionRegistry($c);
-    },
-    RendererInterface::class => function (ContainerInterface $c) {
-        $twig = $c->get(\Twig\Environment::class);
-        return new TwigRenderer($twig);
     },
 ]);
 

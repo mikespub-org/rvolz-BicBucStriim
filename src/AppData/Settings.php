@@ -37,6 +37,9 @@ class Settings extends ArrayObject
     # Application version
     public const APP_VERSION = '4.2.1';
 
+    # Directory for bbs db and thumbnails (relative to root)
+    public const DATA_URI = 'data';
+
     # Current DB schema version
     public const DB_SCHEMA_VERSION = 3;
 

@@ -28,7 +28,7 @@ trait HasTags
      */
     public function tag($tagId, $tagName = null)
     {
-        return new AppTag($tagId, $tagName, $this->dataDir);
+        return new AppTag($tagId, $tagName, $this->dataUri);
     }
 
     /**
