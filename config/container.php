@@ -10,6 +10,7 @@
  */
 
 use Aura\Auth\Auth;
+use BicBucStriim\Actions\ActionRegistry;
 use BicBucStriim\AppData\BicBucStriim;
 use BicBucStriim\AppData\Settings;
 use BicBucStriim\Calibre\Calibre;
@@ -17,6 +18,7 @@ use BicBucStriim\Session\AuthServices;
 use BicBucStriim\Session\Session;
 use BicBucStriim\Framework\RendererInterface;
 use BicBucStriim\Framework\TwigRenderer;
+use BicBucStriim\Utilities\LinkGenerator;
 use BicBucStriim\Utilities\Mailer;
 use BicBucStriim\Utilities\Thumbnails;
 use Psr\Cache\CacheItemPoolInterface;
@@ -94,8 +96,12 @@ $builder->addDefinitions([
     // Shared, single ActionRegistry instance. Routes are registered into this
     // same singleton in config/routes.php, and action classes that need route
     // introspection (e.g. ApiActions) receive it via dependency injection.
-    \BicBucStriim\Actions\ActionRegistry::class => function (ContainerInterface $c) {
-        return new \BicBucStriim\Actions\ActionRegistry($c);
+    ActionRegistry::class => function (ContainerInterface $c) {
+        return new ActionRegistry($c);
+    },
+    LinkGenerator::class => function (ContainerInterface $c) {
+        $registry = $c->get(ActionRegistry::class);
+        return new LinkGenerator($registry);
     },
 ]);
 

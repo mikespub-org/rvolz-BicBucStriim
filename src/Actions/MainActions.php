@@ -941,17 +941,4 @@ class MainActions extends DefaultActions
             return false;
         }
     }
-
-    /**
-     * Summary of getLink - @todo
-     * @param object $object
-     * @return string
-     */
-    public function getLink($object)
-    {
-        return match ($object::class) {
-            \BicBucStriim\Calibre\Data::class => $this->getPath('main-book', ['id' => $object->book, 'file' => $object->name . '.' . strtolower($object->format)]),
-            default => 'TODO MainActions for ' . $object::class,
-        };
-    }
 }

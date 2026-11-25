@@ -11,10 +11,10 @@
 
 namespace BicBucStriim\Actions;
 
+use BicBucStriim\Utilities\LinkGenerator;
 use BicBucStriim\Utilities\RequestUtil;
 use BicBucStriim\Utilities\ResponseUtil;
 use BicBucStriim\Framework\ContainerAdapter;
-use BicBucStriim\Utilities\RouteUtil;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -228,31 +228,11 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
                     $this->renderer()->prependPath($path);
                 }
             }
-            $this->renderer()->addFunction('path', [$this, 'getPath']);
-            $this->renderer()->addFunction('link', [$this, 'getLink']);
+            $generator = $this->container(LinkGenerator::class);
+            $this->renderer()->addFunction('bbs_path', [$generator, 'getPath']);
+            $this->renderer()->addFunction('bbs_link', [$generator, 'getLink']);
+            $this->renderer()->addFunction('bbs_file', [$generator, 'getDataLink']);
         }
-    }
-
-    /**
-     * Summary of getPath - @todo
-     * @param string $routeName
-     * @param array<string, mixed> $params
-     * @return string
-     */
-    public function getPath($routeName, $params = [])
-    {
-        $routeMap = $this->getActionRegistry()->getRouteMap();
-        return RouteUtil::getPathFromRouteMap($routeMap, $routeName, $params);
-    }
-
-    /**
-     * Summary of getLink - @todo
-     * @param object $object
-     * @return string
-     */
-    public function getLink($object)
-    {
-        return 'TODO DefaultActions for ' . $object::class;
     }
 
     /**
