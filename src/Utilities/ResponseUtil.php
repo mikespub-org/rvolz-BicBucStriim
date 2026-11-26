@@ -30,9 +30,7 @@ class ResponseUtil
      */
     protected function factory()
     {
-        if ($this->psr17Factory === null) {
-            $this->psr17Factory = new Psr17Factory();
-        }
+        $this->psr17Factory ??= new Psr17Factory();
         return $this->psr17Factory;
     }
 

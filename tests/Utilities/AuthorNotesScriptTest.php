@@ -34,8 +34,8 @@ use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 #[Group('node-js')]
 class AuthorNotesScriptTest extends PHPUnit\Framework\TestCase
 {
-    private const AUTHOR_ID = 5;
-    private const TYPED_NOTE = '## Hello world!';
+    private const int AUTHOR_ID = 5;
+    private const string TYPED_NOTE = '## Hello world!';
 
     private string $projectRoot;
 

@@ -80,7 +80,7 @@ class OpdsActions extends DefaultActions
                 array_push($books1, $record);
             }
         }
-        $books = array_map([$this, 'checkThumbnailOpds'], $books1);
+        $books = array_map($this->checkThumbnailOpds(...), $books1);
         $gen = $this->getOpdsGenerator();
         $cat = $gen->newestCatalog(null, $books, false);
         return $this->responder->opds($cat, OpdsGenerator::OPDS_MIME_ACQ);
@@ -113,7 +113,7 @@ class OpdsActions extends DefaultActions
             $tl = $this->calibre()->titlesSlice($settings['lang'], $page, $settings->page_size, $filter);
         }
         $books1 = $this->calibre()->titleDetailsFilteredOpds($tl['entries']);
-        $books = array_map([$this, 'checkThumbnailOpds'], $books1);
+        $books = array_map($this->checkThumbnailOpds(...), $books1);
         $gen = $this->getOpdsGenerator();
         $cat = $gen->titlesCatalog(
             null,
@@ -178,7 +178,7 @@ class OpdsActions extends DefaultActions
         $tl = $this->calibre()->authorDetailsSlice($settings['lang'], $id, $page, $settings->page_size, $filter);
         $this->log()->debug('opdsByAuthor 1 ' . var_export($tl, true));
         $books1 = $this->calibre()->titleDetailsFilteredOpds($tl['entries']);
-        $books = array_map([$this, 'checkThumbnailOpds'], $books1);
+        $books = array_map($this->checkThumbnailOpds(...), $books1);
         $this->log()->debug('opdsByAuthor 2 ' . var_export($books, true));
         $gen = $this->getOpdsGenerator();
         $cat = $gen->booksForAuthorCatalog(
@@ -245,7 +245,7 @@ class OpdsActions extends DefaultActions
         $filter = $this->getFilter();
         $tl = $this->calibre()->tagDetailsSlice($settings['lang'], $id, $page, $settings->page_size, $filter);
         $books1 = $this->calibre()->titleDetailsFilteredOpds($tl['entries']);
-        $books = array_map([$this, 'checkThumbnailOpds'], $books1);
+        $books = array_map($this->checkThumbnailOpds(...), $books1);
         $gen = $this->getOpdsGenerator();
         $cat = $gen->booksForTagCatalog(
             null,
@@ -311,7 +311,7 @@ class OpdsActions extends DefaultActions
         $filter = $this->getFilter();
         $tl = $this->calibre()->seriesDetailsSlice($settings['lang'], $id, $page, $settings->page_size, $filter);
         $books1 = $this->calibre()->titleDetailsFilteredOpds($tl['entries']);
-        $books = array_map([$this, 'checkThumbnailOpds'], $books1);
+        $books = array_map($this->checkThumbnailOpds(...), $books1);
         $gen = $this->getOpdsGenerator();
         $cat = $gen->booksForSeriesCatalog(
             null,
@@ -363,7 +363,7 @@ class OpdsActions extends DefaultActions
         $filter = $this->getFilter();
         $tl = $this->calibre()->titlesSlice($settings['lang'], $page, $settings->page_size, $filter, $search);
         $books1 = $this->calibre()->titleDetailsFilteredOpds($tl['entries']);
-        $books = array_map([$this, 'checkThumbnailOpds'], $books1);
+        $books = array_map($this->checkThumbnailOpds(...), $books1);
         $gen = $this->getOpdsGenerator();
         $cat = $gen->searchCatalog(
             null,

@@ -32,7 +32,7 @@ class RoleGuard implements MiddlewareInterface
     public const DENIED_MESSAGE = "You don't have sufficient access rights.";
 
     public function __construct(
-        private ?ResponseFactoryInterface $responseFactory = null,
+        private readonly ?ResponseFactoryInterface $responseFactory = null,
     ) {}
 
     /**
@@ -66,7 +66,7 @@ class RoleGuard implements MiddlewareInterface
     public static function hasGuard(array $middleware): bool
     {
         foreach ($middleware as $entry) {
-            $class = is_object($entry) ? get_class($entry) : $entry;
+            $class = is_object($entry) ? $entry::class : $entry;
             if (is_string($class) && ($class === self::class || is_subclass_of($class, self::class))) {
                 return true;
             }

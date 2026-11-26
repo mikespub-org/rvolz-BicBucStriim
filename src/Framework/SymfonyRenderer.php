@@ -15,7 +15,7 @@ use Twig\Environment as TwigEnvironment;
  */
 class SymfonyRenderer implements RendererInterface
 {
-    private TwigEnvironment $twig;
+    private readonly TwigEnvironment $twig;
 
     public function __construct(TwigEnvironment $twig)
     {

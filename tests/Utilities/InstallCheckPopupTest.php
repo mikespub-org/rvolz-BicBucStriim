@@ -32,7 +32,7 @@ use Twig\Loader\FilesystemLoader;
 #[Group('node-js')]
 class InstallCheckPopupTest extends PHPUnit\Framework\TestCase
 {
-    private const EXPECTED_POPUPS = 11;
+    private const int EXPECTED_POPUPS = 11;
 
     private string $projectRoot;
 

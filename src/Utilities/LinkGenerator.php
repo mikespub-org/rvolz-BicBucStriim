@@ -10,17 +10,17 @@ use BicBucStriim\Framework\RendererInterface;
  */
 class LinkGenerator
 {
-    public function __construct(private ActionRegistry $registry) {}
+    public function __construct(private readonly ActionRegistry $registry) {}
 
     public function addFunctions(RendererInterface $renderer): void
     {
-        $renderer->addFunction('bbs_path', [$this, 'getPath']);
-        // $renderer->addFunction('bbs_link', [$this, 'getLink']);
-        $renderer->addFunction('bbs_file', [$this, 'getDataLink']);
-        $renderer->addFunction('bbs_kindle', [$this, 'getDataKindle']);
-        $renderer->addFunction('bbs_title', [$this, 'getBookLink']);
-        $renderer->addFunction('bbs_cover', [$this, 'getBookCover']);
-        $renderer->addFunction('bbs_thumb', [$this, 'getBookThumb']);
+        $renderer->addFunction('bbs_path', $this->getPath(...));
+        // $renderer->addFunction('bbs_link', $this->getLink(...));
+        $renderer->addFunction('bbs_file', $this->getDataLink(...));
+        $renderer->addFunction('bbs_kindle', $this->getDataKindle(...));
+        $renderer->addFunction('bbs_title', $this->getBookLink(...));
+        $renderer->addFunction('bbs_cover', $this->getBookCover(...));
+        $renderer->addFunction('bbs_thumb', $this->getBookThumb(...));
     }
 
     /**

@@ -16,7 +16,7 @@ use Closure;
 class ContainerAdapter implements ContainerInterface
 {
     /** @var ContainerInterface The actual DI container from the framework. */
-    private ContainerInterface $container;
+    private readonly ContainerInterface $container;
 
     /** @var array<string, mixed> Storage for runtime values. */
     private array $runtimeValues = [];

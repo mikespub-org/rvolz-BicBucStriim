@@ -123,7 +123,7 @@ class Settings extends ArrayObject
 
     public function __construct($settings = [])
     {
-        $settings = array_replace($this->initSettings(), $settings);
+        $settings = array_replace(static::initSettings(), $settings);
         parent::__construct($settings, ArrayObject::ARRAY_AS_PROPS);
     }
 }

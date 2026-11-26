@@ -124,7 +124,7 @@ class EPub
                     $authors = [];
                 } else {
                     $authors = explode(',', $authors);
-                    $authors = array_map('trim', $authors);
+                    $authors = array_map(trim(...), $authors);
                 }
             }
 
@@ -269,7 +269,7 @@ class EPub
                     $subjects = [];
                 } else {
                     $subjects = explode(',', $subjects);
-                    $subjects = array_map('trim', $subjects);
+                    $subjects = array_map(trim(...), $subjects);
                 }
             }
 

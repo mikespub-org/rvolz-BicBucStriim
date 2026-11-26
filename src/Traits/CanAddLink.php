@@ -65,7 +65,7 @@ trait CanAddLink
         $this->getCalibreLinks($calibreThing);
         try {
             $link = $calibreThing->ownLinkList[$linkId] ?? null;
-        } catch (Exception $e) {
+        } catch (Exception) {
             $link = null;
         }
         if (is_null($link)) {

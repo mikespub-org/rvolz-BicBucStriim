@@ -13,7 +13,7 @@ namespace BicBucStriim\Utilities;
  * The DTO is a read-only value object; it owns no behavior and no
  * persistence.
  */
-final class RouteEntry
+final readonly class RouteEntry
 {
     /**
      * @param array{0: class-string, 1: string}|\Closure $callable
@@ -25,12 +25,12 @@ final class RouteEntry
      *        keyword), so the two concrete shapes are spelled out.
      */
     public function __construct(
-        public readonly string $name,
-        public readonly array|string $methods,
-        public readonly string $path,
-        public readonly array|\Closure $callable,
-        public readonly array $middleware = [],
-        public readonly bool $gated = false,
+        public string $name,
+        public array|string $methods,
+        public string $path,
+        public array|\Closure $callable,
+        public array $middleware = [],
+        public bool $gated = false,
     ) {}
 
     public function withGated(bool $gated): self

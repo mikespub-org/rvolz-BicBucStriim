@@ -21,7 +21,7 @@ class MiddlewareDispatcher implements RequestHandlerInterface
      */
     public function __construct(
         private array $queue,
-        private RequestHandlerInterface $fallbackHandler,
+        private readonly RequestHandlerInterface $fallbackHandler,
     ) {}
 
     public function handle(ServerRequestInterface $request): ResponseInterface

@@ -57,7 +57,7 @@ class CalibreConfigMiddleware extends DefaultMiddleware
         # Setup the connection to the Calibre metadata db
         try {
             $calibre = $this->calibre();
-        } catch (Exception $e) {
+        } catch (Exception) {
             $this->log()->error('check_config: Exception while opening metadata db in ' . $settings->calibre_dir);
             return false;
         }

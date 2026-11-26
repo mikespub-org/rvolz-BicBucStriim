@@ -209,7 +209,7 @@ class LoginMiddleware extends DefaultMiddleware
             // @todo this sets 'session' attribute on $this->request
             $this->requester->setSession($session);
         } catch (\ErrorException $e) {
-            $this->log()->warning('login error: bad cookie data ' . var_export(get_class($e), true));
+            $this->log()->warning('login error: bad cookie data ' . var_export($e::class, true));
         }
         $this->log()->debug("after resume: " . $authTracker->getStatus());
         if ($authTracker->isValid()) {
@@ -226,9 +226,7 @@ class LoginMiddleware extends DefaultMiddleware
         }
         // not logged in - check for login info
         $authArray = $this->checkPhpAuth($request);
-        if (is_null($authArray)) {
-            $authArray = $this->checkHttpAuth($request);
-        }
+        $authArray ??= $this->checkHttpAuth($request);
         $this->log()->debug('login auth: ' . var_export($authArray, true));
         // if auth info found check the database
         if (is_null($authArray)) {
@@ -241,7 +239,7 @@ class LoginMiddleware extends DefaultMiddleware
                 'password' => $authArray[1]]);
             $this->log()->debug('login status: ' . var_export($authTracker->getStatus(), true));
         } catch (\Aura\Auth\Exception $e) {
-            $this->log()->debug('login error: ' . var_export(get_class($e), true));
+            $this->log()->debug('login error: ' . var_export($e::class, true));
         }
         return $authTracker->isValid();
     }

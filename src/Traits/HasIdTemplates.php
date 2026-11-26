@@ -85,7 +85,7 @@ trait HasIdTemplates
             try {
                 $id = R::store($template);
                 return $template;
-            } catch (Exception $e) {
+            } catch (Exception) {
                 return null;
             }
         } else {

@@ -241,7 +241,7 @@ class RouteUtilTest extends PHPUnit\Framework\TestCase
     private function sentinelGatekeeper(): MiddlewareInterface
     {
         $factory = new Psr17Factory();
-        return new class ($factory) implements MiddlewareInterface {
+        return new readonly class ($factory) implements MiddlewareInterface {
             public function __construct(private Psr17Factory $factory) {}
 
             public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface

@@ -74,7 +74,7 @@ class Calibre
                 try {
                     $this->calibre->exec($sql);
                     $this->hasNotes = true;
-                } catch (Exception $e) {
+                } catch (Exception) {
                     // ...
                 }
             }
@@ -1239,7 +1239,7 @@ class Calibre
         if (empty($formats)) {
             return null;
         } else {
-            usort($formats, [$this, 'kindleFormatSort']);
+            usort($formats, $this->kindleFormatSort(...));
             $format = $formats[0];
         }
         return $format;

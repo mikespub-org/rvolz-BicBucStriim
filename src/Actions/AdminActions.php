@@ -535,7 +535,7 @@ class AdminActions extends DefaultActions
         } else {
             $versionInfo = json_decode($contents);
             $version = $settings['version'];
-            if (strpos($settings['version'], '-') === false) {
+            if (!str_contains($settings['version'], '-')) {
                 $v = preg_split('/-/', $settings['version']);
                 $version = $v[0];
             }

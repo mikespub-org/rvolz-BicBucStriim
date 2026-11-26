@@ -41,7 +41,7 @@ class Session extends AuraSession implements SessionInterface
      */
     public function getLocalSegment()
     {
-        return $this->getSegment(__CLASS__);
+        return $this->getSegment(self::class);
     }
 
     /**

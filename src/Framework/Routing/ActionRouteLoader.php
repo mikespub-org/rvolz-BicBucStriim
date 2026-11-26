@@ -17,7 +17,7 @@ class ActionRouteLoader extends Loader
 {
     private bool $isLoaded = false;
 
-    public function __construct(private ActionRegistry $registry)
+    public function __construct(private readonly ActionRegistry $registry)
     {
         parent::__construct();
     }

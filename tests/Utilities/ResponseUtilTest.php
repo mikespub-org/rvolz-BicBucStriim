@@ -30,7 +30,6 @@ class ResponseUtilTest extends PHPUnit\Framework\TestCase
     private function readProtected(ResponseUtil $util, string $prop)
     {
         $ref = new \ReflectionProperty(ResponseUtil::class, $prop);
-        $ref->setAccessible(true);
         return $ref->getValue($util);
     }
 
@@ -38,7 +37,6 @@ class ResponseUtilTest extends PHPUnit\Framework\TestCase
     private function callProtected(ResponseUtil $util, string $method)
     {
         $ref = new \ReflectionMethod(ResponseUtil::class, $method);
-        $ref->setAccessible(true);
         return $ref->invoke($util);
     }
 

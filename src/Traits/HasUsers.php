@@ -117,7 +117,7 @@ trait HasUsers
             try {
                 $id = R::store($user);
                 return $user;
-            } catch (Exception $e) {
+            } catch (Exception) {
                 return null;
             }
         }

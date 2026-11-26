@@ -35,9 +35,9 @@ use Psr\Http\Server\RequestHandlerInterface;
 class ActionInitializeListener
 {
     public function __construct(
-        private PsrHttpFactoryInterface $psrHttpFactory,
-        private MiddlewareResolver $middlewareResolver,
-        private HttpFoundationFactoryInterface $httpFoundationFactory,
+        private readonly PsrHttpFactoryInterface $psrHttpFactory,
+        private readonly MiddlewareResolver $middlewareResolver,
+        private readonly HttpFoundationFactoryInterface $httpFoundationFactory,
     ) {}
 
     public function onKernelController(ControllerEvent $event): void
@@ -100,7 +100,7 @@ class ActionInitializeListener
     {
         $request = $event->getRequest();
         $routeParams = array_values($request->attributes->get('_route_params', []));
-        $handler = new class ($callable, $routeParams) implements RequestHandlerInterface {
+        $handler = new readonly class ($callable, $routeParams) implements RequestHandlerInterface {
             public function __construct(
                 private \Closure $callable,
                 private array $args,
@@ -142,7 +142,7 @@ class ActionInitializeListener
         // the action and calls the method with the route parameters — the same
         // positional-args convention the custom App and Laravel use.
         $routeParams = array_values($request->attributes->get('_route_params', []));
-        $handler = new class ($actionInstance, $method, $routeParams) implements RequestHandlerInterface {
+        $handler = new readonly class ($actionInstance, $method, $routeParams) implements RequestHandlerInterface {
             public function __construct(
                 private DefaultActions $action,
                 private string $method,

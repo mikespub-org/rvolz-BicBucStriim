@@ -22,10 +22,10 @@ use Psr\Http\Message\ResponseInterface;
  */
 class App implements \Psr\Http\Server\RequestHandlerInterface
 {
-    private ContainerInterface $container;
-    private ActionRegistry $registry;
-    private ActionResolver $resolver;
-    private MiddlewareResolver $middlewareResolver;
+    private readonly ContainerInterface $container;
+    private readonly ActionRegistry $registry;
+    private readonly ActionResolver $resolver;
+    private readonly MiddlewareResolver $middlewareResolver;
 
     public function __construct(ContainerInterface $container, ?ActionRegistry $registry = null)
     {
@@ -143,7 +143,7 @@ class App implements \Psr\Http\Server\RequestHandlerInterface
     private function dispatchFound(RouteEntry $route, array $routeParams, ServerRequestInterface $request, ResponseInterface $initialResponse): ResponseInterface
     {
         $middleware = $this->middlewareResolver->resolveForRoute((bool) $route->gated, $route->middleware);
-        $handler = new class ($this->resolver, $route->callable, $initialResponse, $routeParams) implements \Psr\Http\Server\RequestHandlerInterface {
+        $handler = new readonly class ($this->resolver, $route->callable, $initialResponse, $routeParams) implements \Psr\Http\Server\RequestHandlerInterface {
             public function __construct(
                 private ActionResolver $resolver,
                 private array|\Closure $callable,

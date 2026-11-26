@@ -174,7 +174,7 @@ class MainActions extends DefaultActions
 
         $filter = $this->getFilter();
         $books1 = $this->calibre()->last30Books($settings['lang'], $settings->page_size, $filter);
-        $books = array_map([$this, 'checkThumbnail'], $books1);
+        $books = array_map($this->checkThumbnail(...), $books1);
         $stats = $this->calibre()->libraryStats($filter);
         $outdated = '';
         $version = $this->calibre()::USER_VERSION;
@@ -208,13 +208,13 @@ class MainActions extends DefaultActions
                 'search' => $search]);
         }
         $tlb = $this->calibre()->titlesSlice($settings['lang'], 0, $settings->page_size, $filter, trim($search));
-        $tlb_books = array_map([$this, 'checkThumbnail'], $tlb['entries']);
+        $tlb_books = array_map($this->checkThumbnail(...), $tlb['entries']);
         $tla = $this->calibre()->authorsSlice(0, $settings->page_size, trim($search));
-        $tla_books = array_map([$this, 'checkThumbnail'], $tla['entries']);
+        $tla_books = array_map($this->checkThumbnail(...), $tla['entries']);
         $tlt = $this->calibre()->tagsSlice(0, $settings->page_size, trim($search));
-        $tlt_books = array_map([$this, 'checkThumbnail'], $tlt['entries']);
+        $tlt_books = array_map($this->checkThumbnail(...), $tlt['entries']);
         $tls = $this->calibre()->seriesSlice(0, $settings->page_size, trim($search));
-        $tls_books = array_map([$this, 'checkThumbnail'], $tls['entries']);
+        $tls_books = array_map($this->checkThumbnail(...), $tls['entries']);
         return $this->render('global_search_result.twig', [
             'page' => $this->buildPage('pagination_search', 0),
             'books' => $tlb_books,
@@ -273,7 +273,7 @@ class MainActions extends DefaultActions
             $tl = $this->calibre()->titlesSlice($settings['lang'], $page, $settings->page_size, $filter, $search);
         }
 
-        $books = array_map([$this, 'checkThumbnail'], $tl['entries']);
+        $books = array_map($this->checkThumbnail(...), $tl['entries']);
         return $this->render('titles.twig', [
             'page' => $this->buildPage('titles', 2, 1),
             'url' => 'titleslist',
@@ -293,7 +293,7 @@ class MainActions extends DefaultActions
     {
         $size = ['B','KB','MB','GB','TB','PB','EB','ZB','YB'];
         $factor = (int) floor((strlen($bytes) - 1) / 3);
-        return sprintf("%.{$decimals}f", $bytes / pow(1024, $factor)) . @$size[$factor];
+        return sprintf("%.{$decimals}f", $bytes / (1024 ** $factor)) . @$size[$factor];
     }
 
     /**
@@ -305,7 +305,7 @@ class MainActions extends DefaultActions
         $settings = $this->settings();
 
         // Add a function to the renderer for human-readable file sizes
-        $this->renderer()->addFilter('hfsize', [$this, 'humanFilesize']);
+        $this->renderer()->addFilter('hfsize', $this->humanFilesize(...));
 
         // parameter checking
         if (!is_numeric($id)) {
@@ -649,7 +649,7 @@ class MainActions extends DefaultActions
             $this->log()->debug('no author ' . $id);
             return $this->notFound();
         }
-        $books = array_map([$this, 'checkThumbnail'], $tl['entries']);
+        $books = array_map($this->checkThumbnail(...), $tl['entries']);
 
         $series = $this->calibre()->authorSeries($id, $books);
 
@@ -782,7 +782,7 @@ class MainActions extends DefaultActions
             $this->log()->debug('seriesDetailsSlice: no series ' . $id);
             return $this->notFound();
         }
-        $books = array_map([$this, 'checkThumbnail'], $tl['entries']);
+        $books = array_map($this->checkThumbnail(...), $tl['entries']);
         return $this->render('series_detail.twig', [
             'page' => $this->buildPage('series_details', 5, 2),
             'url' => 'series/' . $id,
@@ -849,7 +849,7 @@ class MainActions extends DefaultActions
             $this->log()->debug('no tag ' . $id);
             return $this->notFound();
         }
-        $books = array_map([$this, 'checkThumbnail'], $tl['entries']);
+        $books = array_map($this->checkThumbnail(...), $tl['entries']);
         return $this->render('tag_detail.twig', [
             'page' => $this->buildPage('tag_details', 4, 2),
             'url' => 'tags/' . $id,

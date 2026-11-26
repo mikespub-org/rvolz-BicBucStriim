@@ -45,7 +45,7 @@ $builder->addDefinitions([
     CacheItemPoolInterface::class => function (ContainerInterface $c) {
         try {
             return new ApcuAdapter('BicBucStriim', 3600);
-        } catch (CacheException $e) {
+        } catch (CacheException) {
             return new FilesystemAdapter('BicBucStriim', 3600);
         }
     },

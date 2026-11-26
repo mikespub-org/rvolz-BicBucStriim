@@ -19,7 +19,7 @@ use Symfony\Bridge\PsrHttpMessage\HttpFoundationFactoryInterface;
 class PsrResponseListener
 {
     public function __construct(
-        private HttpFoundationFactoryInterface $httpFoundationFactory,
+        private readonly HttpFoundationFactoryInterface $httpFoundationFactory,
     ) {}
 
     public function onKernelView(ViewEvent $event): void

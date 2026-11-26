@@ -27,8 +27,8 @@ use Psr\Http\Server\MiddlewareInterface;
  */
 class MiddlewareResolver
 {
-    private ?ContainerInterface $container;
-    private ResponseFactoryInterface $responseFactory;
+    private readonly ?ContainerInterface $container;
+    private readonly ResponseFactoryInterface $responseFactory;
 
     public function __construct(
         ?ContainerInterface $container = null,

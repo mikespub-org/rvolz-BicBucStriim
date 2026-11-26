@@ -9,7 +9,7 @@ use Twig\Environment;
  */
 class TwigRenderer implements RendererInterface
 {
-    private Environment $twig;
+    private readonly Environment $twig;
 
     public function __construct(Environment $twig)
     {

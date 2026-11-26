@@ -99,7 +99,7 @@ class ContainerAdapterTest extends PHPUnit\Framework\TestCase
         // It's only triggered when the wrapped container exposes a call() method.
         $calls = 0;
         $inner = $this->makePsr11Container();
-        $callable = new class ($inner) implements Psr\Container\ContainerInterface {
+        $callable = new readonly class ($inner) implements Psr\Container\ContainerInterface {
             public function __construct(private Psr\Container\ContainerInterface $container) {}
 
             public function call(callable $callable)

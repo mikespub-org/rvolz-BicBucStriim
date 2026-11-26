@@ -71,7 +71,7 @@ class ActionAdapterController extends Controller
      */
     private function runActionPipeline(ActionResolver $resolver, array|\Closure $callable, array $args, array $middleware, PsrRequest $psrRequest): PsrResponse
     {
-        $handler = new class ($resolver, $callable, $args) implements RequestHandlerInterface {
+        $handler = new readonly class ($resolver, $callable, $args) implements RequestHandlerInterface {
             public function __construct(
                 private ActionResolver $resolver,
                 private array|\Closure $callable,

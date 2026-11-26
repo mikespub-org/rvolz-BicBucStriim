@@ -28,7 +28,7 @@ class MiddlewareDispatcherTest extends PHPUnit\Framework\TestCase
 
     private function makeOkHandler(string $body = 'ok'): RequestHandlerInterface
     {
-        return new class ($body) implements RequestHandlerInterface {
+        return new readonly class ($body) implements RequestHandlerInterface {
             public function __construct(private string $body) {}
             public function handle(ServerRequestInterface $request): ResponseInterface
             {
@@ -41,7 +41,7 @@ class MiddlewareDispatcherTest extends PHPUnit\Framework\TestCase
 
     private function makeAppendingMiddleware(string $marker, bool $appendAfter = true): MiddlewareInterface
     {
-        return new class ($marker, $appendAfter) implements MiddlewareInterface {
+        return new readonly class ($marker, $appendAfter) implements MiddlewareInterface {
             public function __construct(private string $marker, private bool $appendAfter) {}
             public function handle_marker(): string
             {

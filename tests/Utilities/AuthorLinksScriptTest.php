@@ -36,7 +36,7 @@ use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 #[Group('node-js')]
 class AuthorLinksScriptTest extends PHPUnit\Framework\TestCase
 {
-    private const AUTHOR_ID = 5;
+    private const int AUTHOR_ID = 5;
 
     private string $projectRoot;
 

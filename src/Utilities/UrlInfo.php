@@ -5,7 +5,7 @@ namespace BicBucStriim\Utilities;
 /**
  * Class UrlInfo contains information on how to construct URLs
  */
-class UrlInfo
+class UrlInfo implements \Stringable
 {
     /**
      * @var string $protocol - protocol used for access, default 'http'
@@ -45,7 +45,7 @@ class UrlInfo
         }
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return "UrlInfo{ protocol: $this->protocol, host: $this->host}";
     }
