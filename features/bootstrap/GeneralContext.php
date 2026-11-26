@@ -12,6 +12,13 @@ use Behat\MinkExtension\Context\RawMinkContext;
  */
 class GeneralContext extends RawMinkContext
 {
+    public const LINKS = [
+        'Books' => '/titleslist/%d/',
+        'Authors' => '/authorslist/%d/',
+        'Series' => '/serieslist/%d/',
+        'Tags' => '/tagslist/%d/',
+    ];
+
     /**
      * Initializes context.
      *
@@ -115,10 +122,13 @@ class GeneralContext extends RawMinkContext
     #[Then(':arg1 page :arg3 with content :arg2 appears')]
     public function pageWithContentAppears($arg1, $arg2, $arg3): void
     {
-        $expectedPath = sprintf('/titleslist/%d/', (int) $arg3);
+        if (!array_key_exists($arg1, self::LINKS)) {
+            throw new \InvalidArgumentException(sprintf('Page navigation is not configured for "%s".', $arg1));
+        }
+        $expectedPath = sprintf(self::LINKS[$arg1], (int) $arg3);
         $currentPath = parse_url($this->getSession()->getCurrentUrl(), PHP_URL_PATH);
         if (!is_string($currentPath) || !str_ends_with($currentPath, $expectedPath)) {
-            throw new \RuntimeException(sprintf('Expected the Books page URL to end in "%s".', $expectedPath));
+            throw new \RuntimeException(sprintf('Expected the %s page URL to end in "%s".', $arg1, $expectedPath));
         }
         $this->theMenuItemIsActive($arg1);
         $this->assertSession()->pageTextContains($arg2);
@@ -127,10 +137,10 @@ class GeneralContext extends RawMinkContext
     #[When('I go to the :arg1 page :arg2')]
     public function iGoToThePage($arg1, $arg2): void
     {
-        if ($arg1 !== 'Books') {
+        if (!array_key_exists($arg1, self::LINKS)) {
             throw new \InvalidArgumentException(sprintf('Direct pagination is not configured for "%s".', $arg1));
         }
-        $this->visitPath(sprintf('/titleslist/%d/', (int) $arg2));
+        $this->visitPath(sprintf(self::LINKS[$arg1], (int) $arg2));
     }
 
     #[When('I enter :arg1 into the :arg2 search field')]

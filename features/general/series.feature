@@ -26,7 +26,7 @@ Feature: The series list displays all book series in the library.
     And the app switches to the "Series" view
     And I click on the "next" button
     Then "Series" page 1 with content "Serie Rilke" appears
-    And the list contains 1 item
+    And the list contains 2 items
     And there are "previous" buttons
     And there are no "next" buttons
     # Action: MainActions::seriesSlice, GET /series/ (main-series-v2); legacy GET /serieslist/{page}/ (main-series-v1).

@@ -25,7 +25,7 @@ Feature: The authors list displays all book authors in the library.
 		And the app switches to the "Authors" view
 		And there are "next" buttons
 		And I click on the "next" button
-		Then "Authors" page 1 with content "Heyse, Paul" appears
+		Then "Authors" page 1 with content "Paul Heyse" appears
 		And the list contains 2 items
 		And there are "previous" buttons
 		And there are "next" buttons
@@ -36,7 +36,7 @@ Feature: The authors list displays all book authors in the library.
 		And the app switches to the "Authors" view
 		And I go to the "Authors" page 1
 		And I click on the "previous" button
-		Then "Authors" page 0 with content "Eichendorff, Joseph von" appears
+		Then "Authors" page 0 with content "Joseph von Eichendorf" appears
 		And the list contains 2 items
 		# Action: MainActions::authorsSlice, GET /authors/ (main-authors-v2); legacy GET /authorslist/{page}/ (main-authors-v1).
 
@@ -44,7 +44,7 @@ Feature: The authors list displays all book authors in the library.
 		When I click on menu item "Authors"
 		And the app switches to the "Authors" view
 		And I go to the "Authors" page 2
-		Then "Authors" page 2 with content "Ruskin, John" appears
+		Then "Authors" page 2 with content "John Ruskin" appears
 		And the list contains 2 items
 		And there are "previous" buttons
 		And there are no "next" buttons
