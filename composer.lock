@@ -87,16 +87,16 @@
         },
         {
             "name": "aura/auth",
-            "version": "7.0.0",
+            "version": "7.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/auraphp/Aura.Auth.git",
-                "reference": "8e344297c26422dab24ee1e258fd0c68a8a7bebf"
+                "reference": "4bd5ac7f0f4cfb5b00e4c1f0945ea9d1cff25346"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/auraphp/Aura.Auth/zipball/8e344297c26422dab24ee1e258fd0c68a8a7bebf",
-                "reference": "8e344297c26422dab24ee1e258fd0c68a8a7bebf",
+                "url": "https://api.github.com/repos/auraphp/Aura.Auth/zipball/4bd5ac7f0f4cfb5b00e4c1f0945ea9d1cff25346",
+                "reference": "4bd5ac7f0f4cfb5b00e4c1f0945ea9d1cff25346",
                 "shasum": ""
             },
             "require": {
@@ -139,10 +139,10 @@
             ],
             "support": {
                 "issues": "https://github.com/auraphp/Aura.Auth/issues",
-                "source": "https://github.com/auraphp/Aura.Auth/tree/7.0.0"
+                "source": "https://github.com/auraphp/Aura.Auth/tree/7.0.1"
             },
-            "time": "2026-09-29T08:59:49+00:00",
-            "published-time": "2026-09-29T09:00:27+00:00"
+            "time": "2026-11-26T05:18:42+00:00",
+            "published-time": "2026-11-26T05:20:05+00:00"
         },
         {
             "name": "aura/session",
@@ -324,12 +324,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/gabordemooij/redbean.git",
-                "reference": "4646f2649807b6910d6d0f37163737c292550ab1"
+                "reference": "9737362ece105a190f037d128ff2463819306808"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/gabordemooij/redbean/zipball/4646f2649807b6910d6d0f37163737c292550ab1",
-                "reference": "4646f2649807b6910d6d0f37163737c292550ab1",
+                "url": "https://api.github.com/repos/gabordemooij/redbean/zipball/9737362ece105a190f037d128ff2463819306808",
+                "reference": "9737362ece105a190f037d128ff2463819306808",
                 "shasum": ""
             },
             "require": {
@@ -365,8 +365,8 @@
                 "issues": "https://github.com/gabordemooij/redbean/issues",
                 "source": "https://github.com/gabordemooij/redbean/tree/master"
             },
-            "time": "2026-11-14T15:01:12+00:00",
-            "published-time": "2026-11-14T15:01:16+00:00"
+            "time": "2026-11-26T06:55:58+00:00",
+            "published-time": "2026-11-26T06:56:02+00:00"
         },
         {
             "name": "laravel/serializable-closure",
@@ -710,16 +710,16 @@
         },
         {
             "name": "nyholm/psr7",
-            "version": "1.8.2",
+            "version": "1.8.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Nyholm/psr7.git",
-                "reference": "a71f2b11690f4b24d099d6b16690a90ae14fc6f3"
+                "reference": "26c1581611614447a5ff753a450390a23f3e323e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Nyholm/psr7/zipball/a71f2b11690f4b24d099d6b16690a90ae14fc6f3",
-                "reference": "a71f2b11690f4b24d099d6b16690a90ae14fc6f3",
+                "url": "https://api.github.com/repos/Nyholm/psr7/zipball/26c1581611614447a5ff753a450390a23f3e323e",
+                "reference": "26c1581611614447a5ff753a450390a23f3e323e",
                 "shasum": ""
             },
             "require": {
@@ -772,7 +772,7 @@
             ],
             "support": {
                 "issues": "https://github.com/Nyholm/psr7/issues",
-                "source": "https://github.com/Nyholm/psr7/tree/1.8.2"
+                "source": "https://github.com/Nyholm/psr7/tree/1.8.3"
             },
             "funding": [
                 {
@@ -784,8 +784,8 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-09-09T07:06:30+00:00",
-            "published-time": "2024-09-09T07:07:05+00:00"
+            "time": "2026-11-26T08:19:16+00:00",
+            "published-time": "2026-11-26T08:20:50+00:00"
         },
         {
             "name": "nyholm/psr7-server",

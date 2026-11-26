@@ -57,40 +57,4 @@ trait HasAuthors
     {
         return $this->addCalibreThing(self::AUTHOR_TYPE, $authorId, $authorName);
     }
-
-    /**
-     * Get the file name of an author's thumbnail image if it exists.
-     * @param int 	$authorId 	Calibre ID of the author
-     * @return 		?Artefact Artefact with url of the thumbnail image, or null
-     * @deprecated 4.2.3 use bbs()->author($authorId)->getThumbnail() instead
-     */
-    public function authorThumbnail($authorId)
-    {
-        $calibreThing = $this->getCalibreThing(self::AUTHOR_TYPE, $authorId);
-        return $this->getCalibreThumbnail($calibreThing);
-    }
-
-    /**
-     * Return all links defined for an author if it exists.
-     * @param int 	$authorId 	Calibre ID for the author
-     * @return array<Link> author links
-     * @deprecated 4.2.3 use bbs()->author($authorId)->getLinks() instead
-     */
-    public function authorLinks($authorId)
-    {
-        $calibreThing = $this->getCalibreThing(self::AUTHOR_TYPE, $authorId);
-        return $this->getCalibreLinks($calibreThing);
-    }
-
-    /**
-     * Get the note text for an author if it exists.
-     * @param int 	$authorId 	Calibre ID of the author
-     * @return 		?Note 		note text or null
-     * @deprecated 4.2.3 use bbs()->author($authorId)->getNote() instead
-     */
-    public function authorNote($authorId)
-    {
-        $calibreThing = $this->getCalibreThing(self::AUTHOR_TYPE, $authorId);
-        return $this->getCalibreNote($calibreThing);
-    }
 }
