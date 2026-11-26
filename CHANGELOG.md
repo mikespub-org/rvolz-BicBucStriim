@@ -8,12 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Add LinkGenerator class and Twig functions to generate links in templates
 ### Changed
+- Update docker files to use PHP 8.5 by default
 - Use link functions for files in templates
 - Fix download files for tailwind templates
 ### Removed
 - Drop deprecated methods for releases older than 4.3.0
 
-## [4.2.3] - 2026-11-25
+## [4.2.3] - 2026-11-25 Merge features + fix issues
 ### Added
 - Add download link to title entry part in list view - see PR #15 by @Simounet
 ### Changed

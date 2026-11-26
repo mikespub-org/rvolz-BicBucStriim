@@ -4,13 +4,13 @@ USER root
 
 # Install packages missing from https://github.com/TrafeX/docker-php-nginx/blob/master/Dockerfile
 RUN apk add --no-cache \
-    php84-apcu \
-    php84-iconv \
-    php84-mbstring \
-    php84-pdo_sqlite \
-    php84-sqlite3 \
-    php84-sodium \
-    php84-zip
+    php85-apcu \
+    php85-iconv \
+    php85-mbstring \
+    php85-pdo_sqlite \
+    php85-sqlite3 \
+    php85-sodium \
+    php85-zip
 
 # Install composer from the official image
 COPY --from=composer /usr/bin/composer /usr/bin/composer
