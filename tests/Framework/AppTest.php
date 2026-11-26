@@ -197,11 +197,12 @@ class AppTest extends TestCase
     public function testHandleArrayRouteStillWorksWithInjectedRegistry(): void
     {
         $container = $this->getTestContainer();
-        $registry = new \BicBucStriim\Actions\ActionRegistry($container);
+        // we need to get the action registry from container here, or linkgenerator will use the wrong one
+        $registry = $container->get(\BicBucStriim\Actions\ActionRegistry::class);
         $registry->register(ClosureTestAction::class);
         $app = new App($container, $registry);
 
-        // The standard 'hello' route (DefaultActions) is loaded by ActionLoader
+        // The standard 'main-home' route (MainActions) is loaded by ActionLoader
         // into the injected registry too; it must still resolve normally.
         $request = RequestUtil::getServerRequest('GET', '/');
         $response = $app->handle($request);

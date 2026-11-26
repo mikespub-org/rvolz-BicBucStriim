@@ -143,7 +143,7 @@ class MainActionsTest extends PHPUnit\Framework\TestCase
                 ['id' => 7], 51232,
                 'GET', '/static/titlethumbs/{id}/', ['$self', 'thumbnail'],
             ],
-            'main-file-v2' => [
+            'main-book-v2' => [
                 ['id' => 7, 'format' => 'epub', 'fname' => 'The%20Stones%20of%20Venice%2C%20Volume%20II%20-%20John%20Ruskin'], 10198,
                 'GET', '/static/files/{id}/{format}/{fname}/', ['$self', 'filev2'],
             ],

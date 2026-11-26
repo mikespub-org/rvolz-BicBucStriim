@@ -16,6 +16,7 @@ use BicBucStriim\AppData\BicBucStriim;
 use BicBucStriim\AppData\Settings;
 use BicBucStriim\Calibre\Calibre;
 use BicBucStriim\Session\AuthServices;
+use BicBucStriim\Utilities\LinkGenerator;
 use BicBucStriim\Utilities\Mailer;
 use BicBucStriim\Utilities\Thumbnails;
 use BicBucStriim\Framework\ContainerAdapter;
@@ -145,6 +146,15 @@ trait AppTrait
     public function getActionRegistry()
     {
         return $this->container(ActionRegistry::class);
+    }
+
+    /**
+     * Get link generator
+     * @return LinkGenerator
+     */
+    public function getLinkGenerator()
+    {
+        return $this->container(LinkGenerator::class);
     }
 
     /**

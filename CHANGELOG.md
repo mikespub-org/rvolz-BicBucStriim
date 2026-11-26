@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [4.x.x] - 20xx-xx-xx
 ### Added
+- Add LinkGenerator class and Twig functions to generate links in templates
+### Changed
+- Fix download files for tailwind templates
+
+## [4.2.3] - 2026-11-25
+### Added
 - Add download link to title entry part in list view - see PR #15 by @Simounet
 ### Changed
 - Deprecate author*() methods in HasAuthors trait for BicBucStriim class

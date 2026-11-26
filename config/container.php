@@ -69,6 +69,7 @@ $builder->addDefinitions([
     Thumbnails::class => function (ContainerInterface $c) {
         $settings = $c->get('settings');
         $dataPath = $settings['dataDbPath'] ?? 'data/data.db';
+        // use relative to root for uri
         $dataDir = dirname($dataPath);
         # Get Thumbnails utility class
         $thumbs = new Thumbnails($dataDir);

@@ -68,7 +68,7 @@ class MainActions extends DefaultActions
             'main-titles-v2' => ['GET', '/titles/', [$self, 'titlesSlice']],
             'main-cover-v2' => ['GET', '/static/covers/{id}/', [$self, 'cover']],
             'main-thumbnail-v2' => ['GET', '/static/titlethumbs/{id}/', [$self, 'thumbnail']],
-            'main-file-v2' => ['GET', '/static/files/{id}/{format}/{fname}/', [$self, 'filev2']],
+            'main-book-v2' => ['GET', '/static/files/{id}/{format}/{fname}/', [$self, 'book_v2']],
             // @todo handle jumpTarget for author/series/tag slice if we want to support this
             'params-scope-type' => ['GET', '/params/{scope}/{type}/', [$self, 'getTailwindParams']],
         ];
@@ -498,7 +498,7 @@ class MainActions extends DefaultActions
      * Route: /static/files/{id}/{format}/{fname}/
      * @return Response
      */
-    public function filev2($id, $format, $fname)
+    public function book_v2($id, $format, $fname)
     {
         return $this->book($id, "$fname.$format");
     }

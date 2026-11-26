@@ -31,9 +31,9 @@ class App implements \Psr\Http\Server\RequestHandlerInterface
     {
         $this->container = $container;
         // Allow injecting a pre-seeded registry (e.g. tests registering a custom
-        // action with a Closure route); otherwise build the default one. The
-        // standard actions are still loaded in handle() either way.
-        $this->registry = $registry ?? new ActionRegistry($this->container);
+        // action with a Closure route); otherwise get the default one from container.
+        // The standard actions are still loaded in handle() either way.
+        $this->registry = $registry ?? $this->container->get(ActionRegistry::class);
         $this->resolver = new ActionResolver($this->registry);
         $this->middlewareResolver = new MiddlewareResolver($this->container);
     }

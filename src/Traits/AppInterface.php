@@ -54,6 +54,12 @@ interface AppInterface
     public function settings();
 
     /**
+     * Get thumbnails
+     * @return \BicBucStriim\Utilities\Thumbnails
+     */
+    public function thumbs();
+
+    /**
      * Get renderer from container
      * @return \BicBucStriim\Framework\RendererInterface
      */
@@ -77,6 +83,12 @@ interface AppInterface
      * @return \BicBucStriim\Actions\ActionRegistry
      */
     public function getActionRegistry();
+
+    /**
+     * Get link generator
+     * @return \BicBucStriim\Utilities\LinkGenerator
+     */
+    public function getLinkGenerator();
 
     /**
      * Get auth services

@@ -31,7 +31,7 @@ class Author extends Item
     public $notes;
     public $links;
 }
-class AuthorBook extends Item {}
+class AuthorBook extends Book {}
 class Book extends Item
 {
     public $id;
@@ -75,7 +75,7 @@ class Series extends Item
     // from Calibre Notes DB
     public $note;
 }
-class SeriesBook extends Item {}
+class SeriesBook extends Book {}
 class Tag extends Item
 {
     public $id;
@@ -88,5 +88,5 @@ class Tag extends Item
     // from Calibre Notes DB
     public $note;
 }
-class TagBook extends Item {}
+class TagBook extends Book {}
 class Identifier extends Item {}

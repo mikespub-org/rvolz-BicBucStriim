@@ -201,7 +201,7 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
         if ($this->requester->isJsonApi()) {
             return $this->renderJson($data, $status);
         }
-        // Slim 2 framework will replace data, render template and echo output via slim view display()
+        // Initialize renderer if needed
         $this->setTemplatesDir();
         try {
             // Get the renderer via the AppTrait method
@@ -213,12 +213,13 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
     }
 
     /**
-     * Set custom templates directory (once)
+     * Set custom templates directory + add link functions (once)
      * @return void
      */
     public function setTemplatesDir()
     {
         if ($this->templatesDir === null) {
+            // Get custom templates directory (if any)
             $settings = $this->settings();
             $this->templatesDir = $settings->templates_dir ?? '';
             if (!empty($this->templatesDir)) {
@@ -228,10 +229,9 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
                     $this->renderer()->prependPath($path);
                 }
             }
-            $generator = $this->container(LinkGenerator::class);
-            $this->renderer()->addFunction('bbs_path', [$generator, 'getPath']);
-            $this->renderer()->addFunction('bbs_link', [$generator, 'getLink']);
-            $this->renderer()->addFunction('bbs_file', [$generator, 'getDataLink']);
+            // Add link functions to renderer
+            $generator = $this->getLinkGenerator();
+            $generator->addFunctions($this->renderer());
         }
     }
 
