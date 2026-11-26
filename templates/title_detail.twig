@@ -44,7 +44,7 @@
 						<a class="bbs-btn" data-role="button" 
 							{% if page.glob.glob_dl_toggle == true %} disabled="true" {% endif %} 
 							data-ajax="false" 
-							href="{{page.rot}}/titles/{{book.id}}/file/{{format.name|url_encode()}}.{{format.format|lower}}">
+							href="{{page.rot}}{{bbs_file(format)}}">
 							<svg class="bbs-icon" aria-hidden="true"><use xlink:href="#bbs-icon-cloud" href="#bbs-icon-cloud"/></svg>
 							<span>{{ format.format }} | {{format.uncompressed_size|hfsize}}</span>
 						</a>
@@ -69,7 +69,7 @@
 		<div>
 			<h4>{{ page.glob.l10n.presskey2 }}</h4>
 			<p><em>{{kindle_from_email}}</em> {{ page.glob.l10n.presskey3 }}</p>
-			<form action="{{page.rot}}/titles/{{book.id}}/kindle/{{kindle_format.name|url_encode()}}.{{kindle_format.format|lower}}" method="POST" id="ajax-form" data-ajax="false">
+			<form action="{{page.rot}}{{bbs_kindle(kindle_format)}}" method="POST" id="ajax-form" data-ajax="false">
 				<div style="margin-bottom:12px;">
 					<label for="kindleEmail">{{page.glob.l10n.kindle_to_email}}</label>
 					<input type="email" name="kindleEmail" id="kindleEmail" value="" placeholder="{{page.glob.l10n.kindle_to_email}}" required />

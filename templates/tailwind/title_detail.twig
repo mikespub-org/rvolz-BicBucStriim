@@ -19,7 +19,7 @@
 				{% for format in formats %}
 					<a class="top-link"
 					   download="{{format.name|url_encode()}}.{{format.format|lower}}"
-					   href="{{page.rot}}/static/files/{{book.id}}/{{format.format|lower}}/{{format.name|url_encode()}}/">
+					   href="{{page.rot}}{{bbs_file(format, 2)}}">
 						{# Heroicons: download #}
 						<svg class="w-6 h-6 inline-flex" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
 						{{ format.format }} | {{format.uncompressed_size|hfsize}}

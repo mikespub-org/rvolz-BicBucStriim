@@ -19,12 +19,10 @@
 		{% for format in book.files %}
 			<li class="bbs-list-download-item">
 				<a class="bbs-btn bbs-list-download"
-					href="{{page.rot}}/titles/{{format.book}}/file/{{format.name|url_encode()}}.{{format.format|lower}}">
+					href="{{page.rot}}{{bbs_file(format)}}">
 					<svg class="bbs-icon" aria-hidden="true"><use xlink:href="#bbs-icon-cloud"href="#bbs-icon-cloud"></svg>
 					{{ format.format }}
 				</a>
-				{#<!-- {{page.rot}}{{bbs_path('main-book', {'id': format.book, 'file': format.name ~ '.' ~ format.format|lower})}} -->#}
-				{#<!-- {{page.rot}}{{bbs_file(format)}} -->#}
 			</li>
 		{% endfor %}
 	</ul>
