@@ -35,7 +35,7 @@ class Settings extends ArrayObject
     public const APP_NAME = 'BicBucStriim';
 
     # Application version
-    public const APP_VERSION = '4.2.1';
+    public const APP_VERSION = '4.3.1';
 
     # Directory for bbs db and thumbnails (relative to root)
     public const DATA_URI = 'data';

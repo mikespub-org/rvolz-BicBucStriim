@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [4.x.x] - 20xx-xx-xx
+### Changed
+
+## [4.3.1] - 2026-11-26 Use Twig functions for file links
 ### Added
 - Add LinkGenerator class and Twig functions to generate links in templates
 ### Changed
