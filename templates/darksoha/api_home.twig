@@ -18,6 +18,11 @@
     window.ui = SwaggerUIBundle({
       url: '{{ link }}',
       dom_id: '#swagger-ui',
+      requestInterceptor: (request) => {
+        // force accept header in request to get JSON response - replaces curl -H 'accept: */*'
+        request.headers['accept'] = 'application/json';
+        return request;
+      }
     });
   };
 </script>
