@@ -85,8 +85,14 @@ $builder->addDefinitions([
         return Mailer::newInstance($settings);
     },
     \Twig\Environment::class => function (ContainerInterface $c) {
+        $settings = $c->get('settings');
+        $twigCache = $settings['twigCache'] ?? false;
+        $options = [];
+        if (!empty($twigCache)) {
+            $options['cache'] = $twigCache;
+        }
         $loader = new \Twig\Loader\FilesystemLoader('templates');
-        return new \Twig\Environment($loader);
+        return new \Twig\Environment($loader, $options);
     },
     RendererInterface::class => function (ContainerInterface $c) {
         $twig = $c->get(\Twig\Environment::class);

@@ -77,7 +77,7 @@ $app->addBodyParsingMiddleware();
 # We don't really care if someone hits the cache after being logged out
 $cachePool = $app->getContainer()->get(CacheItemPoolInterface::class);
 $responseFactory = $app->getResponseFactory();
-$app->add(new \BicBucStriim\Middleware\CachingMiddleware($app->getContainer(), ['/admin', '/login', '/api'], $cachePool, $responseFactory));
+$app->add(new \BicBucStriim\Middleware\CachingMiddleware($app->getContainer(), ['/admin', '/meta', '/login', '/api'], $cachePool, $responseFactory));
 
 $app->addRoutingMiddleware();
 # Base path - null means undefined, empty '' or '/bbs' etc. mean predefined

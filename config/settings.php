@@ -23,6 +23,8 @@ $dataDbPath = getenv('BBS_DATA_DB') ?: 'data/data.db';
 $mode = !empty(getenv('BBS_DEBUG_MODE')) ? 'debug' : 'production';
 #$mode = 'debug';
 #$mode = 'development';
+# Optional Twig cache dir for compiled templates, e.g. 'data/cache'
+$twigCache = getenv('BBS_TWIG_CACHE') ?: false;
 
 # Init app globals
 $settings = new Settings();
@@ -43,6 +45,7 @@ return [
     'appversion' => $appversion,
     'basepath' => $basepath,
     'dataDbPath' => $dataDbPath,
+    'twigCache' => $twigCache,
     'globalSettings' => $settings,
     'knownConfigs' => $knownConfigs,
     'mode' => $mode,
