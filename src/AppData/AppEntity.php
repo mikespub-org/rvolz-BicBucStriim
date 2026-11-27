@@ -32,7 +32,7 @@ class AppEntity
 
     public const CALIBRE_TYPE = DataConstants::ENTITY_TYPE;
 
-    # dir for bbs db (real path)
+    # dir for bbs db and thumbnails (real path)
     public $dataDir = '';
     public ?Calibrething $calibreThing = null;
 

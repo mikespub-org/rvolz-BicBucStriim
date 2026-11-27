@@ -652,7 +652,6 @@ class OpdsGenerator
         }
         $this->thumbnailLink($tlink);
         $this->imageLink($titleLink . '/cover/');
-        #$this->detailsLink($titleLink.'/thumbnail/');
         foreach ($entry['formats'] as $format) {
             $fname = $format->name;
             $ext = strtolower($format->format);

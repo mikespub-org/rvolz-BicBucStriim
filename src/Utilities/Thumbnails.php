@@ -20,9 +20,9 @@ class Thumbnails
         DataConstants::SERIES_TYPE => ['series', 'series_'],
     ];
 
-    # dir for bbs db (relative to root)
+    # dir for bbs db and thumbnails (relative to root)
     public $dataUri = '';
-    # dir for bbs db (real path)
+    # dir for bbs db and thumbnails (real path)
     public $dataDir = '';
     # dir for generated title thumbs (real path)
     public $titlesDir = '';

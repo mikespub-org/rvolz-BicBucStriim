@@ -5,11 +5,7 @@
     <meta property="og:site_name" content="{{ page.title }}">
     <meta property="og:title" content="{{ book.title }}">
     <meta property="og:description" content="{{ authors[0].name }}">
-	{% if book.thumbnail%}
-    <meta property="og:image" content="{{base_url}}/data/titles/thumb_{{ book.id }}.png">
-	{% else %}
-    <meta property="og:image" content="{{base_url}}/titles/{{ book.id }}/thumbnail/">
-	{% endif %}
+    <meta property="og:image" content="{{base_url}}{{bbs_thumb(book)}}">
     <meta property="og:url" content="{{base_url}}/titles/{{ book.id }}/">
 {% endblock %}
 

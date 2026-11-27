@@ -46,28 +46,6 @@ class LinkGeneratorTest extends PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $path);
     }
 
-    public function testGetLinkForData()
-    {
-        $data = new Data();
-        $data->book = 7;
-        $data->name = "The Stones of Venice, Volume II - John Ruskin";
-        $data->format = "EPUB";
-
-        $expected = "/titles/7/file/The%20Stones%20of%20Venice%2C%20Volume%20II%20-%20John%20Ruskin.epub";
-        $path = $this->generator->getLink($data);
-        $this->assertEquals($expected, $path);
-    }
-
-    public function testGetLinkForUnknown()
-    {
-        $object = new \stdClass();
-        $object->id = 123;
-
-        $expected = "TODO get link for stdClass";
-        $path = $this->generator->getLink($object);
-        $this->assertEquals($expected, $path);
-    }
-
     public function testGetDataLink()
     {
         $data = new Data();
@@ -127,12 +105,26 @@ class LinkGeneratorTest extends PHPUnit\Framework\TestCase
         $book = new Book();
         $book->id = 7;
 
+        // Use default-style links (v1)
         $expected = "/titles/7/thumbnail/";
         $path = $this->generator->getBookThumb($book);
         $this->assertEquals($expected, $path);
 
+        // Use tailwind-style links (v2)
         $this->generator->setVersion(2);
         $expected = "/static/titlethumbs/7/";
+        $path = $this->generator->getBookThumb($book);
+        $this->assertEquals($expected, $path);
+
+        // Use thumbnail file in data dir
+        $book->thumbnail = true;
+        $expected = "/data/titles/thumb_7.png";
+        $path = $this->generator->getBookThumb($book);
+        $this->assertEquals($expected, $path);
+
+        // Use thumbnail file in other data dir
+        $this->generator->setDataUri('other/data');
+        $expected = "/other/data/titles/thumb_7.png";
         $path = $this->generator->getBookThumb($book);
         $this->assertEquals($expected, $path);
     }

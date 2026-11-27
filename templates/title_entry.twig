@@ -1,10 +1,6 @@
 <li class="bbs-list-item">
 	<a class="bbs-list-link" href="{{page.rot}}/titles/{{book.id}}/">
-		{% if book.thumbnail%}
-		<img class="bbs-thumb" src="{{page.rot}}/data/titles/thumb_{{ book.id }}.png" alt="" />
-		{% else %}
-		<img class="bbs-thumb" src="{{page.rot}}/titles/{{ book.id }}/thumbnail/" alt="" />
-		{% endif %}
+		<img class="bbs-thumb" src="{{page.rot}}{{bbs_thumb(book)}}" alt="" />
 		
 		<div class="bbs-list-info">
 			<h3 class="bbs-list-title">

@@ -9,13 +9,11 @@
  *
  */
 
-use Aura\Auth\Auth;
 use BicBucStriim\Actions\ActionRegistry;
 use BicBucStriim\AppData\BicBucStriim;
 use BicBucStriim\AppData\Settings;
 use BicBucStriim\Calibre\Calibre;
 use BicBucStriim\Session\AuthServices;
-use BicBucStriim\Session\Session;
 use BicBucStriim\Framework\RendererInterface;
 use BicBucStriim\Framework\TwigRenderer;
 use BicBucStriim\Utilities\LinkGenerator;

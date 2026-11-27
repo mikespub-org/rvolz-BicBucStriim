@@ -11,7 +11,6 @@
 
 namespace BicBucStriim\Actions;
 
-use BicBucStriim\Utilities\LinkGenerator;
 use BicBucStriim\Utilities\RequestUtil;
 use BicBucStriim\Utilities\ResponseUtil;
 use BicBucStriim\Framework\ContainerAdapter;
@@ -238,6 +237,8 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
             // Add link functions to renderer
             $generator = $this->getLinkGenerator();
             $generator->addFunctions($this->renderer(), $linkVersion);
+            // Set dir for bbs db and thumbnails (relative to root)
+            $generator->setDataUri($this->thumbs()->dataUri);
         }
     }
 

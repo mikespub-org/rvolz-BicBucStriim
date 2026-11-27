@@ -38,6 +38,7 @@ class Book extends Item
     public $language;
     public $formats;
     public $addInfo;
+    public $thumbnail;
 }
 class BookAuthorLink extends Item {}
 class BooksCustomColumnLink extends Item {}

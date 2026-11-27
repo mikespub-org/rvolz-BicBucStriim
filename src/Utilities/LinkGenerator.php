@@ -10,9 +10,16 @@ use BicBucStriim\Framework\RendererInterface;
  */
 class LinkGenerator
 {
+    # dir for bbs db and thumbnails (relative to root)
+    public string $dataUri = 'data';
     public int $version = 1;
 
     public function __construct(private readonly ActionRegistry $registry) {}
+
+    public function setDataUri(string $dataUri): void
+    {
+        $this->dataUri = $dataUri;
+    }
 
     public function setVersion(int $version): void
     {
@@ -25,7 +32,6 @@ class LinkGenerator
             $this->setVersion($version);
         }
         $renderer->addFunction('bbs_path', $this->getPath(...));
-        // $renderer->addFunction('bbs_link', $this->getLink(...));
         $renderer->addFunction('bbs_file', $this->getDataLink(...));
         $renderer->addFunction('bbs_kindle', $this->getDataKindle(...));
         $renderer->addFunction('bbs_title', $this->getBookLink(...));
@@ -40,18 +46,6 @@ class LinkGenerator
     public function getPath(string $routeName, array $params = []): string
     {
         return RouteUtil::getPathFromRouteMap($this->registry->getRouteMap(), $routeName, $params);
-    }
-
-    /**
-     * Summary of getLink - @todo
-     */
-    public function getLink(object $object): string
-    {
-        return match ($object::class) {
-            \BicBucStriim\Calibre\Data::class => $this->getDataLink($object),
-            \BicBucStriim\Calibre\Book::class => $this->getBookLink($object),
-            default => 'TODO get link for ' . $object::class,
-        };
     }
 
     public function getDataLink(\BicBucStriim\Calibre\Data $data): string
@@ -82,6 +76,9 @@ class LinkGenerator
 
     public function getBookThumb(\BicBucStriim\Calibre\Book $book): string
     {
+        if (!empty($book->thumbnail)) {
+            return "/{$this->dataUri}/titles/thumb_{$book->id}.png";
+        }
         if ($this->version == 2) {
             return $this->getPath('main-thumbnail-v2', ['id' => $book->id]);
         }

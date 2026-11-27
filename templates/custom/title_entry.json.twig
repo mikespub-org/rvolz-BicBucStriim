@@ -3,11 +3,7 @@
 	"title": "{{ book.sort }}",
 	"pubdate": "{{ book.pubdate|date("Y") }}",
 	{% if series %}"order": {{book.series_index}},{% endif %}
-	{% if book.thumbnail%}
-	"image": "{{page.rot}}/data/titles/thumb_{{ book.id }}.png",
-	{% else %}
-	"image": "{{page.rot}}/titles/{{ book.id }}/thumbnail/",
-	{% endif %}
+	"image": "{{page.rot}}{{bbs_thumb(book)}}",
 	"author": "{{book.author_sort}}",
 	"addInfo": "{{book.addInfo}}"
 }
