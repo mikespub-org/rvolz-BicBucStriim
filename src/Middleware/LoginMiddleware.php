@@ -330,8 +330,6 @@ class LoginMiddleware extends DefaultMiddleware
         # English as a fallback.
         $settings['lang'] = InputUtil::getUserLang($request);
         $settings['l10n'] = new L10n($settings['lang']);
-        //$settings['langa'] = $settings['l10n']->langa;
-        //$settings['langb'] = $settings['l10n']->langb;
         $this->setSettings($settings);
     }
 }

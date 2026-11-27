@@ -28,21 +28,25 @@ class OpdsGenerator
     public $updated;
     public $xmlw;
     public $l10n;
+    public LinkGenerator $linkGenerator;
+
     /**
      * [__construct description]
      * @param string $bbs_root        Root URL for BicBucStriim, e.g. '/bbs'
      * @param string $bbs_version     BBS version
      * @param string $calibre_dir     calibre library dir
      * @param string $calibre_modtime Modification time of Calibre library, in ATOM format
-     * @param object $l10n            Initialized localization helper
+     * @param L10n   $l10n            Initialized localization helper
+     * @param LinkGenerator $linkGenerator Initialized link generator
      */
-    public function __construct($bbs_root, $bbs_version, $calibre_dir, $calibre_modtime, $l10n = null)
+    public function __construct($bbs_root, $bbs_version, $calibre_dir, $calibre_modtime, $l10n, $linkGenerator)
     {
         $this->bbs_root = $bbs_root;
         $this->bbs_version = $bbs_version;
         $this->calibre_dir = $calibre_dir;
         $this->updated = $calibre_modtime;
         $this->l10n = $l10n;
+        $this->linkGenerator = $linkGenerator;
     }
 
     /**
@@ -645,11 +649,7 @@ class OpdsGenerator
         $this->xmlw->startElement("dc:language");
         $this->xmlw->text($entry['language']);
         $this->xmlw->endElement();
-        if (!empty($entry['book']->thumbnail) && !empty($entry['book']->id)) {
-            $tlink = $this->bbs_root . '/data/titles/thumb_' . $entry['book']->id . '.png';
-        } else {
-            $tlink = $titleLink . '/thumbnail/';
-        }
+        $tlink = $this->bbs_root . $this->linkGenerator->getBookThumb($entry['book']);
         $this->thumbnailLink($tlink);
         $this->imageLink($titleLink . '/cover/');
         foreach ($entry['formats'] as $format) {
@@ -660,7 +660,7 @@ class OpdsGenerator
             if ($protected) {
                 $this->indirectDownloadLink($titleLink . '/showaccess/', $mt);
             } else {
-                $this->directDownloadLink($titleLink . '/file/' . rawurlencode($fname) . '.' . $ext, $mt);
+                $this->directDownloadLink($this->bbs_root . $this->linkGenerator->getDataLink($format), $mt);
             }
         }
         foreach ($entry['tags'] as $category) {

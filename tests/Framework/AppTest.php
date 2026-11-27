@@ -39,6 +39,7 @@ class AppTest extends TestCase
         // Override settings to point to our test database
         $settings = new Settings([
             'calibre_dir' => $this->testDbPath,
+            // @see \BicBucStriim\Middleware\LoginMiddleware::setCurrentLanguage()
             'lang' => 'en',
             'l10n' => new L10n('en'),
             'sep' => ' - ',

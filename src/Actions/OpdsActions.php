@@ -421,13 +421,19 @@ class OpdsActions extends DefaultActions
     {
         $settings = $this->settings();
 
+        // Get link generator for files and thumbs
+        $linkGenerator = $this->getLinkGenerator();
+        // Set dir for bbs db and thumbnails (relative to root)
+        $linkGenerator->setDataUri($this->thumbs()->dataUri);
+
         $root = $this->requester->getRootUrl();
         $gen = new OpdsGenerator(
             $root,
             $settings['version'],
             $this->calibre()->calibre_dir,
             date(DATE_ATOM, $this->calibre()->calibre_last_modified),
-            $settings['l10n']
+            $settings['l10n'],
+            $linkGenerator
         );
         return $gen;
     }

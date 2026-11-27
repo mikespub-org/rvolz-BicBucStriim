@@ -8,9 +8,12 @@
  * - opds_validator (https://github.com/zetaben/opds-validator)
  */
 
+use BicBucStriim\Actions\ActionRegistry;
+use BicBucStriim\Actions\MainActions;
 use BicBucStriim\AppData\BicBucStriim;
 use BicBucStriim\Calibre\Calibre;
 use BicBucStriim\Calibre\CalibreFilter;
+use BicBucStriim\Utilities\LinkGenerator;
 use BicBucStriim\Utilities\OpdsGenerator;
 use BicBucStriim\Utilities\L10n;
 use BicBucStriim\Utilities\TestHelper;
@@ -19,33 +22,41 @@ use PHPUnit\Framework\Attributes\CoversClass;
 #[CoversClass(OpdsGenerator::class)]
 class OpdsGeneratorTest extends PHPUnit\Framework\TestCase
 {
-    public static $opds_rng;
-    public static $data;
-    public static $cdb2;
-    public static $datadb;
+    public static string $opds_rng;
+    public static string $cdb2;
+    public static L10n $l10n;
+    public static LinkGenerator $linkGenerator;
 
-    /** @var ?BicBucStriim */
-    public $bbs;
-    /** @var OpdsGenerator */
-    public $gen;
-    /** @var ?Calibre */
-    public $calibre;
+    public ?BicBucStriim $bbs;
+    public OpdsGenerator $gen;
+    public ?Calibre $calibre;
+    public string $datadb;
+    public string $data;
+
+    public static function setUpBeforeClass(): void
+    {
+        self::$opds_rng = dirname(__DIR__, 2) . '/tests/fixtures/opds_catalog_1_1.rng';
+        self::$cdb2 = dirname(__DIR__, 2) . '/tests/fixtures/lib2/metadata.db';
+        self::$l10n = new L10n('en');
+        $container = require dirname(__DIR__, 2) . '/config/container.php';
+        $registry = $container->get(ActionRegistry::class);
+        $registry->register(MainActions::class);
+        self::$linkGenerator = $container->get(LinkGenerator::class);
+    }
 
     public function setUp(): void
     {
-        self::$opds_rng = dirname(__DIR__, 2) . '/tests/fixtures/opds_catalog_1_1.rng';
-        self::$datadb = TestHelper::copyFixtureDatabase();
-        self::$data = dirname(self::$datadb);
-        self::$cdb2 = dirname(__DIR__, 2) . '/tests/fixtures/lib2/metadata.db';
-        $this->bbs = new BicBucStriim(self::$datadb);
+        $this->datadb = TestHelper::copyFixtureDatabase();
+        $this->data = dirname($this->datadb);
+        $this->bbs = new BicBucStriim($this->datadb);
         $this->calibre = new Calibre(self::$cdb2);
-        $l10n = new L10n('en');
         $this->gen = new OpdsGenerator(
             '/bbs',
             '0.9.0',
             $this->calibre->calibre_dir,
             date(DATE_ATOM, strtotime('2012-01-01T11:59:59')),
-            $l10n
+            self::$l10n,
+            self::$linkGenerator
         );
     }
 
@@ -53,7 +64,7 @@ class OpdsGeneratorTest extends PHPUnit\Framework\TestCase
     {
         $this->calibre = null;
         $this->bbs = null;
-        TestHelper::removeFixtureDatabase(self::$datadb);
+        TestHelper::removeFixtureDatabase($this->datadb);
     }
 
     # Validation helper: validate relaxng
@@ -103,7 +114,7 @@ class OpdsGeneratorTest extends PHPUnit\Framework\TestCase
 
     public function testRootCatalogValidation(): void
     {
-        $feed = self::$data . '/feed.xml';
+        $feed = $this->data . '/feed.xml';
         $xml = $this->gen->rootCatalog($feed);
         $this->assertTrue(file_exists($feed));
         $this->assertTrue($this->opdsValidateSchema($feed));
@@ -178,7 +189,7 @@ class OpdsGeneratorTest extends PHPUnit\Framework\TestCase
 
     public function testNewestCatalogValidation(): void
     {
-        $feed = self::$data . '/feed.xml';
+        $feed = $this->data . '/feed.xml';
         $just_books = $this->calibre->last30Books('en', 30, new CalibreFilter());
         $books = $this->calibre->titleDetailsFilteredOpds($just_books);
         $xml = $this->gen->newestCatalog($feed, $books, false);
@@ -190,7 +201,7 @@ class OpdsGeneratorTest extends PHPUnit\Framework\TestCase
 
     public function testTitlesCatalogValidation(): void
     {
-        $feed = self::$data . '/feed.xml';
+        $feed = $this->data . '/feed.xml';
         $tl = $this->calibre->titlesSlice('en', 0, 2, new CalibreFilter());
         $books = $this->calibre->titleDetailsFilteredOpds($tl['entries']);
         $xml = $this->gen->titlesCatalog(
@@ -229,7 +240,7 @@ class OpdsGeneratorTest extends PHPUnit\Framework\TestCase
 
     public function testAuthorsInitialCatalogValidation(): void
     {
-        $feed = self::$data . '/feed.xml';
+        $feed = $this->data . '/feed.xml';
         $tl = $this->calibre->authorsInitials();
         $xml = $this->gen->authorsRootCatalog($feed, $tl);
         $this->assertTrue(file_exists($feed));
@@ -240,7 +251,7 @@ class OpdsGeneratorTest extends PHPUnit\Framework\TestCase
 
     public function testAuthorsNamesForInitialCatalogValidation(): void
     {
-        $feed = self::$data . '/feed.xml';
+        $feed = $this->data . '/feed.xml';
         $tl = $this->calibre->authorsNamesForInitial('R');
         $xml = $this->gen->authorsNamesForInitialCatalog($feed, $tl, 'R');
         $this->assertTrue(file_exists($feed));
@@ -251,7 +262,7 @@ class OpdsGeneratorTest extends PHPUnit\Framework\TestCase
 
     public function testAuthorsBooksForAuthorCatalogValidation(): void
     {
-        $feed = self::$data . '/feed.xml';
+        $feed = $this->data . '/feed.xml';
         $adetails = $this->calibre->authorDetails(5);
         $books = $this->calibre->titleDetailsFilteredOpds($adetails['books']);
         $xml = $this->gen->booksForAuthorCatalog($feed, $books, 'E', $adetails['author'], false, 0, 1, 2);
@@ -263,7 +274,7 @@ class OpdsGeneratorTest extends PHPUnit\Framework\TestCase
 
     public function testTagsInitialCatalogValidation(): void
     {
-        $feed = self::$data . '/feed.xml';
+        $feed = $this->data . '/feed.xml';
         $tl = $this->calibre->tagsInitials();
         $xml = $this->gen->tagsRootCatalog($feed, $tl);
         $this->assertTrue(file_exists($feed));
@@ -274,7 +285,7 @@ class OpdsGeneratorTest extends PHPUnit\Framework\TestCase
 
     public function testTagsNamesForInitialCatalogValidation(): void
     {
-        $feed = self::$data . '/feed.xml';
+        $feed = $this->data . '/feed.xml';
         $tl = $this->calibre->tagsNamesForInitial('B');
         $xml = $this->gen->tagsNamesForInitialCatalog($feed, $tl, 'B');
         $this->assertTrue(file_exists($feed));
@@ -285,7 +296,7 @@ class OpdsGeneratorTest extends PHPUnit\Framework\TestCase
 
     public function testTagsBooksForTagCatalogValidation(): void
     {
-        $feed = self::$data . '/feed.xml';
+        $feed = $this->data . '/feed.xml';
         $adetails = $this->calibre->tagDetails(9);
         $books = $this->calibre->titleDetailsFilteredOpds($adetails['books']);
         $xml = $this->gen->booksForTagCatalog($feed, $books, 'B', $adetails['tag'], false, 0, 1, 2);
@@ -297,7 +308,7 @@ class OpdsGeneratorTest extends PHPUnit\Framework\TestCase
 
     public function testSeriesInitialCatalogValidation(): void
     {
-        $feed = self::$data . '/feed.xml';
+        $feed = $this->data . '/feed.xml';
         $tl = $this->calibre->seriesInitials();
         $xml = $this->gen->seriesRootCatalog($feed, $tl);
         $this->assertTrue(file_exists($feed));
@@ -308,7 +319,7 @@ class OpdsGeneratorTest extends PHPUnit\Framework\TestCase
 
     public function testSeriesNamesForInitialCatalogValidation(): void
     {
-        $feed = self::$data . '/feed.xml';
+        $feed = $this->data . '/feed.xml';
         $tl = $this->calibre->seriesNamesForInitial('S');
         $xml = $this->gen->seriesNamesForInitialCatalog($feed, $tl, 'S');
         $this->assertTrue(file_exists($feed));
@@ -319,7 +330,7 @@ class OpdsGeneratorTest extends PHPUnit\Framework\TestCase
 
     protected function testSeriesBooksForSeriesCatalogValidation(): void
     {
-        $feed = self::$data . '/feed.xml';
+        $feed = $this->data . '/feed.xml';
         $adetails = $this->calibre->seriesDetailsSlice('en', 1);
         $books = $this->calibre->titleDetailsFilteredOpds($adetails['books']);
         $xml = $this->gen->booksForSeriesCatalog($feed, $books, 'S', $adetails['series'], false, 0, 1, 2);
