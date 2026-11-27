@@ -210,16 +210,16 @@ class MiddlewareTest extends PHPUnit\Framework\TestCase
             }
             $handler = TestHelper::getHandler($app, $expected);
 
-            // Build mock LoginMiddleware with is_authorized() == true
+            // Build mock LoginMiddleware with is_authenticated() == true
             $middleware = $this->getMockBuilder(LoginMiddleware::class)
                 ->setConstructorArgs([$app->getContainer(), $settings['appname'], []])
-                ->onlyMethods(['is_authorized'])
+                ->onlyMethods(['is_authenticated'])
                 ->getMock();
             // Not expects($this->once()) because this will not be called for static resources
             if (in_array($this->dataName(), ['cover', 'thumbnail'])) {
-                $middleware->expects($this->never())->method('is_authorized')->willReturn(true);
+                $middleware->expects($this->never())->method('is_authenticated')->willReturn(true);
             } else {
-                $middleware->expects($this->once())->method('is_authorized')->willReturn(true);
+                $middleware->expects($this->once())->method('is_authenticated')->willReturn(true);
             }
 
             $response = $middleware->process($request, $handler);
@@ -315,7 +315,7 @@ class MiddlewareTest extends PHPUnit\Framework\TestCase
         $middleware = new LoginMiddleware($app->getContainer(), $settings['appname'], []);
         $middleware->setRequester($request, $settings);
 
-        $result = $middleware->is_authorized($request);
+        $result = $middleware->is_authenticated($request);
         $this->assertTrue($result);
         unset($_SESSION[\Aura\Auth\Auth::class]);
     }
@@ -334,7 +334,7 @@ class MiddlewareTest extends PHPUnit\Framework\TestCase
         $middleware = new LoginMiddleware($app->getContainer(), $settings['appname'], []);
         $middleware->setRequester($request, $settings);
 
-        $result = $middleware->is_authorized($request);
+        $result = $middleware->is_authenticated($request);
         $this->assertFalse($result);
         unset($_SESSION[\Aura\Auth\Auth::class]);
     }
@@ -353,7 +353,7 @@ class MiddlewareTest extends PHPUnit\Framework\TestCase
         $middleware = new LoginMiddleware($app->getContainer(), $settings['appname'], []);
         $middleware->setRequester($request, $settings);
 
-        $result = $middleware->is_authorized($request);
+        $result = $middleware->is_authenticated($request);
         $this->assertTrue($result);
         unset($_SESSION[\Aura\Auth\Auth::class]);
     }
@@ -372,7 +372,7 @@ class MiddlewareTest extends PHPUnit\Framework\TestCase
         $middleware = new LoginMiddleware($app->getContainer(), $settings['appname'], []);
         $middleware->setRequester($request, $settings);
 
-        $result = $middleware->is_authorized($request);
+        $result = $middleware->is_authenticated($request);
         $this->assertFalse($result);
         unset($_SESSION[\Aura\Auth\Auth::class]);
     }

@@ -102,7 +102,7 @@ class UtilitiesTest extends PHPUnit\Framework\TestCase
         $expected = 'es';
         $_COOKIE['lang'] = $expected;
         $request = RequestUtil::getServerRequest();
-        // @see LoginMiddleware::is_authorized()
+        // @see LoginMiddleware::is_authenticated()
         $session_factory = new SessionFactory();
         $session = $session_factory->newInstance($request->getCookieParams());
         $request = $request->withAttribute('session', $session);

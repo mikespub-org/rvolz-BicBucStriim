@@ -204,64 +204,6 @@ admin_no_selection:
   gl: -- ningunha selección --
   es: -- ninguna selección --
   pl: -- nie wybrano --
-admin_pw1:
-  hu: Admin jelszó
-  de: Admin Passwort
-  en: Admin Password
-  fr: Mot de passe Administrateur
-  nl: Admin Wachtwoord
-  it: Password Amministratore
-  gl: Contrasinal de administración
-  es: Contraseña de administrador
-  pl: Hasło administatora
-admin_pw2:
-  hu: Admin jelszó
-  de: Admin Passwort
-  en: Admin Password
-  fr: Mot de passe Administrateur
-  nl: Admin Wachtwoord
-  it: Password Amministratore
-  gl: Contrasinal de administración
-  es: Contraseña de administrador
-  pl: Hasło administratora
-admin_pw_expl:
-  hu: ! 'Opcionális: Adjon meg egy jelszót, hogy idegenek ne férhessenek hozzá az admin felülethez'
-  de: "Optional: Tragen sie hier ein Passwort ein, um den Zugang zu den Admin-Einstellungen einzuschränken."
-  en: "Optional: Enter a password to protect the admin page from changes by others."
-  fr: "Optionel: entrez un mot de passe administrateur pour contrôler l\\'accès à la configuration"
-  nl: "Optioneel: Voer een wachtwoord in om de admin pagina te beschermen tegen wijzigingen door anderen"
-  it: "Opzionale: Inserire una password per prevenire modifiche da parte di terzi della pagina di amministrazione"
-  gl: "Opcional: Introduce un contrasinal para controlar o acceso á configuración"
-  es: "Opcional: Introduce una contraseña para proteger el acceso a la configuración"
-  pl: "Opcjonalne: wprowadź hasło by chronić sekcję administracji przed nieupoważnionymi zmianami"
-admin_pw_required1:
-  hu: Nincs admin jelszó beállítva
-  de: Fehlendes Admin-Passwort
-  en: No Admin password set
-  fr: Aucun mot de passe Administrateur défini
-  nl: Geen Admin Wachtwoord ingesteld
-  it: Nessuna Password Amministratore settata
-  gl: Sen contrasinal de administración
-  es: No se ha establecido contraseña de administrador
-  pl: Nie ustawiono hasła administratora
-admin_pw_required2:
-  hu: Nem érvényes admin jelszót akarsz használni a letöltés védelemhez.
-  de: Sie wollen das Admin-Passwort für den Downloadschutz verwenden, haben aber kein
-    gültiges Passwort eingetragen. Bitte tragen Sie eines ein.
-  en: You are trying to use the admin password for download protection without a valid
-    admin password. Please enter a valid admin password.
-  fr: Vous essayez d\'utiliser le mot de passe Administrateur pour télécharger des livres protégés
-    par un mot de passe. Utilisez le bon mot de passe.
-  nl: U probeert gebruik te maken van het admin wachtwoord voor downloadbescherming,
-    zonder een geldige admin wachtwoord. Vul een geldig admin wachtwoord in.
-  it: Si sta\' cercando di utilizzare la password di amministrazione per scaricare un libro protetto da password. 
-    Si prega di utilizzare la password corretta.
-  gl: Estás tentando empregar un contrasinal de administración para baixar libros protexidos con contrasinal. 
-    Deberías utilizar un contrasinal correcto
-  es: Estás intentando utilizar la contraseña de administrador para descargar libros protegidos sin una contraseña
-    de administrador válida. Por favor introduce una contraseña de administrador válida.
-  pl: Próbujesz użyć opcji hasła administratora do ochrony pobierania bez wcześniejszego ustawienia tego hasła.
-    Ustaw najpierw hasło administratora.
 admin_remember_cookie_enabled:
   de: "\\'Angemeldet bleiben\\' Cookie"
   en: "\\'Remember me\\' Cookie"
@@ -824,27 +766,6 @@ changes_saved:
   gl: Modificacións gardadas
   es: Cambios guardados
   pl: Zapisano
-check_access:
-  hu: Jelszó beírása
-  de: Freischalten
-  en: Submit Password
-  fr: Soumettre un mot de passe
-  nl: Verzend wachtwoord
-  it: Inserire Password
-  gl: Introduce un contrasinal
-  es: Enviar contraseña
-  pl: Wprowadź hasło
-check_access_info:
-  hu: Ez a könyv jelszóval védett. Írd be a jelszavad, hogy engedélyezve legyen a letöltés.
-  de: Diese Buch ist passwortgeschützt. Bitte freischalten, um es herunter zu laden.
-  en: This book is protected. Please enter your password to enable the book download.
-  fr: Ce livre est protégé. Saisissez le mot de passe pour télécharger le livre.
-  nl: Dit boek is beschermd. Voer uw wachtwoord in om het mogelijk te maken dit boek
-    te downloaden.
-  it: Questo libro è protetto. Si prega di inserire la password per poterlo scaricare.
-  gl: Este libro está protexido. Debes introducir o contrasinal para poder baixalo.
-  es: Este libro está protegido. Por favor introduce tu contraseña para descargarlo.
-  pl: Ta książka jest chroniona. Podaj hasło by pobrać książkę.
 check_installation:
   hu: Ellenőrizze a telepítést?
   de: Installation überprüfen?
@@ -982,92 +903,6 @@ extra:
   gl: Extra
   es: Extra
   pl: Extra
-glob_dl_expl:
-  hu: Amennyiben másokkal is meg szeretnéd osztani a könyvet, aktiválódik a jelszavas letöltés védelem. Ha van admin jelszavad használhatod azt, vagy egyszerűen adj meg egy másik jelszót.
-  de: Wenn sie ihr Netz mit anderen Benutzern teilen, können sie hier den Passwort-Schutz
-    fürs Herunterladen der Bücher aktivieren. Falls sie schon ein Admin-Passwort vergeben
-    haben, kann das auch fürs Herunerladen genutzt werden. Oder sie erstellen einfach
-    ein neues, separates Passwort.
-  en: If you are sharing your network with others you could activate a password protection
-    for book downloads. If you already have an admin password you can reuse that,
-    or simply specify a new, separate one.
-  fr: Si votre réseau est ouvert au public, vous pouvez activer un mot de passe
-    pour protéger le téléchargement de vos livres. Si vous avez déjà un mot de passe
-    administrateur, vous pouvez le réutiliser ou en définir un nouveau, différent.
-  nl: Wanneer u het netwerk met anderen deelt kunt u wachtwoordbescherming voor het
-    downloaden van boeken activeren. Als u al een adminwachtwoord heeft u kunt u deze
-    hergebruiken, of maak een apart wachtwoord aan voor downloads.
-  it: Se si condivide la rete con gli altri si può attivare una password di protezione per scaricare i libri.
-    Se si possiede già una password di amministrazione è possibile utilizzarla,
-    o semplicemente specificarne una nuova differente.
-  gl: Se compartillas a conexión de rede podes activar unha protección con contrasinal
-    para a baixada de libros. Se xa ts un contrasinal de administración podes reutilizalo
-    ou definir un novo.
-  es: Si estás compartiendo tu red con otros puedes activar la proteccion por contraseña
-    para la descarga de libros. Si ya tienes una contraseña de administrador puedes reusarla,
-    o simplemente especificar distinta y nueva.
-  pl: Jeśli współdzielisz swoją sieć z innymi, możesz włączyć ochronę hasłem przy pobieraniu książek.
-    Jeśli już masz hasło administratora możesz je użyć ponownie, albo utworzyć nowe, inne.    
-glob_dl_legend:
-  hu: Jelszóval védett letöltés
-  de: Herunterladen per Passwort schützen
-  en: Protect downloads with a password
-  fr: Protéger les téléchargements avec un mot de passe
-  nl: Downloads beveiligen met een wachtwoord
-  it: Proteggere i downloads con una password
-  gl: Protexer as baixadas con contrasinal
-  es: Proteger las descargas con una contraseña
-  pl: Ochrona pobierania hasłem
-glob_dl_pw1:
-  hu: Jelszó a letöltéshez
-  de: Passwort fürs Herunterladen
-  en: Password for downloads
-  fr: Mot de passe pour les téléchargements
-  nl: Wachtwoord voor downloads
-  it: Password per downloads
-  gl: Contrasinal para as baixadas
-  es: Contraseña para descargas
-  pl: Hasło pobierania
-glob_dl_pw2:
-  hu: Jelszó a letöltéshez
-  de: Passwort fürs Herunterladen
-  en: Password for downloads
-  fr: Mot de passe pour les téléchargements
-  nl: Wachtwoord voor downloads
-  it: Password per downloads
-  gl: Contrasinal para as baixadas
-  es: Contraseña para descargas
-  pl: Hasło pobierania
-glob_dl_radio1:
-  hu: Nem, nem szükséges
-  de: Nein, nicht nötig
-  en: No, not necessary
-  fr: Non, pas nécessaire
-  nl: Nee, niet noodzakelijk
-  it: No, non necessario
-  gl: Non necesario
-  es: No, no es necesario
-  pl: Nie, nie potrzeba
-glob_dl_radio2:
-  hu: Igen, használd az admin jelszót
-  de: Ja, Admin-Passwort verwenden
-  en: Yes, use admin password
-  fr: Oui, utiliser le mot de passe admin
-  nl: Ja, gebruik admin wachtwoord
-  it: Si, utilizzare la password di amministrazione
-  gl: Si, empregar o contrasinal de administración 
-  es: Si, usar la contraseña de administrador
-  pl: Tak, użyj hasło administratora
-glob_dl_radio3:
-  hu: Igen, használj egy másik jelszót (üsd be)
-  de: Ja, anderes Passwort angeben (unten eingeben)
-  en: Yes, use a separate password (enter below)
-  fr: Oui, utiliser un mot de passe différent (saisissez-le ci-dessous)
-  nl: Ja, gebruik een apart wachtwoord (vul hieronder in)
-  it: Si, utilizzare una password differente (inserire di seguito)
-  gl: Si, empregar un contrasinal diferente (introducir a continuación) 
-  es: Si, usar una contraseña distinta (introducir a continuación)
-  pl: Tak, użyję osobnego hasła (wpisz poniżej)
 home:
   hu: Kezdőlap
   de: Start
@@ -1856,55 +1691,6 @@ tag_details:
   gl: Detalles da etiqueta
   es: Detalles de etiqueta
   pl: Szczegóły tagu
-tag_protect:
-  hu: Szelektív letöltés védelem címkék használatával?
-  de: Selektiver Download-Schutz durch Schlagworte?
-  en: Selective download protection using tags?
-  fr: Protection sélective des téléchargements via les tags ?
-  nl: Bescherming via label?
-  it: Protezione del download selettivo utilizzando le etichiette?
-  gl: Protexer as baixadas selectivamente empregando as etiquetas?
-  es: ¿Protección selectiva usando etiquetas?
-  pl: Wybiórcza ochrona pobierania używając tagów?
-tag_protect_field:
-  hu: Add meg a címkéket a szelektív letöltés védelemhez
-  de: Schlagwort eingeben
-  en: Enter tag for selective download protection
-  fr: Saisissez un tag pour une protection sélective de téléchargement 
-  nl: Selectie op label
-  it: Inserire le etichette per la protezione del download selettivo
-  gl: Introduce a etiqueta para a protección selectiva da baixada
-  es: Introduce una etiqueta para la protección selectiva.
-  pl: Podaj tag dla wybiórczej ochrony tagiem pobierania książek
-tag_protect_field_exp1:
-  hu: Válaszd ki a címkéket amiket használni szeretnél a szelektív letöltés védelemhez
-  de: Geben Sie hier das Schlagwort ein, mit dem Titel vor dem Herunterladen geschützt
-    werden sollen.
-  en: Choose a tag that will be used for selective download protection.
-  fr: Choisissez un tag qui sera utilisé pour la protection sélective de téléchargement.
-  nl: Plaats hier de label die moet worden beschermd
-  it: Scegliere una etichetta da utilizzare per la protezione del download selettivo.
-  gl: Escolle unha etiqueta que será empregada para a baixada selectiva.
-  es: Elige la etiqueta que se usará para la protección de descarga selectiva.
-  pl: Wybierz tag, który zostanie użyty do wybiórcxej ochrony pobierania
-tag_protect_expl:
-  hu: Amennyiben ezt bekapcsolod, csak a kiválasztott címkével ellátott könyvek lesznek jelszóval védve. A többi könyvet jelszó nélkül is le lehet tölteni.
-  de: Mit dieser Option kann der Dwonload-Schutz auf Bücher mit dem angegebenen Schlagwort
-    beschränkt werden. Alle anderen Titel können ohne Passwort heruntergeladen werden.
-  en: If this is activated, only books with the selected tag will be password-protected.
-    All other books can be downloaded without password.
-  fr: Si vous l\'activez, seuls les livres avec ce tag seront protégés.
-    Tous les autres livres pourront être téléchargés sans mot de passe.
-  nl: Indien ingeschakeld, zullen de boeken met onderstaand label worden beveiligd.
-    Let op! Andere boeken zijn dan te downloaden.
-  it: Se attivata, solo i libri con l\'etichetta selezionata saranno protetti da password.
-     Tutti gli altri libri possono essere scaricati senza una password.
-  gl: Se o activas, só os libros con esta etiqueta estará protexidas mediante contrasinal.
-     Todos os outros libros poderán ser baixadas sen contrasinal.
-  es: Si esta activado, sólo los libros con la etiqueta elegida tendran protección por contraseña.
-    Todos los demás libros se podrán descargar sin contraseña.
-  pl: Jeśli włączone tylko książki z wybranym tagiem będą objętę ochroną hasłem pobierania
-    Wszystkie pozostałe książki będą mogły być pobrane bez hasła.
 thumb_gen_clipped:
   hu: Levágod a bélyegképeket?
   de: Vorschaubilder beschneiden?

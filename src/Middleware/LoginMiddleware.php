@@ -61,7 +61,7 @@ class LoginMiddleware extends DefaultMiddleware
             $responder = new ResponseUtil(null);
             return $responder->error(500, $message);
         }
-        // $this->request is updated in is_authorized()
+        // $this->request is updated in is_authenticated()
         $request = $this->requester->value();
         $this->setCurrentLanguage($request);
         return $handler->handle($request);
@@ -82,7 +82,7 @@ class LoginMiddleware extends DefaultMiddleware
                 return false;
             }
             // we need to initialize $this->setAuth() here to identify the user
-            if ($this->is_authorized($request)) {
+            if ($this->is_authenticated($request)) {
                 return false;
             }
             if ($resource === '/login/') {
@@ -107,20 +107,20 @@ class LoginMiddleware extends DefaultMiddleware
         }
         if ($resource === '/login/') {
             // we need to initialize $this->setAuth() if we want to login in MainActions
-            $this->is_authorized($request);
+            $this->is_authenticated($request);
             // special case login page
             $this->log()->debug('login: login page authorized');
             return false;
         }
         if ($resource === '/logout/') {
             // we need to initialize $this->setAuth() if we want to logout in MainActions
-            $this->is_authorized($request);
+            $this->is_authenticated($request);
             // special case logout page
             $this->log()->debug('login: logout page authorized');
             return false;
         }
         if (stripos($resource, '/admin') === 0) {
-            if (!$this->is_static_resource($resource) && !$this->is_authorized($request)) {
+            if (!$this->is_static_resource($resource) && !$this->is_authenticated($request)) {
                 $this->log()->debug('login: redirecting to login');
                 $responder = new ResponseUtil(null);
                 return $responder->redirect($this->requester->getRootUrl() . '/login/');
@@ -128,7 +128,7 @@ class LoginMiddleware extends DefaultMiddleware
             return false;
         }
         if (str_starts_with($resource, '/extra/')) {
-            if (!$this->is_authorized($request)) {
+            if (!$this->is_authenticated($request)) {
                 $this->log()->debug('login: redirecting to login');
                 $responder = new ResponseUtil(null);
                 return $responder->redirect($this->requester->getRootUrl() . '/login/');
@@ -138,7 +138,7 @@ class LoginMiddleware extends DefaultMiddleware
         // see main-author-v1 and main-author-v2 routes in MainActions
         if (str_starts_with($resource, '/authors/') && preg_match('~^/authors/\d+/~', $resource)) {
             // we need to initialize $this->setAuth() if we want to edit authors in MainActions
-            $this->is_authorized($request);
+            $this->is_authenticated($request);
             // special case author details page
             $this->log()->debug('login: author details page authorized');
             return false;
@@ -146,7 +146,7 @@ class LoginMiddleware extends DefaultMiddleware
         // see main-serie-v1 and main-serie-v2 routes in MainActions
         if (str_starts_with($resource, '/series/') && preg_match('~^/series/\d+/~', $resource)) {
             // we need to initialize $this->setAuth() if we want to edit series in MainActions
-            $this->is_authorized($request);
+            $this->is_authenticated($request);
             // special case series details page
             $this->log()->debug('login: series details page authorized');
             return false;
@@ -154,7 +154,7 @@ class LoginMiddleware extends DefaultMiddleware
         // see meta-* routes in MetadataActions
         if (str_starts_with($resource, '/metadata/')) {
             // we need to initialize $this->setAuth() if we want to edit authors or series in MetadataActions
-            $this->is_authorized($request);
+            $this->is_authenticated($request);
             // special case edit metadata page
             $this->log()->debug('login: edit metadata page authorized');
             return false;
@@ -187,13 +187,13 @@ class LoginMiddleware extends DefaultMiddleware
     }
 
     /**
-     * Check if the access request is authorized by a user. A request must either contain session data from
-     * a previous login or contain a HTTP Basic authorization info, which is then used to
+     * Check if the request is authenticated by a user. A request must either contain session data from
+     * a previous login or contain a HTTP Basic authentication info, which is then used to
      * perform a login against the users table in the database.
      * @param Request $request HTTP request
-     * @return bool true if authorized else false
+     * @return bool true if authenticated else false
      */
-    public function is_authorized(Request $request)
+    public function is_authenticated(Request $request)
     {
         // pre-authenticated request e.g. for AdminActionsTest
         if ($this->requester->getAuth()?->isValid()) {
@@ -280,7 +280,7 @@ class LoginMiddleware extends DefaultMiddleware
     }
 
     /**
-     * Look for PHP authorization headers
+     * Look for PHP authentication headers
      * @param Request $request HTTP request
      * @return ?array with username and pasword, or null
      */

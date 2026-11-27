@@ -25,20 +25,11 @@
 	<details class="bbs-collapsible" data-role="collapsible" open>
 		<summary class="bbs-collapsible-header">{{page.glob.l10n.download}}</summary>
 		<div class="bbs-collapsible-content">
-			{% if protect_dl == true %} 
-			<div class="dl_access">
-				<p>{{ page.glob.l10n.check_access_info }}</p>
-				<a class="bbs-btn" data-role="button" data-rel="dialog" href="{{page.rot}}/titles/{{book.id}}/showaccess/">
-					{{ page.glob.l10n.check_access }}
-				</a>
-			</div>
-			{% endif %}	
-			<div class="dl_download" {% if protect_dl == true %} hidden="true" {% endif %}>
+			<div class="dl_download">
 				<p>{{ page.glob.l10n.presskey }}</p>
 				<div class="bbs-btn-group downButtons" data-role="controlgroup" data-type="horizontal">
 					{% for format in formats %}				
 						<a class="bbs-btn" data-role="button" 
-							{% if page.glob.glob_dl_toggle == true %} disabled="true" {% endif %} 
 							data-ajax="false" 
 							href="{{page.rot}}{{bbs_file(format)}}">
 							<svg class="bbs-icon" aria-hidden="true"><use xlink:href="#bbs-icon-cloud" href="#bbs-icon-cloud"/></svg>

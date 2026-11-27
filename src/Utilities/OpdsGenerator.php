@@ -29,6 +29,8 @@ class OpdsGenerator
     public $xmlw;
     public $l10n;
     public LinkGenerator $linkGenerator;
+    // @todo support indirect download link based on some criteria
+    public bool $protected = false;
 
     /**
      * [__construct description]
@@ -47,6 +49,16 @@ class OpdsGenerator
         $this->updated = $calibre_modtime;
         $this->l10n = $l10n;
         $this->linkGenerator = $linkGenerator;
+    }
+
+    /**
+     * Summary of setProtected
+     * @param bool $protected download protection y/n?
+     * @return void
+     */
+    public function setProtected($protected)
+    {
+        $this->protected = $protected;
     }
 
     /**
@@ -111,10 +123,9 @@ class OpdsGenerator
      * Generate an acquisition catalog for the newest books
      * @param  ?string   $of=NULL   output URI or NULL for string output
      * @param  array    $entries   an array of Book
-     * @param  boolean  $protected true = we need password authentication before a download
      * @return ?string
      */
-    public function newestCatalog($of, $entries, $protected)
+    public function newestCatalog($of, $entries)
     {
         $this->openStream($of);
         $this->header(
@@ -128,7 +139,7 @@ class OpdsGenerator
         $this->navigationCatalogLink($this->bbs_root . '/opds/', 'up');
         # Content
         foreach ($entries as $entry) {
-            $this->partialAcquisitionEntry($entry, $protected);
+            $this->partialAcquisitionEntry($entry);
         }
         $this->footer();
         return $this->closeStream($of);
@@ -138,13 +149,12 @@ class OpdsGenerator
      * Generate a paginated acquisition catalog for the all books
      * @param  ?string  $of=NULL   output URI or NULL for string output
      * @param  array    $entries   an array of Book
-     * @param  boolean  $protected true = we need password authentication before a download
      * @param  int      $page      number of page to show, minimum 0
      * @param  ?int     $next      number of the next page to show, or NULL
      * @param  int      $last      number of the last page
      * @return ?string
      */
-    public function titlesCatalog($of, $entries, $protected, $page, $next, $last)
+    public function titlesCatalog($of, $entries, $page, $next, $last)
     {
         $this->openStream($of);
         $this->header(
@@ -166,7 +176,7 @@ class OpdsGenerator
         $this->acquisitionCatalogLink($this->bbs_root . '/opds/titleslist/' . $last . '/', 'last');
         # Content
         foreach ($entries as $entry) {
-            $this->partialAcquisitionEntry($entry, $protected);
+            $this->partialAcquisitionEntry($entry);
         }
         $this->footer();
         return $this->closeStream($of);
@@ -247,13 +257,12 @@ class OpdsGenerator
      * @param  array    $entries    an array of Books
      * @param  string   $initial    the initial character
      * @param  object   $author     the author
-     * @param  bool     $protected  download protection y/n?
      * @param  int      $page      number of page to show, minimum 0
      * @param  ?int     $next      number of the next page to show, or NULL
      * @param  int      $last      number of the last page
      * @return ?string
      */
-    public function booksForAuthorCatalog($of, $entries, $initial, $author, $protected, $page, $next, $last)
+    public function booksForAuthorCatalog($of, $entries, $initial, $author, $page, $next, $last)
     {
         $this->openStream($of);
         $url = '/authorslist/' . $initial . '/' . $author->id . '/';
@@ -277,7 +286,7 @@ class OpdsGenerator
         # Content
         foreach ($entries as $entry) {
             $url2 = $url . $entry['book']->id . '/';
-            $this->partialAcquisitionEntry($entry, $protected);
+            $this->partialAcquisitionEntry($entry);
         }
         $this->footer();
         return $this->closeStream($of);
@@ -358,13 +367,12 @@ class OpdsGenerator
      * @param  array    $entries    an array of Books
      * @param  string   $initial    the initial character
      * @param  object   $tag        the tag
-     * @param  bool     $protected  download protection y/n?
      * @param  int      $page      number of page to show, minimum 0
      * @param  ?int     $next      number of the next page to show, or NULL
      * @param  int      $last      number of the last page
      * @return ?string
      */
-    public function booksForTagCatalog($of, $entries, $initial, $tag, $protected, $page, $next, $last)
+    public function booksForTagCatalog($of, $entries, $initial, $tag, $page, $next, $last)
     {
         $this->openStream($of);
         $url = '/tagslist/' . $initial . '/' . $tag->id . '/';
@@ -388,7 +396,7 @@ class OpdsGenerator
         # Content
         foreach ($entries as $entry) {
             $url2 = $url . $entry['book']->id . '/';
-            $this->partialAcquisitionEntry($entry, $protected);
+            $this->partialAcquisitionEntry($entry);
         }
         $this->footer();
         return $this->closeStream($of);
@@ -477,13 +485,12 @@ class OpdsGenerator
      * @param  array    $entries    an array of Books
      * @param  string   $initial    the initial character
      * @param  object   $series     the series
-     * @param  bool     $protected  download protection y/n?
      * @param  int      $page      number of page to show, minimum 0
      * @param  ?int     $next      number of the next page to show, or NULL
      * @param  int      $last      number of the last page
      * @return ?string
      */
-    public function booksForSeriesCatalog($of, $entries, $initial, $series, $protected, $page, $next, $last)
+    public function booksForSeriesCatalog($of, $entries, $initial, $series, $page, $next, $last)
     {
         $this->openStream($of);
         $url = '/serieslist/' . $initial . '/' . $series->id . '/';
@@ -507,7 +514,7 @@ class OpdsGenerator
         # Content
         foreach ($entries as $entry) {
             $url2 = $url . $entry['book']->id . '/';
-            $this->partialAcquisitionEntry($entry, $protected);
+            $this->partialAcquisitionEntry($entry);
         }
         $this->footer();
         return $this->closeStream($of);
@@ -573,7 +580,6 @@ class OpdsGenerator
      * Generate a paginated acquisition catalog for books as search results
      * @param  ?string  $of=NULL   output URI or NULL for string output
      * @param  array    $entries   an array of Book
-     * @param  boolean  $protected true = we need password authentication before a download
      * @param  int      $page      number of page to show, minimum 0
      * @param  ?int     $next      number of the nextPage to show, or NULL
      * @param  int      $last      number of the last page
@@ -582,7 +588,7 @@ class OpdsGenerator
      * @param  int      $page_size number of entries per search page
      * @return ?string XML stream          the search result feed
      */
-    public function searchCatalog($of, $entries, $protected, $page, $next, $last, $search, $total, $page_size)
+    public function searchCatalog($of, $entries, $page, $next, $last, $search, $total, $page_size)
     {
         $this->openStream($of);
         $this->header(
@@ -616,7 +622,7 @@ class OpdsGenerator
         $this->xmlw->endElement();
         # Content
         foreach ($entries as $entry) {
-            $this->partialAcquisitionEntry($entry, $protected);
+            $this->partialAcquisitionEntry($entry);
         }
         $this->footer();
         return $this->closeStream($of);
@@ -626,11 +632,9 @@ class OpdsGenerator
     /**
      * Write a catalog entry for a book title with acquisition links
      * @param  array    $entry      the book and its details
-     * @param  boolean  $protected  true = use an indirect acquisition link,
-     *                              else a direct one
      * @return void
      */
-    public function partialAcquisitionEntry($entry, $protected)
+    public function partialAcquisitionEntry($entry)
     {
         // @todo align opds routes with or without /opds/
         $titleLink = $this->bbs_root . '/titles/' . $entry['book']->id;
@@ -657,7 +661,8 @@ class OpdsGenerator
             $ext = strtolower($format->format);
             $bp = CalibreUtil::bookPath($this->calibre_dir, $entry['book']->path, $fname . '.' . $ext);
             $mt = CalibreUtil::titleMimeType($bp);
-            if ($protected) {
+            if ($this->protected) {
+                // @todo support indirect download link based on some criteria
                 $this->indirectDownloadLink($titleLink . '/showaccess/', $mt);
             } else {
                 $this->directDownloadLink($this->bbs_root . $this->linkGenerator->getDataLink($format), $mt);

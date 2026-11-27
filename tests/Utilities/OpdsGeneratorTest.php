@@ -148,7 +148,7 @@ class OpdsGeneratorTest extends PHPUnit\Framework\TestCase
         #print_r($just_book);
         $book = $this->calibre->titleDetailsOpds($just_book);
         $this->gen->openStream(null);
-        $this->gen->partialAcquisitionEntry($book, false);
+        $this->gen->partialAcquisitionEntry($book);
         $result = $this->gen->closeStream();
         #print_r($result);
         $this->assertEquals($expected, $result);
@@ -180,8 +180,9 @@ class OpdsGeneratorTest extends PHPUnit\Framework\TestCase
 ';
         $just_book = $this->calibre->title(2);
         $book = $this->calibre->titleDetailsOpds($just_book);
+        $this->gen->setProtected(true);
         $this->gen->openStream(null);
-        $this->gen->partialAcquisitionEntry($book, true);
+        $this->gen->partialAcquisitionEntry($book);
         $result = $this->gen->closeStream();
         #print_r($result);
         $this->assertEquals($expected, $result);
@@ -192,7 +193,7 @@ class OpdsGeneratorTest extends PHPUnit\Framework\TestCase
         $feed = $this->data . '/feed.xml';
         $just_books = $this->calibre->last30Books('en', 30, new CalibreFilter());
         $books = $this->calibre->titleDetailsFilteredOpds($just_books);
-        $xml = $this->gen->newestCatalog($feed, $books, false);
+        $xml = $this->gen->newestCatalog($feed, $books);
         $this->assertTrue(file_exists($feed));
         $this->assertTrue($this->opdsValidateSchema($feed));
         $this->assertTrue($this->opdsValidate($feed, '1.0'));
@@ -207,7 +208,6 @@ class OpdsGeneratorTest extends PHPUnit\Framework\TestCase
         $xml = $this->gen->titlesCatalog(
             $feed,
             $books,
-            false,
             $tl['page'],
             $tl['page'] + 1,
             $tl['pages'] - 1
@@ -225,7 +225,6 @@ class OpdsGeneratorTest extends PHPUnit\Framework\TestCase
         $xml = $this->gen->titlesCatalog(
             null,
             $books,
-            false,
             $tl['page'],
             $tl['page'] + 1,
             $tl['pages'] - 1
@@ -265,7 +264,7 @@ class OpdsGeneratorTest extends PHPUnit\Framework\TestCase
         $feed = $this->data . '/feed.xml';
         $adetails = $this->calibre->authorDetails(5);
         $books = $this->calibre->titleDetailsFilteredOpds($adetails['books']);
-        $xml = $this->gen->booksForAuthorCatalog($feed, $books, 'E', $adetails['author'], false, 0, 1, 2);
+        $xml = $this->gen->booksForAuthorCatalog($feed, $books, 'E', $adetails['author'], 0, 1, 2);
         $this->assertTrue(file_exists($feed));
         $this->assertTrue($this->opdsValidateSchema($feed));
         $this->assertTrue($this->opdsValidate($feed, '1.0'));
@@ -299,7 +298,7 @@ class OpdsGeneratorTest extends PHPUnit\Framework\TestCase
         $feed = $this->data . '/feed.xml';
         $adetails = $this->calibre->tagDetails(9);
         $books = $this->calibre->titleDetailsFilteredOpds($adetails['books']);
-        $xml = $this->gen->booksForTagCatalog($feed, $books, 'B', $adetails['tag'], false, 0, 1, 2);
+        $xml = $this->gen->booksForTagCatalog($feed, $books, 'B', $adetails['tag'], 0, 1, 2);
         $this->assertTrue(file_exists($feed));
         $this->assertTrue($this->opdsValidateSchema($feed));
         $this->assertTrue($this->opdsValidate($feed, '1.0'));
@@ -333,7 +332,7 @@ class OpdsGeneratorTest extends PHPUnit\Framework\TestCase
         $feed = $this->data . '/feed.xml';
         $adetails = $this->calibre->seriesDetailsSlice('en', 1);
         $books = $this->calibre->titleDetailsFilteredOpds($adetails['books']);
-        $xml = $this->gen->booksForSeriesCatalog($feed, $books, 'S', $adetails['series'], false, 0, 1, 2);
+        $xml = $this->gen->booksForSeriesCatalog($feed, $books, 'S', $adetails['series'], 0, 1, 2);
         $this->assertTrue(file_exists($feed));
         $this->assertTrue($this->opdsValidateSchema($feed));
         $this->assertTrue($this->opdsValidate($feed, '1.0'));

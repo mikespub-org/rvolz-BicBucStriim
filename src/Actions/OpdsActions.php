@@ -82,7 +82,7 @@ class OpdsActions extends DefaultActions
         }
         $books = array_map($this->checkThumbnailOpds(...), $books1);
         $gen = $this->getOpdsGenerator();
-        $cat = $gen->newestCatalog(null, $books, false);
+        $cat = $gen->newestCatalog(null, $books);
         return $this->responder->opds($cat, OpdsGenerator::OPDS_MIME_ACQ);
     }
 
@@ -118,7 +118,6 @@ class OpdsActions extends DefaultActions
         $cat = $gen->titlesCatalog(
             null,
             $books,
-            false,
             $tl['page'],
             $this->getNextSearchPage($tl),
             $this->getLastSearchPage($tl)
@@ -186,7 +185,6 @@ class OpdsActions extends DefaultActions
             $books,
             $initial,
             $tl['author'],
-            false,
             $tl['page'],
             $this->getNextSearchPage($tl),
             $this->getLastSearchPage($tl)
@@ -252,7 +250,6 @@ class OpdsActions extends DefaultActions
             $books,
             $initial,
             $tl['tag'],
-            false,
             $tl['page'],
             $this->getNextSearchPage($tl),
             $this->getLastSearchPage($tl)
@@ -318,7 +315,6 @@ class OpdsActions extends DefaultActions
             $books,
             $initial,
             $tl['series'],
-            false,
             $tl['page'],
             $this->getNextSearchPage($tl),
             $this->getLastSearchPage($tl)
@@ -368,7 +364,6 @@ class OpdsActions extends DefaultActions
         $cat = $gen->searchCatalog(
             null,
             $books,
-            false,
             $tl['page'],
             $this->getNextSearchPage($tl),
             $this->getLastSearchPage($tl),
@@ -435,6 +430,8 @@ class OpdsActions extends DefaultActions
             $settings['l10n'],
             $linkGenerator
         );
+        // @todo support indirect download link based on some criteria
+        $gen->setProtected(false);
         return $gen;
     }
 
