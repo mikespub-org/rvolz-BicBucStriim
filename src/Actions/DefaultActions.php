@@ -270,7 +270,7 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
         }
         $root = $this->requester->getRootUrl();
         $auth = $this->requester->isAuthenticated();
-        if ($settings->must_login) {
+        if ($settings->must_login == 1) {
             $adm = $this->requester->isAdmin();
         } else {
             $adm = true;

@@ -431,7 +431,11 @@ class OpdsActions extends DefaultActions
             $linkGenerator
         );
         // @todo support indirect download link based on some criteria
+        //if ($settings->must_login == 2) {
+        //    $gen->setProtected(true);
+        //} else {
         $gen->setProtected(false);
+        //}
         return $gen;
     }
 
