@@ -2615,16 +2615,16 @@
         },
         {
             "name": "mikespub/epub-loader",
-            "version": "4.1.5",
+            "version": "4.1.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mikespub-org/epub-loader.git",
-                "reference": "a1119f2594cca639717cdfd3670eea209ef672b2"
+                "reference": "f113f929e415c2549ab7890b996aef0805271e73"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mikespub-org/epub-loader/zipball/a1119f2594cca639717cdfd3670eea209ef672b2",
-                "reference": "a1119f2594cca639717cdfd3670eea209ef672b2",
+                "url": "https://api.github.com/repos/mikespub-org/epub-loader/zipball/f113f929e415c2549ab7890b996aef0805271e73",
+                "reference": "f113f929e415c2549ab7890b996aef0805271e73",
                 "shasum": ""
             },
             "require": {
@@ -2637,7 +2637,7 @@
                 "mikespub/php-epub-meta": "^4.1",
                 "mikespub/survos-wikidata": "^6.1",
                 "php": ">=8.4",
-                "twig/twig": "^3.30"
+                "twig/twig": "^3.31"
             },
             "require-dev": {
                 "phpunit/phpunit": "^13.4"
@@ -2680,23 +2680,23 @@
             "description": "epub-loader is a utility resource for ebooks",
             "support": {
                 "issues": "https://github.com/mikespub-org/epub-loader/issues",
-                "source": "https://github.com/mikespub-org/epub-loader/tree/4.1.5"
+                "source": "https://github.com/mikespub-org/epub-loader/tree/4.1.6"
             },
-            "time": "2026-10-11T12:37:22+00:00",
-            "published-time": "2026-10-11T12:37:41+00:00"
+            "time": "2026-11-26T19:46:16+00:00",
+            "published-time": "2026-11-26T19:46:35+00:00"
         },
         {
             "name": "mikespub/php-epub-meta",
-            "version": "4.1.6",
+            "version": "4.1.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mikespub-org/php-epub-meta.git",
-                "reference": "8bd600ba9e3585af31872793bb6101823f0ae813"
+                "reference": "a05d732f0599b17fd049ac483ffa2816326b98e4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mikespub-org/php-epub-meta/zipball/8bd600ba9e3585af31872793bb6101823f0ae813",
-                "reference": "8bd600ba9e3585af31872793bb6101823f0ae813",
+                "url": "https://api.github.com/repos/mikespub-org/php-epub-meta/zipball/a05d732f0599b17fd049ac483ffa2816326b98e4",
+                "reference": "a05d732f0599b17fd049ac483ffa2816326b98e4",
                 "shasum": ""
             },
             "require": {
@@ -2753,23 +2753,23 @@
             ],
             "support": {
                 "issues": "https://github.com/mikespub-org/php-epub-meta/issues",
-                "source": "https://github.com/mikespub-org/php-epub-meta/tree/4.1.6"
+                "source": "https://github.com/mikespub-org/php-epub-meta/tree/4.1.7"
             },
-            "time": "2026-10-11T12:45:03+00:00",
-            "published-time": "2026-10-11T12:45:22+00:00"
+            "time": "2026-11-26T17:16:00+00:00",
+            "published-time": "2026-11-26T17:16:20+00:00"
         },
         {
             "name": "mikespub/survos-wikidata",
-            "version": "6.1.2",
+            "version": "6.1.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mikespub-org/survos-wikidata.git",
-                "reference": "09c5a18fd1b7a7e551d71fe43641933a81eb096b"
+                "reference": "c027cf80cefb01c3e34380692703dda4da8da79f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mikespub-org/survos-wikidata/zipball/09c5a18fd1b7a7e551d71fe43641933a81eb096b",
-                "reference": "09c5a18fd1b7a7e551d71fe43641933a81eb096b",
+                "url": "https://api.github.com/repos/mikespub-org/survos-wikidata/zipball/c027cf80cefb01c3e34380692703dda4da8da79f",
+                "reference": "c027cf80cefb01c3e34380692703dda4da8da79f",
                 "shasum": ""
             },
             "require": {
@@ -2780,7 +2780,7 @@
             "require-dev": {
                 "phpstan/phpstan": "^2.3",
                 "phpunit/phpunit": "^13.4",
-                "rector/rector": "^2.7",
+                "rector/rector": "^2.9",
                 "roave/security-advisories": "dev-latest"
             },
             "type": "library",
@@ -2818,7 +2818,7 @@
                 "wikidata"
             ],
             "support": {
-                "source": "https://github.com/mikespub-org/survos-wikidata/tree/6.1.2"
+                "source": "https://github.com/mikespub-org/survos-wikidata/tree/6.1.3"
             },
             "funding": [
                 {
@@ -2830,8 +2830,8 @@
                     "type": "custom"
                 }
             ],
-            "time": "2026-10-11T12:48:43+00:00",
-            "published-time": "2026-10-11T12:48:59+00:00"
+            "time": "2026-11-26T17:10:17+00:00",
+            "published-time": "2026-11-26T17:10:37+00:00"
         },
         {
             "name": "myclabs/deep-copy",

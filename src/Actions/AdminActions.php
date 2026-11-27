@@ -88,6 +88,9 @@ class AdminActions extends DefaultActions
         $templatesDir = realpath('templates');
         $subDirs = glob($templatesDir . '/*', GLOB_ONLYDIR);
         foreach ($subDirs as $subDir) {
+            if (str_ends_with($subDir, 'loader')) {
+                continue;
+            }
             $e = new ConfigTemplatesDir();
             $e->key = str_replace($templatesDir, 'templates', $subDir);
             $e->text = str_replace($templatesDir, 'templates', $subDir);

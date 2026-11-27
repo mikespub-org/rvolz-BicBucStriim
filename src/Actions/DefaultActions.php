@@ -222,16 +222,22 @@ class DefaultActions implements \BicBucStriim\Traits\AppInterface
             // Get custom templates directory (if any)
             $settings = $this->settings();
             $this->templatesDir = $settings->templates_dir ?? '';
+            // Use default-style links (v1)
+            $linkVersion = 1;
             if (!empty($this->templatesDir)) {
                 $path = realpath($this->templatesDir);
                 if ($path) {
                     // Use the new AppTrait method to get the renderer
                     $this->renderer()->prependPath($path);
+                    // Use tailwind-style links (v2)
+                    if (str_contains($path, 'tailwind')) {
+                        $linkVersion = 2;
+                    }
                 }
             }
             // Add link functions to renderer
             $generator = $this->getLinkGenerator();
-            $generator->addFunctions($this->renderer());
+            $generator->addFunctions($this->renderer(), $linkVersion);
         }
     }
 

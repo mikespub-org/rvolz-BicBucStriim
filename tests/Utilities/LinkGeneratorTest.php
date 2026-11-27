@@ -79,8 +79,9 @@ class LinkGeneratorTest extends PHPUnit\Framework\TestCase
         $path = $this->generator->getDataLink($data);
         $this->assertEquals($expected, $path);
 
+        $this->generator->setVersion(2);
         $expected = "/static/files/7/epub/The%20Stones%20of%20Venice%2C%20Volume%20II%20-%20John%20Ruskin/";
-        $path = $this->generator->getDataLink($data, 2);
+        $path = $this->generator->getDataLink($data);
         $this->assertEquals($expected, $path);
     }
 
@@ -115,8 +116,9 @@ class LinkGeneratorTest extends PHPUnit\Framework\TestCase
         $path = $this->generator->getBookCover($book);
         $this->assertEquals($expected, $path);
 
+        $this->generator->setVersion(2);
         $expected = "/static/covers/7/";
-        $path = $this->generator->getBookCover($book, 2);
+        $path = $this->generator->getBookCover($book);
         $this->assertEquals($expected, $path);
     }
 
@@ -129,8 +131,9 @@ class LinkGeneratorTest extends PHPUnit\Framework\TestCase
         $path = $this->generator->getBookThumb($book);
         $this->assertEquals($expected, $path);
 
+        $this->generator->setVersion(2);
         $expected = "/static/titlethumbs/7/";
-        $path = $this->generator->getBookThumb($book, 2);
+        $path = $this->generator->getBookThumb($book);
         $this->assertEquals($expected, $path);
     }
 }

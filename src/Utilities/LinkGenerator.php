@@ -10,10 +10,20 @@ use BicBucStriim\Framework\RendererInterface;
  */
 class LinkGenerator
 {
+    public int $version = 1;
+
     public function __construct(private readonly ActionRegistry $registry) {}
 
-    public function addFunctions(RendererInterface $renderer): void
+    public function setVersion(int $version): void
     {
+        $this->version = $version;
+    }
+
+    public function addFunctions(RendererInterface $renderer, int $version = 0): void
+    {
+        if (!empty($version)) {
+            $this->setVersion($version);
+        }
         $renderer->addFunction('bbs_path', $this->getPath(...));
         // $renderer->addFunction('bbs_link', $this->getLink(...));
         $renderer->addFunction('bbs_file', $this->getDataLink(...));
@@ -44,9 +54,9 @@ class LinkGenerator
         };
     }
 
-    public function getDataLink(\BicBucStriim\Calibre\Data $data, int $version = 1): string
+    public function getDataLink(\BicBucStriim\Calibre\Data $data): string
     {
-        if ($version == 2) {
+        if ($this->version == 2) {
             return $this->getPath('main-book-v2', ['id' => $data->book, 'format' => strtolower($data->format), 'fname' => $data->name]);
         }
         return $this->getPath('main-book', ['id' => $data->book, 'file' => $data->name . '.' . strtolower($data->format)]);
@@ -62,17 +72,17 @@ class LinkGenerator
         return $this->getPath('main-title', ['id' => $book->id]);
     }
 
-    public function getBookCover(\BicBucStriim\Calibre\Book $book, int $version = 1): string
+    public function getBookCover(\BicBucStriim\Calibre\Book $book): string
     {
-        if ($version == 2) {
+        if ($this->version == 2) {
             return $this->getPath('main-cover-v2', ['id' => $book->id]);
         }
         return $this->getPath('main-cover-v1', ['id' => $book->id]);
     }
 
-    public function getBookThumb(\BicBucStriim\Calibre\Book $book, int $version = 1): string
+    public function getBookThumb(\BicBucStriim\Calibre\Book $book): string
     {
-        if ($version == 2) {
+        if ($this->version == 2) {
             return $this->getPath('main-thumbnail-v2', ['id' => $book->id]);
         }
         return $this->getPath('main-thumbnail-v1', ['id' => $book->id]);
